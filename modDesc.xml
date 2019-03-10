@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="42">
+    <author>Wopster</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Pumptools</en>
+    </title>
+    <description>
+        <en>
+            <![CDATA[ToDo]]>
+        </en>
+        <de>
+            <![CDATA[ToDo]]>
+        </de>
+    </description>
+    <iconFilename>icon_pumpTools.png</iconFilename>
+    <multiplayer supported="true"/>
+
+    <!-- <specializations> -->
+        <!-- <specialization name="hoseSystemVehicle" className="HoseSystemVehicle" filename="src/HoseSystemVehicle.lua"/> -->
+    <!-- </specializations> -->
+	
+	<vehicleTypes>
+        <type name="flexibleHose" className="Vehicle" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="baseMaterial" />
+            <specialization name="washable" />
+            <specialization name="wearable" />
+            <specialization name="foliageBending" />
+            <specialization name="ropes" />
+        </type>
+    </vehicleTypes>
+
+    <storeItems>
+        <storeItem xmlFilename="hose/hose.xml"/>
+    </storeItems>
+</modDesc>
