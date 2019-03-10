@@ -7,17 +7,43 @@
 
 Hose = {}
 
-local Hose_mt = Class(Hose, Object)
-
-function Hose:new(isServer, isClient, mt)
-    local hose = Object:new(isServer, isClient, mt or Hose_mt)
-
-    return hose
+function Hose.prerequisitesPresent(specializations)
+    return true
 end
 
-function Hose:load(savegame)
-    self.networkTimeInterpolator = InterpolationTime:new(1.2)
-    self.physicsObjectDirtyFlag = self:getNextDirtyFlag()
+function Hose.getSpecTable(self)
+    return self["spec_" .. self.customEnvironment .. ".hose"]
+end
+
+function Hose.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "computeCatmull", Hose.computeCatmull)
+end
+
+function Hose.registerEventListeners(vehicleType)
+    SpecializationUtil.registerEventListener(vehicleType, "onLoad", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onLoadFinished", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
+end
+
+function Hose:onLoad(savegame)
+    local spec = Hose.getSpecTable(self)
+
+    if self.isClient then
+        spec.mesh = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#mesh"), self.i3dMappings)
+        spec.targetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#targetNode"), self.i3dMappings)
+        spec.length = Utils.getNoNil(getXMLInt(self.xmlFile, "vehicle.hose#length"), self.sizeLength)
+
+        setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
+        setShaderParameter(spec.mesh, "cv1", 0, 0, 0, 0, false)
+        local x, y, z = localToLocal(spec.targetNode, spec.mesh, 0, 0, spec.length)
+        setShaderParameter(spec.mesh, "cv3", x, y, z, 0, false)
+    end
+end
+
+function Hose:onLoadFinished(savegame)
+    if self.isClient then
+        self:computeCatmull()
+    end
 end
 
 function Hose:readStream(streamId, connection)
@@ -32,34 +58,23 @@ end
 function Hose:writeUpdateStream(streamId, connection, dirtyMask)
 end
 
-function Hose:addToPhysics()
-    if not self.isAddedToPhysics then
-        local lastMotorizedNode = nil
-        for _, component in pairs(self.components) do
-            addToPhysics(component.node)
-            if component.motorized then
-                if lastMotorizedNode ~= nil then
-                    if self.isServer then
-                        addVehicleLink(lastMotorizedNode, component.node)
-                    end
-                end
-                lastMotorizedNode = component.node
-            end
-        end
-        self.isAddedToPhysics = true
-        if self.isServer then
-            for _, jointDesc in pairs(self.componentJoints) do
-                self:createComponentJoint(self.components[jointDesc.componentIndices[1]], self.components[jointDesc.componentIndices[2]], jointDesc)
-            end
-            -- if rootnode is sleeping all other components are sleeping as well
-            addWakeUpReport(self.rootNode, "onVehicleWakeUpCallback", self)
-        end
-        for _, collisionPair in pairs(self.collisionPairs) do
-            setPairCollision(collisionPair.component1.node, collisionPair.component2.node, collisionPair.enabled)
-        end
-        self:setMassDirty()
+function Hose:onUpdateInterpolation(dt)
+    if self.isClient then
+        self:computeCatmull(dt)
     end
 end
 
-function Hose:removeFromPhysics()
+function Hose:computeCatmull(dt)
+    local spec = Hose.getSpecTable(self)
+    local x, y, z = 0, 0, 0
+    setShaderParameter(spec.mesh, "cv0", x, y, -spec.length + z, 0, false)
+
+    x, y, z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
+    setShaderParameter(spec.mesh, "cv2", 0, 0, 0, 0, false)
+    setShaderParameter(spec.mesh, "cv3", x, y, z, 0, false)
+
+    x, y, z = 0, 0, 0
+    x, y, z = localToLocal(spec.targetNode, spec.mesh, x, y, spec.length + z)
+    setShaderParameter(spec.mesh, "cv4", x, y, z, 0, false)
 end
+

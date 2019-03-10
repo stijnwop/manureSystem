@@ -16,17 +16,17 @@
     <iconFilename>icon_pumpTools.png</iconFilename>
     <multiplayer supported="true"/>
 
-    <!-- <specializations> -->
-        <!-- <specialization name="hoseSystemVehicle" className="HoseSystemVehicle" filename="src/HoseSystemVehicle.lua"/> -->
-    <!-- </specializations> -->
-	
-	<vehicleTypes>
+    <specializations>
+        <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
+    </specializations>
+
+    <vehicleTypes>
         <type name="flexibleHose" className="Vehicle" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="baseMaterial" />
-            <specialization name="washable" />
-            <specialization name="wearable" />
-            <specialization name="foliageBending" />
-            <specialization name="ropes" />
+            <specialization name="baseMaterial"/>
+            <specialization name="washable"/>
+            <specialization name="wearable"/>
+            <specialization name="foliageBending"/>
+            <specialization name="hose"/>
         </type>
     </vehicleTypes>
 
