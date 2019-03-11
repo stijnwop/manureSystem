@@ -47,19 +47,7 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose mesh="mesh" targetNode="target" />
-    <ropes>
-        <rope baseNode="mesh" targetNode="target" baseParameters="0 0 -3 0" targetParameters="0 0 3 0">
-            <baseParameterAdjuster node="targetAdjuster1" rotationAxis="2" rotationRange="-90 90" minTargetParameters="18 0 18 0"
-                                   maxTargetParameters="-18 0 -18 0"/>
-            <targetParameterAdjuster node="targetAdjuster1" rotationAxis="2" rotationRange="-90 90" minTargetParameters="-18 0 -18 0"
-                                     maxTargetParameters="18 0 18 0"/>
-            <baseParameterAdjuster node="targetAdjuster2" rotationAxis="2" rotationRange="-90 90" minTargetParameters="18 0 18 0"
-                                   maxTargetParameters="-18 0 -18 0"/>
-            <targetParameterAdjuster node="targetAdjuster2" rotationAxis="2" rotationRange="-90 90" minTargetParameters="-18 0 -18 0"
-                                     maxTargetParameters="18 0 18 0"/>
-        </rope>
-    </ropes>
+    <hose mesh="mesh" targetNode="target" offset="0.1"/>
 
     <foliageBending>
         <bendingNode minX="-1.35" maxX="1.35" minZ="-3.5" maxZ="4.1" yOffset="0.2"/>
