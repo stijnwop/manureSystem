@@ -23,17 +23,21 @@
         <typeDesc>$l10n_typeDesc_manureBarrel</typeDesc>
         <filename>hose/hose.i3d</filename>
         <size width="0.2" length="3"/>
+        <supportsPickUp>false</supportsPickUp>
         <components>
             <component centerOfMass="0 0 -0.25" solverIterationCount="40" mass="2.5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="2.5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="2.5"/>
             <component centerOfMass="0 0 0.25" solverIterationCount="40" mass="2.5"/>
 
-            <joint component1="1" component2="2" node="componentJoint1" zRotationNode="componentJoint1Actor" rotLimit="50 40 10" rotMinLimit="-50 -40 -10"
+            <joint component1="1" component2="2" node="componentJoint1" zRotationNode="componentJoint1Actor" rotLimit="50 40 10"
+                   rotMinLimit="-50 -40 -10"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="2" component2="3" node="componentJoint2" zRotationNode="componentJoint2Actor" rotLimit="50 40 10" rotMinLimit="-50 -40 -10"
+            <joint component1="2" component2="3" node="componentJoint2" zRotationNode="componentJoint2Actor" rotLimit="50 40 10"
+                   rotMinLimit="-50 -40 -10"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="3" component2="4" node="componentJoint3" zRotationNode="componentJoint3Actor" rotLimit="50 40 10" rotMinLimit="-50 -40 -10"
+            <joint component1="3" component2="4" node="componentJoint3" zRotationNode="componentJoint3Actor" rotLimit="50 40 10"
+                   rotMinLimit="-50 -40 -10"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
         <schemaOverlay attacherJointPosition="0 0">
@@ -47,7 +51,12 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose mesh="mesh" targetNode="target" offset="0.1"/>
+    <hose mesh="mesh" targetNode="target" offset="0.1">
+        <grabNodes>
+            <grabNode node="grabPoint1" componentIndex="1" componentJointIndex="1"/>
+            <grabNode node="grabPoint2" componentIndex="4" componentJointIndex="3"/>
+        </grabNodes>
+    </hose>
 
     <foliageBending>
         <bendingNode minX="-1.35" maxX="1.35" minZ="-3.5" maxZ="4.1" yOffset="0.2"/>
@@ -69,18 +78,18 @@
     </baseMaterialConfigurations>
 
     <i3dMappings>
-        <i3dMapping id="mesh" node="0>0"/>
-        <i3dMapping id="extendable" node="0>1"/>
-        <i3dMapping id="grabPoint1" node="0>2"/>
-        <i3dMapping id="componentJoint1" node="0>3"/>
-        <i3dMapping id="componentJoint1Actor" node="0>3|0"/>
-        <i3dMapping id="componentJoint2" node="1>0"/>
-        <i3dMapping id="componentJoint2Actor" node="1>0|0"/>
-        <i3dMapping id="targetAdjuster1" node="1>1"/>
-        <i3dMapping id="componentJoint3" node="2>0"/>
-        <i3dMapping id="componentJoint3Actor" node="2>0|0"/>
-        <i3dMapping id="targetAdjuster2" node="2>1"/>
-        <i3dMapping id="grabPoint2" node="3>0"/>
-        <i3dMapping id="target" node="3>1"/>
+        <i3dMapping id="mesh" node="0>0" />
+        <i3dMapping id="extendable" node="0>1" />
+        <i3dMapping id="grabPoint1" node="0>2" />
+        <i3dMapping id="componentJoint1" node="0>3" />
+        <i3dMapping id="componentJoint1Actor" node="0>3|0" />
+        <i3dMapping id="componentJoint2" node="1>0" />
+        <i3dMapping id="componentJoint2Actor" node="1>0|0" />
+        <i3dMapping id="targetAdjuster1" node="1>1" />
+        <i3dMapping id="componentJoint3" node="2>0" />
+        <i3dMapping id="componentJoint3Actor" node="2>0|0" />
+        <i3dMapping id="targetAdjuster2" node="2>1" />
+        <i3dMapping id="grabPoint2" node="3>0" />
+        <i3dMapping id="target" node="3>1" />
     </i3dMappings>
 </vehicle>

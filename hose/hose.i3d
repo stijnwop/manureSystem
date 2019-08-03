@@ -51,7 +51,7 @@
       <TransformGroup name="targetAdjuster2" translation="-7.45058e-09 2.98023e-08 -1.125" collision="false" clipDistance="300" nodeId="17"/>
     </Shape>
     <Shape name="hose_main_component4" translation="0 0 -3" shapeId="6" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="18">
-      <TransformGroup name="grabPoint2" translation="3.67394e-16 2.6077e-08 0" collision="false" clipDistance="300" nodeId="19"/>
+      <TransformGroup name="grabPoint2" translation="3.67394e-16 2.6077e-08 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="19"/>
       <TransformGroup name="target" translation="3.67394e-16 2.6077e-08 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="20"/>
     </Shape>
   </Scene>
