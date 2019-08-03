@@ -1,0 +1,14 @@
+# System stuff
+.DS_STORE
+
+# Maya
+**/.mayaSwatches
+
+# Editors
+*.sublime-workspace
+*.sublime-project
+
+# IDE
+.idea/
+
+*.exe
