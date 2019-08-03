@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Wopster</translationContributors>
+
+    <texts>
+        <!--Inputs-->
+        <text name="input_MS_ATTACH_HOSE" text="Attach hose"/>
+    </texts>
+</l10n>

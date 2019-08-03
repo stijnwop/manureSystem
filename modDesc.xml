@@ -16,6 +16,10 @@
     <iconFilename>icon_pumpTools.png</iconFilename>
     <multiplayer supported="true"/>
 
+    <extraSourceFiles>
+        <sourceFile filename="src/loader.lua"/>
+    </extraSourceFiles>
+
     <specializations>
         <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
     </specializations>
@@ -33,4 +37,14 @@
     <storeItems>
         <storeItem xmlFilename="hose/hose.xml"/>
     </storeItems>
+
+    <actions>
+        <action name="MS_ATTACH_HOSE" axisType="HALF"/>
+    </actions>
+
+    <inputBinding>
+        <actionBinding action="MS_ATTACH_HOSE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_c"/>
+        </actionBinding>
+    </inputBinding>
 </modDesc>
