@@ -2,15 +2,20 @@ HosePlayer = {}
 
 local HosePlayer_mt = Class(HosePlayer)
 
-function HosePlayer:new(isClient, isServer)
+function HosePlayer:new(isClient, isServer, mission, input)
     local self = setmetatable({}, HosePlayer_mt)
 
     self.isClient = isClient
     self.isServer = isServer
+    self.mission = mission
+    self.input = input
 
+    Player.onEnter = Utils.appendedFunction(Player.onEnter, HosePlayer.inj_onEnter)
+    Player.onLeave = Utils.appendedFunction(Player.onLeave, HosePlayer.inj_onLeave)
     Player.pickUpObjectRaycastCallback = Utils.overwrittenFunction(Player.pickUpObjectRaycastCallback, HosePlayer.inj_pickUpObjectRaycastCallback)
     Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_checkObjectInRange)
     Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_pickUpObject)
+    PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_isAvailable)
 
     return self
 end
@@ -19,26 +24,64 @@ function HosePlayer:delete()
 end
 
 function HosePlayer:update(dt)
-    if self.isServer then
-        --
+    if self.isClient then
+        local player = self.mission.player
+        local hose = player.lastFoundHose
 
+        local showActionAttach = false
+        local showActionDetach = false
+
+        if hose ~= nil then
+            local spec = hose.spec_hose
+            local grabNode = spec.grabNodes[player.lastFoundHoseGrabNodeId]
+
+            if grabNode ~= nil then
+                showActionAttach = hose:isAttached(grabNode) and spec.foundConnectorId ~= nil
+                if showActionAttach then
+                    self.input:setActionEventText(self.actionEventIdAttachHose, "attach")
+                    self.input:setActionEventTextPriority(self.actionEventIdAttachHose, GS_PRIO_HIGH)
+
+                    local vehicle = spec.foundVehicle
+                    local connector = vehicle.spec_manureSystemConnector.manureSystemConnectors[spec.foundConnectorId]
+
+                    ManureSystemUtil:renderHelpTextOnNode(connector.node, "attach", "")
+                end
+
+                showActionDetach = hose:isConnected(grabNode) and spec.foundConnectorId ~= nil
+
+                if showActionDetach then
+                    self.input:setActionEventText(self.actionEventIdDetachHose, "detach")
+                    self.input:setActionEventTextPriority(self.actionEventIdDetachHose, GS_PRIO_HIGH)
+
+                    local vehicle = spec.foundVehicle
+                    local connector = vehicle.spec_manureSystemConnector.manureSystemConnectors[spec.foundConnectorId]
+
+                    ManureSystemUtil:renderHelpTextOnNode(connector.node, "detach", "")
+                end
+            end
+        end
+
+        self.input:setActionEventTextVisibility(self.actionEventIdAttachHose, showActionAttach)
+        self.input:setActionEventTextVisibility(self.actionEventIdDetachHose, showActionDetach)
     end
 end
 
-local function isDynamicRigid(nodeId)
+function HosePlayer.isDynamicRigid(nodeId)
     return getRigidBodyType(nodeId):lower() == "dynamic"
 end
 
 function HosePlayer.inj_pickUpObject(player, superFunc, grab, noEventSend)
     -- do own stuff
     log("Hose grab: " .. tostring(grab))
-    log(player.lastFoundHoseId)
+    log(player.lastFoundHoseGrabNodeId)
     --
     local hose = player.lastFoundHose
-    if grab and hose ~= nil and not player.isCarryingObject then
-        hose:grab(player.lastFoundHoseId, player, noEventSend)
-    elseif player.lastFoundHoseId ~= nil then
-        hose:drop(player.lastFoundHoseId, player, noEventSend)
+    if not hose:isConnected(player.lastFoundHoseGrabNode) then
+        if grab and hose ~= nil and not player.isCarryingObject then
+            hose:grab(player.lastFoundHoseGrabNodeId, player, noEventSend)
+        elseif player.lastFoundHoseGrabNodeId ~= nil then
+            hose:drop(player.lastFoundHoseGrabNodeId, player, noEventSend)
+        end
     end
 
     superFunc(player, grab, noEventSend)
@@ -50,29 +93,41 @@ function HosePlayer.inj_checkObjectInRange(player, superFunc)
     if doCheck then
         -- reset hose search
         player.lastFoundHose = nil
+        player.lastFoundHoseIsDetached = false
     end
 
     superFunc(player)
 
     if doCheck then
-        player.isObjectInRange = player.lastFoundHose ~= nil
+        player.isObjectInRange = player.lastFoundHose ~= nil and player.lastFoundHoseIsDetached
     end
 end
 
 function HosePlayer.inj_pickUpObjectRaycastCallback(player, superFunc, hitObjectId, x, y, z, distance)
     if hitObjectId ~= g_currentMission.terrainDetailId then
-        if isDynamicRigid(hitObjectId) then
+        if HosePlayer.isDynamicRigid(hitObjectId) then
             local object = g_currentMission:getNodeObject(hitObjectId)
             if object ~= nil
-                    and object.isaHose ~= nil
-                    and object:isaHose() then
+                and object.isaHose ~= nil
+                and object:isaHose() then
                 local mass = object:getTotalMass()
                 local grabNode = object:getClosestGrabNode(x, y, z)
 
-                if object:isDetached(grabNode) then
-                    player.lastFoundHoseId = grabNode.id
+                local detached = object:isDetached(grabNode)
+                if detached or object:isConnected(grabNode) then
+                    player.lastFoundHoseGrabNode = grabNode
+                    player.lastFoundHoseGrabNodeId = grabNode.id
+
+                    -- only allow pickup on detached hoses.
                     player.lastFoundHose = object
                     player.lastFoundObjectMass = mass
+
+                    if detached then
+                        player.lastFoundHoseIsDetached = true
+                    end
+
+                    -- we raise active in order to trigger functions on the hose.
+                    object:raiseHoseActive()
 
                     return false -- dismiss further checks
                 end
@@ -83,16 +138,66 @@ function HosePlayer.inj_pickUpObjectRaycastCallback(player, superFunc, hitObject
     return superFunc(player, hitObjectId, x, y, z, distance)
 end
 
+function HosePlayer:registerPlayerActionEvents(player)
+    if self.isClient and player == self.mission.player then
+        local _, actionEventIdAttachHose = self.input:registerActionEvent(InputAction.MS_ATTACH_HOSE, self, self.actionEventOnAttachHose, false, true, true, true)
+        self.input:setActionEventTextVisibility(actionEventIdAttachHose, false)
+
+        local _, actionEventIdDetachHose = self.input:registerActionEvent(InputAction.MS_DETACH_HOSE, self, self.actionEventOnDetachHose, false, true, true, true)
+        self.input:setActionEventTextVisibility(actionEventIdDetachHose, false)
+
+        self.actionEventIdAttachHose = actionEventIdAttachHose
+        self.actionEventIdDetachHose = actionEventIdDetachHose
+    end
+end
+
+function HosePlayer:unregisterPlayerActionEvents(player)
+    if player == self.mission.player then
+        self.input:removeActionEvent(self.actionEventIdAttachHose)
+        self.input:removeActionEvent(self.actionEventIdDetachHose)
+    end
+end
+
+function HosePlayer.actionEventOnAttachHose(self, actionName, inputValue, callbackState, isAnalog)
+    local player = self.mission.player
+    local hose = player.lastFoundHose
+
+    if hose ~= nil and hose:isAttached(player.lastFoundHoseGrabNode) then
+        local spec = hose.spec_hose
+        if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
+            hose:attach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+        end
+    end
+end
+
+function HosePlayer.actionEventOnDetachHose(self, actionName, inputValue, callbackState, isAnalog)
+    local player = self.mission.player
+    local hose = player.lastFoundHose
+
+    if hose ~= nil and hose:isConnected(player.lastFoundHoseGrabNode) then
+        local spec = hose.spec_hose
+        if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
+            hose:detach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+        end
+    end
+end
+
 function HosePlayer.inj_onEnter(player, isControlling)
     if isControlling then
-        g_manualAttach:registerPlayerActionEvents(player)
-        g_manualAttach.detectionHandler:addTrigger(player)
+        g_manureSystem.player:registerPlayerActionEvents(player)
     end
 end
 
 ---Injects in the player onLeave function
 ---@param player table
 function HosePlayer.inj_onLeave(player)
-    g_manualAttach:unregisterPlayerActionEvents(player)
-    g_manualAttach.detectionHandler:removeTrigger(player)
+    g_manureSystem.player:unregisterPlayerActionEvents(player)
+end
+
+function HosePlayer.inj_isAvailable(state, superFunc)
+    if g_currentMission.player.lastFoundHose ~= nil then
+        return false
+    end
+
+    return superFunc(state)
 end

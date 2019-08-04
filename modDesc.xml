@@ -38,13 +38,23 @@
         <storeItem xmlFilename="hose/hose.xml"/>
     </storeItems>
 
+    <l10n filenamePrefix="translations/translation" />
+
     <actions>
         <action name="MS_ATTACH_HOSE" axisType="HALF"/>
+        <action name="MS_DETACH_HOSE" axisType="HALF"/>
+        <action name="MS_TOGGLE_FLOW" axisType="HALF"/>
     </actions>
 
     <inputBinding>
         <actionBinding action="MS_ATTACH_HOSE">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_c"/>
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT"/>
+        </actionBinding>
+        <actionBinding action="MS_DETACH_HOSE">
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT"/>
+        </actionBinding>
+        <actionBinding action="MS_TOGGLE_FLOW">
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

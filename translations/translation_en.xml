@@ -5,5 +5,10 @@
     <texts>
         <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Attach hose"/>
+        <text name="input_MS_DETACH_HOSE" text="Detach hose"/>
+
+        <text name="action_toggleManureFlow" text="%s manure flow"/>
+        <text name="action_toggleManureFlowStateOpen" text="Open"/>
+        <text name="action_toggleManureFlowStateClose" text="Close"/>
     </texts>
 </l10n>

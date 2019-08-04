@@ -27,7 +27,7 @@ end
 function loadMission(mission)
     assert(g_manureSystem == nil)
 
-    manureSystem = ManureSystem:new(mission, directory, modName, g_i18n)
+    manureSystem = ManureSystem:new(mission, g_inputBinding, g_i18n, directory, modName)
 
     getfenv(0)["g_manureSystem"] = manureSystem
 

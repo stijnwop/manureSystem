@@ -9,7 +9,7 @@ ManureSystem = {}
 
 local ManureSystem_mt = Class(ManureSystem)
 
-function ManureSystem:new(mission, modDirectory, modName, i18n)
+function ManureSystem:new(mission, input, i18n, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
     self.isServer = mission:getIsServer()
@@ -17,7 +17,7 @@ function ManureSystem:new(mission, modDirectory, modName, i18n)
     self.modDirectory = modDirectory
     self.modName = modName
 
-    self.player = HosePlayer:new(self.isClient, self.isServer)
+    self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
 
