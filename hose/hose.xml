@@ -25,19 +25,19 @@
         <size width="0.2" length="3"/>
         <supportsPickUp>false</supportsPickUp>
         <components>
-            <component centerOfMass="0 0 -0.25" solverIterationCount="40" mass="2.5"/>
-            <component centerOfMass="0 0 0" solverIterationCount="20" mass="2.5"/>
-            <component centerOfMass="0 0 0" solverIterationCount="20" mass="2.5"/>
-            <component centerOfMass="0 0 0.25" solverIterationCount="40" mass="2.5"/>
+            <component centerOfMass="0 0 -0.25" solverIterationCount="20" mass="5"/>
+            <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
+            <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
+            <component centerOfMass="0 0 0.25" solverIterationCount="20" mass="5"/>
 
-            <joint component1="1" component2="2" node="componentJoint1" zRotationNode="componentJoint1Actor" rotLimit="50 40 10"
-                   rotMinLimit="-50 -40 -10"
+            <joint component1="1" component2="2" node="componentJoint1" rotLimit="45 45 45"
+                   rotMinLimit="-45 -45 -45"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="2" component2="3" node="componentJoint2" zRotationNode="componentJoint2Actor" rotLimit="50 40 10"
-                   rotMinLimit="-50 -40 -10"
+            <joint component1="2" component2="3" node="componentJoint2" rotLimit="45 45 45"
+                   rotMinLimit="-45 -45 -45"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="3" component2="4" node="componentJoint3" zRotationNode="componentJoint3Actor" rotLimit="50 40 10"
-                   rotMinLimit="-50 -40 -10"
+            <joint component1="3" component2="4" node="componentJoint3" rotLimit="45 45 45"
+                   rotMinLimit="-45 -45 -45"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
         <schemaOverlay attacherJointPosition="0 0">
@@ -53,8 +53,8 @@
 
     <hose mesh="mesh" targetNode="target" offset="0.1">
         <grabNodes>
-            <grabNode node="grabPoint1" componentIndex="1" componentJointIndex="1"/>
-            <grabNode node="grabPoint2" componentIndex="4" componentJointIndex="3"/>
+            <grabNode node="grabPoint1" invertZOnAttach="true" componentIndex="1" componentJointIndex="1" rotLimit="55 55 55"/>
+            <grabNode node="grabPoint2" componentIndex="4" componentJointIndex="3" rotLimit="55 55 55"/>
         </grabNodes>
     </hose>
 
