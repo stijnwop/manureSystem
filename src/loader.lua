@@ -9,6 +9,8 @@ local directory = g_currentModDirectory
 local modName = g_currentModName
 
 source(Utils.getFilename("src/ManureSystem.lua", directory))
+source(Utils.getFilename("src/events/HoseAttachDetachEvent.lua", directory))
+source(Utils.getFilename("src/events/HoseGrabDropEvent.lua", directory))
 source(Utils.getFilename("src/utils/ManureSystemUtil.lua", directory))
 source(Utils.getFilename("src/utils/ManureSystemXMLUtil.lua", directory))
 source(Utils.getFilename("src/hose/HosePlayer.lua", directory))
