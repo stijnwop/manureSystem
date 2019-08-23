@@ -12,6 +12,8 @@ function HosePlayer:new(isClient, isServer, mission, input)
 
     Player.onEnter = Utils.appendedFunction(Player.onEnter, HosePlayer.inj_onEnter)
     Player.onLeave = Utils.appendedFunction(Player.onLeave, HosePlayer.inj_onLeave)
+    Player.readUpdateStream = Utils.appendedFunction(Player.readUpdateStream, HosePlayer.readUpdateStream)
+    Player.writeUpdateStream = Utils.appendedFunction(Player.writeUpdateStream, HosePlayer.writeUpdateStream)
     Player.pickUpObjectRaycastCallback = Utils.overwrittenFunction(Player.pickUpObjectRaycastCallback, HosePlayer.inj_pickUpObjectRaycastCallback)
     Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_checkObjectInRange)
     Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_pickUpObject)
@@ -21,6 +23,19 @@ function HosePlayer:new(isClient, isServer, mission, input)
 end
 
 function HosePlayer:delete()
+end
+
+function HosePlayer:readUpdateStream(streamId, timestamp, connection)
+    if connection:getIsServer() then
+
+    end
+
+end
+function HosePlayer:writeUpdateStream(streamId, connection, dirtyMask)
+    if not connection:getIsServer() then
+
+    end
+
 end
 
 function HosePlayer:update(dt)
@@ -76,7 +91,8 @@ function HosePlayer.inj_pickUpObject(player, superFunc, grab, noEventSend)
     log(player.lastFoundHoseGrabNodeId)
     --
     local hose = player.lastFoundHose
-    if not hose:isConnected(player.lastFoundHoseGrabNode) then
+    local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
+    if not hose:isConnected(grabNode) then
         if grab and hose ~= nil and not player.isCarryingObject then
             hose:grab(player.lastFoundHoseGrabNodeId, player, noEventSend)
         elseif player.lastFoundHoseGrabNodeId ~= nil then
@@ -99,7 +115,9 @@ function HosePlayer.inj_checkObjectInRange(player, superFunc)
     superFunc(player)
 
     if doCheck then
-        player.isObjectInRange = player.lastFoundHose ~= nil and player.lastFoundHoseIsDetached
+        if not player.isObjectInRange then
+            player.isObjectInRange = player.lastFoundHose ~= nil and player.lastFoundHoseIsDetached
+        end
     end
 end
 
@@ -115,7 +133,6 @@ function HosePlayer.inj_pickUpObjectRaycastCallback(player, superFunc, hitObject
 
                 local detached = object:isDetached(grabNode)
                 if detached or object:isConnected(grabNode) then
-                    player.lastFoundHoseGrabNode = grabNode
                     player.lastFoundHoseGrabNodeId = grabNode.id
 
                     -- only allow pickup on detached hoses.
@@ -162,10 +179,14 @@ function HosePlayer.actionEventOnAttachHose(self, actionName, inputValue, callba
     local player = self.mission.player
     local hose = player.lastFoundHose
 
-    if hose ~= nil and hose:isAttached(player.lastFoundHoseGrabNode) then
+    if hose ~= nil then
         local spec = hose.spec_hose
-        if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
-            hose:attach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+        local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
+
+        if hose:isAttached(grabNode) then
+            if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
+                hose:attach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+            end
         end
     end
 end
@@ -174,10 +195,14 @@ function HosePlayer.actionEventOnDetachHose(self, actionName, inputValue, callba
     local player = self.mission.player
     local hose = player.lastFoundHose
 
-    if hose ~= nil and hose:isConnected(player.lastFoundHoseGrabNode) then
+    if hose ~= nil then
         local spec = hose.spec_hose
-        if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
-            hose:detach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+        local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
+
+        if hose:isConnected(grabNode) then
+            if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
+                hose:detach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+            end
         end
     end
 end

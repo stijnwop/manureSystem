@@ -27,29 +27,26 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "computeCatmullSpline", Hose.computeCatmullSpline)
     SpecializationUtil.registerFunction(vehicleType, "isaHose", Hose.isaHose)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodes", Hose.getGrabNodes)
+    SpecializationUtil.registerFunction(vehicleType, "getGrabNodeById", Hose.getGrabNodeById)
     SpecializationUtil.registerFunction(vehicleType, "getClosestGrabNode", Hose.getClosestGrabNode)
     SpecializationUtil.registerFunction(vehicleType, "grab", Hose.grab)
     SpecializationUtil.registerFunction(vehicleType, "drop", Hose.drop)
     SpecializationUtil.registerFunction(vehicleType, "attach", Hose.attach)
     SpecializationUtil.registerFunction(vehicleType, "detach", Hose.detach)
+    SpecializationUtil.registerFunction(vehicleType, "raiseHoseActive", Hose.raiseHoseActive)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
     SpecializationUtil.registerFunction(vehicleType, "isConnected", Hose.isConnected)
     SpecializationUtil.registerFunction(vehicleType, "findConnectorRaycastCallback", Hose.findConnectorRaycastCallback)
-    SpecializationUtil.registerFunction(vehicleType, "registerPlayerActionEvents", Hose.registerPlayerActionEvents)
-    SpecializationUtil.registerFunction(vehicleType, "unregisterPlayerActionEvents", Hose.unregisterPlayerActionEvents)
+    SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
 end
 
 function Hose.registerEventListeners(vehicleType)
-    SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onLoadFinished", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
-end
-
-function Hose:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
 end
 
 function Hose:onLoad(savegame)
@@ -59,8 +56,9 @@ function Hose:onLoad(savegame)
 
     spec.foundVehicle = nil
     spec.foundConnectorId = nil
-    spec.grabNodeId = nil
+    spec.foundGrabNodeId = nil
     spec.grabNodes = {}
+    spec.grabNodesToVehicles = {}
 
     Hose.loadGrabNodes(self)
 
@@ -106,36 +104,22 @@ end
 function Hose:onUpdate(dt)
     if self.isClient then
         local spec = self.spec_hose
-        if spec.actionEvents ~= nil then
-            local attachActionEvent = spec.actionEvents[InputAction.MS_ATTACH_HOSE]
-
-            if attachActionEvent ~= nil then
-                if spec.foundConnectorId ~= nil then
-                    g_inputBinding:setActionEventText(attachActionEvent.actionEventId, "attach")
-                    g_inputBinding:setActionEventTextPriority(attachActionEvent.actionEventId, GS_PRIO_HIGH)
-
-                    local vehicle = spec.foundVehicle
-                    local connector = vehicle.spec_manureSystemConnector.manureSystemConnectors[spec.foundConnectorId]
-
-                    ManureSystemUtil:renderHelpTextOnNode(connector.node, "attach", "")
-                end
-
-                g_inputBinding:setActionEventTextVisibility(attachActionEvent.actionEventId, spec.foundConnectorId ~= nil)
-            end
-        end
     end
 end
 
 function Hose:onUpdateTick(dt)
     local spec = self.spec_hose
 
-    if self.isServer then
-        spec.foundVehicle = nil
-        spec.foundConnectorId = nil
-        spec.grabNodeId = nil
+    if self.isClient then
+        local player = g_currentMission.player
+        local grabNode = spec.grabNodes[player.lastFoundHoseGrabNodeId]
 
-        for grabNodeId, grabNode in ipairs(spec.grabNodes) do
-            if self:isAttached(grabNode) then
+        if grabNode ~= nil then
+            spec.foundVehicle = nil
+            spec.foundConnectorId = nil
+            spec.foundGrabNodeId = nil
+
+            if self:isAttached(grabNode) or self:isConnected(grabNode) then
                 local x, y, z = getWorldTranslation(grabNode.node)
                 local dx, dy, dz = localDirectionToWorld(grabNode.node, 0, 0, 1)
 
@@ -145,15 +129,14 @@ function Hose:onUpdateTick(dt)
 
                 if spec.foundVehicle ~= nil then
                     for id, connector in ipairs(spec.foundVehicle:getConnectors()) do
-                        if not connector.isConnected then
+                        if not connector.hasOpenManureFlow then
                             local rx, ry, rz = getWorldTranslation(connector.node)
                             local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
                             if distance < Hose.CONNECTOR_SEQUENCE
-                                    and math.abs(y - ry) < connector.inRangeDistance then
+                                and math.abs(y - ry) < connector.inRangeDistance then
                                 spec.foundConnectorId = id
-                                spec.foundGrabNodeId = grabNodeId
-                                print("Found vehicle: " .. spec.foundVehicle:getName() .. " connector: " .. id)
+                                spec.foundGrabNodeId = player.lastFoundHoseGrabNodeId
                             end
                         end
                     end
@@ -186,6 +169,10 @@ function Hose:getGrabNodes()
     return self.spec_hose.grabNodes
 end
 
+function Hose:getGrabNodeById(id)
+    return self.spec_hose.grabNodes[id]
+end
+
 function Hose:getClosestGrabNode(x, y, z)
     local closestGrabNode
     local closestDistance = math.huge
@@ -216,6 +203,7 @@ end
 ---Computes a catmull rom spline over shader
 function Hose:computeCatmullSpline()
     local spec = self.spec_hose
+
     local p0x, p0y, p0z = 0, 0, 0 -- calculate base offset
     local p1x, p1y, p1z = 0, 0, 0
     local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
@@ -232,7 +220,6 @@ end
 
 local function constructPlayerJoint(jointDesc, mass)
     local constructor = JointConstructor:new()
-
     constructor:setActors(jointDesc.actor1, jointDesc.actor2)
     --constructor:setJointTransforms(jointDesc.anchor1, jointDesc.actor2)
     constructor:setEnableCollision(false)
@@ -284,36 +271,8 @@ local function constructPlayerJoint(jointDesc, mass)
     return jointIndex
 end
 
-local function constructConnectorJoint(jointDesc, grabNode, connector)
-    local targetNode = jointDesc.actor2
-
-    if getRigidBodyType(targetNode) ~= "Dynamic" then
-        return
-    end
-
-    setTranslation(jointDesc.actor2, getWorldTranslation(connector.node))
-
-    local constr = JointConstructor:new()
-
-    constr:setActors(jointDesc.actor1, jointDesc.actor2)
-    constr:setJointTransforms(jointDesc.transform2, jointDesc.transform2)
-
-    local springForce = 7500
-    local springDamping = 1500
-    constr:setEnableCollision(false)
-    constr:setRotationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
-    constr:setTranslationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
-
-    for axis = 0, 2 do
-        constr:setRotationLimit(axis, 0, 0)
-        constr:setTranslationLimit(axis, true, 0, 0)
-    end
-
-    return constr:finalize()
-end
-
-function Hose:grab(id, player, noEventSent)
-    -- noEventSent
+function Hose:grab(id, player, noEventSend)
+    HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
     local grabNodes = self:getGrabNodes()
     local grabNode = grabNodes[id]
@@ -338,10 +297,11 @@ function Hose:grab(id, player, noEventSent)
     end
 
     player.isCarryingObject = true
-    self:registerPlayerActionEvents(player)
 end
 
-function Hose:drop(id, player, noEventSent)
+function Hose:drop(id, player, noEventSend)
+    HoseGrabDropEvent.sendEvent(self, id, player, false, noEventSend)
+
     local grabNodes = self:getGrabNodes()
     local grabNode = grabNodes[id]
 
@@ -349,15 +309,24 @@ function Hose:drop(id, player, noEventSent)
     grabNode.player = nil
 
     if self.isServer then
-        removeJoint(grabNode.jointIndex)
+        if grabNode.jointIndex ~= 0 then
+            removeJoint(grabNode.jointIndex)
+        end
+
+        local componentNode = self.components[grabNode.componentIndex].node
+        setCollisionMask(componentNode, grabNode.componentCollisionMask)
     end
 
+    grabNode.jointIndex = 0
+
     player.isCarryingObject = false
-    self:unregisterPlayerActionEvents(player)
 end
 
-function Hose:attach(grabPointId, connectorId, vehicle, noEventSent)
-    log("attaching to " .. vehicle:getName() .. " gp: " .. grabPointId, " connector: " .. connectorId)
+function Hose:attach(grabPointId, connectorId, vehicle, noEventSend)
+    HoseAttachDetachEvent.sendEvent(self, grabPointId, connectorId, vehicle, true, noEventSend)
+
+    log("attaching to " .. vehicle:getName() .. " gp: " .. grabPointId .. " connector: " .. connectorId)
+
     local spec = self.spec_hose
     local grabNode = spec.grabNodes[grabPointId]
 
@@ -366,38 +335,147 @@ function Hose:attach(grabPointId, connectorId, vehicle, noEventSent)
     end
 
     grabNode.state = Hose.STATE_CONNECTED
+
     local connector = vehicle:getConnectorById(connectorId)
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
 
-        local desc = {}
+        grabNode.jointTransform = createTransformGroup("connectorJoint")
+        link(connector.node, grabNode.jointTransform)
 
+        local desc = {}
         desc.actor1 = vehicle.rootNode
         desc.actor2 = componentNode
-        desc.transform1 = grabNode.node
-        desc.transform2 = connector.node
+        desc.transform = connector.node
 
-        grabNode.jointIndex = constructConnectorJoint(desc, grabNode, connector)
+        local rx, ry, rz = getWorldRotation(connector.node)
+        if grabNode.invertZOnAttach then
+            rx, ry, rz = -rx, -ry, -rz
+
+            if math.abs(math.deg(ry)) <= 0.01 then
+                ry = ry + math.rad(180)
+            end
+        end
+
+        setWorldTranslation(componentNode, getWorldTranslation(connector.node))
+        setWorldRotation(componentNode, rx, ry, rz)
+
+        grabNode.jointIndex = self:constructConnectorJoint(desc)
 
         -- restore joint transform position
-        setTranslation(desc.transform2, unpack(connector.jointOrigTrans))
+        setTranslation(desc.transform, unpack(connector.jointOrigTrans))
 
         for i = 1, 3 do
-            self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, 0, 0)
+            --self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, 0, 0)
         end
+
     else
         -- set joint index to '1' on client side, so we can check if something is attached
         grabNode.jointIndex = 1
     end
 
-    vehicle:setIsUsed(connectorId, true)
+    if connector.isParkPlace then
+        local otherNodeId = grabPointId > 1 or 1 and 2
+        local otherGrabNode = spec.grabNodes[otherNodeId]
+        local componentNode = self.components[otherNodeId].node
+        local x, y, z = localToWorld(connector.node, 0, 0, spec.length)
+        local rx, ry, rz = getWorldRotation(connector.node)
+        if grabNode.invertZOnAttach then
+            rx, ry, rz = -rx, -ry, -rz
+
+            if math.abs(math.deg(ry)) <= 0.01 then
+                ry = ry + math.rad(180)
+            end
+        end
+        local desc = {}
+        desc.actor1 = vehicle.rootNode
+        desc.actor2 = componentNode
+        desc.transform = connector.node
+
+        setWorldTranslation(componentNode, x, y, z)
+        setWorldRotation(componentNode, rx, ry, rz)
+
+        otherGrabNode.jointIndex = self:constructConnectorJoint(desc)
+        setTranslation(desc.transform, unpack(connector.jointOrigTrans))
+
+        for _, component in pairs(self.components) do
+            if component.node ~= componentNode then
+                setPairCollision(component.node, vehicle.rootNode, false)
+            end
+        end
+    end
+
+    vehicle:setIsConnected(connectorId, true)
+    spec.grabNodesToVehicles[grabPointId] = vehicle
 end
 
-function Hose:detach(grabPointId, connectorId, vehicle, noEventSent)
+function Hose:detach(grabPointId, connectorId, vehicle, noEventSend)
+    HoseAttachDetachEvent.sendEvent(self, grabPointId, connectorId, vehicle, false, noEventSend)
+    log("detaching from " .. vehicle:getName() .. " gp: " .. grabPointId .. " connector: " .. connectorId)
 
+    local spec = self.spec_hose
     local grabNode = spec.grabNodes[grabPointId]
     grabNode.state = Hose.STATE_DETACHED
-    vehicle:setIsUsed(connectorId, false)
+
+    local connector = vehicle:getConnectorById(connectorId)
+    if self.isServer then
+        if grabNode.jointIndex ~= 0 then
+            removeJoint(grabNode.jointIndex)
+        end
+
+        delete(grabNode.jointTransform)
+
+        for i = 1, 3 do
+            --self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -grabNode.componentJointRotLimit[i], grabNode.componentJointRotLimit[i])
+        end
+
+        local componentNode = self.components[grabNode.componentIndex].node
+        for _, component in pairs(self.components) do
+            if component.node ~= componentNode then
+                setPairCollision(component.node, vehicle.rootNode, true)
+            end
+        end
+    end
+
+    grabNode.jointIndex = 0
+    grabNode.jointTransform = nil
+
+    vehicle:setIsConnected(connectorId, false)
+    spec.grabNodesToVehicles[grabPointId] = nil
+end
+
+function Hose:constructConnectorJoint(jointDesc)
+    if getRigidBodyType(jointDesc.actor2) ~= "Dynamic" then
+        return
+    end
+
+    local constr = JointConstructor:new()
+
+    constr:setActors(jointDesc.actor1, jointDesc.actor2)
+    constr:setJointTransforms(jointDesc.transform, jointDesc.transform)
+
+    local springForce = 7500
+    local springDamping = 1500
+    constr:setEnableCollision(false)
+    constr:setRotationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
+    constr:setTranslationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
+
+    for axis = 0, 2 do
+        constr:setRotationLimit(axis, 0, 0)
+        constr:setTranslationLimit(axis, true, 0, 0)
+    end
+
+    return constr:finalize()
+end
+
+function Hose:raiseHoseActive()
+    local spec = self.spec_hose
+
+    self:raiseActive()
+
+    for _, vehicle in pairs(spec.grabNodesToVehicles) do
+        vehicle:raiseActive()
+    end
 end
 
 function Hose:isAttached(grabNode)
@@ -437,8 +515,12 @@ function Hose.loadGrabNodes(self)
             grabNode.node = node
             grabNode.jointOrigRot = { getRotation(node) }
             grabNode.jointOrigTrans = { getTranslation(node) }
+            grabNode.invertZOnAttach = Utils.getNoNil(getXMLBool(self.xmlFile, key .. '#invertZOnAttach'), false)
             grabNode.componentIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. '#componentIndex'), 1)
             grabNode.componentJointIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. '#componentJointIndex'), 1)
+
+            local rotLimit = StringUtil.getRadiansFromString(getXMLString(self.xmlFile, key .. "#rotLimit"), 3)
+            grabNode.componentJointRotLimit = rotLimit
 
             local componentNode = self.components[grabNode.componentIndex].node
             grabNode.componentCollisionMask = getCollisionMask(componentNode)
@@ -447,6 +529,7 @@ function Hose.loadGrabNodes(self)
 
             if self.isServer then
                 grabNode.jointIndex = 0
+                grabNode.jointTransform = nil
             end
 
             table.insert(spec.grabNodes, grabNode)
@@ -472,8 +555,8 @@ function Hose:findConnectorRaycastCallback(hitActorId, x, y, z, distance, nx, ny
     end
 
     if vehicle ~= nil and vehicle.isa ~= nil
-            and vehicle:isa(Vehicle)
-            and SpecializationUtil.hasSpecialization(ManureSystemConnector, vehicle.specializations) then
+        and vehicle:isa(Vehicle)
+        and SpecializationUtil.hasSpecialization(ManureSystemConnector, vehicle.specializations) then
         local spec = self.spec_hose
         spec.foundVehicle = vehicle
         spec.lastRaycastDistance = distance
@@ -481,28 +564,4 @@ function Hose:findConnectorRaycastCallback(hitActorId, x, y, z, distance, nx, ny
     end
 
     return true
-end
-
-function Hose:registerPlayerActionEvents(player)
-    if self.isClient and player == g_currentMission.player then
-        local spec = self.spec_hose
-        local _, actionEventIdAttachHose = self:addActionEvent(spec.actionEvents, InputAction.MS_ATTACH_HOSE, self, Hose.actionEventOnAttachHose, false, true, false, true, nil, nil, true)
-        g_inputBinding:setActionEventTextVisibility(actionEventIdAttachHose, true)
-        g_inputBinding:setActionEventTextPriority(actionEventIdAttachHose, GS_PRIO_HIGH)
-    end
-end
-
-function Hose:unregisterPlayerActionEvents(player)
-    if player == g_currentMission.player then
-        local spec = self.spec_hose
-        local attachActionEvent = spec.actionEvents[InputAction.MS_ATTACH_HOSE]
-        g_inputBinding:removeActionEvent(attachActionEvent.actionEventId)
-    end
-end
-
-function Hose.actionEventOnAttachHose(self, actionName, inputValue, callbackState, isAnalog)
-    local spec = self.spec_hose
-    if spec.foundConnectorId ~= 0 then
-        self:attach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
-    end
 end
