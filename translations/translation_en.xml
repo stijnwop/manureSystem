@@ -6,9 +6,19 @@
         <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Attach hose"/>
         <text name="input_MS_DETACH_HOSE" text="Detach hose"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Toggle manure flow"/>
+        <text name="input_ACTIVATE_PUMP" text="Activate/deactivate pump"/>
+        <text name="input_TOGGLE_PUMP_DIRECTION" text="Toggle pump direction"/>
 
         <text name="action_toggleManureFlow" text="%s manure flow"/>
         <text name="action_toggleManureFlowStateOpen" text="Open"/>
         <text name="action_toggleManureFlowStateClose" text="Close"/>
+
+
+        <text name="action_activatePump" text="Activate pump of %s"/>
+        <text name="action_deactivatePump" text="Deactivate pump of %s"/>
+
+        <text name="action_directionOut" text="Change pump direction to: emptying"/>
+        <text name="action_directionIn" text="Change pump direction to: filling"/>
     </texts>
 </l10n>
