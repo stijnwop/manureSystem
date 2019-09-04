@@ -1,0 +1,10 @@
+<vehicle>
+    <sounds>
+        <pump template="SLURRY_01">
+            <pitch indoor="1.0" outdoor="1.0" >
+                <modifier type="PUMP_LOAD" value="0.00" modifiedValue="0.88" />
+                <modifier type="PUMP_LOAD" value="1.00" modifiedValue="0.98" />
+            </pitch>
+        </pump>
+    </sounds>
+</vehicle>
