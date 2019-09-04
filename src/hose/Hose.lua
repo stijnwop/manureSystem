@@ -64,13 +64,19 @@ function Hose:onLoad(savegame)
 
     if self.isClient then
         spec.mesh = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#mesh"), self.i3dMappings)
+        spec.baseNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#baseNode"), self.i3dMappings)
         spec.targetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#targetNode"), self.i3dMappings)
         local offset = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#offset"), 0.25)
-        spec.length = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), self.sizeLength) - offset
+
+        local startTrans = { getWorldTranslation(spec.baseNode) }
+        local endTrans = { getWorldTranslation(spec.targetNode) }
+
+        local length = MathUtil.vector3Length(endTrans[1] - startTrans[1], endTrans[2] - startTrans[2], endTrans[3] - startTrans[3])
+        spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length) - offset) * 2
 
         setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
         setShaderParameter(spec.mesh, "cv1", 0, 0, 0, 0, false)
-        local x, y, z = localToLocal(spec.targetNode, spec.mesh, 0, 0, spec.length)
+        local x, y, z = localToLocal(spec.targetNode, spec.baseNode, 0, 0, spec.length)
         setShaderParameter(spec.mesh, "cv3", x, y, z, 0, false)
     end
 
@@ -206,11 +212,11 @@ function Hose:computeCatmullSpline()
 
     local p0x, p0y, p0z = 0, 0, 0 -- calculate base offset
     local p1x, p1y, p1z = 0, 0, 0
-    local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
+    local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.baseNode, 0, 0, 0)
     local p3x, p3y, p3z = 0, 0, 0 -- calculate target offset
 
     p0x, p0y, p0z = p0x, p0y, -spec.length + p0z
-    p3x, p3y, p3z = localToLocal(spec.targetNode, spec.mesh, p3x, p3y, spec.length + p3z)
+    p3x, p3y, p3z = localToLocal(spec.targetNode, spec.baseNode, p3x, p3y, spec.length + p3z)
 
     Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z)
     Hose.setCatmullPoint(spec.mesh, "cv2", p1x, p1y, p1z)
@@ -405,7 +411,7 @@ function Hose:attach(grabPointId, connectorId, vehicle, noEventSend)
         end
     end
 
-    vehicle:setIsConnected(connectorId, true)
+    vehicle:setIsConnected(connectorId, true, self, true)
     spec.grabNodesToVehicles[grabPointId] = vehicle
 end
 
@@ -440,7 +446,7 @@ function Hose:detach(grabPointId, connectorId, vehicle, noEventSend)
     grabNode.jointIndex = 0
     grabNode.jointTransform = nil
 
-    vehicle:setIsConnected(connectorId, false)
+    vehicle:setIsConnected(connectorId, false, nil, true)
     spec.grabNodesToVehicles[grabPointId] = nil
 end
 
