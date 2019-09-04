@@ -114,7 +114,7 @@ function ManureSystemConnector:onUpdate(dt)
     end
 
     --if self.isClient then
-    spec.isPlayerInRange, spec.connectorId = ManureSystemUtil:getIsPlayerInReferenceRange(self)
+    spec.isPlayerInRange, spec.connectorId = ManureSystemUtil:getIsPlayerInConnectorRange(self)
 
     if spec.isPlayerInRange then
         local connector = self:getConnectorById(spec.connectorId)
