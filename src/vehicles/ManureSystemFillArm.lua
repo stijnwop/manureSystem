@@ -1,0 +1,150 @@
+----------------------------------------------------------------------------------------------------
+-- ManureSystemFillArm
+----------------------------------------------------------------------------------------------------
+-- Purpose:
+--
+-- Copyright (c) Wopster, 2019
+----------------------------------------------------------------------------------------------------
+
+---@class ManureSystemFillArm
+ManureSystemFillArm = {}
+
+function ManureSystemFillArm.prerequisitesPresent(specializations)
+    return SpecializationUtil.hasSpecialization(ManureBarrel, specializations)
+end
+
+function ManureSystemFillArm.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "loadManureSystemFillArmFromXML", ManureSystemFillArm.loadManureSystemFillArmFromXML)
+    SpecializationUtil.registerFunction(vehicleType, "getFillArm", ManureSystemFillArm.getFillArm)
+    SpecializationUtil.registerFunction(vehicleType, "fillArmRaycastCallback", ManureSystemFillArm.fillArmRaycastCallback)
+end
+
+function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
+end
+
+function ManureSystemFillArm.registerEventListeners(vehicleType)
+    SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArm)
+    SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemFillArm)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemFillArm)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemFillArm)
+end
+
+function ManureSystemFillArm:onLoad(savegame)
+    self.spec_manureSystemFillArm = ManureSystemUtil.getSpecTable(self, "manureSystemFillArm")
+
+    local spec = self.spec_manureSystemFillArm
+
+    spec.hasFillArm = hasXMLProperty(self.xmlFile, "vehicle.manureSystemFillArm")
+    spec.fillArm = {}
+    spec.fillArm.lastRaycastDistance = 0
+    spec.fillArm.lastRaycastVehicle = nil
+    self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, "vehicle.manureSystemFillArm", 0)
+end
+
+function ManureSystemFillArm:onDelete()
+    local spec = self.spec_manureSystemFillArm
+end
+
+function ManureSystemFillArm:onUpdate(dt)
+end
+
+function ManureSystemFillArm:onUpdateTick(dt)
+    local spec = self.spec_manureSystemFillArm
+    if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
+        local fillArm = spec.fillArm
+
+        fillArm.lastRaycastDistance = 0
+        fillArm.lastRaycastVehicle = nil
+
+        if not fillArm.needsDockingCollision then
+            local raycastMask = 32 + 64 + 128 + 256 + 4096 + 8194
+            local x, y, z = getWorldTranslation(fillArm.node)
+            local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
+
+            raycastClosest(x, y, z, dx, dy, dz, "fillArmRaycastCallback", 2, self, raycastMask, true)
+
+            local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
+            local r, g, b = 1, 0, 0
+
+            if fillArm.lastRaycastDistance ~= 0 then
+                r, g = 0, 1
+            end
+
+            if fillArm.lastRaycastVehicle ~= nil then
+                local specPumpMotor = self.spec_manureSystemPumpMotor
+                specPumpMotor.pumpHasContact = fillArm.lastRaycastVehicle:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
+            end
+
+            lz = lz - 3
+            lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
+
+            drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
+        end
+
+        if fillArm.lastRaycastVehicle ~= nil then
+            self:setPumpTargetObject(fillArm.lastRaycastVehicle, fillArm.fillUnitIndex)
+        else
+            self:setPumpTargetObject(nil, nil)
+        end
+
+    end
+end
+
+function ManureSystemFillArm:getFillArm()
+    return self.spec_manureSystemFillArm.fillArm
+end
+
+function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, index)
+    local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, index)
+
+    if node ~= nil then
+        fillArm.node = node
+        fillArm.type = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
+        fillArm.fillYOffset = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#fillYOffset"), 0)
+        fillArm.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
+        fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
+
+        if fillArm.needsDockingCollision then
+            local fillArmCollisionRoot = g_i3DManager:loadSharedI3DFile("resources/fillArm/fillArmCollision.i3d", g_manureSystem.modDirectory, false, true, false)
+            if fillArmCollisionRoot ~= 0 then
+                fillArm.collision = getChildAt(fillArmCollisionRoot, 0)
+
+                local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#position")) }
+                if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
+                    setTranslation(fillArm.collision, unpack(translation))
+                end
+
+                local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#rotation")) }
+                if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
+                    setRotation(fillArm.collision, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
+                end
+
+                link(node, fillArm.collision)
+                delete(fillArmCollisionRoot)
+            end
+        end
+
+        return true
+    end
+
+    return false
+end
+
+function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distance)
+    if hitObjectId ~= 0 then
+        local object = g_currentMission:getNodeObject(hitObjectId)
+        if object ~= nil and object.isa ~= nil then
+            if object:isa(Vehicle) then
+                if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
+                    local spec = self.spec_manureSystemFillArm
+                    spec.fillArm.lastRaycastDistance = distance
+                    spec.fillArm.lastRaycastVehicle = object
+
+                    return false
+                end
+            end
+        end
+    end
+
+    return true
+end
