@@ -32,3 +32,35 @@ function ManureSystemUtil:renderHelpTextOnNode(node, actionText, inputBinding)
         end
     end
 end
+
+function ManureSystemUtil:getIsPlayerInConnectorRange(vehicle)
+    local player = g_currentMission.player
+
+    if player == nil then
+        return false, nil
+    end
+
+    if not g_currentMission.accessHandler:canPlayerAccess(vehicle) then
+        return false, nil
+    end
+
+    local playerTrans = { getWorldTranslation(player.rootNode) }
+    local playerDistanceSequence = 1.3
+
+    for id, connector in ipairs(vehicle:getConnectors()) do
+        if connector ~= nil and connector.isConnected then
+            local trans = { getWorldTranslation(connector.node) }
+            local distance = MathUtil.vector3Length(trans[1] - playerTrans[1], trans[2] - playerTrans[2], trans[3] - playerTrans[3])
+
+            playerDistanceSequence = Utils.getNoNil(connector.inRangeDistance, playerDistanceSequence)
+
+            if distance < playerDistanceSequence then
+                playerDistanceSequence = distance
+
+                return true, id
+            end
+        end
+    end
+
+    return false, nil
+end
