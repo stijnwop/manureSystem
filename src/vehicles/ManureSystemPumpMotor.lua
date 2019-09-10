@@ -32,6 +32,8 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "canTurnOnPump", ManureSystemPumpMotor.canTurnOnPump)
     SpecializationUtil.registerFunction(vehicleType, "setPumpDirection", ManureSystemPumpMotor.setPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "getPumpDirection", ManureSystemPumpMotor.getPumpDirection)
+    SpecializationUtil.registerFunction(vehicleType, "isPumpingIn", ManureSystemPumpMotor.isPumpingIn)
+    SpecializationUtil.registerFunction(vehicleType, "isPumpingOut", ManureSystemPumpMotor.isPumpingOut)
     SpecializationUtil.registerFunction(vehicleType, "handlePump", ManureSystemPumpMotor.handlePump)
     SpecializationUtil.registerFunction(vehicleType, "runPump", ManureSystemPumpMotor.runPump)
     SpecializationUtil.registerFunction(vehicleType, "setPumpTargetObject", ManureSystemPumpMotor.setPumpTargetObject)
@@ -343,6 +345,14 @@ end
 
 function ManureSystemPumpMotor:getPumpDirection()
     return self.spec_manureSystemPumpMotor.pumpDirection
+end
+
+function ManureSystemPumpMotor:isPumpingIn()
+    return self.spec_manureSystemPumpMotor.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN
+end
+
+function ManureSystemPumpMotor:isPumpingOut()
+    return self.spec_manureSystemPumpMotor.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT
 end
 
 function ManureSystemPumpMotor:handlePump(dt)
