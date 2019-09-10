@@ -1,26 +1,26 @@
 ----------------------------------------------------------------------------------------------------
--- ManureSystemPGII35
+-- ManureSystemPGII25
 ----------------------------------------------------------------------------------------------------
--- Purpose: Insert Manure System function into the SamsonAgro PG II 35.
+-- Purpose: Insert Manure System function into the SamsonAgro PG II 25.
 --
 -- Copyright (c) Wopster, 2019
 ----------------------------------------------------------------------------------------------------
 
----@class ManureSystemPGII35
-ManureSystemPGII35 = {}
+---@class ManureSystemPGII25
+ManureSystemPGII25 = {}
 
-function ManureSystemPGII35.prerequisitesPresent(specializations)
+function ManureSystemPGII25.prerequisitesPresent(specializations)
     return true
 end
 
-function ManureSystemPGII35.registerEventListeners(vehicleType)
-    SpecializationUtil.registerEventListener(vehicleType, "onPreLoad", ManureSystemPGII35)
+function ManureSystemPGII25.registerEventListeners(vehicleType)
+    SpecializationUtil.registerEventListener(vehicleType, "onPreLoad", ManureSystemPGII25)
 end
 
-function ManureSystemPGII35:onPreLoad(savegame)
+function ManureSystemPGII25:onPreLoad(savegame)
     -- Insert FillArm.
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#createNode", true)
-    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|5|0|0|0|0|0|1") -- decalsBoltsArmEnd
+    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|4|0|0|0|0|0|0|0") -- screw_decals
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#position", "0 0 0")
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "0 0 0")
     setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)

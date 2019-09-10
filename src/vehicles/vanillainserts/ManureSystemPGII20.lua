@@ -23,8 +23,8 @@ function ManureSystemPGII20:onPreLoad(savegame)
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#needsDockingCollision", true)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|4|0|0|0|0|2") -- colPart3
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#position", "0.19 -1.35 0.075")
-    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "-2.85 1.091 -3.223")
-    --setXMLString(self.xmlFile, "vehicle.manureSystemFillArm.collision#position", "0.27 -1.35 0")
+    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "-2.85 -89 -3.223")
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
 
     setXMLFloat(self.xmlFile, "vehicle.pumpMotor#litersPerSecond", 250)
     setXMLFloat(self.xmlFile, "vehicle.pumpMotor#toReachMaxEfficiencyTime", 1250)
