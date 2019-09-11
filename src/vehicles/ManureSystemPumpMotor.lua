@@ -470,7 +470,9 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
             g_inputBinding:setActionEventText(actionEventIdTogglePump, g_i18n:getText("action_activatePump"):format(self.typeDesc))
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePump, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePump, GS_PRIO_HIGH)
-            g_inputBinding:setActionEventText(actionEventIdTogglePumpDirection, g_i18n:getText("action_directionOut"))
+
+            local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
+            g_inputBinding:setActionEventText(actionEventIdTogglePumpDirection, pumpDirectionText)
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePumpDirection, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePumpDirection, GS_PRIO_NORMAL)
         end
