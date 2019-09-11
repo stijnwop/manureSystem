@@ -9,6 +9,7 @@
 ---@class ManureSystemFillArm
 ManureSystemFillArm = {}
 ManureSystemFillArm.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
+ManureSystemFillArm.RAYCAST_DISTANCE = 5
 
 function ManureSystemFillArm.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
@@ -32,7 +33,6 @@ end
 
 function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = ManureSystemUtil.getSpecTable(self, "manureSystemFillArm")
-
     local spec = self.spec_manureSystemFillArm
 
     spec.hasFillArm = hasXMLProperty(self.xmlFile, "vehicle.manureSystemFillArm")
@@ -45,6 +45,10 @@ end
 
 function ManureSystemFillArm:onDelete()
     local spec = self.spec_manureSystemFillArm
+    local fillArm = spec.fillArm
+    if fillArm.collision ~= nil then
+        delete(fillArm.collision)
+    end
 end
 
 function ManureSystemFillArm:onUpdate(dt)
@@ -79,7 +83,7 @@ function ManureSystemFillArm:onUpdateTick(dt)
                 self:setPumpTargetObject(nil, nil)
             end
 
-            lz = lz - 3
+            lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
             lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
             drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
         end
@@ -130,6 +134,10 @@ end
 
 function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distance)
     if hitObjectId ~= 0 then
+        if hitObjectId == g_currentMission.terrainRootNode then
+            return false
+        end
+
         local object = g_currentMission:getNodeObject(hitObjectId)
         if object ~= nil and object.isa ~= nil then
             local spec = self.spec_manureSystemFillArm
