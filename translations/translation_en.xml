@@ -20,5 +20,9 @@
 
         <text name="action_directionOut" text="Change pump direction to: emptying"/>
         <text name="action_directionIn" text="Change pump direction to: filling"/>
+
+        <!--Placeables-->
+        <text name="shopItem_slurryLagoon" text="Slurry Lagoon"/>
+        <text name="function_slurryLagoon" text="With a slurry lagoon you're able to store large quantities of slurry."/>
     </texts>
 </l10n>
