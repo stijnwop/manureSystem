@@ -60,6 +60,8 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     local fillArm = dockingArmObject:getFillArm()
                     dockingArmObject:setPumpTargetObject(object, fillArm.fillUnitIndex)
                     --object:setIsDockUsed(referenceId, inrange, dockingArmObject)
+
+                    fillArm.isRaycastAllowed = false
                 end
             elseif dockingArmObject:getPumpTargetObject() ~= nil then
                 dockingArmObject:setPumpTargetObject(nil, nil)
@@ -175,7 +177,7 @@ function ManureSystemDockStrategy:deformDockFunnel(connectorId, doDeform, dt, do
 end
 
 function ManureSystemDockStrategy:load(connector, xmlFile, key)
-    local deformationNode = I3DUtil.indexToObject(self.object.components, getXMLString(xmlFile, key .. "#deformationNode"), self.object.i3dMappings)
+    local deformationNode = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".funnel")
 
     if deformationNode ~= nil then
         connector.deformationNode = deformationNode
@@ -183,21 +185,46 @@ function ManureSystemDockStrategy:load(connector, xmlFile, key)
         connector.deformationNodeOrgRot = { getRotation(deformationNode) }
         connector.deformationNodeLastTrans = connector.deformationNodeOrgTrans
         connector.deformationNodeLastRot = connector.deformationNodeOrgRot
-        connector.deformationYOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
-        connector.deformationYMaxPush = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
+        connector.deformationYOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
+        connector.deformationYMaxPush = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
         connector.dockingArmObject = nil
     else
         g_logManager:xmlError(self.object.configFileName, "DeformationNode not found!")
+        return false
     end
 
-    addTrigger(connector.node, "dockingArmEnteredTriggerCallback", self)
+    if hasXMLProperty(xmlFile, key .. ".trigger") then
+        local funnelTrigger = clone(g_manureSystem.connectorManager.collision, false, false, true)
+        local funnelLinkNode = I3DUtil.indexToObject(self.object.components, getXMLString(xmlFile, key .. ".trigger#linkNode"), self.object.i3dMappings)
+
+        if funnelLinkNode ~= nil then
+            local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, key .. ".trigger#position")) }
+            if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
+                setTranslation(funnelTrigger, unpack(translation))
+            end
+
+            local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, key .. ".trigger#rotation")) }
+            if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
+                setRotation(funnelTrigger, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
+            end
+
+            link(funnelLinkNode, funnelTrigger)
+            connector.trigger = funnelTrigger
+            addTrigger(connector.trigger, "dockingArmEnteredTriggerCallback", self)
+        end
+    else
+        addTrigger(connector.node, "dockingArmEnteredTriggerCallback", self)
+    end
 
     return true
 end
 
-
 function ManureSystemDockStrategy:delete(connector)
-    removeTrigger(connector.node)
+    if connector.trigger ~= nil then
+        removeTrigger(connector.trigger)
+    else
+        removeTrigger(connector.node)
+    end
 end
 
 function ManureSystemDockStrategy:dockingArmEnteredTriggerCallback(triggerId, otherActorId, onEnter, onLeave, onStay, otherShapeId)
