@@ -204,7 +204,7 @@ function ManureSystemLagoon:hasFarmAccessToStorage(farmId, storage)
 end
 
 function ManureSystemLagoon:updateFillPlaneHeight(fillLevel)
-    if self.planeNode ~= nil then
+    if self.isClient and self.planeNode ~= nil then
         local x, _, z = getTranslation(self.planeNode)
         local y = self.planeMoveMinY + (self.planeMoveMaxY - self.planeMoveMinY) * fillLevel / self:getFillUnitCapacity()
         setTranslation(self.planeNode, x, y, z)
