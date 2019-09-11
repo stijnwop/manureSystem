@@ -93,9 +93,14 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
                     vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
                 end
 
+                if spec.hasFillArmReceiver()() then
+                    vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
+                end
+
                 Logger.info("Mod '" .. typeModName .. "' hasPumpMotor", spec.hasPumpMotor())
                 Logger.info("Mod '" .. typeModName .. "' hasConnectors", spec.hasConnectors())
                 Logger.info("Mod '" .. typeModName .. "' hasFillArm", spec.hasFillArm())
+                Logger.info("Mod '" .. typeModName .. "' hasFillArmReceiver", spec.hasFillArmReceiver())
             elseif SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations) then
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
