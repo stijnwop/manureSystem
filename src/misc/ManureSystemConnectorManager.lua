@@ -8,6 +8,7 @@
 
 ---@class ManureSystemConnectorManager
 ManureSystemConnectorManager = {}
+ManureSystemConnectorManager.COLLISION_MASK = 1088430080
 
 ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK = "dock"
 ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING = "coupling"
@@ -31,10 +32,16 @@ end
 function ManureSystemConnectorManager:loadMapData()
     ManureSystemConnectorManager:superClass().loadMapData(self)
     self:loadDefaultConnectorTypes()
+
+    local collisionRoot = g_i3DManager:loadSharedI3DFile("resources/collisions/connectorCollision.i3d", g_manureSystem.modDirectory, false, true, false)
+    self.collision = getChildAt(collisionRoot, 0)
+    setCollisionMask(self.collision, ManureSystemConnectorManager.COLLISION_MASK)
+    setRigidBodyType(self.collision, "Kinematic")
 end
 
 function ManureSystemConnectorManager:unloadMapData()
     ManureSystemConnectorManager:superClass().unloadMapData(self)
+    delete(self.collision)
 end
 
 function ManureSystemConnectorManager:loadDefaultConnectorTypes()
