@@ -8,9 +8,10 @@
 
 ---@class ManureSystemFillArm
 ManureSystemFillArm = {}
+ManureSystemFillArm.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 
 function ManureSystemFillArm.prerequisitesPresent(specializations)
-    return SpecializationUtil.hasSpecialization(ManureBarrel, specializations)
+    return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end
 
 function ManureSystemFillArm.registerFunctions(vehicleType)
@@ -36,6 +37,7 @@ function ManureSystemFillArm:onLoad(savegame)
 
     spec.hasFillArm = hasXMLProperty(self.xmlFile, "vehicle.manureSystemFillArm")
     spec.fillArm = {}
+    spec.fillArm.isRaycastAllowed = true
     spec.fillArm.lastRaycastDistance = 0
     spec.fillArm.lastRaycastVehicle = nil
     self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, "vehicle.manureSystemFillArm", 0)
@@ -52,41 +54,37 @@ function ManureSystemFillArm:onUpdateTick(dt)
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
         local fillArm = spec.fillArm
+        if fillArm.isRaycastAllowed then
+            fillArm.lastRaycastDistance = 0
+            fillArm.lastRaycastVehicle = nil
 
-        fillArm.lastRaycastDistance = 0
-        fillArm.lastRaycastVehicle = nil
-
-        if not fillArm.needsDockingCollision then
-            local raycastMask = 32 + 64 + 128 + 256 + 4096 + 8194
             local x, y, z = getWorldTranslation(fillArm.node)
             local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
-            raycastClosest(x, y, z, dx, dy, dz, "fillArmRaycastCallback", 2, self, raycastMask, true)
+            raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", 2, self, ManureSystemFillArm.RAYCAST_MASK, true)
 
             local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
             local r, g, b = 1, 0, 0
 
-            if fillArm.lastRaycastDistance ~= 0 then
-                r, g = 0, 1
-            end
-
             if fillArm.lastRaycastVehicle ~= nil then
-                local specPumpMotor = self.spec_manureSystemPumpMotor
-                specPumpMotor.pumpHasContact = fillArm.lastRaycastVehicle:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
+                r, g = 0, 1
+
+                if self:isPumpingIn() then
+                    local specPumpMotor = self.spec_manureSystemPumpMotor
+                    specPumpMotor.pumpHasContact = fillArm.lastRaycastVehicle:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
+                end
+
+                self:setPumpTargetObject(fillArm.lastRaycastVehicle, fillArm.fillUnitIndex)
+            else
+                self:setPumpTargetObject(nil, nil)
             end
 
             lz = lz - 3
             lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
-
             drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
         end
-
-        if fillArm.lastRaycastVehicle ~= nil then
-            self:setPumpTargetObject(fillArm.lastRaycastVehicle, fillArm.fillUnitIndex)
-        else
-            self:setPumpTargetObject(nil, nil)
-        end
-
+        -- Reset
+        fillArm.isRaycastAllowed = true
     end
 end
 
@@ -105,9 +103,10 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
 
         if fillArm.needsDockingCollision then
-            local fillArmCollisionRoot = g_i3DManager:loadSharedI3DFile("resources/fillArm/fillArmCollision.i3d", g_manureSystem.modDirectory, false, true, false)
-            if fillArmCollisionRoot ~= 0 then
-                fillArm.collision = getChildAt(fillArmCollisionRoot, 0)
+            local collision = clone(g_manureSystem.fillArmManager.collision, false, false, true)
+
+            if collision ~= 0 then
+                fillArm.collision = collision
 
                 local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#position")) }
                 if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
@@ -120,7 +119,6 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
                 end
 
                 link(node, fillArm.collision)
-                delete(fillArmCollisionRoot)
             end
         end
 
@@ -134,14 +132,19 @@ function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distan
     if hitObjectId ~= 0 then
         local object = g_currentMission:getNodeObject(hitObjectId)
         if object ~= nil and object.isa ~= nil then
+            local spec = self.spec_manureSystemFillArm
+
             if object:isa(Vehicle) then
                 if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
-                    local spec = self.spec_manureSystemFillArm
                     spec.fillArm.lastRaycastDistance = distance
                     spec.fillArm.lastRaycastVehicle = object
 
                     return false
                 end
+            elseif object:isa(ManureSystemLagoon) then
+                spec.fillArm.lastRaycastDistance = distance
+                spec.fillArm.lastRaycastVehicle = object
+                return false
             end
         end
     end
