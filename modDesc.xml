@@ -3,7 +3,7 @@
     <author>Wopster</author>
     <version>1.0.0.0</version>
     <title>
-        <en>Pumptools</en>
+        <en>ManureSystem</en>
     </title>
     <description>
         <en>
@@ -13,7 +13,7 @@
             <![CDATA[ToDo]]>
         </de>
     </description>
-    <iconFilename>icon_pumpTools.png</iconFilename>
+    <iconFilename>icon_manureSystem.png</iconFilename>
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
@@ -22,10 +22,14 @@
 
     <specializations>
         <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
+        <specialization name="manureSystemPumpMotor" className="ManureSystemPumpMotor" filename="src/vehicles/ManureSystemPumpMotor.lua"/>
+        <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/ManureSystemConnector.lua"/>
+        <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/ManureSystemFillArm.lua"/>
         <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/ManureSystemFillArmReceiver.lua"/>
 
         <!-- Vanilla insertion specs -->
         <specialization name="manureSystemPGII20" className="ManureSystemPGII20" filename="src/vehicles/vanillainserts/ManureSystemPGII20.lua"/>
+        <specialization name="manureSystemPGII25" className="ManureSystemPGII25" filename="src/vehicles/vanillainserts/ManureSystemPGII25.lua"/>
         <specialization name="manureSystemPGII35" className="ManureSystemPGII35" filename="src/vehicles/vanillainserts/ManureSystemPGII35.lua"/>
         <specialization name="manureSystemKotteFRC" className="ManureSystemKotteFRC" filename="src/vehicles/vanillainserts/ManureSystemKotteFRC.lua"/>
     </specializations>
@@ -41,18 +45,23 @@
         <type name="vanillaPGII20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemPGII20"/>
         </type>
+        <type name="vanillaPGII25" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemPGII25"/>
+        </type>
         <type name="vanillaPGII35" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemPGII35"/>
         </type>
         <type name="vanillaFRC" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemKotteFRC"/>
+            <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemFillArmReceiver"/>
         </type>
     </vehicleTypes>
 
     <storeItems>
-        <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>
-        <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>
+        <storeItem xmlFilename="resources/slurryLagoon/slurryStorage2.xml"/>
+<!--        <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>-->
+<!--        <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>-->
     </storeItems>
 
     <l10n filenamePrefix="translations/translation"/>

@@ -10,6 +10,7 @@ local modName = g_currentModName
 
 -- DataStructures
 source(Utils.getFilename("src/misc/ManureSystemConnectorManager.lua", directory))
+source(Utils.getFilename("src/misc/ManureSystemFillArmManager.lua", directory))
 
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua", directory))
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemDockStrategy.lua", directory))
@@ -33,6 +34,8 @@ local function isEnabled()
 end
 
 function init()
+    g_placeableTypeManager:addPlaceableType("manureSystemLagoon", "ManureSystemLagoon", directory .. "src/placeables/ManureSystemLagoon.lua")
+
     Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
 
@@ -70,6 +73,7 @@ end
 
 local vehicles = {
     ["data/vehicles/samsonAgro/pgII20/pgII20.xml"] = { typeName = "vanillaPGII20" },
+    ["data/vehicles/samsonAgro/pgII25m/pgII25m.xml"] = { typeName = "vanillaPGII25" },
     ["data/vehicles/samsonAgro/pgII35m/pgII35m.xml"] = { typeName = "vanillaPGII35" },
     ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" }
 }
