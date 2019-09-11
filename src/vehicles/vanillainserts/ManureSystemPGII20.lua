@@ -26,6 +26,6 @@ function ManureSystemPGII20:onPreLoad(savegame)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "-2.85 -89 -3.223")
     setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
 
-    setXMLFloat(self.xmlFile, "vehicle.pumpMotor#litersPerSecond", 250)
-    setXMLFloat(self.xmlFile, "vehicle.pumpMotor#toReachMaxEfficiencyTime", 1250)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 250)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1250)
 end

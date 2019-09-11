@@ -73,17 +73,17 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpMode = ManureSystemPumpMotor.NO_PUMP_MODE
     spec.pumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
 
-    local maxTime = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.pumpMotor#toReachMaxEfficiencyTime"), 1500)
+    local maxTime = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime"), 1500)
     spec.pumpEfficiency = {
         currentLoad = 0,
         currentTime = 0,
         maxTime = maxTime,
-        litersPerSecond = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.pumpMotor#litersPerSecond"), 100)
+        litersPerSecond = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond"), 100)
     }
 
     spec.autoStopPercentage = {
-        inDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.pumpMotor#autoStopPercentageIn"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN),
-        outDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.pumpMotor#autoStopPercentageOut"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT)
+        inDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#autoStopPercentageIn"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN),
+        outDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#autoStopPercentageOut"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT)
     }
 
     if self.isClient then
