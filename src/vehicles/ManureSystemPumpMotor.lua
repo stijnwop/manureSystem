@@ -90,7 +90,6 @@ function ManureSystemPumpMotor:onLoad(savegame)
         local globalSamples = g_manureSystem:getManureSystemSamples()
 
         spec.samples = {}
-        --dischargeNode.sample = g_soundManager:cloneSample(sharedSample, dischargeNode.node or dischargeNode.soundNode, self)
         spec.samples.pump = g_soundManager:cloneSample(globalSamples.pump, self.components[1].node, self)
     end
 
@@ -402,8 +401,8 @@ function ManureSystemPumpMotor:handlePump(dt)
 end
 
 function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, fillType, deltaFill)
-    sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, deltaFill, fillType, ToolType.UNDEFINED, nil)
-    targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -deltaFill, fillType, ToolType.UNDEFINED, nil)
+    local emptyFill = sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, deltaFill, fillType, ToolType.UNDEFINED, nil)
+    targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -emptyFill, fillType, ToolType.UNDEFINED, nil)
 
     if self:getPumpDirection() == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
         local spec = self.spec_manureSystemPumpMotor
