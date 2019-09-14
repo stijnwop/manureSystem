@@ -70,15 +70,15 @@
         <action name="MS_ATTACH_HOSE" axisType="HALF"/>
         <action name="MS_DETACH_HOSE" axisType="HALF"/>
         <action name="MS_TOGGLE_FLOW" axisType="HALF"/>
-        <action name="ACTIVATE_PUMP" axisType="HALF"/>
-        <action name="TOGGLE_PUMP_DIRECTION" axisType="HALF"/>
+        <action name="MS_ACTIVATE_PUMP" axisType="HALF"/>
+        <action name="MS_TOGGLE_PUMP_DIRECTION" axisType="HALF"/>
     </actions>
 
     <inputBinding>
-        <actionBinding action="ACTIVATE_PUMP">
+        <actionBinding action="MS_ACTIVATE_PUMP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_r"/>
         </actionBinding>
-        <actionBinding action="TOGGLE_PUMP_DIRECTION">
+        <actionBinding action="MS_TOGGLE_PUMP_DIRECTION">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_z"/>
         </actionBinding>
         <actionBinding action="MS_ATTACH_HOSE">
