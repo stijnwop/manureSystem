@@ -173,7 +173,7 @@ function ManureSystemPumpMotor:onUpdate(dt)
         local spec = self.spec_manureSystemPumpMotor
 
         if spec.actionEvents ~= nil then
-            local actionEvent = spec.actionEvents[InputAction.ACTIVATE_PUMP]
+            local actionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
             if actionEvent ~= nil and actionEvent.actionEventId ~= nil then
                 g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:canTurnOnPump())
             end
@@ -253,7 +253,7 @@ function ManureSystemPumpMotor:onDraw()
 
         if canTurnOnPump then
             if spec.actionEvents ~= nil then
-                local toggleActionEvent = spec.actionEvents[InputAction.TOGGLE_PUMP_DIRECTION]
+                local toggleActionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
                 if toggleActionEvent ~= nil then
                     g_inputBinding:setActionEventTextVisibility(toggleActionEvent.actionEventId, not spec.pumpIsRunning)
                 end
@@ -267,9 +267,11 @@ function ManureSystemPumpMotor:onDraw()
             showPumpAction = showPumpAction and spec.pumpIsRunning
         end
 
-        local pumpActionEvent = spec.actionEvents[InputAction.ACTIVATE_PUMP]
-        if pumpActionEvent ~= nil then
-            g_inputBinding:setActionEventTextVisibility(pumpActionEvent.actionEventId, showPumpAction)
+        if spec.actionEvents ~= nil then
+            local pumpActionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
+            if pumpActionEvent ~= nil then
+                g_inputBinding:setActionEventTextVisibility(pumpActionEvent.actionEventId, showPumpAction)
+            end
         end
     end
 end
@@ -282,7 +284,7 @@ function ManureSystemPumpMotor:setIsPumpRunning(pumpIsRunning, noEventSend)
 
         spec.pumpIsRunning = pumpIsRunning
 
-        local actionEvent = spec.actionEvents[InputAction.ACTIVATE_PUMP]
+        local actionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
         local text
 
         if pumpIsRunning then
@@ -334,7 +336,7 @@ function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
 
         spec.pumpDirection = pumpDirection
 
-        local actionEvent = spec.actionEvents[InputAction.TOGGLE_PUMP_DIRECTION]
+        local actionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
         if actionEvent ~= nil then
             local text = spec.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
             g_inputBinding:setActionEventText(actionEvent.actionEventId, text)
@@ -463,8 +465,8 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
         self:clearActionEventsTable(spec.actionEvents)
 
         if isActiveForInput then
-            local _, actionEventIdTogglePump = self:addActionEvent(spec.actionEvents, InputAction.ACTIVATE_PUMP, self, ManureSystemPumpMotor.actionEventTogglePump, false, true, false, true, nil, nil, true)
-            local _, actionEventIdTogglePumpDirection = self:addActionEvent(spec.actionEvents, InputAction.TOGGLE_PUMP_DIRECTION, self, ManureSystemPumpMotor.actionEventTogglePumpDirection, false, true, false, true, nil, nil, true)
+            local _, actionEventIdTogglePump = self:addActionEvent(spec.actionEvents, InputAction.MS_ACTIVATE_PUMP, self, ManureSystemPumpMotor.actionEventTogglePump, false, true, false, true, nil, nil, true)
+            local _, actionEventIdTogglePumpDirection = self:addActionEvent(spec.actionEvents, InputAction.MS_TOGGLE_PUMP_DIRECTION, self, ManureSystemPumpMotor.actionEventTogglePumpDirection, false, true, false, true, nil, nil, true)
 
             g_inputBinding:setActionEventText(actionEventIdTogglePump, g_i18n:getText("action_activatePump"):format(self.typeDesc))
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePump, true)
