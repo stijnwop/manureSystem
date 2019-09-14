@@ -20,5 +20,3 @@ IF EXIST %filename% (
    -aoa -r ^
 
 IF %ERRORLEVEL% NEQ 0 ( exit 1 )
-
-PAUSE
