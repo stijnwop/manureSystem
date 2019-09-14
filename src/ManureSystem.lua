@@ -70,6 +70,10 @@ function ManureSystem:removeConnectorVehicle(vehicle)
     ListUtil.removeElementFromList(self.manureSystemConnectors, vehicle)
 end
 
+function ManureSystem:getConnectorVehicles()
+    return self.manureSystemConnectors
+end
+
 function ManureSystem:draw(dt)
 end
 
@@ -108,9 +112,15 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
         end
 
         if not hasVehicleSpec and SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations) then
-            vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
-            vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
-            vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
+            if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
+                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
+            end
+            if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations) then
+                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
+            end
+            if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations) then
+                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
+            end
         end
     end
 end
