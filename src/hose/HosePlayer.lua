@@ -10,14 +10,18 @@ function HosePlayer:new(isClient, isServer, mission, input)
     self.mission = mission
     self.input = input
 
-    Player.onEnter = Utils.appendedFunction(Player.onEnter, HosePlayer.inj_onEnter)
-    Player.onLeave = Utils.appendedFunction(Player.onLeave, HosePlayer.inj_onLeave)
-    Player.readUpdateStream = Utils.appendedFunction(Player.readUpdateStream, HosePlayer.readUpdateStream)
-    Player.writeUpdateStream = Utils.appendedFunction(Player.writeUpdateStream, HosePlayer.writeUpdateStream)
-    Player.pickUpObjectRaycastCallback = Utils.overwrittenFunction(Player.pickUpObjectRaycastCallback, HosePlayer.inj_pickUpObjectRaycastCallback)
-    Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_checkObjectInRange)
-    Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_pickUpObject)
-    PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_isAvailable)
+    Player.readUpdateStream = Utils.appendedFunction(Player.readUpdateStream, HosePlayer.inj_player_readUpdateStream)
+    Player.writeUpdateStream = Utils.appendedFunction(Player.writeUpdateStream, HosePlayer.inj_player_writeUpdateStream)
+    Player.update = Utils.appendedFunction(Player.update, HosePlayer.inj_player_update)
+
+    Player.updateActionEvents = Utils.appendedFunction(Player.updateActionEvents, HosePlayer.inj_player_updateActionEvents)
+    Player.registerActionEvents = Utils.prependedFunction(Player.registerActionEvents, HosePlayer.inj_player_registerActionEvents)
+
+    Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_player_pickUpObject)
+
+    Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_player_checkObjectInRange)
+    PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_playerStateThrow_isAvailable)
+    PlayerStatePickup.isAvailable = Utils.overwrittenFunction(PlayerStatePickup.isAvailable, HosePlayer.inj_playerStatePickup_isAvailable)
 
     return self
 end
@@ -25,204 +29,186 @@ end
 function HosePlayer:delete()
 end
 
-function HosePlayer:readUpdateStream(streamId, timestamp, connection)
-    if connection:getIsServer() then
-
-    end
-
-end
-function HosePlayer:writeUpdateStream(streamId, connection, dirtyMask)
-    if not connection:getIsServer() then
-
-    end
-
-end
-
 function HosePlayer:update(dt)
-    if self.isClient then
-        local player = self.mission.player
-        local hose = player.lastFoundHose
+end
 
-        local showActionAttach = false
-        local showActionDetach = false
+function HosePlayer.inj_player_readUpdateStream(player, streamId, timestamp, connection)
+    if connection:getIsServer() then
+        player.lastFoundObjectIsHose = streamReadBool(streamId)
+        player.lastFoundHoseIsConnected = streamReadBool(streamId)
+
+        if player.lastFoundObjectIsHose then
+            player.lastFoundHose = NetworkUtil.readNodeObjectId(streamId)
+            player.lastFoundGradNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+        end
+    end
+
+end
+function HosePlayer.inj_player_writeUpdateStream(player, streamId, connection, dirtyMask)
+    if not connection:getIsServer() then
+        streamWriteBool(streamId, player.lastFoundObjectIsHose)
+        streamWriteBool(streamId, player.lastFoundHoseIsConnected)
+
+        if player.lastFoundObjectIsHose then
+            NetworkUtil.writeNodeObjectId(streamId, player.lastFoundHose)
+            streamWriteUIntN(streamId, player.lastFoundGradNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+        end
+    end
+end
+
+function HosePlayer.inj_player_update(player, dt)
+    if player.isServer then
+        if player.hoseGrabNodeId ~= nil then
+            local hose = NetworkUtil.getObject(player.lastFoundHose)
+            hose:findConnector(player.hoseGrabNodeId)
+        end
+    end
+end
+
+function HosePlayer.inj_player_updateActionEvents(player)
+    local eventList = player.inputInformation.registrationList
+    local function disableInput(inputAction)
+        local id = eventList[inputAction].eventId
+        g_inputBinding:setActionEventActive(id, false)
+        g_inputBinding:setActionEventTextVisibility(id, false)
+    end
+
+    local function enableInput(inputAction)
+        local id = eventList[inputAction].eventId
+        g_inputBinding:setActionEventActive(id, true)
+        g_inputBinding:setActionEventTextVisibility(id, true)
+    end
+
+    disableInput(InputAction.MS_ATTACH_HOSE)
+    disableInput(InputAction.MS_DETACH_HOSE)
+
+    if player.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(player.lastFoundHose)
 
         if hose ~= nil then
             local spec = hose.spec_hose
-            local grabNode = spec.grabNodes[player.lastFoundHoseGrabNodeId]
+            local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
 
-            if grabNode ~= nil then
-                showActionAttach = hose:isAttached(grabNode) and spec.foundConnectorId ~= nil
-                if showActionAttach then
-                    self.input:setActionEventText(self.actionEventIdAttachHose, "attach")
-                    self.input:setActionEventTextPriority(self.actionEventIdAttachHose, GS_PRIO_HIGH)
-
-                    local vehicle = spec.foundVehicle
-                    local connector = vehicle.spec_manureSystemConnector.manureSystemConnectors[spec.foundConnectorId]
-
-                    ManureSystemUtil:renderHelpTextOnNode(connector.node, "attach", "")
-                end
-
-                showActionDetach = hose:isConnected(grabNode) and spec.foundConnectorId ~= nil
-
-                if showActionDetach then
-                    self.input:setActionEventText(self.actionEventIdDetachHose, "detach")
-                    self.input:setActionEventTextPriority(self.actionEventIdDetachHose, GS_PRIO_HIGH)
-
-                    local vehicle = spec.foundVehicle
-                    local connector = vehicle.spec_manureSystemConnector.manureSystemConnectors[spec.foundConnectorId]
-
-                    ManureSystemUtil:renderHelpTextOnNode(connector.node, "detach", "")
-                end
+            if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 then
+                enableInput(InputAction.MS_ATTACH_HOSE)
+            elseif hose:isConnected(grabNode) then
+                enableInput(InputAction.MS_DETACH_HOSE)
             end
         end
-
-        self.input:setActionEventTextVisibility(self.actionEventIdAttachHose, showActionAttach)
-        self.input:setActionEventTextVisibility(self.actionEventIdDetachHose, showActionDetach)
     end
 end
 
-function HosePlayer.isDynamicRigid(nodeId)
-    return getRigidBodyType(nodeId):lower() == "dynamic"
+function HosePlayer.inj_player_registerActionEvents(player)
+    player.inputInformation.registrationList[InputAction.MS_ATTACH_HOSE] = { eventId = "", callback = player.actionEventOnAttachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_ATTACH_HOSE"), textVisibility = true }
+    player.inputInformation.registrationList[InputAction.MS_DETACH_HOSE] = { eventId = "", callback = player.actionEventOnDetachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_DETACH_HOSE"), textVisibility = true }
 end
 
-function HosePlayer.inj_pickUpObject(player, superFunc, grab, noEventSend)
-    -- do own stuff
-    log("Hose grab: " .. tostring(grab))
-    log(player.lastFoundHoseGrabNodeId)
-    --
-    local hose = player.lastFoundHose
-    local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
-    if not hose:isConnected(grabNode) then
-        if grab and hose ~= nil and not player.isCarryingObject then
-            hose:grab(player.lastFoundHoseGrabNodeId, player, noEventSend)
-        elseif player.lastFoundHoseGrabNodeId ~= nil then
-            hose:drop(player.lastFoundHoseGrabNodeId, player, noEventSend)
+function HosePlayer.inj_player_pickUpObject(player, superFunc, grab, noEventSend)
+    if player.isServer and player.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(player.lastFoundHose)
+        local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
+
+        if grab and not hose:isConnected(grabNode) then
+            hose:grab(grabNode.id, player)
+        elseif player.hoseGrabNodeId ~= nil then
+            hose:drop(player.hoseGrabNodeId, player)
         end
+    else
+        superFunc(player, grab, noEventSend)
     end
-
-    superFunc(player, grab, noEventSend)
 end
 
-function HosePlayer.inj_checkObjectInRange(player, superFunc)
-    local doCheck = player.isControlled and player.isServer and not player.isCarryingObject
+function HosePlayer.inj_player_checkObjectInRange(player, superFunc)
+    local canHandleCheck = player.isControlled and player.isServer and not player.isCarryingObject
 
-    if doCheck then
-        -- reset hose search
+    if canHandleCheck then
         player.lastFoundHose = nil
-        player.lastFoundHoseIsDetached = false
+        player.lastFoundGradNodeId = 0
+        player.lastFoundObjectIsHose = false
+        player.lastFoundHoseIsConnected = false
     end
 
     superFunc(player)
 
-    if doCheck then
-        if not player.isObjectInRange then
-            player.isObjectInRange = player.lastFoundHose ~= nil and player.lastFoundHoseIsDetached
-        end
-    end
-end
-
-function HosePlayer.inj_pickUpObjectRaycastCallback(player, superFunc, hitObjectId, x, y, z, distance)
-    if hitObjectId ~= g_currentMission.terrainDetailId then
-        if HosePlayer.isDynamicRigid(hitObjectId) then
-            local object = g_currentMission:getNodeObject(hitObjectId)
+    if canHandleCheck then
+        if player.lastFoundObject ~= nil then
+            local object = g_currentMission:getNodeObject(player.lastFoundObject)
             if object ~= nil
                 and object.isaHose ~= nil
                 and object:isaHose() then
-                local mass = object:getTotalMass()
-                local grabNode = object:getClosestGrabNode(x, y, z)
 
-                local detached = object:isDetached(grabNode)
-                if detached or object:isConnected(grabNode) then
-                    player.lastFoundHoseGrabNodeId = grabNode.id
-
-                    -- only allow pickup on detached hoses.
-                    player.lastFoundHose = object
-                    player.lastFoundObjectMass = mass
-
-                    if detached then
-                        player.lastFoundHoseIsDetached = true
-                    end
-
-                    -- we raise active in order to trigger functions on the hose.
-                    object:raiseHoseActive()
-
-                    return false -- dismiss further checks
+                local grabNode = object:getClosestGrabNode(unpack(player.lastFoundObjectHitPoint))
+                local isConnected = object:isConnected(grabNode)
+                if object:isDetached(grabNode) or isConnected then
+                    player.lastFoundHose = NetworkUtil.getObjectId(object)
+                    player.lastFoundGradNodeId = grabNode.id
+                    player.lastFoundObjectIsHose = true
+                    player.lastFoundHoseIsConnected = isConnected
+                else
+                    player.lastFoundHose = nil
+                    player.lastFoundGradNodeId = 0
+                    player.lastFoundObject = nil
+                    player.lastFoundObjectHitPoint = nil
+                    player.isObjectInRange = false
                 end
-            end
-        end
-    end
 
-    return superFunc(player, hitObjectId, x, y, z, distance)
-end
-
-function HosePlayer:registerPlayerActionEvents(player)
-    if self.isClient and player == self.mission.player then
-        local _, actionEventIdAttachHose = self.input:registerActionEvent(InputAction.MS_ATTACH_HOSE, self, self.actionEventOnAttachHose, false, true, true, true)
-        self.input:setActionEventTextVisibility(actionEventIdAttachHose, false)
-
-        local _, actionEventIdDetachHose = self.input:registerActionEvent(InputAction.MS_DETACH_HOSE, self, self.actionEventOnDetachHose, false, true, true, true)
-        self.input:setActionEventTextVisibility(actionEventIdDetachHose, false)
-
-        self.actionEventIdAttachHose = actionEventIdAttachHose
-        self.actionEventIdDetachHose = actionEventIdDetachHose
-    end
-end
-
-function HosePlayer:unregisterPlayerActionEvents(player)
-    if player == self.mission.player then
-        self.input:removeActionEvent(self.actionEventIdAttachHose)
-        self.input:removeActionEvent(self.actionEventIdDetachHose)
-    end
-end
-
-function HosePlayer.actionEventOnAttachHose(self, actionName, inputValue, callbackState, isAnalog)
-    local player = self.mission.player
-    local hose = player.lastFoundHose
-
-    if hose ~= nil then
-        local spec = hose.spec_hose
-        local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
-
-        if hose:isAttached(grabNode) then
-            if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
-                hose:attach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
+                -- we raise active in order to trigger functions on the hose.
+                --object:raiseHoseActive()
             end
         end
     end
 end
 
-function HosePlayer.actionEventOnDetachHose(self, actionName, inputValue, callbackState, isAnalog)
-    local player = self.mission.player
-    local hose = player.lastFoundHose
-
-    if hose ~= nil then
-        local spec = hose.spec_hose
-        local grabNode = hose:getGrabNodeById(player.lastFoundHoseGrabNodeId)
-
-        if hose:isConnected(grabNode) then
-            if spec.foundConnectorId ~= 0 and spec.foundVehicle ~= nil then
-                hose:detach(spec.foundGrabNodeId, spec.foundConnectorId, spec.foundVehicle)
-            end
-        end
-    end
-end
-
-function HosePlayer.inj_onEnter(player, isControlling)
-    if isControlling then
-        g_manureSystem.player:registerPlayerActionEvents(player)
-    end
-end
-
----Injects in the player onLeave function
----@param player table
-function HosePlayer.inj_onLeave(player)
-    g_manureSystem.player:unregisterPlayerActionEvents(player)
-end
-
-function HosePlayer.inj_isAvailable(state, superFunc)
-    if g_currentMission.player.lastFoundHose ~= nil then
+function HosePlayer.inj_playerStateThrow_isAvailable(state, superFunc)
+    if state.player.lastFoundObjectIsHose then
         return false
     end
 
     return superFunc(state)
+end
+
+function HosePlayer.inj_playerStatePickup_isAvailable(state, superFunc)
+    local player = state.player
+    if player.lastFoundObjectIsHose and player.lastFoundHoseIsConnected then
+        return false
+    end
+
+    return superFunc(state)
+end
+
+---- Add action event functions to the player class.
+
+function Player.actionEventOnAttachHose(self, actionName, inputValue, callbackState, isAnalog)
+    if self.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(self.lastFoundHose)
+
+        if hose ~= nil then
+            local spec = hose.spec_hose
+            local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
+
+            if hose:isAttached(grabNode) then
+                if spec.foundConnectorId ~= 0 and spec.foundVehicleId ~= 0 then
+                    hose:attach(grabNode.id, spec.foundConnectorId, NetworkUtil.getObject(spec.foundVehicleId))
+                end
+            end
+        end
+    end
+end
+
+function Player.actionEventOnDetachHose(self, actionName, inputValue, callbackState, isAnalog)
+    if self.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(self.lastFoundHose)
+
+        if hose ~= nil then
+            local spec = hose.spec_hose
+            local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
+
+            if hose:isConnected(grabNode) then
+                local desc = spec.grabNodesToVehicles[grabNode.id]
+                if desc ~= nil then
+                    hose:detach(grabNode.id, desc.connectorId, NetworkUtil.getObject(desc.vehicleId))
+                end
+            end
+        end
+    end
 end
