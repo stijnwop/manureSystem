@@ -44,9 +44,6 @@ function ManureSystemConnector:onLoad(savegame)
     spec.manureSystemConnectors = {}
     spec.manureSystemConnectorsByType = {}
 
-    spec.isPlayerInRange = false
-    spec.connectorId = nil
-
     local i = 0
     while true do
         local baseKey = ("vehicle.manureSystemConnectors.connector(%d)"):format(i)
@@ -90,8 +87,6 @@ end
 
 function ManureSystemConnector:onDelete()
     local spec = self.spec_manureSystemConnector
-    spec.isPlayerInRange = false
-    spec.connectorId = nil
 
     for type, connector in ipairs(spec.manureSystemConnectorsByType) do
         spec.connectorStrategies[type]:delete(connector)
@@ -100,51 +95,18 @@ function ManureSystemConnector:onDelete()
     g_manureSystem:removeConnectorVehicle(self)
 end
 
-function ManureSystemConnector:onUpdate(dt)
+function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemConnector
 
     for _, class in pairs(spec.connectorStrategies) do
         if class.onUpdate ~= nil then
-            class:onUpdate(dt)
+            class:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
         end
     end
-
-    if spec.isPlayerInRange then
-        self:raiseActive()
-    end
-
-    --if self.isClient then
-    spec.isPlayerInRange, spec.connectorId = ManureSystemUtil:getIsPlayerInConnectorRange(self)
-
-    if spec.isPlayerInRange then
-        local connector = self:getConnectorById(spec.connectorId)
-        local hasManureFlowControl = connector.manureFlowAnimationName ~= nil
-
-        if hasManureFlowControl then
-
-            local spec_animatedVehicle = self.spec_animatedVehicle
-            if hasManureFlowControl and #spec_animatedVehicle.animations[connector.manureFlowAnimationName].parts > 0 then
-                local _, firstPartAnimation = next(spec_animatedVehicle.animations[connector.manureFlowAnimationName].parts, nil)
-
-                if firstPartAnimation.node ~= nil then
-                    local state = self:getAnimationTime(connector.manureFlowAnimationName) == 0
-                    local text = state and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
-
-                    ManureSystemUtil:renderHelpTextOnNode(firstPartAnimation.node, g_i18n:getText("action_toggleManureFlow"):format(text), "")
-                end
-            end
-        end
-    end
-    --end
 end
 
 function ManureSystemConnector:onDraw(isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemConnector
-
-    if isActiveForInputIgnoreSelection and isSelected then
-        --local text = spec.isPlayerInRange and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
-        --g_currentMission:addHelpButtonText(g_i18n:getText("action_toggleManureFlow"):format(text), InputBinding.TOGGLE_TENSION_BELTS, nil, GS_PRIO_NORMAL)
-    end
 end
 
 function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
@@ -181,7 +143,7 @@ function ManureSystemConnector:getConnectorsByType(type)
     return {}
 end
 
-function ManureSystemConnector:setIsConnected(id, state, hose, noEventSend)
+function ManureSystemConnector:setIsConnected(id, grabNodeId, state, hose, noEventSend)
     local connector = self:getConnectorById(id)
 
     if connector.isConnected ~= state then
@@ -193,7 +155,8 @@ function ManureSystemConnector:setIsConnected(id, state, hose, noEventSend)
         end
 
         connector.isConnected = state
-        connector.connectedHose = hose
+        connector.connectedObject = hose
+        connector.connectedGrabNodeId = grabNodeId
     end
 end
 
@@ -209,7 +172,7 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
 
             if canPlayAnimation then
                 local dir = state and 1 or -1
-                self:playAnimation(connector.lockAnimationName, dir, nil, true)
+                self:playAnimation(connector.manureFlowAnimationName, dir, nil, true)
             end
         end
     end
