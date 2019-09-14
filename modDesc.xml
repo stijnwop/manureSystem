@@ -60,8 +60,8 @@
 
     <storeItems>
         <storeItem xmlFilename="resources/slurryLagoon/slurryStorage2.xml"/>
-<!--        <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>-->
-<!--        <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>-->
+        <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>
+        <!--        <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>-->
     </storeItems>
 
     <l10n filenamePrefix="translations/translation"/>
