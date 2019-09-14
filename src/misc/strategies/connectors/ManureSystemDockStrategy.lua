@@ -58,7 +58,8 @@ function ManureSystemDockStrategy:onUpdate(dt)
                 local connector = object:getConnectorById(connectorId)
                 if not connector.isParkPlace then
                     local fillArm = dockingArmObject:getFillArm()
-                    dockingArmObject:setPumpTargetObject(object, fillArm.fillUnitIndex)
+                    dockingArmObject:setPumpTargetObject(object, connector.fillUnitIndex)
+                    dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
                     --object:setIsDockUsed(referenceId, inrange, dockingArmObject)
 
                     fillArm.isRaycastAllowed = false
@@ -222,7 +223,7 @@ end
 function ManureSystemDockStrategy:delete(connector)
     if connector.trigger ~= nil then
         removeTrigger(connector.trigger)
-    else
+    elseif connector.node ~= nil then
         removeTrigger(connector.node)
     end
 end
