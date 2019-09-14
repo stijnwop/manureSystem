@@ -37,7 +37,7 @@ end
 
 function HoseGrabDropEvent:run(connection)
     if not connection:getIsServer() then
-        g_server:broadcastEvent(self, false, connection, self.player)
+        g_server:broadcastEvent(self, false, connection, self.object)
     end
 
     if self.state then
@@ -50,7 +50,7 @@ end
 function HoseGrabDropEvent.sendEvent(object, id, player, state, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(HoseGrabDropEvent:new(object, id, player, state), nil, nil, player)
+            g_server:broadcastEvent(HoseGrabDropEvent:new(object, id, player, state), nil, nil, object)
         else
             g_client:getServerConnection():sendEvent(HoseGrabDropEvent:new(object, id, player, state))
         end
