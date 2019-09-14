@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>$nickers</translationContributors>
+
+    <texts>
+        <!--Inputs-->
+        <text name="input_MS_ATTACH_HOSE" text="Schlauch ankoppeln"/>
+        <text name="input_MS_DETACH_HOSE" text="Schlauch abkoppeln"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Güllefluss umschalten"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Pumpe Ein/Aus schalten"/>
+        <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Pumprichtung wechseln"/>
+
+        <!--Actions-->
+        <text name="action_toggleManureFlow" text="%s Güllefluss"/>
+        <text name="action_toggleManureFlowStateOpen" text="Offen"/>
+        <text name="action_toggleManureFlowStateClose" text="Geschlossen"/>
+
+
+        <text name="action_activatePump" text="Pumpe von %s einschalten"/>
+        <text name="action_deactivatePump" text="Pumpe von %s ausschalten"/>
+
+        <text name="action_directionOut" text="Ändere Pumprichtung in: entleeren"/>
+        <text name="action_directionIn" text="Ändere Pumprichtung in: befüllen"/>
+
+        <!--Placeables-->
+        <text name="shopItem_slurryLagoon" text="Güllelagune"/>
+        <text name="function_slurryLagoon" text="In einer Güllelagune können große Mengen Gülle gelagert werden."/>
+    </texts>
+</l10n>
