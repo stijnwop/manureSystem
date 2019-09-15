@@ -39,6 +39,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
     SpecializationUtil.registerFunction(vehicleType, "isConnected", Hose.isConnected)
     SpecializationUtil.registerFunction(vehicleType, "findConnector", Hose.findConnector)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectorObjectDesc", Hose.getConnectorObjectDesc)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
 end
 
@@ -187,6 +188,21 @@ function Hose:findConnector(id)
         spec.foundGrabNodeIdSend = spec.foundGrabNodeId
         self:raiseDirtyFlags(spec.dirtyFlag)
     end
+end
+
+function Hose:getConnectorObjectDesc(id)
+    local spec = self.spec_hose
+
+    for grabNodeId, desc in pairs(spec.grabNodesToVehicles) do
+        if grabNodeId ~= id then
+            local connector = desc.vehicle:getConnectorById(desc.connectorId)
+            if connector.isConnected then
+                return desc
+            end
+        end
+    end
+
+    return nil
 end
 
 function Hose.debugRenderRaycastNode(raycastNode, x, y, z, hasContact)
@@ -400,22 +416,11 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
         desc.actor2 = componentNode
         desc.transform = connector.node
 
-        local rx, ry, rz = getWorldRotation(connector.node)
-        if grabNode.invertZOnAttach then
-            rx, ry, rz = -rx, -ry, -rz
+        local x, y, z = localToLocal(connector.node, componentNode, 0, 0, 0)
+        local wx, wy, wz = localToWorld(componentNode, x, y, z)
+        local wqx, wqy, wqz, wqw = mathEulerToQuaternion(localRotationToWorld(componentNode, 0, 0, 0))
 
-            print(math.abs(math.deg(ry)))
-            if math.abs(math.deg(ry)) <= 0.1 then
-                print("are we force rotation?")
-                ry = ry + math.rad(180)
-            end
-        end
-
-        local x, y, z = getWorldTranslation(connector.node)
-        self:setWorldPosition(x, y, z, rx, ry, rz, grabNode.componentIndex, true)
-
-        --setWorldTranslation(componentNode, getWorldTranslation(connector.node))
-        --setWorldRotation(componentNode, rx, ry, rz)
+        self:setWorldPositionQuaternion(wx, wy, wz, wqx, wqy, wqz, wqw, grabNode.componentIndex, true)
 
         grabNode.jointIndex = self:constructConnectorJoint(desc)
 
@@ -452,13 +457,7 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
         local componentNode = self.components[otherNodeId].node
         local x, y, z = localToWorld(connector.node, 0, 0, spec.length)
         local rx, ry, rz = getWorldRotation(connector.node)
-        if grabNode.invertZOnAttach then
-            rx, ry, rz = -rx, -ry, -rz
 
-            if math.abs(math.deg(ry)) <= 0.01 then
-                ry = ry + math.rad(180)
-            end
-        end
         local desc = {}
         desc.actor1 = vehicle.rootNode
         desc.actor2 = componentNode
@@ -477,8 +476,8 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
         end
     end
 
-    vehicle:setIsConnected(connectorId, true, self, true)
-    spec.grabNodesToVehicles[id] = { vehicleId = NetworkUtil.getObjectId(vehicle), connectorId = connectorId }
+    vehicle:setIsConnected(connectorId, true, id, self, true)
+    spec.grabNodesToVehicles[id] = { vehicle = vehicle, connectorId = connectorId }
 end
 
 function Hose:detach(id, connectorId, vehicle, noEventSend)
@@ -516,7 +515,7 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     grabNode.jointIndex = 0
     grabNode.jointTransform = nil
 
-    vehicle:setIsConnected(connectorId, false, nil, true)
+    vehicle:setIsConnected(connectorId, false, nil, nil, true)
     spec.grabNodesToVehicles[id] = nil
 end
 
@@ -601,7 +600,6 @@ function Hose.loadGrabNodes(self)
 
             grabNode.jointOrigRot = { getRotation(node) }
             grabNode.jointOrigTrans = { getTranslation(node) }
-            grabNode.invertZOnAttach = Utils.getNoNil(getXMLBool(self.xmlFile, key .. "#invertZOnAttach"), false)
             grabNode.componentIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentIndex"), 1)
             grabNode.componentJointIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentJointIndex"), 1)
 
