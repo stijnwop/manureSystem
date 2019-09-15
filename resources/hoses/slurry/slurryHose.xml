@@ -52,7 +52,7 @@
 
     <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>" offset="0.25">
         <grabNodes>
-            <grabNode node="grabPoint1" invertZOnAttach="true" componentIndex="1" componentJointIndex="1" rotLimit="22 22 22">
+            <grabNode node="grabPoint1" componentIndex="1" componentJointIndex="1" rotLimit="22 22 22">
                 <visuals visualNode="coupling_normal" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
             </grabNode>
             <grabNode node="grabPoint2" componentIndex="4" componentJointIndex="3" rotLimit="22 22 22">

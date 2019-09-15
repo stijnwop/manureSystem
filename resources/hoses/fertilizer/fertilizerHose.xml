@@ -53,7 +53,7 @@
 
     <hose length="5" mesh="fertilizer_hose" baseNode="baseNode" targetNode="targetNode" offset="0">
         <grabNodes>
-            <grabNode node="grabNode1" invertZOnAttach="true" componentIndex="1" componentJointIndex="1" rotLimit="55 55 55"/>
+            <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1" rotLimit="55 55 55"/>
             <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3" rotLimit="55 55 55"/>
         </grabNodes>
     </hose>
