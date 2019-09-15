@@ -32,7 +32,6 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onDraw", ManureSystemConnector)
-    SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", ManureSystemConnector)
 end
 
 function ManureSystemConnector:onLoad(savegame)
@@ -143,15 +142,19 @@ function ManureSystemConnector:getConnectorsByType(type)
     return {}
 end
 
-function ManureSystemConnector:setIsConnected(id, grabNodeId, state, hose, noEventSend)
+function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEventSend)
     local connector = self:getConnectorById(id)
 
     if connector.isConnected ~= state then
-        -- Todo: event
+        ManureSystemConnectorIsConnectedEvent.sendEvent(self, id, state, grabNodeId, hose, noEventSend)
 
         if connector.lockAnimationName ~= nil then
             local dir = state and 1 or -1
             self:playAnimation(connector.lockAnimationName, dir, nil, true)
+        end
+
+        if connector.manureFlowAnimationName == nil then
+            self:setIsManureFlowOpen(id, state, false, noEventSend)
         end
 
         connector.isConnected = state
@@ -164,7 +167,8 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
     local connector = self:getConnectorById(id)
 
     if not connector.isParkPlace and connector.hasOpenManureFlow ~= state or force then
-        -- Todo: event
+        ManureSystemConnectorManureFlowEvent.sendEvent(self, id, state, force, noEventSend)
+
         connector.hasOpenManureFlow = state
 
         if connector.manureFlowAnimationName ~= nil then
@@ -175,26 +179,5 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
                 self:playAnimation(connector.manureFlowAnimationName, dir, nil, true)
             end
         end
-    end
-end
-
-function ManureSystemConnector:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
-    local spec = self.spec_manureSystemConnector
-    if self.isClient then
-        self:clearActionEventsTable(spec.actionEvents)
-
-        if isActiveForInputIgnoreSelection then
-            --local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.TOGGLE_TENSION_BELTS, self, ManureSystemConnector.actionEventToggleManureFlow, false, true, false, true, nil)
-            --g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
-        end
-    end
-end
-
-function ManureSystemConnector.actionEventToggleManureFlow(self, actionName, inputValue, callbackState, isAnalog)
-    local spec = self.spec_manureSystemConnector
-
-    if spec.isPlayerInRange and spec.connectorId ~= nil then
-        local connector = self:getConnectorById(spec.connectorId)
-        self:setIsManureFlowOpen(spec.connectorId, not connector.hasOpenManureFlow, false)
     end
 end
