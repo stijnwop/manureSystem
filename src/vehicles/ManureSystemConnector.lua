@@ -87,8 +87,10 @@ end
 function ManureSystemConnector:onDelete()
     local spec = self.spec_manureSystemConnector
 
-    for type, connector in ipairs(spec.manureSystemConnectorsByType) do
-        spec.connectorStrategies[type]:delete(connector)
+    for type, connectors in pairs(spec.manureSystemConnectorsByType) do
+        for _, connector in ipairs(connectors) do
+            spec.connectorStrategies[type]:delete(connector)
+        end
     end
 
     g_manureSystem:removeConnectorVehicle(self)
