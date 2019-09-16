@@ -34,6 +34,10 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "drop", Hose.drop)
     SpecializationUtil.registerFunction(vehicleType, "attach", Hose.attach)
     SpecializationUtil.registerFunction(vehicleType, "detach", Hose.detach)
+    SpecializationUtil.registerFunction(vehicleType, "connectGrabNode", Hose.connectGrabNode)
+    SpecializationUtil.registerFunction(vehicleType, "disconnectGrabNode", Hose.disconnectGrabNode)
+    SpecializationUtil.registerFunction(vehicleType, "parkHose", Hose.parkHose)
+    SpecializationUtil.registerFunction(vehicleType, "unparkHose", Hose.unparkHose)
     SpecializationUtil.registerFunction(vehicleType, "raiseHoseActive", Hose.raiseHoseActive)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
@@ -395,21 +399,45 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
 
     log("attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
 
-    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     if self:isAttached(grabNode) then
         self:drop(id, grabNode.player, true)
     end
 
-    grabNode.state = Hose.STATE_CONNECTED
+    local connector = vehicle:getConnectorById(connectorId)
+
+    if not connector.isParkPlace then
+        self:connectGrabNode(grabNode, connector, vehicle)
+    else
+        self:parkHose(connector, vehicle)
+    end
+end
+
+function Hose:detach(id, connectorId, vehicle, noEventSend)
+    HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, false, noEventSend)
+
+    log("detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+
+    local grabNode = self:getGrabNodeById(id)
+    grabNode.state = Hose.STATE_DETACHED
 
     local connector = vehicle:getConnectorById(connectorId)
+
+    if not connector.isParkPlace then
+        self:disconnectGrabNode(grabNode, connector, vehicle)
+    else
+        self:unparkHose(connector, vehicle)
+    end
+end
+
+function Hose:connectGrabNode(grabNode, connector, vehicle)
+    local spec = self.spec_hose
+
+    grabNode.state = Hose.STATE_CONNECTED
+
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
-
-        grabNode.jointTransform = createTransformGroup("connectorJoint")
-        link(connector.node, grabNode.jointTransform)
 
         local desc = {}
         desc.actor1 = vehicle.rootNode
@@ -424,15 +452,15 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
 
         grabNode.jointIndex = self:constructConnectorJoint(desc)
 
-        -- restore joint transform position
+        -- Restore joint transform position
         setTranslation(desc.transform, unpack(connector.jointOrigTrans))
 
-        local limit = math.rad(5)
+        local limit = math.rad(10)
         for i = 1, 3 do
             self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -limit, limit)
         end
     else
-        -- set joint index to '1' on client side, so we can check if something is attached
+        -- Set joint index to '1' on client side, so we can check if something is attached
         grabNode.jointIndex = 1
     end
 
@@ -451,51 +479,17 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
         self:computeCatmullSpline()
     end
 
-    if connector.isParkPlace then
-        local otherNodeId = id > 1 or 1 and 2
-        local otherGrabNode = spec.grabNodes[otherNodeId]
-        local componentNode = self.components[otherNodeId].node
-        local x, y, z = localToWorld(connector.node, 0, 0, spec.length)
-        local rx, ry, rz = getWorldRotation(connector.node)
-
-        local desc = {}
-        desc.actor1 = vehicle.rootNode
-        desc.actor2 = componentNode
-        desc.transform = connector.node
-
-        setWorldTranslation(componentNode, x, y, z)
-        setWorldRotation(componentNode, rx, ry, rz)
-
-        otherGrabNode.jointIndex = self:constructConnectorJoint(desc)
-        setTranslation(desc.transform, unpack(connector.jointOrigTrans))
-
-        for _, component in pairs(self.components) do
-            if component.node ~= componentNode then
-                setPairCollision(component.node, vehicle.rootNode, false)
-            end
-        end
-    end
-
-    vehicle:setIsConnected(connectorId, true, id, self, true)
-    spec.grabNodesToVehicles[id] = { vehicle = vehicle, connectorId = connectorId }
+    vehicle:setIsConnected(connector.id, true, grabNode.id, self, true)
+    spec.grabNodesToVehicles[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
 end
 
-function Hose:detach(id, connectorId, vehicle, noEventSend)
-    HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, false, noEventSend)
-    log("detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
-
+function Hose:disconnectGrabNode(grabNode, connector, vehicle)
     local spec = self.spec_hose
-    local grabNode = self:getGrabNodeById(id)
-    grabNode.state = Hose.STATE_DETACHED
 
-    --local connector = vehicle:getConnectorById(connectorId)
-    local componentNode = self.components[grabNode.componentIndex].node
     if self.isServer then
         if grabNode.jointIndex ~= 0 then
             removeJoint(grabNode.jointIndex)
         end
-
-        delete(grabNode.jointTransform)
 
         for i = 1, 3 do
             self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -grabNode.componentJointRotLimit[i], grabNode.componentJointRotLimit[i])
@@ -503,6 +497,7 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     end
 
     if self.isClient then
+        local componentNode = self.components[grabNode.componentIndex].node
         link(componentNode, grabNode.visualNode)
         link(componentNode, grabNode.hoseTargetNode)
         setRotation(grabNode.visualNode, unpack(grabNode.visualOrigRot))
@@ -513,10 +508,88 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     end
 
     grabNode.jointIndex = 0
-    grabNode.jointTransform = nil
 
-    vehicle:setIsConnected(connectorId, false, nil, nil, true)
-    spec.grabNodesToVehicles[id] = nil
+    vehicle:setIsConnected(connector.id, false, nil, nil, true)
+    spec.grabNodesToVehicles[grabNode.id] = nil
+end
+
+function Hose:parkHose(connector, vehicle)
+    local spec = self.spec_hose
+
+    local length = math.min(connector.parkPlaceLength, self.sizeLength) * connector.parkDirection
+    local grabNodesDivision = #self:getGrabNodes() - 1
+
+    local division = #self.components - 1
+
+    -- First we remove the hose from physics
+    self:removeFromPhysics()
+
+    local xPos, yPos, zPos = getWorldTranslation(connector.node)
+    local xRot, yRot, zRot = getWorldRotation(connector.node)
+
+    -- We place the components correctly.
+    for i = 1, #self.components do
+        local parkNode = createTransformGroup("parkNode")
+        setTranslation(parkNode, xPos, yPos, zPos)
+        setRotation(parkNode, xRot, yRot, zRot)
+
+        local x, y, z = localToWorld(parkNode, 0, 0, length / division * (i - 1))
+
+        local ox, oy, oz = 0, 0, 0
+        if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
+            oy = math.rad(180)
+        end
+
+        local rx, ry, rz = localRotationToWorld(parkNode, ox, oy, oz)
+
+        self:setWorldPosition(x, y, z, rx, ry, rz, i, true)
+
+        delete(parkNode)
+    end
+
+    self:addToPhysics()
+
+    for id, grabNode in ipairs(self:getGrabNodes()) do
+        if self.isServer then
+            local component = self.components[grabNode.componentIndex]
+            local jointTransform = createTransformGroup("jointTransform")
+
+            link(connector.node, jointTransform)
+            setRotation(jointTransform, 0, 0, 0)
+            setTranslation(jointTransform, 0, 0, length / grabNodesDivision * (id - 1))
+
+            local desc = {}
+            desc.actor1 = vehicle.rootNode
+            desc.actor2 = component.node
+            desc.transform = jointTransform
+            grabNode.jointTransform = jointTransform
+            grabNode.jointIndex = self:constructConnectorJoint(desc)
+        end
+
+        grabNode.state = Hose.STATE_CONNECTED
+        vehicle:setIsConnected(connector.id, true, id, self, true)
+        spec.grabNodesToVehicles[id] = { vehicle = vehicle, connectorId = connector.id }
+    end
+end
+
+function Hose:unparkHose(connector, vehicle)
+    local spec = self.spec_hose
+
+    for id, grabNode in ipairs(self:getGrabNodes()) do
+        if self.isServer then
+            if grabNode.jointIndex ~= 0 then
+                removeJoint(grabNode.jointIndex)
+            end
+
+            if grabNode.jointTransform ~= nil then
+                delete(grabNode.jointTransform)
+            end
+        end
+
+        grabNode.state = Hose.STATE_DETACHED
+        vehicle:setIsConnected(connector.id, false, nil, nil, true)
+        spec.grabNodesToVehicles[id] = nil
+    end
 end
 
 function Hose:constructConnectorJoint(jointDesc)

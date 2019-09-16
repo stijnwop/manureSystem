@@ -11,6 +11,9 @@ ManureSystemCouplingStrategy = {}
 
 ManureSystemCouplingStrategy.EMPTY_LITER_PER_SECOND = 25
 
+ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT = 1
+ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT = -1
+
 local ManureSystemCouplingStrategy_mt = Class(ManureSystemCouplingStrategy)
 
 function ManureSystemCouplingStrategy:new(object, customMt)
@@ -69,8 +72,31 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.jointOrigRot = { getRotation(connector.node) }
     connector.jointOrigTrans = { getTranslation(connector.node) }
 
+    if connector.isParkPlace then
+        connector.parkPlaceAnimationName = getXMLString(xmlFile, key .. "#parkPlaceAnimationName")
+        connector.parkPlaceLength = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceAnimationNameLength"), 5) -- Default length of 5m
+
+        connector.parkOffsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkOffsetThreshold"), 0)
+        local parkDirection = Utils.getNoNil(getXMLString(xmlFile, key .. "#parkDirection"), "right")
+        connector.parkDirection = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
+        connector.parkStartTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. "#parkStartTransOffset"), 3), { 0, 0, 0 })
+        connector.parkStartRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkStartRotOffset"), 3), { 0, 0, 0 })
+        connector.parkEndTransOffset = Utils.getNoNil(Utils.getVectorNFromString(getXMLString(xmlFile, key .. "#parkEndTransOffset"), 3), { 0, 0, 0 })
+        connector.parkEndRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkEndRotOffset"), 3), { 0, 0, 0 })
+
+        local lengthNode = createTransformGroup(("connector_length_node_%d"):format(connector.id))
+        local x, y, z = 0, 0, connector.parkPlaceLength * connector.parkDirection
+
+        link(connector.node, lengthNode)
+        setTranslation(lengthNode, x, y, z)
+        connector.parkPlaceLengthNode = lengthNode
+    end
+
     return true
 end
 
 function ManureSystemCouplingStrategy:delete(connector)
+    if connector.isParkPlace then
+        delete(connector.parkPlaceLengthNode)
+    end
 end
