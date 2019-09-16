@@ -81,6 +81,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
 
     disableInput(InputAction.MS_ATTACH_HOSE)
     disableInput(InputAction.MS_DETACH_HOSE)
+    disableInput(InputAction.MS_TOGGLE_FLOW)
 
     if player.lastFoundObjectIsHose then
         local hose = NetworkUtil.getObject(player.lastFoundHose)
@@ -92,7 +93,25 @@ function HosePlayer.inj_player_updateActionEvents(player)
             if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 then
                 enableInput(InputAction.MS_ATTACH_HOSE)
             elseif hose:isConnected(grabNode) then
-                enableInput(InputAction.MS_DETACH_HOSE)
+                local desc = spec.grabNodesToVehicles[grabNode.id]
+                if desc ~= nil then
+                    local vehicle = desc.vehicle
+                    local connector = vehicle:getConnectorById(desc.connectorId)
+                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil
+
+                    if hasManureFlowControl then
+                        enableInput(InputAction.MS_TOGGLE_FLOW)
+                        local state = vehicle:getAnimationTime(connector.manureFlowAnimationName) == 0
+                        local text = state and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
+                        local id = eventList[InputAction.MS_TOGGLE_FLOW].eventId
+
+                        g_inputBinding:setActionEventText(id, g_i18n:getText("action_toggleManureFlow"):format(text))
+                    end
+
+                    if not hasManureFlowControl or not connector.hasOpenManureFlow then
+                        enableInput(InputAction.MS_DETACH_HOSE)
+                    end
+                end
             end
         end
     end
@@ -101,6 +120,7 @@ end
 function HosePlayer.inj_player_registerActionEvents(player)
     player.inputInformation.registrationList[InputAction.MS_ATTACH_HOSE] = { eventId = "", callback = player.actionEventOnAttachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_ATTACH_HOSE"), textVisibility = true }
     player.inputInformation.registrationList[InputAction.MS_DETACH_HOSE] = { eventId = "", callback = player.actionEventOnDetachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_DETACH_HOSE"), textVisibility = true }
+    player.inputInformation.registrationList[InputAction.MS_TOGGLE_FLOW] = { eventId = "", callback = player.actionEventOnToggleFlow, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_TOGGLE_FLOW"), textVisibility = true }
 end
 
 function HosePlayer.inj_player_pickUpObject(player, superFunc, grab, noEventSend)
@@ -206,7 +226,30 @@ function Player.actionEventOnDetachHose(self, actionName, inputValue, callbackSt
             if hose:isConnected(grabNode) then
                 local desc = spec.grabNodesToVehicles[grabNode.id]
                 if desc ~= nil then
-                    hose:detach(grabNode.id, desc.connectorId, NetworkUtil.getObject(desc.vehicleId))
+                    hose:detach(grabNode.id, desc.connectorId, desc.vehicle)
+                end
+            end
+        end
+    end
+end
+
+function Player.actionEventOnToggleFlow(self, actionName, inputValue, callbackState, isAnalog)
+    if self.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(self.lastFoundHose)
+
+        if hose ~= nil then
+            local spec = hose.spec_hose
+            local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
+            if hose:isConnected(grabNode) then
+                local desc = spec.grabNodesToVehicles[grabNode.id]
+                if desc ~= nil then
+                    local vehicle = desc.vehicle
+                    local connector = vehicle:getConnectorById(desc.connectorId)
+                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil
+
+                    if hasManureFlowControl and not vehicle:getIsAnimationPlaying(connector.manureFlowAnimationName) then
+                        vehicle:setIsManureFlowOpen(desc.connectorId, not connector.hasOpenManureFlow, false)
+                    end
                 end
             end
         end
