@@ -240,6 +240,7 @@ function Player.actionEventOnToggleFlow(self, actionName, inputValue, callbackSt
         if hose ~= nil then
             local spec = hose.spec_hose
             local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
+
             if hose:isConnected(grabNode) then
                 local desc = spec.grabNodesToVehicles[grabNode.id]
                 if desc ~= nil then

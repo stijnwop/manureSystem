@@ -36,9 +36,6 @@ function ManureSystemDockStrategy:new(object, customMt)
     return instance
 end
 
-function ManureSystemDockStrategy:delete()
-end
-
 function ManureSystemDockStrategy:onUpdate(dt)
     local object = self.object
 
