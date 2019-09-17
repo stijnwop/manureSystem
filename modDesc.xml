@@ -32,6 +32,7 @@
         <specialization name="manureSystemPGII25" className="ManureSystemPGII25" filename="src/vehicles/vanillainserts/ManureSystemPGII25.lua"/>
         <specialization name="manureSystemPGII35" className="ManureSystemPGII35" filename="src/vehicles/vanillainserts/ManureSystemPGII35.lua"/>
         <specialization name="manureSystemKotteFRC" className="ManureSystemKotteFRC" filename="src/vehicles/vanillainserts/ManureSystemKotteFRC.lua"/>
+        <specialization name="manureSystemKotteTSA" className="ManureSystemKotteTSA" filename="src/vehicles/vanillainserts/ManureSystemKotteTSA.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -55,6 +56,10 @@
             <specialization name="manureSystemKotteFRC"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemFillArmReceiver"/>
+        </type>
+        <type name="vanillaTSA" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemKotteTSA"/>
+            <specialization name="manureSystemConnector"/>
         </type>
     </vehicleTypes>
 

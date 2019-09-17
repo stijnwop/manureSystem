@@ -78,7 +78,8 @@ local vehicles = {
     ["data/vehicles/samsonAgro/pgII20/pgII20.xml"] = { typeName = "vanillaPGII20" },
     ["data/vehicles/samsonAgro/pgII25m/pgII25m.xml"] = { typeName = "vanillaPGII25" },
     ["data/vehicles/samsonAgro/pgII35m/pgII35m.xml"] = { typeName = "vanillaPGII35" },
-    ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" }
+    ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" },
+    ["data/vehicles/kotte/tsa/tsa.xml"] = { typeName = "vanillaTSA" }
 }
 
 function vehicleLoad(self, superFunc, vehicleData, ...)
