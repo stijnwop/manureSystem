@@ -81,7 +81,7 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
         connector.parkDirection = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
         connector.parkStartTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. "#parkStartTransOffset"), 3), { 0, 0, 0 })
         connector.parkStartRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkStartRotOffset"), 3), { 0, 0, 0 })
-        connector.parkEndTransOffset = Utils.getNoNil(Utils.getVectorNFromString(getXMLString(xmlFile, key .. "#parkEndTransOffset"), 3), { 0, 0, 0 })
+        connector.parkEndTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. "#parkEndTransOffset"), 3), { 0, 0, 0 })
         connector.parkEndRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkEndRotOffset"), 3), { 0, 0, 0 })
 
         local lengthNode = createTransformGroup(("connector_length_node_%d"):format(connector.id))
