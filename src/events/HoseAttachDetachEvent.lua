@@ -1,3 +1,12 @@
+----------------------------------------------------------------------------------------------------
+-- HoseAttachDetachEvent
+----------------------------------------------------------------------------------------------------
+-- Purpose: Event to synchronize the vehicle attach state to clients.
+--
+-- Copyright (c) Wopster, 2019
+----------------------------------------------------------------------------------------------------
+
+---@class HoseAttachDetachEvent
 HoseAttachDetachEvent = {}
 local HoseAttachDetachEvent_mt = Class(HoseAttachDetachEvent, Event)
 

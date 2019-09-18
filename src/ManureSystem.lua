@@ -1,10 +1,12 @@
----
+----------------------------------------------------------------------------------------------------
 -- ManureSystem
---
--- Main class for PumpTools
+----------------------------------------------------------------------------------------------------
+-- Purpose: Main class the handle the Manure System.
 --
 -- Copyright (c) Wopster, 2019
+----------------------------------------------------------------------------------------------------
 
+---@class ManureSystem
 ManureSystem = {}
 
 local ManureSystem_mt = Class(ManureSystem)

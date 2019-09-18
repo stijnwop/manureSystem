@@ -1,10 +1,12 @@
----
+----------------------------------------------------------------------------------------------------
 -- Logger
---
--- Logger utility.
+----------------------------------------------------------------------------------------------------
+-- Purpose: Logger utility.
 --
 -- Copyright (c) Wopster, 2018
+----------------------------------------------------------------------------------------------------
 
+------@class Logger
 Logger = {}
 
 Logger.INFO = 0
@@ -30,7 +32,8 @@ local function print_r(t, name, indent)
             else
                 tableList[t] = full and (full .. '.' .. id) or id
 
-                if next(t) then -- If table not empty.. fill it further
+                if next(t) then
+                    -- If table not empty.. fill it further
                     table.insert(out, tag .. '{')
 
                     for key, value in pairs(t) do
