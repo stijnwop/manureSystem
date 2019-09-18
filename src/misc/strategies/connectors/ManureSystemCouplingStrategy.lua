@@ -96,6 +96,10 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
 end
 
 function ManureSystemCouplingStrategy:delete(connector)
+    if connector.isConnected and connector.connectedObject ~= nil then
+        connector.connectedObject:detach(connector.connectedGrabNodeId, connector.id, self.object, true)
+    end
+
     if connector.isParkPlace then
         delete(connector.parkPlaceLengthNode)
     end

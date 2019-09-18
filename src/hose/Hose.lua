@@ -50,6 +50,7 @@ end
 function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onLoadFinished", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onPreDelete", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
@@ -110,6 +111,21 @@ function Hose:onLoadFinished(savegame)
         for _, joint in ipairs(self.componentJoints) do
             joint.orgRotLimit = ListUtil.copyTable(joint.rotLimit)
             joint.orgRotMinLimit = ListUtil.copyTable(joint.rotMinLimit)
+        end
+    end
+end
+
+function Hose:onPreDelete()
+    local spec = self.spec_hose
+
+    for id, grabNode in ipairs(spec.grabNodes) do
+        if self:isAttached(grabNode) then
+            self:drop(id, grabNode.player, true)
+        elseif self:isConnected(grabNode) then
+            local desc = spec.grabNodesToVehicles[id]
+            if desc ~= nil then
+                self:detach(id, desc.connectorId, desc.vehicle, true)
+            end
         end
     end
 end
