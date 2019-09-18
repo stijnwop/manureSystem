@@ -30,6 +30,8 @@ end
 function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onDraw", ManureSystemConnector)
 end
@@ -96,6 +98,34 @@ function ManureSystemConnector:onDelete()
     g_manureSystem:removeConnectorVehicle(self)
 end
 
+function ManureSystemConnector:onReadStream(streamId, connection)
+    local spec = self.spec_manureSystemConnector
+    if connection:getIsServer() then
+        for type, connectors in pairs(spec.manureSystemConnectorsByType) do
+            for _, connector in ipairs(connectors) do
+                local class = spec.connectorStrategies[type]
+                if class.onReadStream ~= nil then
+                    class:onReadStream(connector, streamId, connection)
+                end
+            end
+        end
+    end
+end
+
+function ManureSystemConnector:onWriteStream(streamId, connection)
+    local spec = self.spec_manureSystemConnector
+    if not connection:getIsServer() then
+        for type, connectors in pairs(spec.manureSystemConnectorsByType) do
+            for _, connector in ipairs(connectors) do
+                local class = spec.connectorStrategies[type]
+                if class.onWriteStream ~= nil then
+                    class:onWriteStream(connector, streamId, connection)
+                end
+            end
+        end
+    end
+end
+
 function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemConnector
 
@@ -117,6 +147,8 @@ function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFi
         connector.id = id + 1
         connector.node = node
         connector.isConnected = false
+        connector.connectedObject = nil
+        connector.connectedNodeId = nil
         connector.inRangeDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#inRangeDistance"), 1.3)
         connector.isParkPlace = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#isParkPlace"), false)
         connector.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
@@ -161,7 +193,7 @@ function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEve
 
         connector.isConnected = state
         connector.connectedObject = hose
-        connector.connectedGrabNodeId = grabNodeId
+        connector.connectedNodeId = grabNodeId
     end
 end
 
