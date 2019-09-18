@@ -7,7 +7,7 @@
             <en>Slurry hose</en>
         </name>
         <image>resources/hoses/slurry/store.png</image>
-        <price>0</price> <!-- ToDo -->
+        <price>150</price> <!-- ToDo -->
         <lifetime>600</lifetime>
         <rotation>0</rotation>
         <brand>LIZARD</brand>
@@ -52,11 +52,11 @@
 
     <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>" offset="0.25">
         <grabNodes>
-            <grabNode node="grabPoint1" componentIndex="1" componentJointIndex="1" rotLimit="22 22 22">
-                <visuals visualNode="coupling_normal" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
+            <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1" rotLimit="22 22 22">
+                <visuals visualNode="coupling_normal_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
             </grabNode>
-            <grabNode node="grabPoint2" componentIndex="4" componentJointIndex="3" rotLimit="22 22 22">
-                <visuals visualNode="coupling_normal1" hoseTargetNode="target"/>
+            <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3" rotLimit="22 22 22">
+                <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
             </grabNode>
         </grabNodes>
     </hose>
@@ -81,20 +81,15 @@
     </baseMaterialConfigurations>
 
     <i3dMappings>
-        <i3dMapping id="coupling_normal" node="0>0" />
-        <i3dMapping id="hose" node="0>1" />
-        <i3dMapping id="grabPoint1" node="0>3" />
+        <i3dMapping id="hose" node="0>0" />
+        <i3dMapping id="coupling_normal_start" node="0>1" />
+        <i3dMapping id="coupling_extend_start" node="0>2" />
+        <i3dMapping id="grabNode1" node="0>3" />
         <i3dMapping id="componentJoint1" node="0>4" />
-        <i3dMapping id="componentJoint1Actor" node="0>4|0" />
-        <i3dMapping id="base" node="0>5" />
         <i3dMapping id="componentJoint2" node="1>0" />
-        <i3dMapping id="componentJoint2Actor" node="1>0|0" />
-        <i3dMapping id="targetAdjuster1" node="1>1" />
-        <i3dMapping id="targetAdjuster2" node="2>0" />
-        <i3dMapping id="grabPoint2" node="3>0" />
+        <i3dMapping id="grabNode2" node="3>0" />
         <i3dMapping id="target" node="3>1" />
-        <i3dMapping id="coupling_normal1" node="3>2" />
+        <i3dMapping id="coupling_normal_end" node="3>2" />
         <i3dMapping id="componentJoint3" node="3>3" />
-        <i3dMapping id="componentJoint3Actor" node="3>3|0" />
     </i3dMappings>
 </vehicle>
