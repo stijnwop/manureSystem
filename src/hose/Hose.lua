@@ -105,6 +105,13 @@ function Hose:onLoadFinished(savegame)
     if self.isClient then
         self:computeCatmullSpline()
     end
+
+    if self.isServer then
+        for _, joint in ipairs(self.componentJoints) do
+            joint.orgRotLimit = ListUtil.copyTable(joint.rotLimit)
+            joint.orgRotMinLimit = ListUtil.copyTable(joint.rotMinLimit)
+        end
+    end
 end
 
 function Hose:onReadUpdateStream(streamId, timestamp, connection)
@@ -491,8 +498,9 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
             removeJoint(grabNode.jointIndex)
         end
 
+        local jointDesc = self.componentJoints[grabNode.componentJointIndex]
         for i = 1, 3 do
-            self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -grabNode.componentJointRotLimit[i], grabNode.componentJointRotLimit[i])
+            self:setComponentJointRotLimit(jointDesc, i, jointDesc.orgRotMinLimit[i], jointDesc.orgRotLimit[i])
         end
     end
 
@@ -549,6 +557,7 @@ function Hose:parkHose(connector, vehicle)
 
     self:addToPhysics()
 
+    local excludedComponentIds = {}
     for id, grabNode in ipairs(self:getGrabNodes()) do
         if self.isServer then
             local component = self.components[grabNode.componentIndex]
@@ -564,17 +573,33 @@ function Hose:parkHose(connector, vehicle)
             desc.transform = jointTransform
             grabNode.jointTransform = jointTransform
             grabNode.jointIndex = self:constructConnectorJoint(desc)
+            excludedComponentIds[grabNode.componentIndex] = true
         end
 
         grabNode.state = Hose.STATE_CONNECTED
         vehicle:setIsConnected(connector.id, true, id, self, true)
         spec.grabNodesToVehicles[id] = { vehicle = vehicle, connectorId = connector.id }
     end
+
+    if self.isServer then
+        for _, joint in ipairs(self.componentJoints) do
+            for i = 1, 3 do
+                self:setComponentJointRotLimit(joint, i, 0, 0)
+            end
+        end
+
+        for i, component in ipairs(self.components) do
+            if not excludedComponentIds[i] then
+                setPairCollision(component.node, vehicle.rootNode, false)
+            end
+        end
+    end
 end
 
 function Hose:unparkHose(connector, vehicle)
     local spec = self.spec_hose
 
+    local excludedComponentIds = {}
     for id, grabNode in ipairs(self:getGrabNodes()) do
         if self.isServer then
             if grabNode.jointIndex ~= 0 then
@@ -584,11 +609,26 @@ function Hose:unparkHose(connector, vehicle)
             if grabNode.jointTransform ~= nil then
                 delete(grabNode.jointTransform)
             end
+            excludedComponentIds[grabNode.componentIndex] = true
         end
 
         grabNode.state = Hose.STATE_DETACHED
         vehicle:setIsConnected(connector.id, false, nil, nil, true)
         spec.grabNodesToVehicles[id] = nil
+    end
+
+    if self.isServer then
+        for _, joint in ipairs(self.componentJoints) do
+            for i = 1, 3 do
+                self:setComponentJointRotLimit(joint, i, joint.orgRotMinLimit[i], joint.orgRotLimit[i])
+            end
+        end
+
+        for i, component in ipairs(self.components) do
+            if not excludedComponentIds[i] then
+                setPairCollision(component.node, vehicle.rootNode, true)
+            end
+        end
     end
 end
 
@@ -675,9 +715,6 @@ function Hose.loadGrabNodes(self)
             grabNode.jointOrigTrans = { getTranslation(node) }
             grabNode.componentIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentIndex"), 1)
             grabNode.componentJointIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentJointIndex"), 1)
-
-            local rotLimit = StringUtil.getRadiansFromString(getXMLString(self.xmlFile, key .. "#rotLimit"), 3)
-            grabNode.componentJointRotLimit = rotLimit
 
             local componentNode = self.components[grabNode.componentIndex].node
             grabNode.componentCollisionMask = getCollisionMask(componentNode)
