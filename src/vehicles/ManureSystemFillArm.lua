@@ -96,10 +96,11 @@ function ManureSystemFillArm:getFillArm()
     return self.spec_manureSystemFillArm.fillArm
 end
 
-function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, index)
-    local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, index)
+function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, id)
+    local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
 
     if node ~= nil then
+        fillArm.id = id + 1
         fillArm.node = node
         fillArm.type = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
         fillArm.fillYOffset = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#fillYOffset"), 0)
