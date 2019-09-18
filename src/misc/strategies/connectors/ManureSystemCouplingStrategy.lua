@@ -34,7 +34,7 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
         local connectors = object:getConnectorsByType(self.couplingType)
 
         for _, connector in ipairs(connectors) do
-            if connector.isConnected then
+            if connector.isConnected and not connector.isParkPlace then
                 local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedGrabNodeId)
 
                 if desc ~= nil and desc.vehicle ~= object and object.spec_manureSystemPumpMotor ~= nil then
