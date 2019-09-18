@@ -36,6 +36,26 @@ function ManureSystemDockStrategy:new(object, customMt)
     return instance
 end
 
+function ManureSystemDockStrategy:onReadStream(connector, streamId, connection)
+    local isConnected = streamReadBool(streamId)
+    if streamReadBool(streamId) then
+        connector.connectedNodeId = streamReadInt8(streamId)
+        connector.connectedObject = NetworkUtil.readNodeObject(streamId)
+    end
+
+    self.object:setIsConnected(connector.id, isConnected, connector.connectedNodeId, connector.connectedObject, true)
+end
+
+function ManureSystemDockStrategy:onWriteStream(connector, streamId, connection)
+    streamWriteBool(streamId, connector.isConnected)
+    streamWriteBool(streamId, connector.connectedNodeId ~= nil)
+
+    if connector.connectedNodeId ~= nil then
+        streamWriteInt8(streamId, connector.connectedNodeId)
+        NetworkUtil.writeNodeObject(streamId, connector.connectedObject)
+    end
+end
+
 function ManureSystemDockStrategy:onUpdate(dt)
     local object = self.object
 
@@ -57,7 +77,7 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     local fillArm = dockingArmObject:getFillArm()
                     dockingArmObject:setPumpTargetObject(object, connector.fillUnitIndex)
                     dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
-                    --object:setIsDockUsed(referenceId, inrange, dockingArmObject)
+                    object:setIsConnected(connectorId, inRange, fillArm.id, dockingArmObject)
 
                     fillArm.isRaycastAllowed = false
                 end
@@ -92,7 +112,7 @@ function ManureSystemDockStrategy:getDockArmInRange(object)
 
             for _, connector in pairs(self.object:getConnectorsByType(fillArm.type)) do
                 local connectorId = connector.id -- Use the actual index
-                if (not connector.isConnected or connector.dockingArmObject ~= nil and connector.dockingArmObject == object) and connector.deformationNode ~= nil then
+                if (not connector.isConnected or connector.connectedObject ~= nil and connector.connectedObject == object) and connector.deformationNode ~= nil then
                     local dx, dy, dz = getWorldTranslation(connector.deformationNode)
                     local distance = MathUtil.vector2Length(x - dx, z - dz)
 
@@ -108,6 +128,12 @@ function ManureSystemDockStrategy:getDockArmInRange(object)
                         -- When connector was in range we force reset.
                         if self.lastInRangeConnectorIds[connectorId] then
                             self.lastInRangeConnectorIds[connectorId] = false
+                        end
+
+                        if self.object.isServer then
+                            if connector.isConnected then
+                                self.object:setIsConnected(connectorId, false, nil, nil)
+                            end
                         end
                     end
                 end
@@ -185,7 +211,6 @@ function ManureSystemDockStrategy:load(connector, xmlFile, key)
         connector.deformationNodeLastRot = connector.deformationNodeOrgRot
         connector.deformationYOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
         connector.deformationYMaxPush = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
-        connector.dockingArmObject = nil
     else
         g_logManager:xmlError(self.object.configFileName, "DeformationNode not found!")
         return false

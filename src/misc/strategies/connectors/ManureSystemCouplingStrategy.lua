@@ -27,6 +27,30 @@ function ManureSystemCouplingStrategy:new(object, customMt)
     return instance
 end
 
+function ManureSystemCouplingStrategy:onReadStream(connector, streamId, connection)
+    local isConnected = streamReadBool(streamId)
+    if streamReadBool(streamId) then
+        connector.connectedNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+        connector.connectedObject = NetworkUtil.readNodeObject(streamId)
+    end
+
+    self.object:setIsConnected(connector.id, isConnected, connector.connectedNodeId, connector.connectedObject, true)
+    local hasOpenManureFlow = streamReadBool(streamId)
+    self.object:setIsManureFlowOpen(connector.id, hasOpenManureFlow, true, true)
+end
+
+function ManureSystemCouplingStrategy:onWriteStream(connector, streamId, connection)
+    streamWriteBool(streamId, connector.isConnected)
+    streamWriteBool(streamId, connector.connectedNodeId ~= nil)
+
+    if connector.connectedNodeId ~= nil then
+        streamWriteUIntN(streamId, connector.connectedNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+        NetworkUtil.writeNodeObject(streamId, connector.connectedObject)
+    end
+
+    streamWriteBool(streamId, connector.hasOpenManureFlow)
+end
+
 function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local object = self.object
 
@@ -35,7 +59,7 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
 
         for _, connector in ipairs(connectors) do
             if connector.isConnected and not connector.isParkPlace then
-                local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedGrabNodeId)
+                local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
 
                 if desc ~= nil and desc.vehicle ~= object and object.spec_manureSystemPumpMotor ~= nil then
                     local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
@@ -63,8 +87,6 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
 end
 
 function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
-    connector.connectedObject = nil
-    connector.connectedGrabNodeId = nil
     connector.hasOpenManureFlow = false
     connector.lockAnimationName = getXMLString(xmlFile, key .. "#lockAnimationName")
     connector.manureFlowAnimationName = getXMLString(xmlFile, key .. "#manureFlowAnimationName")
@@ -97,7 +119,7 @@ end
 
 function ManureSystemCouplingStrategy:delete(connector)
     if connector.isConnected and connector.connectedObject ~= nil then
-        connector.connectedObject:detach(connector.connectedGrabNodeId, connector.id, self.object, true)
+        connector.connectedObject:detach(connector.connectedNodeId, connector.id, self.object, true)
     end
 
     if connector.isParkPlace then
