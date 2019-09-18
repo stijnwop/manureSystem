@@ -38,7 +38,6 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "disconnectGrabNode", Hose.disconnectGrabNode)
     SpecializationUtil.registerFunction(vehicleType, "parkHose", Hose.parkHose)
     SpecializationUtil.registerFunction(vehicleType, "unparkHose", Hose.unparkHose)
-    SpecializationUtil.registerFunction(vehicleType, "raiseHoseActive", Hose.raiseHoseActive)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
     SpecializationUtil.registerFunction(vehicleType, "isConnected", Hose.isConnected)
@@ -54,6 +53,8 @@ function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onReadStream", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", Hose)
 end
@@ -130,6 +131,54 @@ function Hose:onPreDelete()
     end
 end
 
+function Hose:onReadStream(streamId, connection)
+    if connection:getIsServer() then
+        local spec = self.spec_hose
+        spec.hosesToLoadFromNetwork = {}
+
+        local numOfGrabNodes = streamReadInt8(streamId)
+        for id = 1, numOfGrabNodes do
+            local grabNode = spec.grabNodes[id]
+            grabNode.state = streamReadInt8(streamId)
+
+            if self:isAttached(grabNode) then
+                local player = NetworkUtil.readNodeObject(streamId)
+                self:grab(id, player, true)
+            elseif self:isConnected(grabNode) then
+                if streamReadBool(streamId) then
+                    local vehicleId = NetworkUtil.readNodeObjectId(streamId)
+                    local connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
+                    table.insert(spec.hosesToLoadFromNetwork, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
+                end
+            end
+        end
+    end
+end
+
+function Hose:onWriteStream(streamId, connection)
+    if not connection:getIsServer() then
+        local spec = self.spec_hose
+        local numOfGrabNodes = #spec.grabNodes
+        streamWriteInt8(streamId, numOfGrabNodes)
+
+        for id = 1, numOfGrabNodes do
+            local grabNode = spec.grabNodes[id]
+            streamWriteInt8(streamId, grabNode.state)
+
+            if self:isAttached(grabNode) then
+                NetworkUtil.writeNodeObject(streamId, grabNode.player)
+            elseif self:isConnected(grabNode) then
+                local desc = spec.grabNodesToVehicles[id]
+                streamWriteBool(streamId, desc ~= nil)
+                if desc ~= nil then
+                    NetworkUtil.writeNodeObjectId(streamId, NetworkUtil.getObjectId(desc.vehicle))
+                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+                end
+            end
+        end
+    end
+end
+
 function Hose:onReadUpdateStream(streamId, timestamp, connection)
     if connection:getIsServer() then
         if streamReadBool(streamId) then
@@ -146,8 +195,8 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
         local spec = self.spec_hose
         if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
-            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
-            streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS)
+            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
 end
@@ -159,8 +208,15 @@ function Hose:onUpdateInterpolation(dt)
 end
 
 function Hose:onUpdate(dt)
-    if self.isClient then
-        local spec = self.spec_hose
+    local spec = self.spec_hose
+
+    if spec.hosesToLoadFromNetwork ~= nil then
+        for _, toLoad in ipairs(spec.hosesToLoadFromNetwork) do
+            local vehicle = NetworkUtil.getObject(toLoad.vehicleId)
+            self:attach(toLoad.grabNodeId, toLoad.connectorId, vehicle, true)
+        end
+
+        spec.hosesToLoadFromNetwork = nil
     end
 end
 
@@ -443,7 +499,6 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     log("detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
 
     local grabNode = self:getGrabNodeById(id)
-    grabNode.state = Hose.STATE_DETACHED
 
     local connector = vehicle:getConnectorById(connectorId)
 
@@ -509,6 +564,8 @@ end
 function Hose:disconnectGrabNode(grabNode, connector, vehicle)
     local spec = self.spec_hose
 
+    grabNode.state = Hose.STATE_DETACHED
+
     if self.isServer then
         if grabNode.jointIndex ~= 0 then
             removeJoint(grabNode.jointIndex)
@@ -541,8 +598,7 @@ function Hose:parkHose(connector, vehicle)
     local spec = self.spec_hose
 
     local length = math.min(connector.parkPlaceLength, self.sizeLength) * connector.parkDirection
-    local grabNodesDivision = #self:getGrabNodes() - 1
-
+    local grabNodesDivision = #spec.grabNodes - 1
     local division = #self.components - 1
 
     -- First we remove the hose from physics
@@ -571,6 +627,7 @@ function Hose:parkHose(connector, vehicle)
         delete(parkNode)
     end
 
+    -- Add the hose back to physics
     self:addToPhysics()
 
     local excludedComponentIds = {}
@@ -594,7 +651,7 @@ function Hose:parkHose(connector, vehicle)
 
         grabNode.state = Hose.STATE_CONNECTED
         vehicle:setIsConnected(connector.id, true, id, self, true)
-        spec.grabNodesToVehicles[id] = { vehicle = vehicle, connectorId = connector.id }
+        spec.grabNodesToVehicles[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
     end
 
     if self.isServer then
@@ -670,16 +727,6 @@ function Hose:constructConnectorJoint(jointDesc)
     end
 
     return constr:finalize()
-end
-
-function Hose:raiseHoseActive()
-    local spec = self.spec_hose
-
-    self:raiseActive()
-
-    for _, vehicle in pairs(spec.grabNodesToVehicles) do
-        --vehicle:raiseActive()
-    end
 end
 
 function Hose:isAttached(grabNode)
