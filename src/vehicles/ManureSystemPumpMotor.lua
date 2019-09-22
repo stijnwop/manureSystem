@@ -46,7 +46,7 @@ function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsTurnedOn", ManureSystemPumpMotor.getIsTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
-
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsWorkAreaActive", ManureSystemPumpMotor.getIsWorkAreaActive)
 end
 
 function ManureSystemPumpMotor.registerEventListeners(vehicleType)
@@ -364,14 +364,13 @@ function ManureSystemPumpMotor:handlePump(dt)
     local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
     if self:isPumpRunning() and targetObject ~= nil then
         local spec = self.spec_manureSystemPumpMotor
-        local pumpDirection = self:getPumpDirection()
 
         local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
         if sourceObject == nil then
             sourceObject, sourceFillUnitIndex = self, 1
         end
 
-        if pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN then
+        if self:isPumpingIn() then
             if sourceObject:getFillUnitFreeCapacity(sourceFillUnitIndex) > 0 then
                 local targetFillType = targetObject:getFillUnitFillType(targetFillUnitIndex)
 
@@ -381,7 +380,7 @@ function ManureSystemPumpMotor:handlePump(dt)
 
                     if targetFillLevel > 0 and sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
                         if spec.pumpEfficiency.currentLoad > 0 then
-                            local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, targetFillLevel) * pumpDirection
+                            local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, targetFillLevel)
                             self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, targetFillType, deltaFillLevel)
                         end
                     else
@@ -391,11 +390,11 @@ function ManureSystemPumpMotor:handlePump(dt)
                     self:setIsPumpRunning(false) -- invalid
                 end
             end
-        else
+        elseif self:isPumpingOut() then
             local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
             if sourceFillLevel > 0 then
                 local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
-                local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel) * pumpDirection
+                local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
                 self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
             end
         end
@@ -403,10 +402,18 @@ function ManureSystemPumpMotor:handlePump(dt)
 end
 
 function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, fillType, deltaFill)
-    local emptyFill = sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, deltaFill, fillType, ToolType.UNDEFINED, nil)
-    targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -emptyFill, fillType, ToolType.UNDEFINED, nil)
+    if deltaFill <= 0 then
+        return
+    end
 
-    if self:getPumpDirection() == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
+    deltaFill = deltaFill * self:getPumpDirection()
+
+    local emptyFill = sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, deltaFill, fillType, ToolType.UNDEFINED, nil)
+    if emptyFill ~= 0 then
+        targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -emptyFill, fillType, ToolType.UNDEFINED, nil)
+    end
+
+    if self:isPumpingOut() then
         local spec = self.spec_manureSystemPumpMotor
         local targetObjectFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
 
@@ -456,6 +463,14 @@ function ManureSystemPumpMotor:getCanToggleTurnedOn(superFunc)
     end
 
     return superFunc(self)
+end
+
+function ManureSystemPumpMotor:getIsWorkAreaActive(superFunc, workArea)
+    if self:isPumpRunning() then
+        return false
+    end
+
+    return superFunc(self, workArea)
 end
 
 function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
