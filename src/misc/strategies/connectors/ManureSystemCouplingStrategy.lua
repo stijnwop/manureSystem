@@ -13,6 +13,7 @@ ManureSystemCouplingStrategy.EMPTY_LITER_PER_SECOND = 25
 
 ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT = 1
 ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT = -1
+ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS = 2
 
 local ManureSystemCouplingStrategy_mt = Class(ManureSystemCouplingStrategy)
 
@@ -51,39 +52,81 @@ function ManureSystemCouplingStrategy:onWriteStream(connector, streamId, connect
     streamWriteBool(streamId, connector.hasOpenManureFlow)
 end
 
+local sortConnectorsByManureFlowState = function(con1, con2)
+    return con1.hasOpenManureFlow and not con2.hasOpenManureFlow
+end
+
 function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local object = self.object
 
     if object.isServer then
-        local connectors = object:getConnectorsByType(self.couplingType)
 
-        for _, connector in ipairs(connectors) do
-            if connector.isConnected and not connector.isParkPlace then
-                local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
+        if object.isStandalonePump ~= nil and object:isStandalonePump() then
+            local connectors = object:getConnectorsByType(self.couplingType)
 
-                if desc ~= nil and desc.vehicle ~= object and object.spec_manureSystemPumpMotor ~= nil then
-                    local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
+            if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
+                table.sort(connectors, sortConnectorsByManureFlowState)
 
-                    if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-                        object:setPumpTargetObject(desc.vehicle, descConnector.fillUnitIndex)
-                        object:setPumpSourceObject(object, connector.fillUnitIndex)
-                    elseif object:getPumpTargetObject() ~= nil then
-                        object:setPumpTargetObject(nil, nil)
+                local connector1, connector2 = unpack(connectors, 1, 2)
+                if connector1.isConnected and not connector1.isParkPlace
+                    and connector2.isConnected and not connector2.isParkPlace then
+                    local desc1 = self:getConnectorObjectDesc(connector1)
+                    local desc2 = self:getConnectorObjectDesc(connector2)
+
+                    if desc1 ~= nil and desc2 ~= nil then
+                        object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
+                        object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
                     end
-                else
-                    if connector.hasOpenManureFlow and connector.manureFlowAnimationName ~= nil then
-                        local fillType = object:getFillUnitFillType(connector.fillUnitIndex)
-                        local fillLevel = object:getFillUnitFillLevel(connector.fillUnitIndex)
+                end
+            end
+        else
+            self:findPumpObjects(object, dt)
+        end
+    end
+end
 
-                        if fillLevel > 0 then
-                            local deltaFillLevel = math.min(ManureSystemCouplingStrategy.EMPTY_LITER_PER_SECOND * dt * 0.001, fillLevel)
-                            object:addFillUnitFillLevel(object:getOwnerFarmId(), connector.fillUnitIndex, -deltaFillLevel, fillType, ToolType.UNDEFINED, nil)
-                        end
+function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
+    local connectors = object:getConnectorsByType(self.couplingType)
+
+    for _, connector in ipairs(connectors) do
+        if connector.isConnected and not connector.isParkPlace then
+            local desc = self:getConnectorObjectDesc(connector)
+
+            if desc ~= nil then
+                object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
+                object:setPumpSourceObject(object, connector.fillUnitIndex)
+            else
+                if object:getPumpTargetObject() ~= nil then
+                    object:setPumpTargetObject(nil, nil)
+                end
+
+                if connector.hasOpenManureFlow and connector.manureFlowAnimationName ~= nil then
+                    local fillType = object:getFillUnitFillType(connector.fillUnitIndex)
+                    local fillLevel = object:getFillUnitFillLevel(connector.fillUnitIndex)
+
+                    if fillLevel > 0 then
+                        local deltaFillLevel = math.min(ManureSystemCouplingStrategy.EMPTY_LITER_PER_SECOND * dt * 0.001, fillLevel)
+                        object:addFillUnitFillLevel(object:getOwnerFarmId(), connector.fillUnitIndex, -deltaFillLevel, fillType, ToolType.UNDEFINED, nil)
                     end
                 end
             end
         end
     end
+end
+
+function ManureSystemCouplingStrategy:getConnectorObjectDesc(connector)
+    local object = self.object
+    local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
+
+    if desc ~= nil and desc.vehicle ~= object and object.spec_manureSystemPumpMotor ~= nil then
+        local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
+
+        if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
+            return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }
+        end
+    end
+
+    return nil
 end
 
 function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
