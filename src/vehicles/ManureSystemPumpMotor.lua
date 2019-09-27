@@ -36,6 +36,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isPumpingOut", ManureSystemPumpMotor.isPumpingOut)
     SpecializationUtil.registerFunction(vehicleType, "handlePump", ManureSystemPumpMotor.handlePump)
     SpecializationUtil.registerFunction(vehicleType, "runPump", ManureSystemPumpMotor.runPump)
+    SpecializationUtil.registerFunction(vehicleType, "isStandalonePump", ManureSystemPumpMotor.isStandalonePump)
     SpecializationUtil.registerFunction(vehicleType, "setPumpTargetObject", ManureSystemPumpMotor.setPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpTargetObject", ManureSystemPumpMotor.getPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "setPumpSourceObject", ManureSystemPumpMotor.setPumpSourceObject)
@@ -73,6 +74,8 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpMode = ManureSystemPumpMotor.NO_PUMP_MODE
     spec.pumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
 
+    spec.isStandalone = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#isStandalone"), false)
+
     local maxTime = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime"), 1500)
     spec.pumpEfficiency = {
         currentLoad = 0,
@@ -101,7 +104,9 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.sourceObject = nil
     spec.sourceFillUnitIndex = nil
 
-    ManureSystemPumpMotor.disableDischargeable(self)
+    if SpecializationUtil.hasSpecialization(Dischargeable, self.specializations) then
+        ManureSystemPumpMotor.disableDischargeable(self)
+    end
 end
 
 function ManureSystemPumpMotor.disableDischargeable(self)
@@ -396,6 +401,8 @@ function ManureSystemPumpMotor:handlePump(dt)
                 local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
                 local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
                 self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
+            else
+                self:setIsPumpRunning(false) -- empty
             end
         end
     end
@@ -414,13 +421,16 @@ function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, target
     end
 
     if self:isPumpingOut() then
-        local spec = self.spec_manureSystemPumpMotor
         local targetObjectFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
 
-        if targetObjectFillLevel >= (targetObject:getFillUnitCapacity(targetFillUnitIndex) * spec.autoStopPercentage.outDirection) then
+        if targetObjectFillLevel >= (targetObject:getFillUnitCapacity(targetFillUnitIndex)) then
             self:setIsPumpRunning(false) -- full
         end
     end
+end
+
+function ManureSystemPumpMotor:isStandalonePump()
+    return self.spec_manureSystemPumpMotor.isStandalone
 end
 
 function ManureSystemPumpMotor:setPumpTargetObject(object, fillUnitIndex)
@@ -459,6 +469,10 @@ end
 
 function ManureSystemPumpMotor:getCanToggleTurnedOn(superFunc)
     if self:isPumpRunning() then
+        return false
+    end
+
+    if self:isStandalonePump() then
         return false
     end
 
