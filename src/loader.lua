@@ -41,6 +41,9 @@ function init()
 
     Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
+    Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadedItems)
+
+    FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
 
     VehicleTypeManager.validateVehicleTypes = Utils.prependedFunction(VehicleTypeManager.validateVehicleTypes, validateVehicleTypes)
 
@@ -68,6 +71,39 @@ function loadedMission(mission, node)
     end
 
     g_manureSystem:onMissionLoaded(mission)
+end
+
+
+function loadedItems(mission)
+    if not isEnabled() then
+        return
+    end
+
+    if mission:getIsServer() then
+        if mission.missionInfo.savegameDirectory ~= nil and fileExists(mission.missionInfo.savegameDirectory .. "/manureSystem.xml") then
+            local xmlFile = loadXMLFile("ManureSystemXML", mission.missionInfo.savegameDirectory .. "/manureSystem.xml")
+            if xmlFile ~= nil then
+                manureSystem:onMissionLoadFromSavegame(xmlFile)
+                delete(xmlFile)
+            end
+        end
+    end
+end
+
+function saveToXMLFile(missionInfo)
+    if not isEnabled() then
+        return
+    end
+
+    if missionInfo.isValid then
+        local xmlFile = createXMLFile("ManureSystemXML", missionInfo.savegameDirectory .. "/manureSystem.xml", "manureSystem")
+        if xmlFile ~= nil then
+            manureSystem:onMissionSaveToSavegame(xmlFile)
+
+            saveXMLFile(xmlFile)
+            delete(xmlFile)
+        end
+    end
 end
 
 function validateVehicleTypes(vehicleTypeManager)

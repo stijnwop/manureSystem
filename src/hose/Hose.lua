@@ -32,6 +32,8 @@ function Hose.initSpecialization()
 end
 
 function Hose.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "onMissionSaveToSavegame", Hose.onMissionSaveToSavegame)
+    SpecializationUtil.registerFunction(vehicleType, "onMissionLoadFromSavegame", Hose.onMissionLoadFromSavegame)
     SpecializationUtil.registerFunction(vehicleType, "computeCatmullSpline", Hose.computeCatmullSpline)
     SpecializationUtil.registerFunction(vehicleType, "isaHose", Hose.isaHose)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodes", Hose.getGrabNodes)
@@ -81,8 +83,6 @@ function Hose:onLoad(savegame)
 
     Hose.loadGrabNodes(self)
 
-    g_manureSystem:addConnectorObject(self)
-
     if self.isClient then
         spec.mesh = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#mesh"), self.i3dMappings)
         spec.targetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#targetNode"), self.i3dMappings)
@@ -112,6 +112,8 @@ function Hose:onLoad(savegame)
         spec.foundGrabNodeIdSend = 0
     end
 
+    g_manureSystem:addConnectorObject(self)
+
     spec.dirtyFlag = self:getNextDirtyFlag()
 end
 
@@ -131,6 +133,53 @@ end
 function Hose:onPreDelete()
     self:removeHoseConnections()
     g_manureSystem:removeConnectorObject(self)
+end
+
+function Hose:onMissionSaveToSavegame(key, xmlFile)
+    local spec = self.spec_hose
+    for grabNodeId, desc in pairs(spec.grabNodesToVehicles) do
+        local grabNode = self:getGrabNodeById(grabNodeId)
+
+        if not grabNode.isExtension then
+            local saveKey = key .. (".grabNodesToVehicles.grabNode(%d)"):format(grabNodeId - 1)
+
+            if desc ~= nil then
+                local connector = desc.vehicle:getConnectorById(desc.connectorId)
+
+                setXMLInt(xmlFile, saveKey .. "#grabNodeId", grabNodeId)
+                setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
+                local vehicleId = g_manureSystem:getConnectorObjectId(desc.vehicle)
+                setXMLInt(xmlFile, saveKey .. "#vehicleId", vehicleId)
+
+                -- No need to store anything else.
+                if connector.isParkPlace then
+                    return
+                end
+            end
+        end
+    end
+end
+
+function Hose:onMissionLoadFromSavegame(key, xmlFile)
+    local i = 0
+    while true do
+        local loadKey = key .. (".grabNodesToVehicles.grabNode(%d)"):format(i)
+
+        if not hasXMLProperty(xmlFile, loadKey) then
+            break
+        end
+
+        local grabNodeId = getXMLInt(xmlFile, loadKey .. "#grabNodeId")
+        local connectorId = getXMLInt(xmlFile, loadKey .. "#connectorId")
+        local vehicleId = getXMLInt(xmlFile, loadKey .. "#vehicleId")
+
+        if g_manureSystem:connectorObjectExists(vehicleId) then
+            local vehicle = g_manureSystem:getConnectorObject(vehicleId)
+            self:attach(grabNodeId, connectorId, vehicle)
+        end
+
+        i = i + 1
+    end
 end
 
 function Hose:onReadStream(streamId, connection)

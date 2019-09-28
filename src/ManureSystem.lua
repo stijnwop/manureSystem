@@ -44,6 +44,42 @@ function ManureSystem:onMissionLoaded(mission)
     self.fillArmManager:loadMapData()
 end
 
+function ManureSystem:onMissionLoadFromSavegame(xmlFile)
+    local i = 0
+    while true do
+        local key = ("manureSystem.hoses.hose(%d)"):format(i)
+        if not hasXMLProperty(xmlFile, key) then
+            break
+        end
+
+        local hoseId = getXMLInt(xmlFile, key .. "#id")
+        if self:connectorObjectExists(hoseId) then
+            local hose = self:getConnectorObject(hoseId)
+            hose:onMissionLoadFromSavegame(key, xmlFile)
+        end
+
+        i = i + 1
+    end
+end
+
+function ManureSystem:onMissionSaveToSavegame(xmlFile)
+    setXMLInt(xmlFile, "manureSystem#version", 1)
+
+    local hoses = {}
+    for id, object in ipairs(self.manureSystemConnectors) do
+        if object.isaHose ~= nil and object:isaHose() then
+            table.insert(hoses, { id, object })
+        end
+    end
+
+    for i, saveData in ipairs(hoses) do
+        local id, object = unpack(saveData)
+        local key = ("manureSystem.hoses.hose(%d)"):format(i - 1)
+        setXMLInt(xmlFile, key .. "#id", id)
+        object:onMissionSaveToSavegame(key, xmlFile)
+    end
+end
+
 function ManureSystem:update(dt)
     self.player:update(dt)
 end
@@ -74,6 +110,18 @@ end
 
 function ManureSystem:getConnectorObjects()
     return self.manureSystemConnectors
+end
+
+function ManureSystem:getConnectorObject(id)
+    return self.manureSystemConnectors[id]
+end
+
+function ManureSystem:getConnectorObjectId(object)
+    return ListUtil.findListElementFirstIndex(self.manureSystemConnectors, object)
+end
+
+function ManureSystem:connectorObjectExists(id)
+    return self.manureSystemConnectors[id] ~= nil
 end
 
 function ManureSystem:draw(dt)
