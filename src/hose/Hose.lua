@@ -79,7 +79,7 @@ function Hose:onLoad(savegame)
     spec.connectorType = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
 
     spec.grabNodes = {}
-    spec.grabNodesToVehicles = {}
+    spec.grabNodesToObjects = {}
 
     Hose.loadGrabNodes(self)
 
@@ -137,19 +137,19 @@ end
 
 function Hose:onMissionSaveToSavegame(key, xmlFile)
     local spec = self.spec_hose
-    for grabNodeId, desc in pairs(spec.grabNodesToVehicles) do
+    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
         local grabNode = self:getGrabNodeById(grabNodeId)
 
         if not grabNode.isExtension then
-            local saveKey = key .. (".grabNodesToVehicles.grabNode(%d)"):format(grabNodeId - 1)
+            local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(grabNodeId - 1)
 
             if desc ~= nil then
                 local connector = desc.vehicle:getConnectorById(desc.connectorId)
 
                 setXMLInt(xmlFile, saveKey .. "#grabNodeId", grabNodeId)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
-                local vehicleId = g_manureSystem:getConnectorObjectId(desc.vehicle)
-                setXMLInt(xmlFile, saveKey .. "#vehicleId", vehicleId)
+                local objectId = g_manureSystem:getConnectorObjectId(desc.vehicle)
+                setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
 
                 -- No need to store anything else.
                 if connector.isParkPlace then
@@ -163,7 +163,7 @@ end
 function Hose:onMissionLoadFromSavegame(key, xmlFile)
     local i = 0
     while true do
-        local loadKey = key .. (".grabNodesToVehicles.grabNode(%d)"):format(i)
+        local loadKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i)
 
         if not hasXMLProperty(xmlFile, loadKey) then
             break
@@ -171,11 +171,11 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile)
 
         local grabNodeId = getXMLInt(xmlFile, loadKey .. "#grabNodeId")
         local connectorId = getXMLInt(xmlFile, loadKey .. "#connectorId")
-        local vehicleId = getXMLInt(xmlFile, loadKey .. "#vehicleId")
+        local objectId = getXMLInt(xmlFile, loadKey .. "#objectId")
 
-        if g_manureSystem:connectorObjectExists(vehicleId) then
-            local vehicle = g_manureSystem:getConnectorObject(vehicleId)
-            self:attach(grabNodeId, connectorId, vehicle)
+        if g_manureSystem:connectorObjectExists(objectId) then
+            local object = g_manureSystem:getConnectorObject(objectId)
+            self:attach(grabNodeId, connectorId, object)
         end
 
         i = i + 1
@@ -219,7 +219,7 @@ function Hose:onWriteStream(streamId, connection)
             if self:isAttached(grabNode) then
                 NetworkUtil.writeNodeObject(streamId, grabNode.player)
             elseif self:isConnected(grabNode) then
-                local desc = spec.grabNodesToVehicles[id]
+                local desc = spec.grabNodesToObjects[id]
                 streamWriteBool(streamId, desc ~= nil)
                 if desc ~= nil then
                     NetworkUtil.writeNodeObjectId(streamId, NetworkUtil.getObjectId(desc.vehicle))
@@ -346,7 +346,7 @@ end
 function Hose:getConnectorObjectDesc(id)
     local spec = self.spec_hose
 
-    for grabNodeId, desc in pairs(spec.grabNodesToVehicles) do
+    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
         if grabNodeId ~= id then
             local vehicle = desc.vehicle
 
@@ -603,9 +603,9 @@ function Hose:setIsConnected(id, state, grabNodeId, hose, noEventSend)
 
     -- Set two way recognition
     if state then
-        spec.grabNodesToVehicles[id] = { vehicle = hose, connectorId = grabNodeId }
+        spec.grabNodesToObjects[id] = { vehicle = hose, connectorId = grabNodeId }
     else
-        spec.grabNodesToVehicles[id] = nil
+        spec.grabNodesToObjects[id] = nil
     end
 end
 
@@ -660,7 +660,7 @@ function Hose:connectGrabNode(grabNode, connector, vehicle)
     end
 
     vehicle:setIsConnected(connector.id, true, grabNode.id, self, true)
-    spec.grabNodesToVehicles[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
+    spec.grabNodesToObjects[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
 end
 
 function Hose:disconnectGrabNode(grabNode, connector, vehicle)
@@ -693,7 +693,7 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
     grabNode.jointIndex = 0
 
     vehicle:setIsConnected(connector.id, false, nil, nil, true)
-    spec.grabNodesToVehicles[grabNode.id] = nil
+    spec.grabNodesToObjects[grabNode.id] = nil
 end
 
 function Hose:removeHoseConnections()
@@ -703,7 +703,7 @@ function Hose:removeHoseConnections()
         if self:isAttached(grabNode) then
             self:drop(id, grabNode.player, true)
         elseif self:isConnected(grabNode) then
-            local desc = spec.grabNodesToVehicles[id]
+            local desc = spec.grabNodesToObjects[id]
             if desc ~= nil then
                 self:detach(id, desc.connectorId, desc.vehicle, true)
             end
@@ -770,7 +770,7 @@ function Hose:parkHose(connector, vehicle)
 
         grabNode.state = Hose.STATE_CONNECTED
         vehicle:setIsConnected(connector.id, true, id, self, true)
-        spec.grabNodesToVehicles[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
+        spec.grabNodesToObjects[grabNode.id] = { vehicle = vehicle, connectorId = connector.id }
     end
 
     if self.isServer then
@@ -806,7 +806,7 @@ function Hose:unparkHose(connector, vehicle)
 
         grabNode.state = Hose.STATE_DETACHED
         vehicle:setIsConnected(connector.id, false, nil, nil, true)
-        spec.grabNodesToVehicles[id] = nil
+        spec.grabNodesToObjects[id] = nil
     end
 
     if self.isServer then

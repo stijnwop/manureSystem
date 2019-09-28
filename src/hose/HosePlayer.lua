@@ -103,7 +103,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
             if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 then
                 enableInput(InputAction.MS_ATTACH_HOSE)
             elseif hose:isConnected(grabNode) then
-                local desc = spec.grabNodesToVehicles[grabNode.id]
+                local desc = spec.grabNodesToObjects[grabNode.id]
                 if desc ~= nil then
                     local vehicle = desc.vehicle
                     local connector = vehicle:getConnectorById(desc.connectorId)
@@ -271,7 +271,7 @@ function Player.actionEventOnDetachHose(self, actionName, inputValue, callbackSt
             local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
 
             if hose:isConnected(grabNode) then
-                local desc = spec.grabNodesToVehicles[grabNode.id]
+                local desc = spec.grabNodesToObjects[grabNode.id]
                 if desc ~= nil then
                     hose:detach(grabNode.id, desc.connectorId, desc.vehicle)
                 end
@@ -289,7 +289,7 @@ function Player.actionEventOnToggleFlow(self, actionName, inputValue, callbackSt
             local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
 
             if hose:isConnected(grabNode) then
-                local desc = spec.grabNodesToVehicles[grabNode.id]
+                local desc = spec.grabNodesToObjects[grabNode.id]
                 if desc ~= nil then
                     local vehicle = desc.vehicle
                     local connector = vehicle:getConnectorById(desc.connectorId)
