@@ -60,9 +60,8 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
     local object = self.object
 
     if object.isServer then
-
         if object.isStandalonePump ~= nil and object:isStandalonePump() then
-            local connectors = object:getConnectorsByType(self.couplingType)
+            local connectors = ListUtil.copyTable(object:getConnectorsByType(self.couplingType))
 
             if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
                 table.sort(connectors, sortConnectorsByManureFlowState)
@@ -70,12 +69,17 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
                 local connector1, connector2 = unpack(connectors, 1, 2)
                 if connector1.isConnected and not connector1.isParkPlace
                     and connector2.isConnected and not connector2.isParkPlace then
-                    local desc1 = self:getConnectorObjectDesc(connector1)
-                    local desc2 = self:getConnectorObjectDesc(connector2)
+                    local desc1 = self:getConnectorObjectDesc(object, connector1)
+                    local desc2 = self:getConnectorObjectDesc(object, connector2)
 
                     if desc1 ~= nil and desc2 ~= nil then
                         object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
                         object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+                    else
+                        if object:getPumpTargetObject() ~= nil and object:getPumpSourceObject() ~= nil then
+                            object:setPumpTargetObject(nil, nil)
+                            object:setPumpSourceObject(nil, nil)
+                        end
                     end
                 end
             end
@@ -90,16 +94,20 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
     for _, connector in ipairs(connectors) do
         if connector.isConnected and not connector.isParkPlace then
-            local desc = self:getConnectorObjectDesc(connector)
+            local desc = self:getConnectorObjectDesc(object, connector)
 
-            if desc ~= nil then
-                object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
-                object:setPumpSourceObject(object, connector.fillUnitIndex)
-            else
-                if object:getPumpTargetObject() ~= nil then
-                    object:setPumpTargetObject(nil, nil)
+            if object.spec_manureSystemPumpMotor ~= nil then
+                if desc ~= nil then
+                    object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
+                    object:setPumpSourceObject(object, connector.fillUnitIndex)
+                else
+                    if object:getPumpTargetObject() ~= nil then
+                        object:setPumpTargetObject(nil, nil)
+                    end
                 end
+            end
 
+            if desc == nil then
                 if connector.hasOpenManureFlow and connector.manureFlowAnimationName ~= nil then
                     local fillType = object:getFillUnitFillType(connector.fillUnitIndex)
                     local fillLevel = object:getFillUnitFillLevel(connector.fillUnitIndex)
@@ -114,11 +122,10 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
     end
 end
 
-function ManureSystemCouplingStrategy:getConnectorObjectDesc(connector)
-    local object = self.object
+function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
     local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
 
-    if desc ~= nil and desc.vehicle ~= object and object.spec_manureSystemPumpMotor ~= nil then
+    if desc ~= nil and desc.vehicle ~= object then
         local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
         if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
@@ -132,7 +139,9 @@ end
 function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.hasOpenManureFlow = false
     connector.lockAnimationName = getXMLString(xmlFile, key .. "#lockAnimationName")
+    connector.lockAnimationIndex = getXMLInt(xmlFile, key .. "#lockAnimationIndex")
     connector.manureFlowAnimationName = getXMLString(xmlFile, key .. "#manureFlowAnimationName")
+    connector.manureFlowAnimationIndex = getXMLInt(xmlFile, key .. "#manureFlowAnimationIndex")
 
     connector.jointOrigRot = { getRotation(connector.node) }
     connector.jointOrigTrans = { getTranslation(connector.node) }

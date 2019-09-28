@@ -13,6 +13,7 @@ Hose.STATE_ATTACHED = 0
 Hose.STATE_DETACHED = 1
 Hose.STATE_CONNECTED = 2
 Hose.STATE_PARKED = 3
+Hose.STATE_EXTENDED = 4
 
 Hose.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2
 
@@ -44,6 +45,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "detach", Hose.detach)
     SpecializationUtil.registerFunction(vehicleType, "connectGrabNode", Hose.connectGrabNode)
     SpecializationUtil.registerFunction(vehicleType, "disconnectGrabNode", Hose.disconnectGrabNode)
+    SpecializationUtil.registerFunction(vehicleType, "removeHoseConnections", Hose.removeHoseConnections)
     SpecializationUtil.registerFunction(vehicleType, "parkHose", Hose.parkHose)
     SpecializationUtil.registerFunction(vehicleType, "unparkHose", Hose.unparkHose)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
@@ -78,6 +80,8 @@ function Hose:onLoad(savegame)
     spec.grabNodesToVehicles = {}
 
     Hose.loadGrabNodes(self)
+
+    g_manureSystem:addConnectorObject(self)
 
     if self.isClient then
         spec.mesh = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#mesh"), self.i3dMappings)
@@ -125,22 +129,8 @@ function Hose:onLoadFinished(savegame)
 end
 
 function Hose:onPreDelete()
-    local spec = self.spec_hose
-
-    for id, grabNode in ipairs(spec.grabNodes) do
-        if self:isAttached(grabNode) then
-            self:drop(id, grabNode.player, true)
-        elseif self:isConnected(grabNode) then
-            local desc = spec.grabNodesToVehicles[id]
-            if desc ~= nil then
-                self:detach(id, desc.connectorId, desc.vehicle, true)
-            end
-        end
-
-        if grabNode.isExtension then
-            g_manureSystem:removeConnectorObject(self)
-        end
-    end
+    self:removeHoseConnections()
+    g_manureSystem:removeConnectorObject(self)
 end
 
 function Hose:onReadStream(streamId, connection)
@@ -254,35 +244,37 @@ function Hose:findConnector(id)
 
             local objects = g_manureSystem:getConnectorObjects()
             for _, object in pairs(objects) do
-                local vx, _, vz = getWorldTranslation(object.components[1].node)
-                local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+                if object ~= self then
+                    local vx, _, vz = getWorldTranslation(object.components[1].node)
+                    local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
-                if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                    or object:isa(Placeable) and distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE * 2 then
+                    if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
+                        or object:isa(Placeable) and distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE * 2 then
 
-                    if object.isaHose ~= nil and object:isaHose() then
-                        for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
-                            if (grabNode.isExtension and not connectorGrabNode.isExtension) or (not grabNode.isExtension and connectorGrabNode.isExtension) then
-                                local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
-                                local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                        if object.isaHose ~= nil and object:isaHose() then
+                            for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
+                                if not grabNode.isExtension and connectorGrabNode.isExtension then
+                                    local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
+                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
-                                if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
-                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                    spec.foundConnectorId = connectorId
-                                    spec.foundGrabNodeId = id
+                                    if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
+                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                        spec.foundConnectorId = connectorId
+                                        spec.foundGrabNodeId = id
+                                    end
                                 end
                             end
-                        end
-                    else
-                        for connectorId, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
-                            if not connector.hasOpenManureFlow or connector.isConnected then
-                                local rx, ry, rz = getWorldTranslation(connector.node)
-                                local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                        elseif not grabNode.isExtension then
+                            for connectorId, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
+                                if not connector.hasOpenManureFlow or connector.isConnected then
+                                    local rx, ry, rz = getWorldTranslation(connector.node)
+                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
-                                if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
-                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                    spec.foundConnectorId = connectorId
-                                    spec.foundGrabNodeId = id
+                                    if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
+                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                        spec.foundConnectorId = connectorId
+                                        spec.foundGrabNodeId = id
+                                    end
                                 end
                             end
                         end
@@ -307,7 +299,14 @@ function Hose:getConnectorObjectDesc(id)
 
     for grabNodeId, desc in pairs(spec.grabNodesToVehicles) do
         if grabNodeId ~= id then
-            local connector = desc.vehicle:getConnectorById(desc.connectorId)
+            local vehicle = desc.vehicle
+
+            -- Recursively get the connector object.
+            if vehicle.isaHose ~= nil and vehicle:isaHose() then
+                return vehicle:getConnectorObjectDesc(desc.connectorId)
+            end
+
+            local connector = vehicle:getConnectorById(desc.connectorId)
             if connector.isConnected then
                 return desc
             end
@@ -543,11 +542,21 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
 end
 
 function Hose:setIsConnected(id, state, grabNodeId, hose, noEventSend)
+    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     if grabNode.isExtension then
         local dir = state and -1 or 1
         self:playAnimation(grabNode.extensionAnimationName, dir, nil, true)
+    end
+
+    grabNode.state = state and Hose.STATE_EXTENDED or Hose.STATE_DETACHED
+
+    -- Set two way recognition
+    if state then
+        spec.grabNodesToVehicles[id] = { vehicle = hose, connectorId = grabNodeId }
+    else
+        spec.grabNodesToVehicles[id] = nil
     end
 end
 
@@ -638,8 +647,25 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
     spec.grabNodesToVehicles[grabNode.id] = nil
 end
 
+function Hose:removeHoseConnections()
+    local spec = self.spec_hose
+
+    for id, grabNode in ipairs(spec.grabNodes) do
+        if self:isAttached(grabNode) then
+            self:drop(id, grabNode.player, true)
+        elseif self:isConnected(grabNode) then
+            local desc = spec.grabNodesToVehicles[id]
+            if desc ~= nil then
+                self:detach(id, desc.connectorId, desc.vehicle, true)
+            end
+        end
+    end
+end
+
 function Hose:parkHose(connector, vehicle)
     local spec = self.spec_hose
+
+    self:removeHoseConnections()
 
     local length = math.min(connector.parkPlaceLength, self.sizeLength) * connector.parkDirection
     local grabNodesDivision = #spec.grabNodes - 1
@@ -843,10 +869,6 @@ function Hose.loadGrabNodes(self)
             if self.isServer then
                 grabNode.jointIndex = 0
                 grabNode.jointTransform = nil
-            end
-
-            if grabNode.isExtension then
-                g_manureSystem:addConnectorObject(self)
             end
 
             table.insert(spec.grabNodes, grabNode)
