@@ -352,12 +352,12 @@ function ManureSystemStorage:setIsConnected(id, state, grabNodeId, hose, noEvent
     if connector.isConnected ~= state then
         ManureSystemConnectorIsConnectedEvent.sendEvent(self, id, state, grabNodeId, hose, noEventSend)
 
-        if connector.lockAnimationName ~= nil then
+        if connector.lockAnimationIndex ~= nil then
             local dir = state and 1 or -1
-            self:playAnimation(connector.lockAnimationName, dir, nil, true)
+            self:playAnimation(connector.lockAnimationIndex, dir)
         end
 
-        if connector.manureFlowAnimationName == nil then
+        if connector.manureFlowAnimationIndex == nil then
             self:setIsManureFlowOpen(id, state, false, noEventSend)
         end
 
@@ -375,12 +375,12 @@ function ManureSystemStorage:setIsManureFlowOpen(id, state, force, noEventSend)
 
         connector.hasOpenManureFlow = state
 
-        if connector.manureFlowAnimationName ~= nil then
-            local canPlayAnimation = force or not self:getIsAnimationPlaying(connector.manureFlowAnimationName)
+        if connector.manureFlowAnimationIndex ~= nil then
+            local canPlayAnimation = force or not self:getIsAnimationPlaying(connector.manureFlowAnimationIndex)
 
             if canPlayAnimation then
                 local dir = state and 1 or -1
-                self:playAnimation(connector.manureFlowAnimationName, dir, nil, true)
+                self:playAnimation(connector.manureFlowAnimationIndex, dir)
             end
         end
     end
@@ -404,4 +404,33 @@ function ManureSystemStorage:isUnderFillPlane(x, y, z)
 
     return py >= y
 end
+
+--- Animation functions that should exist in the animated object class, but does not.
+
+function ManureSystemStorage:getIsAnimationPlaying(id)
+    local animatedObject = self.animatedObjects[id]
+    if animatedObject ~= nil then
+        return animatedObject.isMoving
+    end
+
+    return false
+end
+
+function ManureSystemStorage:getAnimationTime(id)
+    local animatedObject = self.animatedObjects[id]
+    if animatedObject ~= nil then
+        return animatedObject.animation.time
+    end
+
+    return 0
+end
+
+function ManureSystemStorage:playAnimation(id, dir)
+    local animatedObject = self.animatedObjects[id]
+    if animatedObject ~= nil then
+        animatedObject.animation.direction = dir
+        animatedObject:raiseActive()
+    end
+end
+
 

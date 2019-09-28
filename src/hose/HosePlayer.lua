@@ -107,11 +107,12 @@ function HosePlayer.inj_player_updateActionEvents(player)
                 if desc ~= nil then
                     local vehicle = desc.vehicle
                     local connector = vehicle:getConnectorById(desc.connectorId)
-                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil
+                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil or connector.manureFlowAnimationIndex ~= nil
+                    local animationName = connector.manureFlowAnimationName ~= nil and connector.manureFlowAnimationName or connector.manureFlowAnimationIndex
 
                     if hasManureFlowControl then
                         enableInput(InputAction.MS_TOGGLE_FLOW)
-                        local state = vehicle:getAnimationTime(connector.manureFlowAnimationName) == 0
+                        local state = vehicle:getAnimationTime(animationName) == 0
                         local text = state and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
                         local id = eventList[InputAction.MS_TOGGLE_FLOW].eventId
 
@@ -292,9 +293,10 @@ function Player.actionEventOnToggleFlow(self, actionName, inputValue, callbackSt
                 if desc ~= nil then
                     local vehicle = desc.vehicle
                     local connector = vehicle:getConnectorById(desc.connectorId)
-                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil
+                    local hasManureFlowControl = connector.manureFlowAnimationName ~= nil or connector.manureFlowAnimationIndex ~= nil
+                    local animationName = connector.manureFlowAnimationName ~= nil and connector.manureFlowAnimationName or connector.manureFlowAnimationIndex
 
-                    if hasManureFlowControl and not vehicle:getIsAnimationPlaying(connector.manureFlowAnimationName) then
+                    if hasManureFlowControl and not vehicle:getIsAnimationPlaying(animationName) then
                         vehicle:setIsManureFlowOpen(desc.connectorId, not connector.hasOpenManureFlow, false)
                     end
                 end
