@@ -62,17 +62,17 @@ function ManureSystem:getManureSystemSamples()
     return self.samples
 end
 
-function ManureSystem:addConnectorVehicle(vehicle)
-    if not ListUtil.hasListElement(self.manureSystemConnectors, vehicle) then
-        ListUtil.addElementToList(self.manureSystemConnectors, vehicle)
+function ManureSystem:addConnectorObject(object)
+    if not ListUtil.hasListElement(self.manureSystemConnectors, object) then
+        ListUtil.addElementToList(self.manureSystemConnectors, object)
     end
 end
 
-function ManureSystem:removeConnectorVehicle(vehicle)
-    ListUtil.removeElementFromList(self.manureSystemConnectors, vehicle)
+function ManureSystem:removeConnectorObject(object)
+    ListUtil.removeElementFromList(self.manureSystemConnectors, object)
 end
 
-function ManureSystem:getConnectorVehicles()
+function ManureSystem:getConnectorObjects()
     return self.manureSystemConnectors
 end
 

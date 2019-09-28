@@ -37,7 +37,7 @@ local function isEnabled()
 end
 
 function init()
-    g_placeableTypeManager:addPlaceableType("manureSystemLagoon", "ManureSystemLagoon", directory .. "src/placeables/ManureSystemLagoon.lua")
+    g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")
 
     Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
@@ -79,12 +79,16 @@ local vehicles = {
     ["data/vehicles/samsonAgro/pgII25m/pgII25m.xml"] = { typeName = "vanillaPGII25" },
     ["data/vehicles/samsonAgro/pgII35m/pgII35m.xml"] = { typeName = "vanillaPGII35" },
     ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" },
-    ["data/vehicles/kotte/tsa/tsa.xml"] = { typeName = "vanillaTSA" }
+    ["data/vehicles/kotte/tsa/tsa.xml"] = { typeName = "vanillaTSA" },
+    ["zunhammer/TV585/TV585.xml"] = { typeName = "dlcTV585" },
 }
 
 function vehicleLoad(self, superFunc, vehicleData, ...)
-    if vehicles[vehicleData.filename] ~= nil then
-        local data = vehicles[vehicleData.filename]
+    local _, baseDir = Utils.getModNameAndBaseDirectory(vehicleData.filename)
+    local xmlFilename = vehicleData.filename:gsub(baseDir, "")
+
+    if vehicles[xmlFilename] ~= nil then
+        local data = vehicles[xmlFilename]
         local replacementType = modName .. "." .. data.typeName
         local typeEntry = g_vehicleTypeManager:getVehicleTypeByName(replacementType)
         if typeEntry ~= nil then

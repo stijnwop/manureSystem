@@ -150,7 +150,7 @@ function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distan
 
                     return false
                 end
-            elseif object:isa(ManureSystemLagoon) then
+            elseif object:isa(ManureSystemStorage) then
                 spec.fillArm.lastRaycastDistance = distance
                 spec.fillArm.lastRaycastVehicle = object
                 return false

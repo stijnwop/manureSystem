@@ -53,7 +53,7 @@ function ManureSystemConnector:onLoad(savegame)
             break
         end
 
-        local typeString = Utils.getNoNil(getXMLString(self.xmlFile, baseKey .. '#type'), ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+        local typeString = Utils.getNoNil(getXMLString(self.xmlFile, baseKey .. "#type"), ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
         local type = g_manureSystem.connectorManager:getConnectorType(typeString)
 
         if type == nil then
@@ -81,8 +81,7 @@ function ManureSystemConnector:onLoad(savegame)
     end
 
     if #spec.manureSystemConnectors ~= 0 then
-        log("Adding connector to: " .. self:getName())
-        g_manureSystem:addConnectorVehicle(self)
+        g_manureSystem:addConnectorObject(self)
     end
 end
 
@@ -95,7 +94,7 @@ function ManureSystemConnector:onDelete()
         end
     end
 
-    g_manureSystem:removeConnectorVehicle(self)
+    g_manureSystem:removeConnectorObject(self)
 end
 
 function ManureSystemConnector:onReadStream(streamId, connection)
