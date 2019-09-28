@@ -26,12 +26,18 @@ function Hose.prerequisitesPresent(specializations)
     return true
 end
 
+function Hose.initSpecialization()
+    g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+end
+
 function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "computeCatmullSpline", Hose.computeCatmullSpline)
     SpecializationUtil.registerFunction(vehicleType, "isaHose", Hose.isaHose)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodes", Hose.getGrabNodes)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodeById", Hose.getGrabNodeById)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectorById", Hose.getConnectorById)
     SpecializationUtil.registerFunction(vehicleType, "getClosestGrabNode", Hose.getClosestGrabNode)
+    SpecializationUtil.registerFunction(vehicleType, "setIsConnected", Hose.setIsConnected)
     SpecializationUtil.registerFunction(vehicleType, "grab", Hose.grab)
     SpecializationUtil.registerFunction(vehicleType, "drop", Hose.drop)
     SpecializationUtil.registerFunction(vehicleType, "attach", Hose.attach)
@@ -129,6 +135,10 @@ function Hose:onPreDelete()
             if desc ~= nil then
                 self:detach(id, desc.connectorId, desc.vehicle, true)
             end
+        end
+
+        if grabNode.isExtension then
+            g_manureSystem:removeConnectorObject(self)
         end
     end
 end
@@ -242,21 +252,38 @@ function Hose:findConnector(id)
         if self:isAttached(grabNode) or self:isConnected(grabNode) then
             local x, y, z = getWorldTranslation(grabNode.node)
 
-            local vehicles = g_manureSystem:getConnectorVehicles()
-            for _, vehicle in pairs(vehicles) do
-                local vx, _, vz = getWorldTranslation(vehicle.components[1].node)
-                local distanceToVehicle = MathUtil.vector2LengthSq(x - vx, z - vz)
+            local objects = g_manureSystem:getConnectorObjects()
+            for _, object in pairs(objects) do
+                local vx, _, vz = getWorldTranslation(object.components[1].node)
+                local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
-                if distanceToVehicle < Hose.VEHICLE_CONNECTOR_SEQUENCE then
-                    for connectorId, connector in ipairs(vehicle:getConnectorsByType(spec.connectorType)) do
-                        if not connector.hasOpenManureFlow or connector.isConnected then
-                            local rx, ry, rz = getWorldTranslation(connector.node)
-                            local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
+                    or object:isa(Placeable) and distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE * 2 then
 
-                            if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
-                                spec.foundVehicleId = NetworkUtil.getObjectId(vehicle)
-                                spec.foundConnectorId = connectorId
-                                spec.foundGrabNodeId = id
+                    if object.isaHose ~= nil and object:isaHose() then
+                        for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
+                            if (grabNode.isExtension and not connectorGrabNode.isExtension) or (not grabNode.isExtension and connectorGrabNode.isExtension) then
+                                local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
+                                local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+
+                                if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connectorId
+                                    spec.foundGrabNodeId = id
+                                end
+                            end
+                        end
+                    else
+                        for connectorId, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
+                            if not connector.hasOpenManureFlow or connector.isConnected then
+                                local rx, ry, rz = getWorldTranslation(connector.node)
+                                local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+
+                                if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connectorId
+                                    spec.foundGrabNodeId = id
+                                end
                             end
                         end
                     end
@@ -315,6 +342,10 @@ end
 
 function Hose:getGrabNodeById(id)
     return self.spec_hose.grabNodes[id]
+end
+
+function Hose:getConnectorById(id)
+    return self:getGrabNodeById(id)
 end
 
 function Hose:getClosestGrabNode(x, y, z)
@@ -511,6 +542,15 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     end
 end
 
+function Hose:setIsConnected(id, state, grabNodeId, hose, noEventSend)
+    local grabNode = self:getGrabNodeById(id)
+
+    if grabNode.isExtension then
+        local dir = state and -1 or 1
+        self:playAnimation(grabNode.extensionAnimationName, dir, nil, true)
+    end
+end
+
 function Hose:connectGrabNode(grabNode, connector, vehicle)
     local spec = self.spec_hose
 
@@ -535,9 +575,11 @@ function Hose:connectGrabNode(grabNode, connector, vehicle)
         -- Restore joint transform position
         setTranslation(desc.transform, unpack(connector.jointOrigTrans))
 
-        local limit = math.rad(10)
-        for i = 1, 3 do
-            self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -limit, limit)
+        if not grabNode.isExtension then
+            local limit = math.rad(10)
+            for i = 1, 3 do
+                self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -limit, limit)
+            end
         end
     else
         -- Set joint index to '1' on client side, so we can check if something is attached
@@ -746,16 +788,25 @@ end
 function Hose.loadGrabNodes(self)
     local spec = self.spec_hose
 
+    local hoseConfigurationId = Utils.getNoNil(self.configurations["hose"], 1)
+    local baseKey = ("vehicle.hose.hoseConfigurations.hoseConfiguration(%d)"):format(hoseConfigurationId - 1)
+    ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.hose.hoseConfigurations.hoseConfiguration", hoseConfigurationId, self.components, self)
+
+    -- Fallback key
+    if not hasXMLProperty(self.xmlFile, baseKey) then
+        baseKey = "vehicle.hose"
+    end
+
     local i = 0
     while i <= 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS do
-        local key = ("vehicle.hose.grabNodes.grabNode(%d)"):format(i)
+        local key = ("%s.grabNodes.grabNode(%d)"):format(baseKey, i)
 
         if not hasXMLProperty(self.xmlFile, key) then
             break
         end
 
         if #spec.grabNodes == 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS then
-            Logger.error("Max amount of grabNodes reached!") -- Todo: logger
+            Logger.error("Max amount of grabNodes reached!")
             break
         end
 
@@ -776,6 +827,9 @@ function Hose.loadGrabNodes(self)
                 grabNode.updateHoseTargetRotation = Utils.getNoNil(getXMLBool(self.xmlFile, key .. ".visuals#updateHoseTargetRotation"), false)
             end
 
+            grabNode.isExtension = Utils.getNoNil(getXMLBool(self.xmlFile, key .. "#isExtension"), false)
+            grabNode.extensionAnimationName = getXMLString(self.xmlFile, key .. "#extensionAnimationName")
+
             grabNode.jointOrigRot = { getRotation(node) }
             grabNode.jointOrigTrans = { getTranslation(node) }
             grabNode.componentIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentIndex"), 1)
@@ -789,6 +843,10 @@ function Hose.loadGrabNodes(self)
             if self.isServer then
                 grabNode.jointIndex = 0
                 grabNode.jointTransform = nil
+            end
+
+            if grabNode.isExtension then
+                g_manureSystem:addConnectorObject(self)
             end
 
             table.insert(spec.grabNodes, grabNode)
