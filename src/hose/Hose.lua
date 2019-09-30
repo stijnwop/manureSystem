@@ -89,12 +89,11 @@ function Hose:onLoad(savegame)
         spec.centerNode1 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode1"), self.i3dMappings)
         spec.centerNode2 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode2"), self.i3dMappings)
 
-        local offset = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#offset"), 0.25)
         local startTrans = { getWorldTranslation(spec.mesh) }
         local endTrans = { getWorldTranslation(spec.targetNode) }
         local length = MathUtil.vector3Length(endTrans[1] - startTrans[1], endTrans[2] - startTrans[2], endTrans[3] - startTrans[3])
 
-        spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length)) - offset * 2
+        spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length))
 
         setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
         setShaderParameter(spec.mesh, "cv1", 0, 0, 0, 0, false)
@@ -118,10 +117,6 @@ function Hose:onLoad(savegame)
 end
 
 function Hose:onLoadFinished(savegame)
-    if self.isClient then
-        self:computeCatmullSpline()
-    end
-
     if self.isServer then
         for _, joint in ipairs(self.componentJoints) do
             joint.orgRotLimit = ListUtil.copyTable(joint.rotLimit)
@@ -713,6 +708,14 @@ end
 
 function Hose:parkHose(connector, vehicle)
     local spec = self.spec_hose
+
+    if connector.parkPlaceLength < spec.length then
+        if self.isClient then
+            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_parkingPlaceTooSmall"):format(connector.parkPlaceLength, spec.length), 2000)
+        end
+
+        return
+    end
 
     self:removeHoseConnections()
 
