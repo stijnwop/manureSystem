@@ -73,7 +73,6 @@ function loadedMission(mission, node)
     g_manureSystem:onMissionLoaded(mission)
 end
 
-
 function loadedItems(mission)
     if not isEnabled() then
         return
@@ -116,6 +115,8 @@ local vehicles = {
     ["data/vehicles/samsonAgro/pgII35m/pgII35m.xml"] = { typeName = "vanillaPGII35" },
     ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" },
     ["data/vehicles/kotte/tsa/tsa.xml"] = { typeName = "vanillaTSA" },
+    ["data/vehicles/kotte/ve8000/ve8000.xml"] = { typeName = "vanillaVE8000" },
+    ["data/vehicles/joskin/modulo/modulo.xml"] = { typeName = "vanillaModulo" },
     ["zunhammer/TV585/TV585.xml"] = { typeName = "dlcTV585" },
 }
 

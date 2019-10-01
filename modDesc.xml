@@ -33,6 +33,8 @@
         <specialization name="manureSystemPGII35" className="ManureSystemPGII35" filename="src/vehicles/vanillainserts/ManureSystemPGII35.lua"/>
         <specialization name="manureSystemKotteFRC" className="ManureSystemKotteFRC" filename="src/vehicles/vanillainserts/ManureSystemKotteFRC.lua"/>
         <specialization name="manureSystemKotteTSA" className="ManureSystemKotteTSA" filename="src/vehicles/vanillainserts/ManureSystemKotteTSA.lua"/>
+        <specialization name="manureSystemKotteVE8000" className="ManureSystemKotteVE8000" filename="src/vehicles/vanillainserts/ManureSystemKotteVE8000.lua"/>
+        <specialization name="manureSystemModulo" className="ManureSystemModulo" filename="src/vehicles/vanillainserts/ManureSystemModulo.lua"/>
         <specialization name="manureSystemTV585" className="ManureSystemTV585" filename="src/vehicles/vanillainserts/ManureSystemTV585.lua"/>
     </specializations>
 
@@ -53,6 +55,12 @@
         </type>
         <type name="vanillaPGII35" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemPGII35"/>
+        </type>
+        <type name="vanillaModulo" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemModulo"/>
+        </type>
+        <type name="vanillaVE8000" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemKotteVE8000"/>
         </type>
         <type name="vanillaFRC" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemKotteFRC"/>
