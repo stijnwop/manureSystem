@@ -100,7 +100,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
             local spec = hose.spec_hose
             local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
 
-            if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 then
+            if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 and not spec.foundConnectorIsConnected then
                 enableInput(InputAction.MS_ATTACH_HOSE)
             elseif hose:isConnected(grabNode) then
                 local desc = spec.grabNodesToObjects[grabNode.id]
@@ -254,7 +254,7 @@ function Player.actionEventOnAttachHose(self, actionName, inputValue, callbackSt
             local grabNode = hose:getGrabNodeById(self.lastFoundGradNodeId)
 
             if hose:isAttached(grabNode) then
-                if spec.foundConnectorId ~= 0 and spec.foundVehicleId ~= 0 then
+                if spec.foundConnectorId ~= 0 and spec.foundVehicleId ~= 0 and not spec.foundConnectorIsConnected then
                     hose:attach(grabNode.id, spec.foundConnectorId, NetworkUtil.getObject(spec.foundVehicleId))
                 end
             end

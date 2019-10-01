@@ -53,6 +53,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
     SpecializationUtil.registerFunction(vehicleType, "isConnected", Hose.isConnected)
+    SpecializationUtil.registerFunction(vehicleType, "isExtended", Hose.isExtended)
     SpecializationUtil.registerFunction(vehicleType, "findConnector", Hose.findConnector)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorObjectDesc", Hose.getConnectorObjectDesc)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
@@ -103,11 +104,13 @@ function Hose:onLoad(savegame)
 
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
+    spec.foundConnectorIsConnected = false
     spec.foundGrabNodeId = 0
 
     if self.isServer then
         spec.foundVehicleIdSend = 0
         spec.foundConnectorIdSend = 0
+        spec.foundConnectorIsConnectedSend = false
         spec.foundGrabNodeIdSend = 0
     end
 
@@ -231,6 +234,7 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
             local spec = self.spec_hose
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
             spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+            spec.foundConnectorIsConnected = streamReadBool(streamId)
             spec.foundGrabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS)
         end
     end
@@ -242,6 +246,7 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
         if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
             streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteBool(streamId, spec.foundConnectorIsConnected)
             streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
@@ -279,6 +284,7 @@ function Hose:findConnector(id)
 
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
+    spec.foundConnectorIsConnected = false
     spec.foundGrabNodeId = 0
 
     local grabNode = self:getGrabNodeById(id)
@@ -304,6 +310,7 @@ function Hose:findConnector(id)
                                     if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
                                         spec.foundConnectorId = connectorId
+                                        spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
                                         spec.foundGrabNodeId = id
                                     end
                                 end
@@ -317,6 +324,7 @@ function Hose:findConnector(id)
                                     if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
                                         spec.foundConnectorId = connectorId
+                                        spec.foundConnectorIsConnected = connector.isConnected
                                         spec.foundGrabNodeId = id
                                     end
                                 end
@@ -330,9 +338,11 @@ function Hose:findConnector(id)
 
     if spec.foundVehicleId ~= spec.foundVehicleIdSend
         or spec.foundConnectorId ~= spec.foundConnectorIdSend
+        or spec.foundConnectorIsConnected ~= spec.foundConnectorIsConnectedSend
         or spec.foundGrabNodeId ~= spec.foundGrabNodeIdSend then
         spec.foundVehicleIdSend = spec.foundVehicleId
         spec.foundConnectorIdSend = spec.foundConnectorId
+        spec.foundConnectorIsConnectedSend = spec.foundConnectorIsConnected
         spec.foundGrabNodeIdSend = spec.foundGrabNodeId
         self:raiseDirtyFlags(spec.dirtyFlag)
     end
@@ -861,6 +871,10 @@ end
 
 function Hose:isConnected(grabNode)
     return grabNode.state == Hose.STATE_CONNECTED
+end
+
+function Hose:isExtended(grabNode)
+    return grabNode.state == Hose.STATE_EXTENDED
 end
 
 function Hose.loadGrabNodes(self)
