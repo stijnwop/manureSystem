@@ -50,16 +50,44 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>" offset="0.25">
-        <grabNodes>
-            <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1">
-                <visuals visualNode="coupling_normal_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
-            </grabNode>
-            <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3">
-                <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
-            </grabNode>
-        </grabNodes>
+    <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>">
+        <hoseConfigurations>
+            <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
+                <grabNodes>
+                    <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1">
+                        <visuals visualNode="coupling_normal_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
+                    </grabNode>
+                    <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3">
+                        <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
+                    </grabNode>
+                </grabNodes>
+
+                <objectChange node="coupling_normal_start" visibilityActive="true"/>
+                <objectChange node="coupling_extend_start" visibilityActive="false"/>
+            </hoseConfiguration>
+            <hoseConfiguration name="$l10n_configuration_valueExtend" price="40">
+                <grabNodes>
+                    <grabNode isExtension="true" extensionAnimationName="extend" node="grabNode1" componentIndex="1" componentJointIndex="1">
+                        <visuals visualNode="coupling_extend_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
+                    </grabNode>
+                    <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3">
+                        <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
+                    </grabNode>
+                </grabNodes>
+
+                <objectChange node="coupling_extend_start" visibilityActive="true"/>
+                <objectChange node="coupling_normal_start" visibilityActive="false"/>
+            </hoseConfiguration>
+        </hoseConfigurations>
     </hose>
+
+    <animations>
+        <animation name="extend">
+            <part node="bottom_lever" startTime="0" endTime="0.5" startRot="0 0 0" endRot="-50 0 0"/>
+            <part node="bottom_hook" startTime="0" endTime="0.5" startRot="0 0 0" endRot="65 0 0"/>
+            <part node="top_hook" startTime="0.4" endTime="0.5" startRot="0 0 0" endRot="-15 0 0"/>
+        </animation>
+    </animations>
 
     <foliageBending>
         <bendingNode minX="-1.35" maxX="1.35" minZ="-3.5" maxZ="4.1" yOffset="0.2"/>
@@ -84,6 +112,9 @@
         <i3dMapping id="hose" node="0>0"/>
         <i3dMapping id="coupling_normal_start" node="0>1"/>
         <i3dMapping id="coupling_extend_start" node="0>2"/>
+        <i3dMapping id="top_hook" node="0>2|0"/>
+        <i3dMapping id="bottom_lever" node="0>2|1"/>
+        <i3dMapping id="bottom_hook" node="0>2|1|0"/>
         <i3dMapping id="grabNode1" node="0>3"/>
         <i3dMapping id="componentJoint1" node="0>4"/>
         <i3dMapping id="componentJoint2" node="1>0"/>
