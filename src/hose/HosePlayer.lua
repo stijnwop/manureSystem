@@ -71,6 +71,7 @@ function HosePlayer.inj_player_update(player, dt)
         if player.hoseGrabNodeId ~= nil then
             local hose = NetworkUtil.getObject(player.lastFoundHose)
             hose:findConnector(player.hoseGrabNodeId)
+            hose:restrictPlayerMovement(player.hoseGrabNodeId, player, dt)
         end
     end
 end

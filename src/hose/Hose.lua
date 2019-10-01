@@ -23,6 +23,9 @@ Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096
 Hose.CONNECTOR_SEQUENCE = 0.6 * 0.6
 Hose.VEHICLE_CONNECTOR_SEQUENCE = 6 * 6
 
+Hose.RESPAWN_OFFSET = 0.00001
+Hose.RESPAWN_LENGTH_OFFSET = 0.5
+
 function Hose.prerequisitesPresent(specializations)
     return true
 end
@@ -55,6 +58,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isConnected", Hose.isConnected)
     SpecializationUtil.registerFunction(vehicleType, "isExtended", Hose.isExtended)
     SpecializationUtil.registerFunction(vehicleType, "findConnector", Hose.findConnector)
+    SpecializationUtil.registerFunction(vehicleType, "restrictPlayerMovement", Hose.restrictPlayerMovement)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorObjectDesc", Hose.getConnectorObjectDesc)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
 end
@@ -65,7 +69,6 @@ function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onPreDelete", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
-    SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", Hose)
@@ -101,6 +104,8 @@ function Hose:onLoad(savegame)
         local x, y, z = localToLocal(spec.targetNode, spec.mesh, 0, 0, spec.length)
         setShaderParameter(spec.mesh, "cv3", x, y, z, 0, false)
     end
+
+    spec.lastInRangePosition = { 0, 0, 0 }
 
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
@@ -271,8 +276,48 @@ function Hose:onUpdate(dt)
     end
 end
 
-function Hose:onUpdateTick(dt)
+function Hose:restrictPlayerMovement(id, player, dt)
     local spec = self.spec_hose
+    local movementIsDirty = player.networkInformation.interpolationTime.isDirty
+    if movementIsDirty then
+        local grabNode = self:getGrabNodeById(id)
+
+        if self:isAttached(grabNode) then
+            local desc, count = self:getConnectorObjectDesc(id)
+
+            if desc ~= nil then
+                local connector = desc.vehicle:getConnectorById(desc.connectorId)
+                local cx, cy, cz = getWorldTranslation(connector.node)
+                local px, py, pz = getWorldTranslation(player.rootNode)
+                local dx, dz = px - cx, pz - cz
+                local radius = dx * dx + dz * dz
+                local length = (spec.length + Hose.RESPAWN_LENGTH_OFFSET) * count
+
+                local actionRadius = length * length
+
+                if radius < actionRadius then
+                    spec.lastInRangePosition = { getTranslation(player.rootNode) }
+                else
+                    cx, cy, cz = getWorldTranslation(connector.node)
+                    px, py, pz = getWorldTranslation(player.rootNode)
+
+                    local distance = MathUtil.vector2Length(px - cx, pz - cz)
+                    local x, _, z = unpack(spec.lastInRangePosition)
+
+                    x = cx + ((px - cx) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
+                    z = cz + ((pz - cz) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
+
+                    player:moveToAbsoluteInternal(x, py, z)
+                    spec.lastInRangePosition = { x, py, z }
+
+                    if not spec.rangeRestrictionMessageShown and player == g_currentMission.player then
+                        spec.rangeRestrictionMessageShown = true
+                        g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestriction"), 5000)
+                    end
+                end
+            end
+        end
+    end
 end
 
 function Hose:findConnector(id)
@@ -348,7 +393,9 @@ function Hose:findConnector(id)
     end
 end
 
-function Hose:getConnectorObjectDesc(id)
+function Hose:getConnectorObjectDesc(id, hoseCount)
+    hoseCount = hoseCount or 1
+
     local spec = self.spec_hose
 
     for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
@@ -357,17 +404,18 @@ function Hose:getConnectorObjectDesc(id)
 
             -- Recursively get the connector object.
             if vehicle.isaHose ~= nil and vehicle:isaHose() then
-                return vehicle:getConnectorObjectDesc(desc.connectorId)
+                hoseCount = hoseCount + 1
+                return vehicle:getConnectorObjectDesc(desc.connectorId, hoseCount)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
             if connector.isConnected then
-                return desc
+                return desc, hoseCount
             end
         end
     end
 
-    return nil
+    return nil, hoseCount
 end
 
 function Hose.debugRenderRaycastNode(raycastNode, x, y, z, hasContact)
