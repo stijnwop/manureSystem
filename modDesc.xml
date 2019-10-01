@@ -13,7 +13,7 @@
             <![CDATA[ToDo]]>
         </de>
     </description>
-    <iconFilename>icon_manureSystem.png</iconFilename>
+    <iconFilename>icon.png</iconFilename>
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
@@ -33,11 +33,13 @@
         <specialization name="manureSystemPGII35" className="ManureSystemPGII35" filename="src/vehicles/vanillainserts/ManureSystemPGII35.lua"/>
         <specialization name="manureSystemKotteFRC" className="ManureSystemKotteFRC" filename="src/vehicles/vanillainserts/ManureSystemKotteFRC.lua"/>
         <specialization name="manureSystemKotteTSA" className="ManureSystemKotteTSA" filename="src/vehicles/vanillainserts/ManureSystemKotteTSA.lua"/>
+        <specialization name="manureSystemTV585" className="ManureSystemTV585" filename="src/vehicles/vanillainserts/ManureSystemTV585.lua"/>
     </specializations>
 
     <vehicleTypes>
         <type name="flexibleHose" className="Vehicle" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="baseMaterial"/>
+            <specialization name="animatedVehicle"/>
             <specialization name="washable"/>
             <specialization name="wearable"/>
             <specialization name="foliageBending"/>
@@ -60,6 +62,11 @@
         <type name="vanillaTSA" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemKotteTSA"/>
             <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
+        <!-- HOLMER DLC -->
+        <type name="dlcTV585" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemTV585"/>
         </type>
     </vehicleTypes>
 
