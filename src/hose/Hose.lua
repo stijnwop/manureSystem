@@ -366,7 +366,14 @@ function Hose:findConnector(id)
                                     local rx, ry, rz = getWorldTranslation(connector.node)
                                     local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
-                                    if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance then
+                                    local connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
+                                    if not connectorInRange and connector.isParkPlace then
+                                        rx, ry, rz = getWorldTranslation(connector.parkPlaceLengthNode)
+                                        distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                                        connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
+                                    end
+
+                                    if connectorInRange then
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
                                         spec.foundConnectorId = connectorId
                                         spec.foundConnectorIsConnected = connector.isConnected
