@@ -31,27 +31,53 @@ source(Utils.getFilename("src/utils/ManureSystemXMLUtil.lua", directory))
 source(Utils.getFilename("src/hose/HosePlayer.lua", directory))
 
 local manureSystem
+local vehicles = {}
 
 local function isEnabled()
     return manureSystem ~= nil
 end
 
-function init()
-    g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")
+local function loadInsertionVehicles()
+    local xmlFile = loadXMLFile("ManureSystemInsertionVehicles", Utils.getFilename("resources/insertionVehicles.xml", directory))
 
-    Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
-    Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
-    Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadedItems)
+    local i = 0
+    while true do
+        local key = ("vehicles.vehicle(%d)"):format(i)
+        if not hasXMLProperty(xmlFile, key) then
+            break
+        end
 
-    FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
+        local entry = {}
+        entry.xml = getXMLString(xmlFile, key .. ".xml")
+        entry.replaceTypeName = modName .. "." .. getXMLString(xmlFile, key .. ".replaceTypeName")
+        entry.copySpecializations = hasXMLProperty(xmlFile, key .. ".copySpecializations")
 
-    VehicleTypeManager.validateVehicleTypes = Utils.prependedFunction(VehicleTypeManager.validateVehicleTypes, validateVehicleTypes)
+        entry.specializations = {}
+        if entry.copySpecializations then
+            local s = 0
+            while true do
+                local specKey = ("%s.copySpecializations.specialization(%d)"):format(key, s)
+                if not hasXMLProperty(xmlFile, specKey) then
+                    break
+                end
 
-    --BaseMission.loadVehicle = Utils.overwrittenFunction(BaseMission.loadVehicle, loadVehicle)
-    Vehicle.load = Utils.overwrittenFunction(Vehicle.load, vehicleLoad)
+                local name = getXMLString(xmlFile, specKey .. "#name")
+                table.insert(entry.specializations, name)
+
+                s = s + 1
+            end
+
+        end
+
+        vehicles[entry.xml] = entry
+
+        i = i + 1
+    end
+
+    delete(xmlFile)
 end
 
-function loadMission(mission)
+local function loadMission(mission)
     assert(g_manureSystem == nil)
 
     manureSystem = ManureSystem:new(mission, g_inputBinding, g_i18n, directory, modName)
@@ -61,7 +87,7 @@ function loadMission(mission)
     addModEventListener(manureSystem)
 end
 
-function loadedMission(mission, node)
+local function loadedMission(mission, node)
     if not isEnabled() then
         return
     end
@@ -73,7 +99,7 @@ function loadedMission(mission, node)
     g_manureSystem:onMissionLoaded(mission)
 end
 
-function loadedItems(mission)
+local function loadedItems(mission)
     if not isEnabled() then
         return
     end
@@ -89,7 +115,7 @@ function loadedItems(mission)
     end
 end
 
-function saveToXMLFile(missionInfo)
+local function saveToXMLFile(missionInfo)
     if not isEnabled() then
         return
     end
@@ -105,28 +131,39 @@ function saveToXMLFile(missionInfo)
     end
 end
 
-function validateVehicleTypes(vehicleTypeManager)
+local function validateVehicleTypes(vehicleTypeManager)
     ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
 end
 
-local vehicles = {
-    ["data/vehicles/samsonAgro/pgII20/pgII20.xml"] = { typeName = "vanillaPGII20" },
-    ["data/vehicles/samsonAgro/pgII25m/pgII25m.xml"] = { typeName = "vanillaPGII25" },
-    ["data/vehicles/samsonAgro/pgII35m/pgII35m.xml"] = { typeName = "vanillaPGII35" },
-    ["data/vehicles/kotte/frc/frc.xml"] = { typeName = "vanillaFRC" },
-    ["data/vehicles/kotte/tsa/tsa.xml"] = { typeName = "vanillaTSA" },
-    ["data/vehicles/kotte/ve8000/ve8000.xml"] = { typeName = "vanillaVE8000" },
-    ["data/vehicles/joskin/modulo/modulo.xml"] = { typeName = "vanillaModulo" },
-    ["zunhammer/TV585/TV585.xml"] = { typeName = "dlcTV585" },
-}
-
-function vehicleLoad(self, superFunc, vehicleData, ...)
+local function vehicleLoad(self, superFunc, vehicleData, ...)
     local _, baseDir = Utils.getModNameAndBaseDirectory(vehicleData.filename)
     local xmlFilename = vehicleData.filename:gsub(baseDir, "")
 
     if vehicles[xmlFilename] ~= nil then
         local data = vehicles[xmlFilename]
-        local replacementType = modName .. "." .. data.typeName
+        local replacementType = data.replaceTypeName
+
+        if data.copySpecializations then
+            local orgEntry = g_vehicleTypeManager:getVehicleTypeByName(vehicleData.typeName)
+            if orgEntry ~= nil then
+                local stringParts = StringUtil.splitString(".", vehicleData.typeName)
+                if #stringParts ~= 1 then
+                    local typeModName = unpack(stringParts)
+
+                    for _, name in pairs(data.specializations) do
+                        local specName = typeModName .. "." .. name
+                        local spec = g_specializationManager:getSpecializationObjectByName(specName)
+
+                        if spec ~= nil then
+                            g_vehicleTypeManager:addSpecialization(replacementType, specName)
+                        end
+                    end
+                end
+            end
+
+            data.copySpecializations = false
+        end
+
         local typeEntry = g_vehicleTypeManager:getVehicleTypeByName(replacementType)
         if typeEntry ~= nil then
             vehicleData.typeName = replacementType
@@ -135,6 +172,22 @@ function vehicleLoad(self, superFunc, vehicleData, ...)
     end
 
     return superFunc(self, vehicleData, ...)
+end
+
+local function init()
+    loadInsertionVehicles()
+
+    g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")
+
+    Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
+    Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
+    Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadedItems)
+
+    FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
+
+    VehicleTypeManager.validateVehicleTypes = Utils.prependedFunction(VehicleTypeManager.validateVehicleTypes, validateVehicleTypes)
+
+    Vehicle.load = Utils.overwrittenFunction(Vehicle.load, vehicleLoad)
 end
 
 init()

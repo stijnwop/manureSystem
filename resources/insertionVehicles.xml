@@ -1,0 +1,41 @@
+<vehicles>
+    <vehicle>
+        <xml>data/vehicles/samsonAgro/pgII20/pgII20.xml</xml>
+        <replaceTypeName>vanillaPGII20</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/samsonAgro/pgII25m/pgII25m.xml</xml>
+        <replaceTypeName>vanillaPGII25</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/samsonAgro/pgII35m/pgII35m.xml</xml>
+        <replaceTypeName>vanillaPGII35</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kotte/frc/frc.xml</xml>
+        <replaceTypeName>vanillaFRC</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kotte/tsa/tsa.xml</xml>
+        <replaceTypeName>vanillaTSA</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kotte/ve8000/ve8000.xml</xml>
+        <replaceTypeName>vanillaVE8000</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/joskin/modulo/modulo.xml</xml>
+        <replaceTypeName>vanillaModulo</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>zunhammer/TV585/TV585.xml</xml>
+        <replaceTypeName>dlcTV585</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>holmer/terraVariant435/terraVariant435.xml</xml>
+        <replaceTypeName>dlcTerraVariant435</replaceTypeName>
+        <copySpecializations>
+            <specialization name="crabSteeringAttacher"/>
+        </copySpecializations>
+    </vehicle>
+</vehicles>

@@ -36,6 +36,7 @@
         <specialization name="manureSystemKotteVE8000" className="ManureSystemKotteVE8000" filename="src/vehicles/vanillainserts/ManureSystemKotteVE8000.lua"/>
         <specialization name="manureSystemModulo" className="ManureSystemModulo" filename="src/vehicles/vanillainserts/ManureSystemModulo.lua"/>
         <specialization name="manureSystemTV585" className="ManureSystemTV585" filename="src/vehicles/vanillainserts/ManureSystemTV585.lua"/>
+        <specialization name="manureSystemTerraVariant435" className="ManureSystemTerraVariant435" filename="src/vehicles/vanillainserts/ManureSystemTerraVariant435.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -75,6 +76,17 @@
         <!-- HOLMER DLC -->
         <type name="dlcTV585" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemTV585"/>
+        </type>
+        <type name="dlcTerraVariant435" parent="tractorCrabSteering" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="fillVolume"/>
+            <specialization name="dischargeable"/>
+            <specialization name="foldable"/>
+            <specialization name="fillTriggerVehicle"/>
+            <specialization name="powerConsumer"/>
+            <specialization name="manureSystemTerraVariant435"/>
+            <specialization name="manureSystemFillArm"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
         </type>
     </vehicleTypes>
 
