@@ -136,7 +136,7 @@ end
 function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distance)
     if hitObjectId ~= 0 then
         if hitObjectId == g_currentMission.terrainRootNode then
-            return false
+            return true
         end
 
         local object = g_currentMission:getNodeObject(hitObjectId)
