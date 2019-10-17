@@ -22,6 +22,7 @@ function HosePlayer:new(isClient, isServer, mission, input)
     Player.readUpdateStream = Utils.appendedFunction(Player.readUpdateStream, HosePlayer.inj_player_readUpdateStream)
     Player.writeUpdateStream = Utils.appendedFunction(Player.writeUpdateStream, HosePlayer.inj_player_writeUpdateStream)
     Player.update = Utils.appendedFunction(Player.update, HosePlayer.inj_player_update)
+    Player.onLeave = Utils.appendedFunction(Player.onLeave, HosePlayer.inj_player_onLeave)
 
     Player.updateActionEvents = Utils.appendedFunction(Player.updateActionEvents, HosePlayer.inj_player_updateActionEvents)
     Player.registerActionEvents = Utils.prependedFunction(Player.registerActionEvents, HosePlayer.inj_player_registerActionEvents)
@@ -72,6 +73,15 @@ function HosePlayer.inj_player_update(player, dt)
             local hose = NetworkUtil.getObject(player.lastFoundHose)
             hose:findConnector(player.hoseGrabNodeId)
             hose:restrictPlayerMovement(player.hoseGrabNodeId, player, dt)
+        end
+    end
+end
+
+function HosePlayer.inj_player_onLeave(player)
+    if player.isServer and player.lastFoundObjectIsHose then
+        local hose = NetworkUtil.getObject(player.lastFoundHose)
+        if player.hoseGrabNodeId ~= nil then
+            hose:drop(player.hoseGrabNodeId, player)
         end
     end
 end
