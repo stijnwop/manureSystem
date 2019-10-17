@@ -178,3 +178,11 @@ function ManureSystemCouplingStrategy:delete(connector)
         delete(connector.parkPlaceLengthNode)
     end
 end
+
+function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
+    self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
+end
+
+function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)
+    setXMLBool(xmlFile, key .. "#hasOpenManureFlow", connector.hasOpenManureFlow)
+end
