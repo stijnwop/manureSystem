@@ -28,6 +28,14 @@
         <replaceTypeName>vanillaModulo</replaceTypeName>
     </vehicle>
     <vehicle>
+        <xml>data/vehicles/zunhammer/18500PE/18500PE.xml</xml>
+        <replaceTypeName>vanilla18500PE</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/veenhuis/premiumIntegral30000/premiumIntegral30000.xml</xml>
+        <replaceTypeName>vanillaPremiumIntegral30000</replaceTypeName>
+    </vehicle>
+    <vehicle>
         <xml>zunhammer/TV585/TV585.xml</xml>
         <replaceTypeName>dlcTV585</replaceTypeName>
     </vehicle>
