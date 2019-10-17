@@ -54,8 +54,10 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
 
         local hoseId = getXMLInt(xmlFile, key .. "#id")
         if self:connectorObjectExists(hoseId) then
-            local hose = self:getConnectorObject(hoseId)
-            hose:onMissionLoadFromSavegame(key, xmlFile)
+            local object = self:getConnectorObject(hoseId)
+            if object.isaHose ~= nil and object:isaHose() then
+                object:onMissionLoadFromSavegame(key, xmlFile)
+            end
         end
 
         i = i + 1
@@ -98,9 +100,14 @@ function ManureSystem:getManureSystemSamples()
     return self.samples
 end
 
+local sortByConfigFileName = function(arg1, arg2)
+    return arg1.configFileName > arg2.configFileName
+end
+
 function ManureSystem:addConnectorObject(object)
     if not ListUtil.hasListElement(self.manureSystemConnectors, object) then
         ListUtil.addElementToList(self.manureSystemConnectors, object)
+        table.sort(self.manureSystemConnectors, sortByConfigFileName)
     end
 end
 
