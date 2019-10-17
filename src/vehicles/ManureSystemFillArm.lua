@@ -56,7 +56,7 @@ end
 
 function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
-    if isActiveForInputIgnoreSelection and self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
+    if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
         local fillArm = spec.fillArm
         if fillArm.isRaycastAllowed then
             fillArm.lastRaycastDistance = 0
