@@ -10,6 +10,7 @@
 ManureSystemCouplingStrategy = {}
 
 ManureSystemCouplingStrategy.EMPTY_LITER_PER_SECOND = 25
+ManureSystemCouplingStrategy.MAX_TIME_SCALE = 0.25
 
 ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT = 1
 ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT = -1
@@ -56,6 +57,11 @@ local sortConnectorsByManureFlowState = function(con1, con2)
     return con1.hasOpenManureFlow and not con2.hasOpenManureFlow
 end
 
+function ManureSystemCouplingStrategy:getCalculatedMaxTime(amountOfHoses)
+    local orgMaxTime = self.object:getOriginalPumpMaxTime()
+    return orgMaxTime + orgMaxTime * ManureSystemCouplingStrategy.MAX_TIME_SCALE * amountOfHoses
+end
+
 function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local object = self.object
 
@@ -69,16 +75,20 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
                 local connector1, connector2 = unpack(connectors, 1, 2)
                 if connector1.isConnected and not connector1.isParkPlace
                     and connector2.isConnected and not connector2.isParkPlace then
-                    local desc1 = self:getConnectorObjectDesc(object, connector1)
-                    local desc2 = self:getConnectorObjectDesc(object, connector2)
+                    local desc1, amountOfHoses1 = self:getConnectorObjectDesc(object, connector1)
+                    local desc2, amountOfHoses2 = self:getConnectorObjectDesc(object, connector2)
 
                     if desc1 ~= nil and desc2 ~= nil then
                         object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
                         object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+
+                        local impactTime = self:getCalculatedMaxTime(amountOfHoses1 + amountOfHoses2)
+                        object:setPumpMaxTime(impactTime)
                     else
                         if object:getPumpTargetObject() ~= nil and object:getPumpSourceObject() ~= nil then
                             object:setPumpTargetObject(nil, nil)
                             object:setPumpSourceObject(nil, nil)
+                            object:setPumpMaxTime(object:getOriginalPumpMaxTime())
                         end
                     end
                 end
@@ -94,15 +104,18 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
     for _, connector in ipairs(connectors) do
         if connector.isConnected and not connector.isParkPlace then
-            local desc = self:getConnectorObjectDesc(object, connector)
+            local desc, amountOfHoses = self:getConnectorObjectDesc(object, connector)
 
             if object.spec_manureSystemPumpMotor ~= nil then
                 if desc ~= nil then
                     object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
                     object:setPumpSourceObject(object, connector.fillUnitIndex)
+                    local impactTime = self:getCalculatedMaxTime(amountOfHoses)
+                    object:setPumpMaxTime(impactTime)
                 else
                     if object:getPumpTargetObject() ~= nil then
                         object:setPumpTargetObject(nil, nil)
+                        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
                     end
                 end
             end
@@ -123,17 +136,17 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 end
 
 function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
-    local desc = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
+    local desc, count = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
 
     if desc ~= nil and desc.vehicle ~= object then
         local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
         if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-            return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }
+            return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, count
         end
     end
 
-    return nil
+    return nil, count
 end
 
 function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
