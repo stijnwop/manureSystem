@@ -41,6 +41,9 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getPumpTargetObject", ManureSystemPumpMotor.getPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "setPumpSourceObject", ManureSystemPumpMotor.setPumpSourceObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpSourceObject", ManureSystemPumpMotor.getPumpSourceObject)
+    SpecializationUtil.registerFunction(vehicleType, "setPumpMaxTime", ManureSystemPumpMotor.setPumpMaxTime)
+    SpecializationUtil.registerFunction(vehicleType, "getPumpMaxTime", ManureSystemPumpMotor.getPumpMaxTime)
+    SpecializationUtil.registerFunction(vehicleType, "getOriginalPumpMaxTime", ManureSystemPumpMotor.getOriginalPumpMaxTime)
 end
 
 function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
@@ -80,6 +83,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpEfficiency = {
         currentLoad = 0,
         currentTime = 0,
+        orgMaxTime = maxTime,
         maxTime = maxTime,
         litersPerSecond = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond"), 100)
     }
@@ -454,6 +458,18 @@ end
 
 function ManureSystemPumpMotor:getPumpSourceObject()
     return self.spec_manureSystemPumpMotor.sourceObject, self.spec_manureSystemPumpMotor.sourceFillUnitIndex
+end
+
+function ManureSystemPumpMotor:getOriginalPumpMaxTime()
+    return self.spec_manureSystemPumpMotor.pumpEfficiency.orgMaxTime
+end
+
+function ManureSystemPumpMotor:setPumpMaxTime(maxTime)
+    self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime = maxTime
+end
+
+function ManureSystemPumpMotor:getPumpMaxTime()
+    return self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime
 end
 
 function ManureSystemPumpMotor:getIsTurnedOn(superFunc)
