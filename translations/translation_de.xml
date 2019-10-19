@@ -15,15 +15,25 @@
         <text name="action_toggleManureFlowStateOpen" text="Offen"/>
         <text name="action_toggleManureFlowStateClose" text="Geschlossen"/>
 
-
         <text name="action_activatePump" text="Pumpe von %s einschalten"/>
         <text name="action_deactivatePump" text="Pumpe von %s ausschalten"/>
 
         <text name="action_directionOut" text="Ändere Pumprichtung in: entleeren"/>
         <text name="action_directionIn" text="Ändere Pumprichtung in: befüllen"/>
+        <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
+        <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
+
+        <!--Warnings-->
+        <text name="warning_parkingPlaceTooSmall" text="The %sm parking place is too small for the %sm hose!"/>
+        <text name="warning_hoseRangeRestriction" text="The hose range restriction won't allow you to go any further!"/>
 
         <!--Placeables-->
         <text name="shopItem_slurryLagoon" text="Güllelagune"/>
         <text name="function_slurryLagoon" text="In einer Güllelagune können große Mengen Gülle gelagert werden."/>
+        <text name="action_enableMixer" text="Enable mixer"/>
+
+        <!--Hose Configuration-->
+        <text name="configuration_hose" text="Change hose type."/>
+        <text name="configuration_valueExtend" text="Extension"/>
     </texts>
 </l10n>

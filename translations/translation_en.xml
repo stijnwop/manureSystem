@@ -10,16 +10,18 @@
         <text name="input_MS_ACTIVATE_PUMP" text="Activate/deactivate pump"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Toggle pump direction"/>
 
+        <!--Actions-->
         <text name="action_toggleManureFlow" text="%s manure flow"/>
         <text name="action_toggleManureFlowStateOpen" text="Open"/>
         <text name="action_toggleManureFlowStateClose" text="Close"/>
-
 
         <text name="action_activatePump" text="Activate pump of %s"/>
         <text name="action_deactivatePump" text="Deactivate pump of %s"/>
 
         <text name="action_directionOut" text="Change pump direction to: emptying"/>
         <text name="action_directionIn" text="Change pump direction to: filling"/>
+        <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
+        <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
 
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="The %sm parking place is too small for the %sm hose!"/>
@@ -28,6 +30,7 @@
         <!--Placeables-->
         <text name="shopItem_slurryLagoon" text="Slurry Lagoon"/>
         <text name="function_slurryLagoon" text="With a slurry lagoon you're able to store large quantities of slurry."/>
+        <text name="action_enableMixer" text="Enable mixer"/>
 
         <!--Hose Configuration-->
         <text name="configuration_hose" text="Change hose type."/>
