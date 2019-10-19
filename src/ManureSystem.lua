@@ -22,6 +22,7 @@ function ManureSystem:new(mission, input, i18n, modDirectory, modName)
     self.connectorManager = ManureSystemConnectorManager:new()
     self.fillArmManager = ManureSystemFillArmManager:new()
     self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
+    self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
     self.samples = {}
@@ -34,6 +35,7 @@ end
 
 function ManureSystem:delete()
     self.player:delete()
+    self.husbandryModuleLiquidManure:delete()
 
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()
@@ -101,7 +103,10 @@ function ManureSystem:getManureSystemSamples()
 end
 
 local sortByConfigFileName = function(arg1, arg2)
-    return arg1.configFileName > arg2.configFileName
+    local str1 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg1) or ""
+    local str2 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg2) or ""
+
+    return arg1.configFileName .. tostring(str1) > arg2.configFileName .. tostring(str2)
 end
 
 function ManureSystem:addConnectorObject(object)
