@@ -404,7 +404,7 @@ function ManureSystemPumpMotor:handlePump(dt)
             if sourceFillLevel > 0 then
                 local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
 
-                if targetObject:getFillUnitAllowsFillType(sourceFillUnitIndex, sourceFillType) then
+                if targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
                     local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
                     self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
                 else
