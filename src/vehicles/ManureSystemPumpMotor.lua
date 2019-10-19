@@ -347,8 +347,12 @@ function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
 
         local actionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
         if actionEvent ~= nil then
-            local text = spec.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
-            g_inputBinding:setActionEventText(actionEvent.actionEventId, text)
+            local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
+            if self:isStandalonePump() then
+                pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
+            end
+
+            g_inputBinding:setActionEventText(actionEvent.actionEventId, pumpDirectionText)
         end
     end
 end
@@ -523,6 +527,10 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePump, GS_PRIO_HIGH)
 
             local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
+            if self:isStandalonePump() then
+                pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
+            end
+
             g_inputBinding:setActionEventText(actionEventIdTogglePumpDirection, pumpDirectionText)
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePumpDirection, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePumpDirection, GS_PRIO_NORMAL)
