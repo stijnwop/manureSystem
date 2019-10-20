@@ -23,7 +23,7 @@ function ManureSystemTV585:onPreLoad(savegame)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "exactFillRootNode") -- colPart3
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#position", "0 0.2 0")
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "-90 0 0")
-    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.5)
 
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 197)
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1150)

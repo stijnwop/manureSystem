@@ -24,7 +24,7 @@ function ManureSystemModulo:onPreLoad(savegame)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|3|1|0|0") -- colPart1
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#position", "-0.725 0.04 -0.35")
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "0 90 0")
-    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.5)
 
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 300)
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1250)

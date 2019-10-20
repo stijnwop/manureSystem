@@ -23,7 +23,7 @@ function ManureSystemPGII35:onPreLoad(savegame)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|5|0|0|0|0|0|1") -- decalsBoltsArmEnd
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#position", "0 0 0")
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "0 0 0")
-    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.5)
 
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 300)
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1250)

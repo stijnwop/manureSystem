@@ -22,7 +22,7 @@ function ManureSystemTerraVariant435:onPreLoad(savegame)
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#createNode", true)
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|15|0|0|0|4|1") -- colPart3
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "180 0 0")
-    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.25)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.5)
 
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 197)
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1150)
