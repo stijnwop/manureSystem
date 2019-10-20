@@ -197,5 +197,5 @@ function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
 end
 
 function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)
-    setXMLBool(xmlFile, key .. "#hasOpenManureFlow", connector.hasOpenManureFlow)
+    setXMLBool(xmlFile, key .. "#hasOpenManureFlow", connector.isConnected and connector.hasOpenManureFlow)
 end
