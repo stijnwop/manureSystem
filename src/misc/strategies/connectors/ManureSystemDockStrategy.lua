@@ -74,8 +74,19 @@ function ManureSystemDockStrategy:onUpdate(dt)
             if inRange then
                 local connector = object:getConnectorById(connectorId)
                 if not connector.isParkPlace then
+                    local fillObject = object
+                    local fillUnitIndex = connector.fillUnitIndex
                     local fillArm = dockingArmObject:getFillArm()
-                    dockingArmObject:setPumpTargetObject(object, connector.fillUnitIndex)
+
+                    if connector.isStationary then
+                        local desc = self:getStationaryConnectorDesc(connector)
+                        if desc ~= nil then
+                            fillObject = desc.vehicle
+                            fillUnitIndex = desc.fillUnitIndex
+                        end
+                    end
+
+                    dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
                     dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
                     object:setIsConnected(connectorId, inRange, fillArm.id, dockingArmObject)
 
@@ -100,6 +111,26 @@ function ManureSystemDockStrategy:onUpdate(dt)
             end
         end
     end
+end
+
+function ManureSystemDockStrategy:getStationaryConnectorDesc(connector)
+    local object = self.object
+
+    if connector.stationaryConnectorId ~= nil then
+        local stationaryConnector = object:getConnectorById(connector.stationaryConnectorId)
+
+        if stationaryConnector.connectedObject ~= nil then
+            local desc, count = stationaryConnector.connectedObject:getConnectorObjectDesc(stationaryConnector.connectedNodeId)
+            if desc ~= nil and desc.vehicle ~= object then
+                local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
+                if stationaryConnector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
+                    return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, count
+                end
+            end
+        end
+    end
+
+    return nil
 end
 
 function ManureSystemDockStrategy:getDockArmInRange(object)
@@ -238,6 +269,9 @@ function ManureSystemDockStrategy:load(connector, xmlFile, key)
     else
         addTrigger(connector.node, "dockingArmEnteredTriggerCallback", self)
     end
+
+    connector.isStationary = Utils.getNoNil(getXMLBool(xmlFile, key .. "#isStationary"), false)
+    connector.stationaryConnectorId = getXMLInt(xmlFile, key .. "#stationaryConnectorId")
 
     return true
 end
