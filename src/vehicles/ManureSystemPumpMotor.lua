@@ -220,6 +220,11 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             if spec.pumpEfficiency.currentTime < spec.pumpEfficiency.maxTime then
                 spec.pumpEfficiency.currentTime = math.min(spec.pumpEfficiency.currentTime + dt, spec.pumpEfficiency.maxTime)
             end
+
+            -- Reset the stop timer for the motor, else it will turn of the vehicle even in manual ignition mode.
+            if self.spec_motorized ~= nil then
+                self.spec_motorized.motorStopTimer = self.spec_motorized.motorStopTimerDuration
+            end
         else
             if spec.pumpEfficiency.currentTime > 0 then
                 spec.pumpEfficiency.currentTime = math.max(spec.pumpEfficiency.currentTime - dt, 0)
