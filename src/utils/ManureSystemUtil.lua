@@ -23,15 +23,18 @@ function ManureSystemUtil.getSpecTable(vehicle, name)
 end
 
 ---Gets the first found physics node when the root node isn't a rigid body.
-function ManureSystemUtil.getFirstPhysicsNode(node)
-    if getRigidBodyType(node):lower() == ManureSystemUtil.NO_RIGID_BODY then
-        for i = 1, getNumOfChildren(node) do
-            local childNode = getChildAt(node, i - 1)
-            if getRigidBodyType(childNode):lower() ~= ManureSystemUtil.NO_RIGID_BODY then
-                return childNode
-            end
+function ManureSystemUtil.getFirstPhysicsNode(nodeId)
+    if getRigidBodyType(nodeId):lower() ~= ManureSystemUtil.NO_RIGID_BODY then
+        return nodeId
+    end
+
+    for i = 0, getNumOfChildren(nodeId) - 1 do
+        local tmp = ManureSystemUtil.getFirstPhysicsNode(getChildAt(nodeId, i))
+
+        if tmp ~= 0 then
+            return tmp
         end
     end
 
-    return node
+    return 0
 end
