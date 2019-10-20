@@ -190,6 +190,10 @@ function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEve
             self:setIsManureFlowOpen(id, state, false, noEventSend)
         end
 
+        if not state and connector.hasOpenManureFlow then
+            self:setIsManureFlowOpen(id, state, true, noEventSend)
+        end
+
         connector.isConnected = state
         connector.connectedObject = hose
         connector.connectedNodeId = grabNodeId
