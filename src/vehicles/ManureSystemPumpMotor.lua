@@ -222,8 +222,9 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             end
 
             -- Reset the stop timer for the motor, else it will turn of the vehicle even in manual ignition mode.
-            if self.spec_motorized ~= nil then
-                self.spec_motorized.motorStopTimer = self.spec_motorized.motorStopTimerDuration
+            local rootVehicle = self:getRootVehicle()
+            if rootVehicle.spec_motorized ~= nil then
+                rootVehicle.spec_motorized.motorStopTimer = rootVehicle.spec_motorized.motorStopTimerDuration
             end
         else
             if spec.pumpEfficiency.currentTime > 0 then
