@@ -73,6 +73,7 @@ function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onPreDelete", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", Hose)
@@ -278,6 +279,10 @@ function Hose:onUpdate(dt)
 
         spec.hosesToLoadFromNetwork = nil
     end
+end
+
+function Hose:onUpdateTick(dt)
+    local spec = self.spec_hose
 
     if self.isServer then
         local function hasBothSidesAttached()
@@ -312,7 +317,10 @@ function Hose:onUpdate(dt)
                             local length = (spec.length + Hose.RESPAWN_LENGTH_OFFSET) * count
 
                             if distance > length then
-                                Logger.info("Restriction detach distance: ", distance)
+                                if g_manureSystem.debug then
+                                    Logger.info("Restriction detach distance: ", distance)
+                                end
+
                                 self:detach(grabNodeId, connector1.id, vehicle)
                             end
                         end
@@ -594,7 +602,7 @@ function Hose:drop(id, player, noEventSend)
     grabNode.player = nil
 
     if self.isServer then
-        if grabNode.jointIndex ~= 0 then
+        if grabNode.jointIndex ~= nil then
             removeJoint(grabNode.jointIndex)
         end
 
@@ -602,7 +610,7 @@ function Hose:drop(id, player, noEventSend)
         setCollisionMask(componentNode, grabNode.componentCollisionMask)
     end
 
-    grabNode.jointIndex = 0
+    grabNode.jointIndex = nil
 
     player.isCarryingObject = false
     player.hoseGrabNodeId = nil
@@ -670,18 +678,28 @@ function Hose:connectGrabNode(grabNode, connector, vehicle)
 
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
+        local jointTransform = createTransformGroup("jointTransform")
+        link(connector.node, jointTransform)
+
+        local x, y, z = localToLocal(connector.node, componentNode, 0, 0, 0)
+        setTranslation(jointTransform, x, y, z)
+        setRotation(jointTransform, 0, 0, 0)
 
         local desc = {}
         desc.actor1 = vehicle.rootNode
         desc.actor2 = componentNode
-        desc.transform = connector.node
+        desc.transform = jointTransform
 
-        local x, y, z = localToLocal(connector.node, componentNode, 0, 0, 0)
         local wx, wy, wz = localToWorld(componentNode, x, y, z)
-        local wqx, wqy, wqz, wqw = mathEulerToQuaternion(localRotationToWorld(componentNode, 0, 0, 0))
+        local rx, ry, rz = localRotationToWorld(jointTransform, 0, 0, 0)
+        if grabNode.updateHoseTargetRotation then
+            rx, ry, rz = localRotationToWorld(jointTransform, 0, math.pi, 0)
+        end
 
+        local wqx, wqy, wqz, wqw = mathEulerToQuaternion(rx, ry, rz)
         self:setWorldPositionQuaternion(wx, wy, wz, wqx, wqy, wqz, wqw, grabNode.componentIndex, true)
 
+        grabNode.jointTransform = jointTransform
         grabNode.jointIndex = self:constructConnectorJoint(desc)
 
         -- Restore joint transform position
@@ -723,8 +741,13 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
     grabNode.state = Hose.STATE_DETACHED
 
     if self.isServer then
-        if grabNode.jointIndex ~= 0 then
+        if grabNode.jointIndex ~= nil then
             removeJoint(grabNode.jointIndex)
+        end
+
+        if grabNode.jointTransform ~= nil then
+            delete(grabNode.jointTransform)
+            grabNode.jointTransform = nil
         end
 
         local jointDesc = self.componentJoints[grabNode.componentJointIndex]
@@ -744,7 +767,7 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
         self:computeCatmullSpline()
     end
 
-    grabNode.jointIndex = 0
+    grabNode.jointIndex = nil
 
     vehicle:setIsConnected(connector.id, false, nil, nil, true)
     spec.grabNodesToObjects[grabNode.id] = nil
@@ -798,7 +821,7 @@ function Hose:parkHose(connector, vehicle)
 
         local ox, oy, oz = 0, 0, 0
         if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
-            oy = math.rad(180)
+            oy = math.pi
         end
 
         local rx, ry, rz = localRotationToWorld(parkNode, ox, oy, oz)
@@ -856,12 +879,13 @@ function Hose:unparkHose(connector, vehicle)
     local excludedComponentIds = {}
     for id, grabNode in ipairs(self:getGrabNodes()) do
         if self.isServer then
-            if grabNode.jointIndex ~= 0 then
+            if grabNode.jointIndex ~= nil then
                 removeJoint(grabNode.jointIndex)
             end
 
             if grabNode.jointTransform ~= nil then
                 delete(grabNode.jointTransform)
+                grabNode.jointTransform = nil
             end
             excludedComponentIds[grabNode.componentIndex] = true
         end
@@ -1051,7 +1075,7 @@ function Hose.loadGrabNodes(self)
             grabNode.player = nil
 
             if self.isServer then
-                grabNode.jointIndex = 0
+                grabNode.jointIndex = nil
                 grabNode.jointTransform = nil
             end
 
