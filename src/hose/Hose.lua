@@ -9,6 +9,8 @@
 ---@class Hose
 Hose = {}
 
+Hose.MOD_NAME = g_currentModName
+
 Hose.STATE_ATTACHED = 0
 Hose.STATE_DETACHED = 1
 Hose.STATE_CONNECTED = 2
@@ -61,6 +63,8 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "restrictPlayerMovement", Hose.restrictPlayerMovement)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorObjectDesc", Hose.getConnectorObjectDesc)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
+    SpecializationUtil.registerFunction(vehicleType, "constructPlayerJoint", Hose.constructPlayerJoint)
+    SpecializationUtil.registerFunction(vehicleType, "onPlayerJointBreak", Hose.onPlayerJointBreak)
 end
 
 function Hose.registerEventListeners(vehicleType)
@@ -76,8 +80,7 @@ function Hose.registerEventListeners(vehicleType)
 end
 
 function Hose:onLoad(savegame)
-    self.spec_hose = ManureSystemUtil.getSpecTable(self, "hose")
-
+    self.spec_hose = self[("spec_%s.hose"):format(Hose.MOD_NAME)]
     local spec = self.spec_hose
 
     spec.connectorType = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
@@ -147,11 +150,12 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
             local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(grabNodeId - 1)
 
             if desc ~= nil then
-                local connector = desc.vehicle:getConnectorById(desc.connectorId)
+                local vehicle = desc.vehicle
+                local connector = vehicle:getConnectorById(desc.connectorId)
 
                 setXMLInt(xmlFile, saveKey .. "#grabNodeId", grabNodeId)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
-                local objectId = g_manureSystem:getConnectorObjectId(desc.vehicle)
+                local objectId = g_manureSystem:getConnectorObjectId(vehicle)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
 
                 -- No need to store anything else.
@@ -274,6 +278,49 @@ function Hose:onUpdate(dt)
 
         spec.hosesToLoadFromNetwork = nil
     end
+
+    if self.isServer then
+        local function hasBothSidesAttached()
+            local count = 0
+            for id, _ in ipairs(spec.grabNodes) do
+                if spec.grabNodesToObjects[id] ~= nil then
+                    count = count + 1
+                end
+            end
+            return count >= 2
+        end
+
+        if hasBothSidesAttached() then
+            local grabNodeId = next(spec.grabNodesToObjects)
+            local desc = spec.grabNodesToObjects[grabNodeId]
+
+            if desc ~= nil then
+                local vehicle = desc.vehicle
+                local connector1 = vehicle:getConnectorById(desc.connectorId)
+
+                if not connector1.isParkPlace then
+                    local connectorDesc, count = self:getConnectorObjectDesc(grabNodeId)
+
+                    if connectorDesc ~= nil then
+                        local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed() > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed() > 2
+                        if doCheck then
+                            local connector2 = connectorDesc.vehicle:getConnectorById(connectorDesc.connectorId)
+                            local ax, _, az = getWorldTranslation(connector1.node)
+                            local bx, _, bz = getWorldTranslation(connector2.node)
+
+                            local distance = MathUtil.vector2Length(ax - bx, az - bz)
+                            local length = (spec.length + Hose.RESPAWN_LENGTH_OFFSET) * count
+
+                            if distance > length then
+                                Logger.info("Restriction detach distance: ", distance)
+                                self:detach(grabNodeId, connector1.id, vehicle)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 
 function Hose:restrictPlayerMovement(id, player, dt)
@@ -344,7 +391,7 @@ function Hose:findConnector(id)
                     local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
                     if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                        or object:isa(Placeable) and distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE * 2 then
+                        or object:isa(Placeable) then
 
                         if object.isaHose ~= nil and object:isaHose() then
                             for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
@@ -507,59 +554,6 @@ function Hose:computeCatmullSpline()
     Hose.setCatmullPoint(spec.mesh, "cv4", p3x, p3y, p3z, 1)
 end
 
-local function constructPlayerJoint(jointDesc, mass)
-    local constructor = JointConstructor:new()
-    constructor:setActors(jointDesc.actor1, jointDesc.actor2)
-    --constructor:setJointTransforms(jointDesc.anchor1, jointDesc.actor2)
-    constructor:setEnableCollision(false)
-
-    local mx, my, mz = getCenterOfMass(jointDesc.actor2)
-    local wx, wy, wz = localToWorld(jointDesc.actor2, mx, my, mz)
-    constructor:setJointWorldPositions(wx, wy, wz, wx, wy, wz)
-    local nx, ny, nz = localDirectionToWorld(jointDesc.actor2, 1, 0, 0)
-    constructor:setJointWorldAxes(nx, ny, nz, nx, ny, nz)
-
-    local yx, yy, yz = localDirectionToWorld(jointDesc.actor2, 0, 1, 0)
-    constructor:setJointWorldNormals(yx, yy, yz, yx, yy, yz)
-
-    setTranslation(jointDesc.transform, -2, -0.4, 0.35)
-    setRotation(jointDesc.transform, 0, math.rad(180), 0)
-
-    local rotLimitSpring = {}
-    local rotLimitDamping = {}
-    local transLimitSpring = {}
-    local translimitDamping = {}
-    local springMass = mass * 60
-
-    for i = 1, 3 do
-        rotLimitSpring[i] = springMass
-        rotLimitDamping[i] = math.sqrt(mass * rotLimitSpring[i]) * 2
-        transLimitSpring[i] = springMass
-        translimitDamping[i] = math.sqrt(mass * transLimitSpring[i]) * 2
-    end
-
-    constructor:setRotationLimitSpring(rotLimitSpring[1], rotLimitDamping[1], rotLimitSpring[2], rotLimitDamping[2], rotLimitSpring[3], rotLimitDamping[3])
-    constructor:setTranslationLimitSpring(transLimitSpring[1], translimitDamping[1], transLimitSpring[2], translimitDamping[1], transLimitSpring[3], translimitDamping[3])
-
-    for i = 0, 2 do
-        constructor:setRotationLimit(i, 0, 0)
-        constructor:setTranslationLimit(i, true, 0, 0)
-    end
-
-    -- if not g_hoseSystem.debugRendering then
-    --    local forceLimit = mass * 25 -- only when stucked behind object
-    --    constructor:setBreakable(forceLimit, forceLimit)
-    --end
-
-    local jointIndex = constructor:finalize()
-
-    --if not g_hoseSystem.debugRendering then
-    -- addJointBreakReport(jointIndex, "onGrabJointBreak", self)
-    --end
-
-    return jointIndex
-end
-
 function Hose:grab(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
@@ -583,7 +577,7 @@ function Hose:grab(id, player, noEventSend)
         desc.anchor1 = player.pickUpKinematicHelperNode
         desc.anchor2 = grabNode.node
 
-        grabNode.jointIndex = constructPlayerJoint(desc, self:getTotalMass())
+        grabNode.jointIndex = self:constructPlayerJoint(desc, self:getTotalMass())
     end
 
     player.isCarryingObject = true
@@ -892,6 +886,59 @@ function Hose:unparkHose(connector, vehicle)
     end
 end
 
+function Hose:constructPlayerJoint(jointDesc, mass)
+    local constructor = JointConstructor:new()
+    constructor:setActors(jointDesc.actor1, jointDesc.actor2)
+    constructor:setEnableCollision(false)
+
+    local mx, my, mz = getCenterOfMass(jointDesc.actor2)
+    local wx, wy, wz = localToWorld(jointDesc.actor2, mx, my, mz)
+    constructor:setJointWorldPositions(wx, wy, wz, wx, wy, wz)
+    local nx, ny, nz = localDirectionToWorld(jointDesc.actor2, 1, 0, 0)
+    constructor:setJointWorldAxes(nx, ny, nz, nx, ny, nz)
+
+    local yx, yy, yz = localDirectionToWorld(jointDesc.actor2, 0, 1, 0)
+    constructor:setJointWorldNormals(yx, yy, yz, yx, yy, yz)
+
+    setTranslation(jointDesc.transform, -2, -0.4, 0.35)
+    setRotation(jointDesc.transform, 0, math.rad(180), 0)
+
+    local rotLimitSpring = {}
+    local rotLimitDamping = {}
+    local transLimitSpring = {}
+    local translimitDamping = {}
+    local springMass = mass * 60
+
+    for i = 1, 3 do
+        rotLimitSpring[i] = springMass
+        rotLimitDamping[i] = math.sqrt(mass * rotLimitSpring[i]) * 2
+        transLimitSpring[i] = springMass
+        translimitDamping[i] = math.sqrt(mass * transLimitSpring[i]) * 2
+    end
+
+    constructor:setRotationLimitSpring(rotLimitSpring[1], rotLimitDamping[1], rotLimitSpring[2], rotLimitDamping[2], rotLimitSpring[3], rotLimitDamping[3])
+    constructor:setTranslationLimitSpring(transLimitSpring[1], translimitDamping[1], transLimitSpring[2], translimitDamping[1], transLimitSpring[3], translimitDamping[3])
+
+    for i = 0, 2 do
+        constructor:setRotationLimit(i, 0, 0)
+        constructor:setTranslationLimit(i, true, 0, 0)
+    end
+
+    if not g_manureSystem.debug then
+        local forceAcceleration = 4
+        local forceLimit = forceAcceleration * mass * 40
+        constructor:setBreakable(forceLimit, forceLimit)
+    end
+
+    local jointIndex = constructor:finalize()
+
+    if not g_manureSystem.debug then
+        addJointBreakReport(jointIndex, "onPlayerJointBreak", self)
+    end
+
+    return jointIndex
+end
+
 function Hose:constructConnectorJoint(jointDesc)
     if getRigidBodyType(jointDesc.actor2) ~= "Dynamic" then
         return
@@ -914,6 +961,22 @@ function Hose:constructConnectorJoint(jointDesc)
     end
 
     return constr:finalize()
+end
+
+function Hose:onPlayerJointBreak(jointIndex, breakingImpulse)
+    local player = g_currentMission.player
+
+    if player ~= nil then
+        local hose = NetworkUtil.getObject(player.lastFoundHose)
+        local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
+
+        if jointIndex == grabNode.jointIndex then
+            hose:drop(grabNode.id, player)
+        end
+    end
+
+    -- Do not delete the joint internally, we already deleted it
+    return false
 end
 
 function Hose:isAttached(grabNode)
