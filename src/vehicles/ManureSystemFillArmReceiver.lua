@@ -46,8 +46,6 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         spec.fillTrigger:delete()
         spec.fillTrigger = nil
     end
-
-    print("ManureSystemFillArmReceiver onLoad")
 end
 
 function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
