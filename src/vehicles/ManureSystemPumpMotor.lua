@@ -434,9 +434,20 @@ function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, target
 
     deltaFill = deltaFill * self:getPumpDirection()
 
-    local emptyFill = sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, deltaFill, fillType, ToolType.UNDEFINED, nil)
-    if emptyFill ~= 0 then
-        targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -emptyFill, fillType, ToolType.UNDEFINED, nil)
+    local movedFill = targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -deltaFill, fillType, ToolType.UNDEFINED, nil)
+
+    local difference = math.abs(-deltaFill - movedFill)
+    if difference > 0.01 then
+        local orgMaxTime = self:getOriginalPumpMaxTime()
+        local impactTime = orgMaxTime + orgMaxTime * 0.25 * difference
+        self:setPumpMaxTime(impactTime)
+    end
+
+    if movedFill ~= 0 then
+        sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, -movedFill, fillType, ToolType.UNDEFINED, nil)
+    else
+        local spec = self.spec_manureSystemPumpMotor
+        spec.pumpHasContact = false
     end
 
     if self:isPumpingOut() then
