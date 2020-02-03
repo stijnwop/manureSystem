@@ -76,6 +76,7 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
 
     self.fillPlane = ManureSystemFillPlane:new(self)
     self.fillPlane:load(self.nodeId, xmlFile, "placeable.manureSystemStorage.fillPlane", self:getFillUnitCapacity())
+    self.fillPlaneIsIdle = true
 
     local triggerNode = I3DUtil.indexToObject(self.nodeId, getXMLString(xmlFile, "placeable.manureSystemStorage.trigger#node"))
     if triggerNode == nil then
@@ -89,7 +90,7 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
     self.activateText = g_i18n:getText("action_enableMixer")
     self.hasMixer = Utils.getNoNil(getXMLBool(xmlFile, "placeable.manureSystemStorage#hasMixer"), false)
     self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 150)
-    self.thickness = 1 -- 0-1 range
+    self.thickness = 0 -- 0-1 range
     self.isMixerActive = false
     self.playerInRange = false
     addTrigger(triggerNode, "triggerCallback", self)
@@ -225,7 +226,9 @@ function ManureSystemStorage:loadFromXMLFile(xmlFile, key, resetVehicles)
         return false
     end
 
+    self.thickness = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#thickness"), self.thickness)
     self.fillPlane:setHeight(self:getFillUnitFillLevel())
+    self.fillPlane:resetMixingState(self.thickness)
 
     local i = 0
     while true do
@@ -274,6 +277,8 @@ function ManureSystemStorage:saveToXMLFile(xmlFile, key, usedModNames)
     local storageKey = string.format("%s.storage", key)
     self.storage:saveToXMLFile(xmlFile, storageKey, usedModNames)
 
+    setXMLFloat(xmlFile, key .. "#thickness", self.thickness)
+
     for id, connector in pairs(self.manureSystemConnectors) do
         local connectorKey = string.format("%s.manureSystemConnectors.connector(%d)", key, id - 1)
         setXMLInt(xmlFile, connectorKey .. "#id", id)
@@ -315,6 +320,7 @@ function ManureSystemStorage:update(dt)
     end
 
     if self.isServer then
+        local lastThickness = self.thickness
         if self.hasMixer and self.isMixerActive then
             self:decreaseManureThickness(self.mixPerSecond, dt)
 
@@ -324,6 +330,13 @@ function ManureSystemStorage:update(dt)
             end
 
             self:raiseActive()
+        end
+
+        if not self.fillPlaneIsIdle then
+            if lastThickness == self.thickness then
+                self.fillPlane:resetMixingState(self.thickness)
+                self.fillPlaneIsIdle = true
+            end
         end
     end
 
@@ -534,8 +547,10 @@ function ManureSystemStorage:increaseManureThickness()
     local capacity = self:getFillUnitCapacity()
     local fillLevel = self:getFillUnitFillLevel()
     -- The more it's filled the slower it thickening is.
-    local mq = ageInHours * (1.1 - (fillLevel / capacity)) / 1000
+    local mq = (ageInHours * (1.1 - (fillLevel / capacity))) / fillLevel
+    -- Todo: take Seasons into account.
     self.thickness = MathUtil.clamp(self.thickness + mq, 0, 1)
+    self.fillPlaneIsIdle = false
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
 end
 
@@ -548,6 +563,8 @@ function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt)
     local mixedAmount = ((mixPerSecond / 100) * 1000) / self:getFillUnitFillLevel()
     local decrease = mixedAmount * (dt * 0.001) / 60
     self.thickness = math.max(self.thickness - decrease, 0)
+    self.fillPlane:setMixingState(mixPerSecond, self.thickness)
+    self.fillPlaneIsIdle = false
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
 end
 
