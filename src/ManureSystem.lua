@@ -18,6 +18,7 @@ function ManureSystem:new(mission, input, i18n, modDirectory, modName)
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
     self.modName = modName
+    self.debug = false
 
     self.connectorManager = ManureSystemConnectorManager:new()
     self.fillArmManager = ManureSystemFillArmManager:new()
@@ -30,6 +31,8 @@ function ManureSystem:new(mission, input, i18n, modDirectory, modName)
     local xmlFile = loadXMLFile("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", modDirectory))
     self:loadManureSystemSamples(xmlFile)
 
+    addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
+
     return self
 end
 
@@ -39,6 +42,8 @@ function ManureSystem:delete()
 
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()
+
+    removeConsoleCommand("msToggleDebug")
 end
 
 function ManureSystem:onMissionLoaded(mission)
@@ -66,20 +71,33 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     end
 end
 
+local sortByConfigFileName = function(arg1, arg2)
+    local id1 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg1) or 0
+    local id2 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg2) or 0
+
+    return id1 < id2
+end
+
 function ManureSystem:onMissionSaveToSavegame(xmlFile)
     setXMLInt(xmlFile, "manureSystem#version", 1)
 
     local hoses = {}
+    local objectToId = {}
     for id, object in ipairs(self.manureSystemConnectors) do
         if object.isaHose ~= nil and object:isaHose() then
-            table.insert(hoses, { id, object })
+            objectToId[object] = id
+            table.insert(hoses, object)
         end
     end
 
-    for i, saveData in ipairs(hoses) do
-        local id, object = unpack(saveData)
+    table.sort(hoses, sortByConfigFileName)
+
+    for i, object in ipairs(hoses) do
+        local id = objectToId[object]
         local key = ("manureSystem.hoses.hose(%d)"):format(i - 1)
         setXMLInt(xmlFile, key .. "#id", id)
+        local idVeh = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, object) or 0
+        setXMLInt(xmlFile, key .. "#idVeh", idVeh)
         object:onMissionSaveToSavegame(key, xmlFile)
     end
 end
@@ -100,13 +118,6 @@ end
 
 function ManureSystem:getManureSystemSamples()
     return self.samples
-end
-
-local sortByConfigFileName = function(arg1, arg2)
-    local str1 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg1) or ""
-    local str2 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg2) or ""
-
-    return arg1.configFileName .. tostring(str1) > arg2.configFileName .. tostring(str2)
 end
 
 function ManureSystem:addConnectorObject(object)
@@ -185,4 +196,14 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
             end
         end
     end
+end
+
+
+----------------------
+-- Commands
+----------------------
+
+function ManureSystem:consoleCommandToggleDebug()
+    self.debug = not self.debug
+    return tostring(self.debug)
 end
