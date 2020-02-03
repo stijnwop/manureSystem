@@ -8,6 +8,7 @@
 
 ---@class ManureSystemPumpMotor
 ManureSystemPumpMotor = {}
+ManureSystemPumpMotor.MOD_NAME = g_currentModName
 
 ManureSystemPumpMotor.PUMP_DIRECTION_IN = 1
 ManureSystemPumpMotor.PUMP_DIRECTION_OUT = -1
@@ -67,8 +68,7 @@ function ManureSystemPumpMotor.registerEventListeners(vehicleType)
 end
 
 function ManureSystemPumpMotor:onLoad(savegame)
-    self.spec_manureSystemPumpMotor = ManureSystemUtil.getSpecTable(self, "manureSystemPumpMotor")
-
+    self.spec_manureSystemPumpMotor = self[("spec_%s.manureSystemPumpMotor"):format(ManureSystemPumpMotor.MOD_NAME)]
     local spec = self.spec_manureSystemPumpMotor
 
     spec.pumpIsRunning = false

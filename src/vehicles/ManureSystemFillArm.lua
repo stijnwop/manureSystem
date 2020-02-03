@@ -8,6 +8,8 @@
 
 ---@class ManureSystemFillArm
 ManureSystemFillArm = {}
+ManureSystemFillArm.MOD_NAME = g_currentModName
+
 ManureSystemFillArm.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 ManureSystemFillArm.RAYCAST_DISTANCE = 5
 
@@ -32,7 +34,7 @@ function ManureSystemFillArm.registerEventListeners(vehicleType)
 end
 
 function ManureSystemFillArm:onLoad(savegame)
-    self.spec_manureSystemFillArm = ManureSystemUtil.getSpecTable(self, "manureSystemFillArm")
+    self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
 
     spec.hasFillArm = hasXMLProperty(self.xmlFile, "vehicle.manureSystemFillArm")

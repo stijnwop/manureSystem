@@ -8,6 +8,7 @@
 
 ---@class ManureSystemConnector
 ManureSystemConnector = {}
+ManureSystemConnector.MOD_NAME = g_currentModName
 
 ManureSystemConnector.CONNECTORS_SEND_NUM_BITS = 4 -- 2 ^ 4
 
@@ -37,7 +38,7 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
 end
 
 function ManureSystemConnector:onLoad(savegame)
-    self.spec_manureSystemConnector = ManureSystemUtil.getSpecTable(self, "manureSystemConnector")
+    self.spec_manureSystemConnector = self[("spec_%s.manureSystemConnector"):format(ManureSystemConnector.MOD_NAME)]
 
     local spec = self.spec_manureSystemConnector
 

@@ -8,6 +8,7 @@
 
 ---@class ManureSystemFillArmReceiver
 ManureSystemFillArmReceiver = {}
+ManureSystemFillArmReceiver.MOD_NAME = g_currentModName
 
 function ManureSystemFillArmReceiver.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillVolume, specializations)
@@ -22,7 +23,7 @@ function ManureSystemFillArmReceiver.registerEventListeners(vehicleType)
 end
 
 function ManureSystemFillArmReceiver:onLoad(savegame)
-    self.spec_manureSystemFillArmReceiver = ManureSystemUtil.getSpecTable(self, "manureSystemFillArmReceiver")
+    self.spec_manureSystemFillArmReceiver = self[("spec_%s.manureSystemFillArmReceiver"):format(ManureSystemFillArmReceiver.MOD_NAME)]
 
     if #self.spec_fillVolume.volumes == 0 then
         return
