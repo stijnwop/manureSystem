@@ -34,6 +34,10 @@ function ManureSystemStorage:delete()
     -- Delete storage later to avoid access to already deleted storage
     self.storage:delete()
 
+    if self.isClient then
+        g_soundManager:deleteSamples(self.samples)
+    end
+
     for type, connectors in pairs(self.manureSystemConnectorsByType) do
         for _, connector in ipairs(connectors) do
             self.connectorStrategies[type]:delete(connector)
@@ -83,8 +87,17 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
 
     self.triggerNode = triggerNode
     self.activateText = g_i18n:getText("action_enableMixer")
+    self.hasMixer = Utils.getNoNil(getXMLBool(xmlFile, "placeable.manureSystemStorage#hasMixer"), false)
+    self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 150)
+    self.thickness = 1 -- 0-1 range
+    self.isMixerActive = false
     self.playerInRange = false
     addTrigger(triggerNode, "triggerCallback", self)
+
+    self.samples = {}
+    if self.isClient then
+        self.samples.mix = g_soundManager:loadSampleFromXML(xmlFile, "placeable.manureSystemStorage.sounds", "mix", self.baseDirectory, self.nodeId, 0, AudioGroup.ENVIRONMENT, nil, nil)
+    end
 
     -- Prepare for hose physics
     self.rootNode = ManureSystemUtil.getFirstPhysicsNode(self.nodeId)
@@ -181,6 +194,12 @@ function ManureSystemStorage:readUpdateStream(streamId, timestamp, connection)
     if connection:getIsServer() then
         if streamReadBool(streamId) then
             self.fillPlane:setHeight(self:getFillUnitFillLevel())
+            local isMixerActive = streamReadBool(streamId)
+            if isMixerActive ~= self.isMixerActive then
+                self:updateActivateText()
+            end
+            self.isMixerActive = isMixerActive
+            self.thickness = streamReadUIntN(streamId, ManureSystemStorage.SEND_NUM_BITS)
         end
     end
 end
@@ -189,7 +208,10 @@ function ManureSystemStorage:writeUpdateStream(streamId, connection, dirtyMask)
     ManureSystemStorage:superClass().writeUpdateStream(self, streamId, connection, dirtyMask)
 
     if not connection:getIsServer() then
-        streamWriteBool(streamId, bitAND(dirtyMask, self.lagoonDirtyFlag) ~= 0)
+        if streamWriteBool(streamId, bitAND(dirtyMask, self.lagoonDirtyFlag) ~= 0) then
+            streamWriteBool(streamId, self.isMixerActive)
+            streamWriteUIntN(streamId, self.thickness, ManureSystemStorage.SEND_NUM_BITS)
+        end
     end
 end
 
@@ -277,7 +299,10 @@ end
 
 function ManureSystemStorage:hourChanged()
     ManureSystemStorage:superClass().hourChanged(self)
-    -- Todo: update manure thickness.
+
+    if self.isServer then
+        self:increaseManureThickness()
+    end
 end
 
 function ManureSystemStorage:update(dt)
@@ -286,6 +311,19 @@ function ManureSystemStorage:update(dt)
     for _, class in pairs(self.connectorStrategies) do
         if class.onUpdate ~= nil then
             class:onUpdate(dt)
+        end
+    end
+
+    if self.isServer then
+        if self.hasMixer and self.isMixerActive then
+            self:decreaseManureThickness(self.mixPerSecond, dt)
+
+            if not (self.thickness > 0) then
+                self.isMixerActive = false
+                self:updateActivateText()
+            end
+
+            self:raiseActive()
         end
     end
 
@@ -301,7 +339,21 @@ function ManureSystemStorage:update(dt)
 
             local text = string.format(g_i18n:getText("info_fillLevel") .. " %s: %s (%d%%)", fillTypeName, g_i18n:formatFluid(fillLevel), math.floor(100 * fillLevel / capacity))
             g_currentMission:addExtraPrintText(text)
+
+            g_currentMission:addExtraPrintText(g_i18n:getText("info_thickness"):format(fillTypeName, self.thickness * 100))
             self:raiseActive()
+        end
+
+        if self.hasMixer then
+            if self.isMixerActive then
+                if not g_soundManager:getIsSamplePlaying(self.samples.mix) then
+                    g_soundManager:playSample(self.samples.mix)
+                end
+            else
+                if g_soundManager:getIsSamplePlaying(self.samples.mix) then
+                    g_soundManager:stopSample(self.samples.mix)
+                end
+            end
         end
     end
 end
@@ -359,6 +411,11 @@ end
 
 function ManureSystemStorage:addFillUnitFillLevel(farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
     local movedFillLevel = 0
+
+    if fillLevelDelta < 0 then
+        -- Give it 10% room to do some minor filling even when completely thick.
+        fillLevelDelta = fillLevelDelta * (1.1 - self.thickness)
+    end
 
     if self.storage:getIsFillTypeSupported(fillTypeIndex) and self:getIsToolTypeAllowed(toolType) then
         if self:hasFarmAccessToStorage(farmId, self.storage) then
@@ -466,23 +523,60 @@ function ManureSystemStorage:isUnderFillPlane(x, y, z)
     return self.fillPlane:isUnder(x, y, z)
 end
 
-function ManureSystemStorage:getIsActivatable()
-    if self.storage ~= nil then
-        for _, fillLevel in pairs(self.storage.fillLevels) do
-            if fillLevel > 0 then
-                return true
-            end
-        end
+function ManureSystemStorage:increaseManureThickness()
+    if not self.isServer then
+        return
     end
 
-    return false
+    -- Manure with up to 4% solids content can be handled as a liquid with irrigation equipment
+    -- Manure with 4 to 10% solids content can be handled as a slurry
+    local ageInHours = math.max(self.age, 1) * 24
+    local capacity = self:getFillUnitCapacity()
+    local fillLevel = self:getFillUnitFillLevel()
+    -- The more it's filled the slower it thickening is.
+    local mq = ageInHours * (1.1 - (fillLevel / capacity)) / 1000
+    self.thickness = MathUtil.clamp(self.thickness + mq, 0, 1)
+    self:raiseDirtyFlags(self.lagoonDirtyFlag)
+end
+
+function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt)
+    if not self.isServer then
+        return
+    end
+
+    -- Mixed amount depends on the fill level because low fill level is mixed faster.
+    local mixedAmount = ((mixPerSecond / 100) * 1000) / self:getFillUnitFillLevel()
+    local decrease = mixedAmount * (dt * 0.001) / 60
+    self.thickness = math.max(self.thickness - decrease, 0)
+    self:raiseDirtyFlags(self.lagoonDirtyFlag)
+end
+
+function ManureSystemStorage:getIsActivatable()
+    if not self.hasMixer then
+        return false
+    end
+
+    return self.playerInRange and self.thickness > 0
 end
 
 function ManureSystemStorage:drawActivate()
 end
 
 function ManureSystemStorage:onActivateObject()
-    -- set mixer
+    self.isMixerActive = not self.isMixerActive
+    self:updateActivateText()
+end
+
+function ManureSystemStorage:shouldRemoveActivatable()
+    return false
+end
+
+function ManureSystemStorage:updateActivateText()
+    if self.isMixerActive then
+        self.activateText = g_i18n:getText("action_disableMixer")
+    else
+        self.activateText = g_i18n:getText("action_enableMixer")
+    end
 end
 
 function ManureSystemStorage:triggerCallback(triggerId, otherId, onEnter, onLeave, onStay, otherShapeId)
@@ -490,11 +584,17 @@ function ManureSystemStorage:triggerCallback(triggerId, otherId, onEnter, onLeav
         if g_currentMission.player ~= nil and otherId == g_currentMission.player.rootNode then
             if onEnter then
                 self.playerInRange = true
-                g_currentMission:removeActivatableObject(self)
-                g_currentMission:addActivatableObject(self)
+
+                if self.hasMixer then
+                    g_currentMission:removeActivatableObject(self)
+                    g_currentMission:addActivatableObject(self)
+                end
             else
                 self.playerInRange = false
-                g_currentMission:removeActivatableObject(self)
+
+                if self.hasMixer then
+                    g_currentMission:removeActivatableObject(self)
+                end
             end
             self:raiseActive()
         end

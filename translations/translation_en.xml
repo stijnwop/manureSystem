@@ -31,6 +31,8 @@
         <text name="shopItem_slurryLagoon" text="Slurry Lagoon"/>
         <text name="function_slurryLagoon" text="With a slurry lagoon you're able to store large quantities of slurry."/>
         <text name="action_enableMixer" text="Enable mixer"/>
+        <text name="action_disableMixer" text="Disable mixer"/>
+        <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
         <text name="configuration_hose" text="Change hose type."/>
