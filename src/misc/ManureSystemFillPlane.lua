@@ -99,6 +99,25 @@ function ManureSystemFillPlane:getShaderPlaneAngle(node)
     return angle
 end
 
-function ManureSystemFillPlane:setMixingState()
-    -- Todo: set mixing state.
+function ManureSystemFillPlane:resetMixingState(thickness)
+    setShaderParameter(self.planeNode, "displacementScaleSpeedFrequency", 0.01, 0.1, 0.1, 0, false)
+    local mixedRoughnessPow = 0.5 + (1 - thickness)
+    local _, _, _, numberOfAngles = getShaderParameter(self.planeNode, "mixParams")
+    setShaderParameter(self.planeNode, "mixParams", mixedRoughnessPow, 0, 0, numberOfAngles, false)
+end
+
+function ManureSystemFillPlane:setMixingState(literPerSecond, thickness)
+    local impact = MathUtil.clamp(literPerSecond * (1.5 - thickness) / literPerSecond, 0, 1)
+    local maxOffsetScale = (literPerSecond * 0.5) / 1000
+    local offsetScale = maxOffsetScale * impact
+    local waveY = impact
+    local waveZ = impact * 2
+
+    setShaderParameter(self.planeNode, "displacementScaleSpeedFrequency", offsetScale, waveY, waveZ, 0, false)
+
+    local angle = 2
+    local yOffset = impact / 2
+    local mixedRoughnessPow = 0.5 + (1 - thickness)
+    local _, _, _, numberOfAngles = getShaderParameter(self.planeNode, "mixParams")
+    setShaderParameter(self.planeNode, "mixParams", mixedRoughnessPow, yOffset, angle, numberOfAngles, false)
 end

@@ -8,9 +8,13 @@
 local directory = g_currentModDirectory
 local modName = g_currentModName
 
+source(Utils.getFilename("src/placeables/ManureSystemAnimatedObjectExtension.lua", directory))
+source(Utils.getFilename("src/misc/ManureSystemFillPlane.lua", directory))
+
 -- DataStructures
 source(Utils.getFilename("src/misc/ManureSystemConnectorManager.lua", directory))
 source(Utils.getFilename("src/misc/ManureSystemFillArmManager.lua", directory))
+source(Utils.getFilename("src/misc/ManureSystemHusbandryModuleLiquidManure.lua", directory))
 
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua", directory))
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemDockStrategy.lua", directory))
@@ -191,3 +195,31 @@ local function init()
 end
 
 init()
+
+-------------------------------------------------------------------------------
+--- Development only
+-------------------------------------------------------------------------------
+
+if g_showDevelopmentWarnings and g_addCheatCommands then
+    function Utils.getTimeScaleIndex(timeScale)
+        if timeScale >= 12000 then return 7
+        elseif timeScale >= 120 then return 6
+        elseif timeScale >= 60 then return 5
+        elseif timeScale >= 30 then return 4
+        elseif timeScale >= 15 then return 3
+        elseif timeScale >= 5 then return 2
+        end
+        return 1
+    end
+
+    function Utils.getTimeScaleFromIndex(timeScaleIndex)
+        if timeScaleIndex >= 7 then return 12000
+        elseif timeScaleIndex >= 6 then return 120
+        elseif timeScaleIndex >= 5 then return 60
+        elseif timeScaleIndex >= 4 then return 30
+        elseif timeScaleIndex >= 3 then return 15
+        elseif timeScaleIndex >= 2 then return 5
+        end
+        return 1
+    end
+end
