@@ -107,7 +107,7 @@ function ManureSystemFillPlane:resetMixingState(thickness)
 end
 
 function ManureSystemFillPlane:setMixingState(literPerSecond, thickness)
-    local impact = MathUtil.clamp(literPerSecond * (1.5 - thickness) / literPerSecond, 0, 1)
+    local impact = MathUtil.clamp(literPerSecond * (1.1 - thickness) / literPerSecond, 0, 1)
     local maxOffsetScale = (literPerSecond * 0.5) / 1000
     local offsetScale = maxOffsetScale * impact
     local waveY = impact
