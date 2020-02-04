@@ -322,7 +322,7 @@ function ManureSystemStorage:update(dt)
     if self.isServer then
         local lastThickness = self.thickness
         if self.hasMixer and self.isMixerActive then
-            self:decreaseManureThickness(self.mixPerSecond, dt)
+            self:decreaseManureThickness(self.mixPerSecond, dt, self.isMixerActive)
 
             if not (self.thickness > 0) then
                 self.isMixerActive = false
@@ -417,8 +417,15 @@ function ManureSystemStorage:getFillUnitFreeCapacity(unitIndex)
     return capacity - fillLevel
 end
 
-function ManureSystemStorage:onMovedFillLevel(fillLevel)
+function ManureSystemStorage:onMovedFillLevel(fillLevel, movedFillLevel)
     self.fillPlane:setHeight(fillLevel)
+
+    -- If we got added fillLevel decrease thickness.
+    if movedFillLevel > 0 then
+        local movedDt = 60
+        self:decreaseManureThickness(movedFillLevel, movedDt, not self.isMixerActive)
+    end
+
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
 end
 
@@ -439,7 +446,7 @@ function ManureSystemStorage:addFillUnitFillLevel(farmId, fillUnitIndex, fillLev
             movedFillLevel = movedFillLevel + (newFillLevel - oldFillLevel)
 
             if self.isServer then
-                self:onMovedFillLevel(newFillLevel)
+                self:onMovedFillLevel(newFillLevel, movedFillLevel)
             end
         end
 
@@ -554,7 +561,7 @@ function ManureSystemStorage:increaseManureThickness()
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
 end
 
-function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt)
+function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt, updatePlane)
     if not self.isServer then
         return
     end
@@ -563,9 +570,12 @@ function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt)
     local mixedAmount = ((mixPerSecond / 100) * 1000) / self:getFillUnitFillLevel()
     local decrease = mixedAmount * (dt * 0.001) / 60
     self.thickness = math.max(self.thickness - decrease, 0)
-    self.fillPlane:setMixingState(mixPerSecond, self.thickness)
-    self.fillPlaneIsIdle = false
-    self:raiseDirtyFlags(self.lagoonDirtyFlag)
+
+    if updatePlane then
+        self.fillPlane:setMixingState(mixPerSecond, self.thickness)
+        self.fillPlaneIsIdle = false
+        self:raiseDirtyFlags(self.lagoonDirtyFlag)
+    end
 end
 
 function ManureSystemStorage:getIsActivatable()
