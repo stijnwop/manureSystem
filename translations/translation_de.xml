@@ -28,9 +28,9 @@
         <text name="warning_hoseRangeRestriction" text="The hose range restriction won't allow you to go any further!"/>
 
         <!--Placeables-->
-        <text name="shopItem_slurryLagoon" text="Güllelagune"/>
-        <text name="function_slurryLagoon" text="In einer Güllelagune können große Mengen Gülle gelagert werden."/>
         <text name="action_enableMixer" text="Enable mixer"/>
+        <text name="action_disableMixer" text="Disable mixer"/>
+        <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
         <text name="configuration_hose" text="Change hose type."/>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="44">
+<modDesc descVersion="47">
     <author>Wopster</author>
     <version>1.0.0.0</version>
     <title>
@@ -99,9 +99,7 @@
     </vehicleTypes>
 
     <storeItems>
-        <storeItem xmlFilename="resources/manureLagoon/manureLagoon.xml"/>
         <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>
-        <!--        <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>-->
     </storeItems>
 
     <l10n filenamePrefix="translations/translation"/>
