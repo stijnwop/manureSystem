@@ -52,6 +52,7 @@ function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsWorkAreaActive", ManureSystemPumpMotor.getIsWorkAreaActive)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getConsumingLoad", ManureSystemPumpMotor.getConsumingLoad)
 end
 
 function ManureSystemPumpMotor.registerEventListeners(vehicleType)
@@ -513,6 +514,15 @@ function ManureSystemPumpMotor:getIsWorkAreaActive(superFunc, workArea)
     end
 
     return superFunc(self, workArea)
+end
+
+---Calculate the load based on the liters per second.
+function ManureSystemPumpMotor:getConsumingLoad(superFunc)
+    local value, count = superFunc(self)
+
+    local spec = self.spec_manureSystemPumpMotor
+    local load = spec.pumpEfficiency.currentLoad
+    return value + load, count + 1
 end
 
 function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
