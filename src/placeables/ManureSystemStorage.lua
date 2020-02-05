@@ -23,20 +23,22 @@ function ManureSystemStorage:new(isServer, isClient)
 end
 
 function ManureSystemStorage:delete()
+    if self.isClient then
+        if self.samples.mix ~= nil then
+            g_soundManager:deleteSample(self.samples.mix)
+            self.samples.mix = nil
+        end
+    end
+
     if self.triggerNode ~= nil then
         removeTrigger(self.triggerNode)
     end
 
-    g_currentMission.storageSystem:removeStorage(self.storage)
-
     self.fillPlane:delete()
 
     -- Delete storage later to avoid access to already deleted storage
+    g_currentMission.storageSystem:removeStorage(self.storage)
     self.storage:delete()
-
-    if self.isClient then
-        g_soundManager:deleteSamples(self.samples)
-    end
 
     for type, connectors in pairs(self.manureSystemConnectorsByType) do
         for _, connector in ipairs(connectors) do
@@ -80,7 +82,6 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
 
     local triggerNode = I3DUtil.indexToObject(self.nodeId, getXMLString(xmlFile, "placeable.manureSystemStorage.trigger#node"))
     if triggerNode == nil then
-        --g_logManager:xmlWarning(self.configFileName, "Invalid connector type %s", typeString)
         print("Error: ManureSystemStorage could not load trigger. Check the user attribute 'triggerNode'")
         printCallstack()
         return false
