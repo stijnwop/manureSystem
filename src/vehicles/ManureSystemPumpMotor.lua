@@ -59,7 +59,6 @@ function ManureSystemPumpMotor.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemPumpMotor)
-    SpecializationUtil.registerEventListener(vehicleType, "onDraw", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", ManureSystemPumpMotor)
@@ -179,12 +178,29 @@ end
 
 function ManureSystemPumpMotor:onUpdate(dt)
     if self.isClient then
+        local canTurnOnPump = self:canTurnOnPump()
         local spec = self.spec_manureSystemPumpMotor
 
+        if canTurnOnPump then
+            if spec.actionEvents ~= nil then
+                local toggleActionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
+                if toggleActionEvent ~= nil then
+                    g_inputBinding:setActionEventTextVisibility(toggleActionEvent.actionEventId, not spec.pumpIsRunning)
+                end
+            end
+        end
+
+        local showPumpAction = canTurnOnPump
+        if not spec.pumpIsRunning then
+            showPumpAction = showPumpAction and spec.hasTargetObject
+        else
+            showPumpAction = showPumpAction and spec.pumpIsRunning
+        end
+
         if spec.actionEvents ~= nil then
-            local actionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
-            if actionEvent ~= nil and actionEvent.actionEventId ~= nil then
-                g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:canTurnOnPump())
+            local pumpActionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
+            if pumpActionEvent ~= nil then
+                g_inputBinding:setActionEventTextVisibility(pumpActionEvent.actionEventId, showPumpAction)
             end
         end
     end
@@ -258,36 +274,6 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
 
         -- Reset contact
         spec.pumpHasContact = true
-    end
-end
-
-function ManureSystemPumpMotor:onDraw()
-    if self.isClient then
-        local canTurnOnPump = self:canTurnOnPump()
-        local spec = self.spec_manureSystemPumpMotor
-
-        if canTurnOnPump then
-            if spec.actionEvents ~= nil then
-                local toggleActionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
-                if toggleActionEvent ~= nil then
-                    g_inputBinding:setActionEventTextVisibility(toggleActionEvent.actionEventId, not spec.pumpIsRunning)
-                end
-            end
-        end
-
-        local showPumpAction = canTurnOnPump
-        if not spec.pumpIsRunning then
-            showPumpAction = showPumpAction and spec.hasTargetObject
-        else
-            showPumpAction = showPumpAction and spec.pumpIsRunning
-        end
-
-        if spec.actionEvents ~= nil then
-            local pumpActionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
-            if pumpActionEvent ~= nil then
-                g_inputBinding:setActionEventTextVisibility(pumpActionEvent.actionEventId, showPumpAction)
-            end
-        end
     end
 end
 
