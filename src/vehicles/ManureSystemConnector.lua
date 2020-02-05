@@ -34,7 +34,6 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
-    SpecializationUtil.registerEventListener(vehicleType, "onDraw", ManureSystemConnector)
 end
 
 function ManureSystemConnector:onLoad(savegame)
@@ -134,10 +133,6 @@ function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIg
             class:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
         end
     end
-end
-
-function ManureSystemConnector:onDraw(isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
-    local spec = self.spec_manureSystemConnector
 end
 
 function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
