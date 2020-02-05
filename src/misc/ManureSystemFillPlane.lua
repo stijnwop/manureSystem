@@ -46,6 +46,7 @@ function ManureSystemFillPlane:load(rootNode, xmlFile, xmlNode, capacity)
 
             assert(self.planeMinY <= self.planeMaxY)
             self:setHeight(0)
+            self:resetMixingState(0)
 
             --local detectionNodeIndex = XMLUtil.getValueFromXMLFileOrUserAttribute(xmlFile, xmlNode, "detectionNode", getXMLString, rootNode)
             --if detectionNodeIndex ~= nil then
