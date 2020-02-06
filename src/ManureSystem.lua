@@ -155,32 +155,31 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
         local stringParts = StringUtil.splitString(".", typeName)
         local hasVehicleSpec = false
         if #stringParts ~= 1 then
-            local typeModName = unpack(stringParts)
+            local typeModName, vehicleType = unpack(stringParts)
             local spec = specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemVehicle")
 
-            if spec ~= nil then
+            if spec ~= nil and spec.getManureSystemVehicleHasFeatureEnabled ~= nil then
                 hasVehicleSpec = true
-
-                if spec.hasPumpMotor() then
+                if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasPumpMotor") then
                     vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
                 end
 
-                if spec.hasConnectors() then
+                if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasConnectors") then
                     vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
                 end
 
-                if spec.hasFillArm() then
+                if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArm") then
                     vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
                 end
 
-                if spec.hasFillArmReceiver() then
+                if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArmReceiver") then
                     vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
                 end
 
-                Logger.info("Mod '" .. typeModName .. "' hasPumpMotor", spec.hasPumpMotor())
-                Logger.info("Mod '" .. typeModName .. "' hasConnectors", spec.hasConnectors())
-                Logger.info("Mod '" .. typeModName .. "' hasFillArm", spec.hasFillArm())
-                Logger.info("Mod '" .. typeModName .. "' hasFillArmReceiver", spec.hasFillArmReceiver())
+                Logger.info("Mod '" .. typeModName .. "' hasPumpMotor", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasPumpMotor"))
+                Logger.info("Mod '" .. typeModName .. "' hasConnectors", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasConnectors"))
+                Logger.info("Mod '" .. typeModName .. "' hasFillArm", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArm"))
+                Logger.info("Mod '" .. typeModName .. "' hasFillArmReceiver", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArmReceiver"))
             end
         end
 
