@@ -9,6 +9,7 @@
 ---@class ManureSystemPumpMotor
 ManureSystemPumpMotor = {}
 ManureSystemPumpMotor.MOD_NAME = g_currentModName
+ManureSystemPumpMotor.MOD_DIR = g_CurrentModDirectory
 
 ManureSystemPumpMotor.PUMP_DIRECTION_IN = 1
 ManureSystemPumpMotor.PUMP_DIRECTION_OUT = -1
@@ -94,10 +95,14 @@ function ManureSystemPumpMotor:onLoad(savegame)
     }
 
     if self.isClient then
-        local globalSamples = g_manureSystem:getManureSystemSamples()
+        local samplePump = g_soundManager:loadSampleFromXML(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds", "pump", self.baseDirectory, self.components, 1, AudioGroup.VEHICLE, self.i3dMappings, self)
+        if samplePump == nil then
+            local globalSamples = g_manureSystem:getManureSystemSamples()
+            samplePump = g_soundManager:cloneSample(globalSamples.pump, self.components[1].node, self)
+        end
 
         spec.samples = {}
-        spec.samples.pump = g_soundManager:cloneSample(globalSamples.pump, self.components[1].node, self)
+        spec.samples.pump = samplePump
     end
 
     spec.dirtyFlag = self:getNextDirtyFlag()
