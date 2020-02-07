@@ -43,6 +43,7 @@ function ManureSystem:delete()
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()
 
+    g_soundManager:deleteSamples(self.samples)
     removeConsoleCommand("msToggleDebug")
 end
 
