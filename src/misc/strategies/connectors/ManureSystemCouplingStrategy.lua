@@ -141,10 +141,15 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
     local desc, count = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
 
     if desc ~= nil and desc.vehicle ~= object then
-        local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
+        if desc.connectorId ~= nil then
+            local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
-        if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-            return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, count
+            if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
+                return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, count
+            end
+        else
+            -- Raycasted object.
+            return { vehicle = desc.vehicle, fillUnitIndex = 1 }, count
         end
     end
 
