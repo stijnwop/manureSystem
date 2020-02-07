@@ -40,9 +40,6 @@ end
 function HosePlayer:delete()
 end
 
-function HosePlayer:update(dt)
-end
-
 function HosePlayer.inj_player_readUpdateStream(player, streamId, timestamp, connection)
     if connection:getIsServer() then
         player.lastFoundObjectIsHose = streamReadBool(streamId)
@@ -255,7 +252,6 @@ function HosePlayer.inj_playerStatePickup_isAvailable(state, superFunc)
 end
 
 ---- Add action event functions to the player class.
-
 function Player.actionEventOnAttachHose(self, actionName, inputValue, callbackState, isAnalog)
     if self.lastFoundObjectIsHose then
         local hose = NetworkUtil.getObject(self.lastFoundHose)

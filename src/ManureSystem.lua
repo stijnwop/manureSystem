@@ -103,7 +103,6 @@ function ManureSystem:onMissionSaveToSavegame(xmlFile)
 end
 
 function ManureSystem:update(dt)
-    self.player:update(dt)
 end
 
 function ManureSystem:loadManureSystemSamples(xmlFile)
@@ -147,9 +146,6 @@ function ManureSystem:connectorObjectExists(id)
     return self.manureSystemConnectors[id] ~= nil
 end
 
-function ManureSystem:draw(dt)
-end
-
 function ManureSystem.installSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName)
     for typeName, typeEntry in pairs(vehicleTypeManager:getVehicleTypes()) do
         local stringParts = StringUtil.splitString(".", typeName)
@@ -157,34 +153,34 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
         if #stringParts ~= 1 then
             local typeModName, vehicleType = unpack(stringParts)
             local spec = specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemVehicle")
+            hasVehicleSpec = spec ~= nil and spec.getManureSystemVehicleHasFeatureEnabled ~= nil
 
-            if spec ~= nil and spec.getManureSystemVehicleHasFeatureEnabled ~= nil then
-                hasVehicleSpec = true
+            if hasVehicleSpec then
                 if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasPumpMotor") then
                     if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
                         vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
-                        Logger.info("Mod '" .. typeModName .. "." .. vehicleType .. "' hasPumpMotor", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasPumpMotor"))
+                        Logger.info("Adding ManureSystemPumpMotor to: '" .. typeName)
                     end
                 end
 
                 if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasConnectors") then
                     if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations) then
                         vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
-                        Logger.info("Mod '" .. typeModName .. "." .. vehicleType .. "' hasConnectors", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasConnectors"))
+                        Logger.info("Adding ManureSystemConnector to: '" .. typeName)
                     end
                 end
 
                 if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArm") then
                     if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations) then
                         vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
-                        Logger.info("Mod '" .. typeModName .. "." .. vehicleType .. "' hasFillArm", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArm"))
+                        Logger.info("Adding ManureSystemFillArm to: '" .. typeName)
                     end
                 end
 
                 if spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArmReceiver") then
                     if not SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, typeEntry.specializations) then
                         vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
-                        Logger.info("Mod '" .. typeModName .. "." .. vehicleType .. "' hasFillArmReceiver", spec.getManureSystemVehicleHasFeatureEnabled(vehicleType, "hasFillArmReceiver"))
+                        Logger.info("Adding ManureSystemFillArmReceiver to: '" .. typeName)
                     end
                 end
             end
