@@ -284,7 +284,7 @@ end
 function Hose:onUpdateTick(dt)
     local spec = self.spec_hose
 
-    if self.isServer then
+    if self.isServer and self.firstTimeRun then
         local function hasBothSidesAttached()
             local count = 0
             for id, _ in ipairs(spec.grabNodes) do
