@@ -14,23 +14,18 @@ ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK = "dock"
 ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING = "coupling"
 ManureSystemConnectorManager.CONNECTOR_TYPE_TRANSFER_HOSE = "transfer"
 
-local ManureSystemConnectorManager_mt = Class(ManureSystemConnectorManager, AbstractManager)
+local ManureSystemConnectorManager_mt = Class(ManureSystemConnectorManager)
 
 function ManureSystemConnectorManager:new(customMt)
-    local self = AbstractManager:new(customMt or ManureSystemConnectorManager_mt)
+    local self = setmetatable({}, customMt or ManureSystemConnectorManager_mt)
 
-    self:initDataStructures()
+    self.typeByName = {}
+    self.numTypes = 0
 
     return self
 end
 
-function ManureSystemConnectorManager:initDataStructures()
-    self.typeByName = {}
-    self.numTypes = 0
-end
-
 function ManureSystemConnectorManager:loadMapData()
-    ManureSystemConnectorManager:superClass().loadMapData(self)
     self:loadDefaultConnectorTypes()
 
     local collisionRoot = g_i3DManager:loadSharedI3DFile("resources/collisions/connectorCollision.i3d", g_manureSystem.modDirectory, false, true, false)
@@ -40,7 +35,6 @@ function ManureSystemConnectorManager:loadMapData()
 end
 
 function ManureSystemConnectorManager:unloadMapData()
-    ManureSystemConnectorManager:superClass().unloadMapData(self)
     delete(self.collision)
 end
 
