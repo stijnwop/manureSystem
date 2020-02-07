@@ -54,10 +54,10 @@
         <hoseConfigurations>
             <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
-                    <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1">
+                    <grabNode node="grabNode1" raycastNode="raycastNode1" componentIndex="1" componentJointIndex="1">
                         <visuals visualNode="coupling_normal_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
                     </grabNode>
-                    <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3">
+                    <grabNode node="grabNode2" raycastNode="raycastNode2" componentIndex="4" componentJointIndex="3">
                         <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
                     </grabNode>
                 </grabNodes>
@@ -67,10 +67,10 @@
             </hoseConfiguration>
             <hoseConfiguration name="$l10n_configuration_valueExtend" price="40">
                 <grabNodes>
-                    <grabNode isExtension="true" extensionAnimationName="extend" node="grabNode1" componentIndex="1" componentJointIndex="1">
+                    <grabNode isExtension="true" extensionAnimationName="extend" node="grabNode1" raycastNode="raycastNode1" componentIndex="1" componentJointIndex="1">
                         <visuals visualNode="coupling_extend_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
                     </grabNode>
-                    <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3">
+                    <grabNode node="grabNode2" raycastNode="raycastNode2" componentIndex="4" componentJointIndex="3">
                         <visuals visualNode="coupling_normal_end" hoseTargetNode="target"/>
                     </grabNode>
                 </grabNodes>
@@ -117,10 +117,12 @@
         <i3dMapping id="bottom_hook" node="0>2|1|0"/>
         <i3dMapping id="grabNode1" node="0>3"/>
         <i3dMapping id="componentJoint1" node="0>4"/>
+        <i3dMapping id="raycastNode1" node="0>5"/>
         <i3dMapping id="componentJoint2" node="1>0"/>
         <i3dMapping id="grabNode2" node="3>0"/>
         <i3dMapping id="target" node="3>1"/>
         <i3dMapping id="coupling_normal_end" node="3>2"/>
         <i3dMapping id="componentJoint3" node="3>3"/>
+        <i3dMapping id="raycastNode2" node="3>4"/>
     </i3dMappings>
 </vehicle>

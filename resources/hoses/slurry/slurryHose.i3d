@@ -45,7 +45,7 @@
   <Scene>
     <Shape name="hose_main_component1" shapeId="1" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="1">
       <Shape name="hose" translation="1.54074e-33 0 -0.07" rotation="0 180 0" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="2"/>
-      <Shape name="coupling_normal_start" translation="2.98023e-08 0 3.64973e-24" rotation="0 180 0" visibility="false" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="3"/>
+      <Shape name="coupling_normal_start" translation="2.98023e-08 0 3.64973e-24" rotation="0 180 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="3"/>
       <Shape name="coupling_extend_start" translation="-2.98023e-08 0.0167934 -0.0777317" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="3" skinBindNodeIds="4 5 6 7" clipDistance="300" nodeId="4">
         <TransformGroup name="top_hook" translation="2.98023e-08 0.0970822 0.0469957" collision="false" clipDistance="300" nodeId="5"/>
         <TransformGroup name="bottom_lever" translation="2.98023e-08 -0.133183 0.0444317" collision="false" clipDistance="300" nodeId="6">
@@ -54,16 +54,18 @@
       </Shape>
       <TransformGroup name="grabNode1" collision="false" clipDistance="300" nodeId="8"/>
       <TransformGroup name="componentJoint1" translation="1.83697e-16 0 -1.125" collision="false" clipDistance="300" nodeId="9"/>
+      <TransformGroup name="raycastNode1" collision="false" clipDistance="300" nodeId="10"/>
     </Shape>
-    <Shape name="hose_main_component2" translation="7.45058e-09 -3.72529e-09 -1.125" shapeId="5" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="10">
-      <TransformGroup name="componentJoint2" translation="-7.45058e-09 2.98023e-08 -0.75" collision="false" clipDistance="300" nodeId="11"/>
+    <Shape name="hose_main_component2" translation="7.45058e-09 -3.72529e-09 -1.125" shapeId="5" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="11">
+      <TransformGroup name="componentJoint2" translation="-7.45058e-09 2.98023e-08 -0.75" collision="false" clipDistance="300" nodeId="12"/>
     </Shape>
-    <Shape name="hose_main_component3" translation="7.45058e-09 -3.72529e-09 -1.875" shapeId="6" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="12"/>
-    <Shape name="hose_main_component4" translation="0 0 -3.1" shapeId="7" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="13">
-      <TransformGroup name="grabNode2" translation="3.67394e-16 2.6077e-08 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="14"/>
-      <TransformGroup name="target" translation="3.67394e-16 2.6077e-08 0.03" rotation="0 180 0" collision="false" clipDistance="300" nodeId="15"/>
-      <Shape name="coupling_normal_end" translation="2.98023e-08 0 0" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="16"/>
-      <TransformGroup name="componentJoint3" translation="3.67394e-16 2.6077e-08 1.225" collision="false" clipDistance="300" nodeId="17"/>
+    <Shape name="hose_main_component3" translation="7.45058e-09 -3.72529e-09 -1.875" shapeId="6" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="13"/>
+    <Shape name="hose_main_component4" translation="0 0 -3.1" shapeId="7" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="14">
+      <TransformGroup name="grabNode2" translation="3.67394e-16 2.6077e-08 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="15"/>
+      <TransformGroup name="target" translation="3.67394e-16 2.6077e-08 0.03" rotation="0 180 0" collision="false" clipDistance="300" nodeId="16"/>
+      <Shape name="coupling_normal_end" translation="2.98023e-08 0 0" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="17"/>
+      <TransformGroup name="componentJoint3" translation="3.67394e-16 2.6077e-08 1.225" collision="false" clipDistance="300" nodeId="18"/>
+      <TransformGroup name="raycastNode2" translation="3.67394e-16 2.6077e-08 0" collision="false" clipDistance="300" nodeId="19"/>
     </Shape>
   </Scene>
 
