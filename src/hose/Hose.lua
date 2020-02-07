@@ -565,7 +565,9 @@ end
 function Hose:grab(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
-    log("Grab hose id: " .. id)
+    if g_manureSystem.debug then
+        Logger.info("Grab hose id", id)
+    end
 
     local grabNode = self:getGrabNodeById(id)
 
@@ -595,7 +597,10 @@ end
 function Hose:drop(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, false, noEventSend)
 
-    log("Drop hose id: " .. id)
+    if g_manureSystem.debug then
+        Logger.info("Drop hose id", id)
+    end
+
     local grabNode = self:getGrabNodeById(id)
 
     grabNode.state = Hose.STATE_DETACHED
@@ -619,7 +624,9 @@ end
 function Hose:attach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, true, noEventSend)
 
-    log("attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+    if g_manureSystem.debug then
+        Logger.info("Attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+    end
 
     local grabNode = self:getGrabNodeById(id)
 
@@ -639,7 +646,9 @@ end
 function Hose:detach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, false, noEventSend)
 
-    log("detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+    if g_manureSystem.debug then
+        Logger.info("Detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+    end
 
     local grabNode = self:getGrabNodeById(id)
 
