@@ -69,7 +69,6 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
 
             raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", 2, self, ManureSystemFillArm.RAYCAST_MASK, true)
 
-            local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
             local r, g, b = 1, 0, 0
 
             if fillArm.lastRaycastVehicle ~= nil then
@@ -85,9 +84,12 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 self:setPumpTargetObject(nil, nil)
             end
 
-            lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
-            lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
-            drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
+            if g_manureSystem.debug then
+                local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
+                lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
+                lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
+                drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
+            end
         end
         -- Reset
         fillArm.isRaycastAllowed = true
