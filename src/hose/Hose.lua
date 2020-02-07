@@ -817,24 +817,37 @@ function Hose:parkHose(connector, vehicle)
     -- First we remove the hose from physics
     self:removeFromPhysics()
 
-    local xPos, yPos, zPos = getWorldTranslation(connector.node)
-    local xRot, yRot, zRot = getWorldRotation(connector.node)
+    local xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
+    local xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
+
+    local xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
+    local xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
+
+    local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
+    local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
+
+    -- Do correction on the end offset with the start offset.
+    xEndOffPos = xEndOffPos - xStartOffPos
+    yEndOffPos = yEndOffPos - yStartOffPos
+    zEndOffPos = zEndOffPos - zStartOffPos
 
     -- We place the components correctly.
     for i = 1, #self.components do
         local parkNode = createTransformGroup("parkNode")
-        setTranslation(parkNode, xPos, yPos, zPos)
-        setRotation(parkNode, xRot, yRot, zRot)
+        setWorldTranslation(parkNode, xPos, yPos, zPos)
+        setWorldRotation(parkNode, xRot, yRot, zRot)
 
-        local x, y, z = localToWorld(parkNode, 0, 0, length / division * (i - 1))
+        local alpha = i - 1
+        -- Calculate offset.
+        local tx, ty, tz = MathUtil.vector3Lerp(xStartOffPos, yStartOffPos, zStartOffPos, xEndOffPos, yEndOffPos, zEndOffPos, 1 / division * alpha)
+        local x, y, z = localToWorld(parkNode, tx, ty, tz + (length / division * alpha))
 
         local ox, oy, oz = 0, 0, 0
         if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
-            oy = math.pi
+            oy = oy + math.pi
         end
 
         local rx, ry, rz = localRotationToWorld(parkNode, ox, oy, oz)
-
         self:setWorldPosition(x, y, z, rx, ry, rz, i, true)
 
         delete(parkNode)
