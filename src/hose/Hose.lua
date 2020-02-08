@@ -19,14 +19,14 @@ Hose.STATE_EXTENDED = 4
 
 Hose.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2
 
-Hose.RAYCAST_DISTANCE = 3
-Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096
-
 Hose.CONNECTOR_SEQUENCE = 0.6 * 0.6
 Hose.VEHICLE_CONNECTOR_SEQUENCE = 6 * 6
 
 Hose.RESPAWN_OFFSET = 0.00001
 Hose.RESPAWN_LENGTH_OFFSET = 0.5
+
+Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
+Hose.RAYCAST_DISTANCE = 2
 
 function Hose.prerequisitesPresent(specializations)
     return true
@@ -65,6 +65,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
     SpecializationUtil.registerFunction(vehicleType, "constructPlayerJoint", Hose.constructPlayerJoint)
     SpecializationUtil.registerFunction(vehicleType, "onPlayerJointBreak", Hose.onPlayerJointBreak)
+    SpecializationUtil.registerFunction(vehicleType, "fillRaycastCallback", Hose.fillRaycastCallback)
 end
 
 function Hose.registerEventListeners(vehicleType)
@@ -144,17 +145,24 @@ end
 
 function Hose:onMissionSaveToSavegame(key, xmlFile)
     local spec = self.spec_hose
-    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
-        local grabNode = self:getGrabNodeById(grabNodeId)
 
+    -- Remap for saving.
+    local grabNodesToSave = {}
+    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
+        table.insert(grabNodesToSave, { grabNodeId, desc })
+    end
+
+    for i, data in ipairs(grabNodesToSave) do
+        local id, desc = unpack(data)
+        local grabNode = self:getGrabNodeById(id)
         if not grabNode.isExtension then
-            local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(grabNodeId - 1)
+            local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i - 1)
 
             if desc ~= nil then
                 local vehicle = desc.vehicle
                 local connector = vehicle:getConnectorById(desc.connectorId)
 
-                setXMLInt(xmlFile, saveKey .. "#grabNodeId", grabNodeId)
+                setXMLInt(xmlFile, saveKey .. "#grabNodeId", id)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
                 local objectId = g_manureSystem:getConnectorObjectId(vehicle)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
@@ -299,14 +307,14 @@ function Hose:onUpdateTick(dt)
             local grabNodeId = next(spec.grabNodesToObjects)
             local desc = spec.grabNodesToObjects[grabNodeId]
 
-            if desc ~= nil then
+            if desc ~= nil and desc.connectorId ~= nil then
                 local vehicle = desc.vehicle
                 local connector1 = vehicle:getConnectorById(desc.connectorId)
 
                 if not connector1.isParkPlace then
                     local connectorDesc, count = self:getConnectorObjectDesc(grabNodeId)
 
-                    if connectorDesc ~= nil then
+                    if connectorDesc ~= nil and connectorDesc.connectorId ~= nil then
                         local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed() > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed() > 2
                         if doCheck then
                             local connector2 = connectorDesc.vehicle:getConnectorById(connectorDesc.connectorId)
@@ -340,7 +348,7 @@ function Hose:restrictPlayerMovement(id, player, dt)
         if self:isAttached(grabNode) then
             local desc, count = self:getConnectorObjectDesc(id)
 
-            if desc ~= nil then
+            if desc ~= nil and desc.connectorId ~= nil then
                 local connector = desc.vehicle:getConnectorById(desc.connectorId)
                 local cx, cy, cz = getWorldTranslation(connector.node)
                 local px, py, pz = getWorldTranslation(player.rootNode)
@@ -455,10 +463,14 @@ function Hose:findConnector(id)
     end
 end
 
-function Hose:getConnectorObjectDesc(id, hoseCount)
+function Hose:getConnectorObjectDesc(id, hoseCount, doRaycast)
     hoseCount = hoseCount or 1
+    doRaycast = doRaycast or false
 
     local spec = self.spec_hose
+
+    spec.lastRaycastDistance = 0
+    spec.lastRaycastObject = nil
 
     for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
         if grabNodeId ~= id then
@@ -467,13 +479,24 @@ function Hose:getConnectorObjectDesc(id, hoseCount)
             -- Recursively get the connector object.
             if vehicle.isaHose ~= nil and vehicle:isaHose() then
                 hoseCount = hoseCount + 1
-                return vehicle:getConnectorObjectDesc(desc.connectorId, hoseCount)
+                return vehicle:getConnectorObjectDesc(desc.connectorId, hoseCount, doRaycast)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
             if connector.isConnected then
                 return desc, hoseCount
             end
+        end
+    end
+
+    if doRaycast then
+        local grabNode = self:getGrabNodeById(id)
+        local x, y, z = getWorldTranslation(grabNode.raycastNode)
+        local dx, dy, dz = localDirectionToWorld(grabNode.raycastNode, 0, 0, -1)
+        raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
+
+        if spec.lastRaycastObject ~= nil then
+            return { vehicle = spec.lastRaycastObject }, hoseCount
         end
     end
 
@@ -492,6 +515,34 @@ function Hose.debugRenderRaycastNode(raycastNode, x, y, z, hasContact)
     lx, ly, lz = localToWorld(raycastNode, lx, ly, lz)
 
     drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
+end
+
+function Hose:fillRaycastCallback(hitObjectId, x, y, z, distance)
+    if hitObjectId ~= 0 then
+        if hitObjectId == g_currentMission.terrainRootNode then
+            return true
+        end
+
+        local object = g_currentMission:getNodeObject(hitObjectId)
+        if object ~= nil and object.isa ~= nil then
+            local spec = self.spec_hose
+
+            if object:isa(Vehicle) then
+                if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
+                    spec.lastRaycastDistance = distance
+                    spec.lastRaycastObject = object
+
+                    return false
+                end
+            elseif object:isa(ManureSystemStorage) then
+                spec.lastRaycastDistance = distance
+                spec.lastRaycastObject = object
+                return false
+            end
+        end
+    end
+
+    return true
 end
 
 --- Allows easy check on raycast
@@ -1073,6 +1124,7 @@ function Hose.loadGrabNodes(self)
 
             grabNode.id = i + 1
             grabNode.node = node
+            grabNode.raycastNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. "#raycastNode"), self.i3dMappings)
 
             if self.isClient then
                 grabNode.visualNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. ".visuals#visualNode"), self.i3dMappings)

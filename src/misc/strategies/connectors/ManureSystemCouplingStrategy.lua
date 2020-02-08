@@ -138,7 +138,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 end
 
 function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
-    local desc, count = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId)
+    local desc, count = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId, 1, true) -- do raycast too.
 
     if desc ~= nil and desc.vehicle ~= object then
         if desc.connectorId ~= nil then
