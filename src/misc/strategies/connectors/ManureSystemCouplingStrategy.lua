@@ -18,11 +18,11 @@ ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS = 2
 
 local ManureSystemCouplingStrategy_mt = Class(ManureSystemCouplingStrategy)
 
-function ManureSystemCouplingStrategy:new(object, customMt)
+function ManureSystemCouplingStrategy:new(object, type, customMt)
     local instance = {}
 
     instance.object = object
-    instance.couplingType = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+    instance.couplingType = type
 
     setmetatable(instance, customMt or ManureSystemCouplingStrategy_mt)
 
