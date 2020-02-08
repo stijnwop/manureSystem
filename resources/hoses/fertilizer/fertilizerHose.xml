@@ -12,7 +12,7 @@
         <lifetime>600</lifetime>
         <rotation>0</rotation>
         <brand>LIZARD</brand>
-        <category>slurryTanks</category>
+        <category>sprayers</category>
         <vertexBufferMemoryUsage>510488</vertexBufferMemoryUsage>
         <indexBufferMemoryUsage>87540</indexBufferMemoryUsage>
         <textureMemoryUsage>11469208</textureMemoryUsage>
