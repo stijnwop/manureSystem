@@ -3,11 +3,12 @@
     <annotation>Copyright (C) GIANTS Software GmbH, All Rights Reserved.</annotation>
 
     <storeData>
-        <name>
-            <en>Slurry hose</en>
-        </name>
+        <name>$l10n_shopItem_slurryHose</name>
+        <functions>
+            <function>$l10n_function_slurryHose</function>
+        </functions>
         <image>resources/hoses/slurry/store.png</image>
-        <price>150</price> <!-- ToDo -->
+        <price>150</price>
         <lifetime>600</lifetime>
         <rotation>0</rotation>
         <brand>LIZARD</brand>
@@ -95,15 +96,15 @@
 
     <baseMaterial>
         <material name="hose_mat" baseNode="hose">
-            <shaderParameter name="colorMat1" value="0.004 0.061 0.117 1.0"/>
+            <shaderParameter name="colorMat1" value="0.1 0.025 0.005 1.0"/>
         </material>
     </baseMaterial>
 
     <baseMaterialConfigurations price="3000" useDefaultColors="false" defaultColorIndex="0">
+        <baseMaterialConfiguration color="0.1 0.025 0.005 1.0"/><!-- brown -->
         <baseMaterialConfiguration color="0.004 0.061 0.117 1.0"/><!-- blue -->
         <baseMaterialConfiguration color="0.013 0.013 0.013 1.0"/><!-- black -->
         <baseMaterialConfiguration color="0.04 0.175 0.105 1.0"/><!-- green -->
-        <baseMaterialConfiguration color="0.1 0.025 0.005 1.0"/><!-- brown -->
         <baseMaterialConfiguration color="0.19 0.19 0.19 1.0"/> <!-- gray -->
         <material name="hose_mat" shaderParameter="colorMat1"/>
     </baseMaterialConfigurations>

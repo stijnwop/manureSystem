@@ -20,12 +20,12 @@
 
         <text name="action_directionOut" text="Ändere Pumprichtung in: entleeren"/>
         <text name="action_directionIn" text="Ändere Pumprichtung in: befüllen"/>
-        <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
-        <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
+        <text name="action_directionLeftRight" text="Ändere Pumprichtung in: links nach rechts"/>
+        <text name="action_directionRightLeft" text="Ändere Pumprichtung in: rechts nach links"/>
 
         <!--Warnings-->
-        <text name="warning_parkingPlaceTooSmall" text="The %sm parking place is too small for the %sm hose!"/>
-        <text name="warning_hoseRangeRestriction" text="The hose range restriction won't allow you to go any further!"/>
+        <text name="warning_parkingPlaceTooSmall" text="Der %sm Lagerplatz ist zu klein für den %sm Schlauch!"/>
+        <text name="warning_hoseRangeRestriction" text="Die maximale Schlauchlänge ist erreicht. Sie können sich nicht weiter entfernen!"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Enable mixer"/>
@@ -33,6 +33,8 @@
         <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
+        <text name="shopItem_slurryHose" text="Gülleschlauch"/>
+        <text name="function_slurryHose" text="Mit einem Gülleschlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern."/>
         <text name="configuration_hose" text="Change hose type."/>
         <text name="configuration_valueExtend" text="Extension"/>
     </texts>

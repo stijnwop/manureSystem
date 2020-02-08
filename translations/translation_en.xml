@@ -33,6 +33,8 @@
         <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
+        <text name="shopItem_slurryHose" text="Slurry hose"/>
+        <text name="function_slurryHose" text="With a slurry hose you are able to pump a liquid fill type from source to target. If applicable you could extend the slurry hose to reach larger ranges."/>
         <text name="configuration_hose" text="Change hose type."/>
         <text name="configuration_valueExtend" text="Extension"/>
     </texts>
