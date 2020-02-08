@@ -12,6 +12,7 @@ ManureSystemConnectorManager.COLLISION_MASK = 1088430080
 
 ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK = "dock"
 ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING = "coupling"
+ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING = "couplingFertilizer"
 ManureSystemConnectorManager.CONNECTOR_TYPE_TRANSFER_HOSE = "transfer"
 
 local ManureSystemConnectorManager_mt = Class(ManureSystemConnectorManager)
@@ -42,6 +43,7 @@ function ManureSystemConnectorManager:loadDefaultConnectorTypes()
     self:addConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
     self:addConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
     self:addConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_TRANSFER_HOSE)
+    self:addConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING)
 end
 
 function ManureSystemConnectorManager:formatTypeKey(name)
@@ -70,8 +72,9 @@ function ManureSystemConnectorManager:addConnectorType(name)
 end
 
 function ManureSystemConnectorManager:getConnectorStrategy(type, object)
-    if type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING) then
-        return ManureSystemCouplingStrategy:new(object)
+    if type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+        or type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING) then
+        return ManureSystemCouplingStrategy:new(object, type)
     elseif type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) then
         return ManureSystemDockStrategy:new(object)
     end
