@@ -36,6 +36,22 @@
         <replaceTypeName>vanillaPremiumIntegral30000</replaceTypeName>
     </vehicle>
     <vehicle>
+        <xml>data/vehicles/hardi/navigator6000/navigator6000.xml</xml>
+        <replaceTypeName>vanillaNavigator6000</replaceTypeName>
+    </vehicle>
+
+    <!-- Pallets -->
+    <vehicle>
+        <xml>data/objects/pallets/liquidTank/fertilizerTank.xml</xml>
+        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/objects/pallets/liquidTank/herbicideTank.xml</xml>
+        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+    </vehicle>
+
+    <!-- Mods -->
+    <vehicle>
         <xml>zunhammer/TV585/TV585.xml</xml>
         <replaceTypeName>dlcTV585</replaceTypeName>
     </vehicle>
