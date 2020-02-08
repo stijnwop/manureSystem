@@ -178,6 +178,16 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
     return superFunc(self, vehicleData, ...)
 end
 
+local function getIsFillTriggerActivatable(trigger, superFunc, vehicle)
+    if trigger.sourceObject ~= nil then
+        if trigger.sourceObject.spec_manureSystemConnector ~= nil and vehicle.spec_manureSystemConnector ~= nil then
+            return false
+        end
+    end
+
+    return superFunc(trigger, vehicle)
+end
+
 local function init()
     loadInsertionVehicles()
 
@@ -192,6 +202,7 @@ local function init()
     VehicleTypeManager.validateVehicleTypes = Utils.prependedFunction(VehicleTypeManager.validateVehicleTypes, validateVehicleTypes)
 
     Vehicle.load = Utils.overwrittenFunction(Vehicle.load, vehicleLoad)
+    FillTrigger.getIsActivatable = Utils.overwrittenFunction(FillTrigger.getIsActivatable, getIsFillTriggerActivatable)
 end
 
 init()
