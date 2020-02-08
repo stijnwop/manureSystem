@@ -85,7 +85,8 @@ function Hose:onLoad(savegame)
     self.spec_hose = self[("spec_%s.hose"):format(Hose.MOD_NAME)]
     local spec = self.spec_hose
 
-    spec.connectorType = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+    local typeString = Utils.getNoNil(getXMLString(self.xmlFile, "vehicle.hose#type"), ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+    spec.connectorType = g_manureSystem.connectorManager:getConnectorType(typeString)
 
     spec.grabNodes = {}
     spec.grabNodesToObjects = {}
