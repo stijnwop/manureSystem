@@ -23,21 +23,20 @@
         <typeDesc>$l10n_typeDesc_manureBarrel</typeDesc>
         <filename>resources/hoses/fertilizer/fertilizerHose.i3d</filename>
         <size width="0.2" length="5"/>
-        <supportsPickUp>false</supportsPickUp>
         <components>
             <component centerOfMass="0 0 -0.25" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0.25" solverIterationCount="20" mass="5"/>
 
-            <joint component1="1" component2="2" node="componentJoint1" rotLimit="45 45 45"
-                   rotMinLimit="-45 -45 -45"
+            <joint component1="1" component2="2" node="componentJoint1" rotLimit="22 22 22"
+                   rotMinLimit="-22 -22 -22"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="2" component2="3" node="componentJoint2" rotLimit="45 45 45"
-                   rotMinLimit="-45 -45 -45"
+            <joint component1="2" component2="3" node="componentJoint2" rotLimit="22 22 22"
+                   rotMinLimit="-22 -22 -22"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="3" component2="4" node="componentJoint3" rotLimit="45 45 45"
-                   rotMinLimit="-45 -45 -45"
+            <joint component1="4" component2="3" node="componentJoint3" rotLimit="22 22 22"
+                   rotMinLimit="-22 -22 -22"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
         <schemaOverlay attacherJointPosition="0 0">
@@ -51,11 +50,19 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose length="5" mesh="fertilizer_hose" baseNode="baseNode" targetNode="targetNode" offset="0">
-        <grabNodes>
-            <grabNode node="grabNode1" componentIndex="1" componentJointIndex="1" rotLimit="55 55 55"/>
-            <grabNode node="grabNode2" componentIndex="4" componentJointIndex="3" rotLimit="55 55 55"/>
-        </grabNodes>
+    <hose length="4.945" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>">
+        <hoseConfigurations>
+            <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
+                <grabNodes>
+                    <grabNode node="grabNode1" raycastNode="grabNode1" componentIndex="1" componentJointIndex="1">
+                        <visuals visualNode="fertilizer_coupling1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
+                    </grabNode>
+                    <grabNode node="grabNode2" raycastNode="grabNode2" componentIndex="4" componentJointIndex="3">
+                        <visuals visualNode="fertilizer_coupling2" hoseTargetNode="targetNode"/>
+                    </grabNode>
+                </grabNodes>
+            </hoseConfiguration>
+        </hoseConfigurations>
     </hose>
 
     <foliageBending>
