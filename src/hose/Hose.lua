@@ -105,9 +105,6 @@ function Hose:onLoad(savegame)
         spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length))
 
         setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
-        setShaderParameter(spec.mesh, "cv1", 0, 0, 0, 0, false)
-        local x, y, z = localToLocal(spec.targetNode, spec.mesh, 0, 0, spec.length)
-        setShaderParameter(spec.mesh, "cv3", x, y, z, 0, false)
     end
 
     spec.lastInRangePosition = { 0, 0, 0 }
@@ -599,7 +596,6 @@ function Hose:computeCatmullSpline()
     local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
     local p3x, p3y, p3z = 0, 0, spec.length -- calculate target offset
 
-    p0x, p0y, p0z = p0x, p0y, p0z
     p3x, p3y, p3z = localToLocal(spec.targetNode, spec.mesh, p3x, p3y, p3z)
 
     local w1x, w1y, w1z = getWorldTranslation(spec.centerNode1)
@@ -607,10 +603,12 @@ function Hose:computeCatmullSpline()
 
     p1x, p1y, p1z = worldToLocal(spec.mesh, (w1x + w2x) * 0.5, (w1y + w2y) * 0.5, (w1z + w2z) * 0.5)
 
-    Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 1)
-    Hose.setCatmullPoint(spec.mesh, "cv2", p1x, p1y, p1z, 0)
-    Hose.setCatmullPoint(spec.mesh, "cv3", p2x, p2y, p2z, 0)
-    Hose.setCatmullPoint(spec.mesh, "cv4", p3x, p3y, p3z, 1)
+    -- Fix flickering on the hose mesh.
+    local intersectionOffset = 0.003
+    Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
+    Hose.setCatmullPoint(spec.mesh, "cv2", p1x + intersectionOffset, p1y, p1z, 0)
+    Hose.setCatmullPoint(spec.mesh, "cv3", p2x - intersectionOffset, p2y, p2z, 0)
+    Hose.setCatmullPoint(spec.mesh, "cv4", p3x - intersectionOffset, p3y, p3z, 0)
 end
 
 function Hose:grab(id, player, noEventSend)
