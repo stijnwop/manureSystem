@@ -33,8 +33,10 @@
         <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
+        <text name="typeDesc_hose" text="schlauch"/>
         <text name="shopItem_slurryHose" text="Gülleschlauch"/>
-        <text name="function_slurryHose" text="Mit einem Gülleschlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern."/>
+        <text name="shopItem_fertilizerHose" text="Düngerschlauch"/>
+        <text name="function_hose" text="Mit einem schlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern."/>
         <text name="configuration_hose" text="Change hose type."/>
         <text name="configuration_valueExtend" text="Extension"/>
     </texts>

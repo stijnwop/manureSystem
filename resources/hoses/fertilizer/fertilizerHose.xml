@@ -3,11 +3,12 @@
     <annotation>Copyright (C) GIANTS Software GmbH, All Rights Reserved.</annotation>
 
     <storeData>
-        <name>
-            <en>Fertilizer hose</en>
-        </name>
+        <name>$l10n_shopItem_fertilizerHose</name>
+        <functions>
+            <function>$l10n_function_hose</function>
+        </functions>
         <image>resources/hoses/fertilizer/store.png</image>
-        <price>0</price> <!-- ToDo -->
+        <price>300</price>
         <lifetime>600</lifetime>
         <rotation>0</rotation>
         <brand>LIZARD</brand>
@@ -20,7 +21,7 @@
     </storeData>
 
     <base>
-        <typeDesc>$l10n_typeDesc_manureBarrel</typeDesc>
+        <typeDesc>$l10n_typeDesc_hose</typeDesc>
         <filename>resources/hoses/fertilizer/fertilizerHose.i3d</filename>
         <size width="0.2" length="5"/>
         <components>

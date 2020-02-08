@@ -5,7 +5,7 @@
     <storeData>
         <name>$l10n_shopItem_slurryHose</name>
         <functions>
-            <function>$l10n_function_slurryHose</function>
+            <function>$l10n_function_hose</function>
         </functions>
         <image>resources/hoses/slurry/store.png</image>
         <price>150</price>
@@ -21,7 +21,7 @@
     </storeData>
 
     <base>
-        <typeDesc>$l10n_typeDesc_manureBarrel</typeDesc>
+        <typeDesc>$l10n_typeDesc_hose</typeDesc>
         <filename>resources/hoses/slurry/slurryHose.i3d</filename>
         <size width="0.2" length="3"/>
         <components>
