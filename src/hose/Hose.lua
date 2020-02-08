@@ -103,7 +103,6 @@ function Hose:onLoad(savegame)
         local length = MathUtil.vector3Length(endTrans[1] - startTrans[1], endTrans[2] - startTrans[2], endTrans[3] - startTrans[3])
 
         spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length))
-
         setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
     end
 
@@ -133,6 +132,8 @@ function Hose:onLoadFinished(savegame)
             joint.orgRotMinLimit = ListUtil.copyTable(joint.rotMinLimit)
         end
     end
+
+    self:computeCatmullSpline()
 end
 
 function Hose:onPreDelete()
