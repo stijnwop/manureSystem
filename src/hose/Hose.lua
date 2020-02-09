@@ -41,6 +41,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "onMissionLoadFromSavegame", Hose.onMissionLoadFromSavegame)
     SpecializationUtil.registerFunction(vehicleType, "computeCatmullSpline", Hose.computeCatmullSpline)
     SpecializationUtil.registerFunction(vehicleType, "isaHose", Hose.isaHose)
+    SpecializationUtil.registerFunction(vehicleType, "getLength", Hose.getLength)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodes", Hose.getGrabNodes)
     SpecializationUtil.registerFunction(vehicleType, "getGrabNodeById", Hose.getGrabNodeById)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorById", Hose.getConnectorById)
@@ -311,7 +312,7 @@ function Hose:onUpdateTick(dt)
                 local connector1 = vehicle:getConnectorById(desc.connectorId)
 
                 if not connector1.isParkPlace then
-                    local connectorDesc, count = self:getConnectorObjectDesc(grabNodeId)
+                    local connectorDesc, length = self:getConnectorObjectDesc(grabNodeId)
 
                     if connectorDesc ~= nil and connectorDesc.connectorId ~= nil then
                         local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed() > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed() > 2
@@ -321,7 +322,7 @@ function Hose:onUpdateTick(dt)
                             local bx, _, bz = getWorldTranslation(connector2.node)
 
                             local distance = MathUtil.vector2Length(ax - bx, az - bz)
-                            local length = (spec.length + Hose.RESPAWN_LENGTH_OFFSET) * count
+                            length = length + Hose.RESPAWN_LENGTH_OFFSET
 
                             if distance > length then
                                 if g_manureSystem.debug then
@@ -345,7 +346,7 @@ function Hose:restrictPlayerMovement(id, player, dt)
         local grabNode = self:getGrabNodeById(id)
 
         if self:isAttached(grabNode) then
-            local desc, count = self:getConnectorObjectDesc(id)
+            local desc, length = self:getConnectorObjectDesc(id)
 
             if desc ~= nil and desc.connectorId ~= nil then
                 local connector = desc.vehicle:getConnectorById(desc.connectorId)
@@ -353,7 +354,7 @@ function Hose:restrictPlayerMovement(id, player, dt)
                 local px, py, pz = getWorldTranslation(player.rootNode)
                 local dx, dz = px - cx, pz - cz
                 local radius = dx * dx + dz * dz
-                local length = (spec.length + Hose.RESPAWN_LENGTH_OFFSET) * count
+                length = length + Hose.RESPAWN_LENGTH_OFFSET
 
                 local actionRadius = length * length
 
@@ -462,11 +463,11 @@ function Hose:findConnector(id)
     end
 end
 
-function Hose:getConnectorObjectDesc(id, hoseCount, doRaycast)
-    hoseCount = hoseCount or 1
-    doRaycast = doRaycast or false
-
+function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
     local spec = self.spec_hose
+
+    doRaycast = doRaycast or false
+    totalHoseLength = totalHoseLength or self:getLength()
 
     spec.lastRaycastDistance = 0
     spec.lastRaycastObject = nil
@@ -477,13 +478,13 @@ function Hose:getConnectorObjectDesc(id, hoseCount, doRaycast)
 
             -- Recursively get the connector object.
             if vehicle.isaHose ~= nil and vehicle:isaHose() then
-                hoseCount = hoseCount + 1
-                return vehicle:getConnectorObjectDesc(desc.connectorId, hoseCount, doRaycast)
+                totalHoseLength = totalHoseLength + vehicle:getLength()
+                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
             if connector.isConnected then
-                return desc, hoseCount
+                return desc, totalHoseLength
             end
         end
     end
@@ -495,11 +496,11 @@ function Hose:getConnectorObjectDesc(id, hoseCount, doRaycast)
         raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
 
         if spec.lastRaycastObject ~= nil then
-            return { vehicle = spec.lastRaycastObject }, hoseCount
+            return { vehicle = spec.lastRaycastObject }, totalHoseLength
         end
     end
 
-    return nil, hoseCount
+    return nil, totalHoseLength
 end
 
 function Hose.debugRenderRaycastNode(raycastNode, x, y, z, hasContact)
@@ -547,6 +548,10 @@ end
 --- Allows easy check on raycast
 function Hose:isaHose()
     return true
+end
+
+function Hose:getLength()
+    return self.spec_hose.length
 end
 
 function Hose:getGrabNodes()

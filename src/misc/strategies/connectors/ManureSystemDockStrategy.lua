@@ -120,11 +120,11 @@ function ManureSystemDockStrategy:getStationaryConnectorDesc(connector)
         local stationaryConnector = object:getConnectorById(connector.stationaryConnectorId)
 
         if stationaryConnector.connectedObject ~= nil then
-            local desc, count = stationaryConnector.connectedObject:getConnectorObjectDesc(stationaryConnector.connectedNodeId)
+            local desc, length = stationaryConnector.connectedObject:getConnectorObjectDesc(stationaryConnector.connectedNodeId)
             if desc ~= nil and desc.vehicle ~= object then
                 local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
                 if stationaryConnector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-                    return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, count
+                    return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, length
                 end
             end
         end
