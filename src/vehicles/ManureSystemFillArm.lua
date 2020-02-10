@@ -112,9 +112,11 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
 
         if fillArm.needsDockingCollision then
-            local collision = clone(g_manureSystem.fillArmManager.collision, false, false, true)
+            local collision = clone(g_manureSystem.fillArmManager.collision, false, false, false)
 
             if collision ~= 0 then
+                setIsCompoundChild(collision, true)
+                addToPhysics(collision)
                 fillArm.collision = collision
 
                 local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#position")) }

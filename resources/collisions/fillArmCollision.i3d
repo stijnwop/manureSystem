@@ -15,7 +15,7 @@
   </Shapes>
 
   <Scene>
-    <Shape name="armCollision" shapeId="1" compoundChild="true" density="0.001" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" nodeId="1"/>
+    <Shape name="armCollision" shapeId="1" kinematic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" nodeId="1"/>
   </Scene>
 
   <UserAttributes>
