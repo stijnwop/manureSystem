@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="set_1" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+
+  <Files>
+    <File fileId="2" filename="valves2_specular.png" />
+    <File fileId="1" filename="valves2_normal.png" />
+    <File fileId="5" filename="valves1_specular.png" />
+    <File fileId="4" filename="valves1_normal.png" />
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+  </Files>
+
+  <Materials>
+    <Material name="valves10inch_mat" materialId="2" diffuseColor="0.8 0.8 0.8 1" cosPower="9.60784" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat3" value="0.015 0.16 0.075 0.0"/>
+      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
+      <CustomParameter name="colorMat0" value="0.005 0.085 0.035 0.0"/>
+      <CustomParameter name="colorMat1" value="0.015 0.16 0.075 0.0"/>
+      <CustomParameter name="colorMat2" value="0.05 0.05 0.055 0.0"/>
+      <Normalmap fileId="1"/>
+      <Glossmap fileId="2"/>
+    </Material>
+    <Material name="valves8inch_mat" materialId="1" diffuseColor="0.8 0.8 0.8 1" cosPower="9.60784" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat2" value="0.015 0.16 0.075 0.0"/>
+      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
+      <CustomParameter name="colorMat0" value="0.005 0.085 0.035 0.0"/>
+      <CustomParameter name="colorMat1" value="0.7 0.0 0.0 0.0"/>
+      <Normalmap fileId="4"/>
+      <Glossmap fileId="5"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="set_1.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="set" collision="false" clipDistance="300" nodeId="1">
+      <Shape name="hose_connector" translation="0 -1.19261e-18 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2">
+        <Shape name="handle_connector" translation="0.0588567 0.112407 -0.0257013" rotation="0 0 -150" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="3"/>
+        <Shape name="hose_clamp" translation="0.13248 -0.136818 0.00015129" rotation="0 0 -20" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4">
+          <Shape name="link" translation="3.78788e-05 0.224781 0.000225914" rotation="0 0 60" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="5"/>
+        </Shape>
+      </Shape>
+      <Shape name="eightInchMZBrassValve" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
+      <Shape name="eightInchMZcastIronValve" translation="1.11021e-16 0 0" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7"/>
+      <Shape name="handle_new" shapeId="7" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="8">
+        <Shape name="piston" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="9"/>
+        <Shape name="handle_valve" translation="0.0158721 0.25821 0" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="10">
+          <Shape name="handle_bar" translation="-0.130318 -0.0184616 -3.53903e-08" shapeId="10" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="11"/>
+        </Shape>
+      </Shape>
+      <Shape name="handle_old" shapeId="11" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="12">
+        <Shape name="piston" translation="-0.0699028 0.24 -0.000265173" shapeId="12" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="13"/>
+        <Shape name="handle_bar" translation="-0.0691212 0.258523 0.0845319" shapeId="13" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="14">
+          <Shape name="handle_valve" translation="0 0.125811 0.0919794" shapeId="14" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="15"/>
+        </Shape>
+      </Shape>
+      <Shape name="brass_hydraulic" shapeId="15" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="16"/>
+      <Shape name="brass_pneumatic" shapeId="16" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="17"/>
+      <Shape name="tenInchMZCastIronValve" shapeId="17" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="18"/>
+      <Shape name="tenInchBPCastIronValve" shapeId="18" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="19"/>
+      <Shape name="castIron_hydraulic" shapeId="19" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="20"/>
+      <Shape name="castIron_pneumatic" shapeId="20" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="21"/>
+    </TransformGroup>
+  </Scene>
+
+  <UserAttributes>
+  </UserAttributes>
+</i3D>
