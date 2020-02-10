@@ -68,4 +68,30 @@
             </valve>
         </valves>
     </set>
+    <set filename="resources/assets/set_2.i3d">
+        <connectors>
+            <connector type="connector_1" node="0">
+                <animation name="connector_1_lock">
+                    <!-- Nodes below are child nodes of the connector node -->
+                    <part node="0" startTime="0" endTime="0.5" startRot="0 0 -140" endRot="0 0 -25"/>
+                    <part node="1" startTime="0" endTime="0.5" startRot="0 0 -15" endRot="0 0 0"/>
+                    <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 -20" endRot="0 0 0"/>
+                </animation>
+            </connector>
+        </connectors>
+        <valves>
+            <valve type="8inch_brass" node="1">
+                <handle type="handle_new" node="2">
+                    <!-- Nodes below are child nodes of the handle node -->
+                    <animation name="8inch_brass_handle_new">
+                        <part node="0" startTime="0" endTime="0.25" startTrans="-0.047 0.251 0" endTrans="-0.047 0.3 0"/>
+                        <part node="0" startTime="0.25" endTime="0.5" startTrans="-0.047 0.3 0" endTrans="-0.047 0.365 0"/>
+                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -75"/>
+                        <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
+                        <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
+                    </animation>
+                </handle>
+            </valve>
+        </valves>
+    </set>
 </assets>
