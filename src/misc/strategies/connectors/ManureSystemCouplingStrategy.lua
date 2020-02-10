@@ -158,10 +158,13 @@ end
 
 function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.hasOpenManureFlow = false
-    connector.lockAnimationName = getXMLString(xmlFile, key .. "#lockAnimationName")
-    connector.lockAnimationIndex = getXMLInt(xmlFile, key .. "#lockAnimationIndex")
-    connector.manureFlowAnimationName = getXMLString(xmlFile, key .. "#manureFlowAnimationName")
-    connector.manureFlowAnimationIndex = getXMLInt(xmlFile, key .. "#manureFlowAnimationIndex")
+
+    if not connector.hasSharedSet then
+        connector.lockAnimationName = getXMLString(xmlFile, key .. "#lockAnimationName")
+        connector.lockAnimationIndex = getXMLInt(xmlFile, key .. "#lockAnimationIndex")
+        connector.manureFlowAnimationName = getXMLString(xmlFile, key .. "#manureFlowAnimationName")
+        connector.manureFlowAnimationIndex = getXMLInt(xmlFile, key .. "#manureFlowAnimationIndex")
+    end
 
     connector.jointOrigRot = { getRotation(connector.node) }
     connector.jointOrigTrans = { getTranslation(connector.node) }
