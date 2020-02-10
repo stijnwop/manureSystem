@@ -20,16 +20,15 @@ function ManureSystem:new(mission, input, i18n, modDirectory, modName)
     self.modName = modName
     self.debug = false
 
-    self.connectorManager = ManureSystemConnectorManager:new()
-    self.fillArmManager = ManureSystemFillArmManager:new()
+    self.connectorManager = ManureSystemConnectorManager:new(self.modDirectory)
+    self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
     self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
     self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
     self.samples = {}
 
-    local xmlFile = loadXMLFile("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", modDirectory))
-    self:loadManureSystemSamples(xmlFile)
+    self:loadManureSystemSamples()
 
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
 
@@ -106,7 +105,8 @@ end
 function ManureSystem:update(dt)
 end
 
-function ManureSystem:loadManureSystemSamples(xmlFile)
+function ManureSystem:loadManureSystemSamples()
+    local xmlFile = loadXMLFile("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
     if xmlFile ~= nil then
         local soundsNode = getRootNode()
 
