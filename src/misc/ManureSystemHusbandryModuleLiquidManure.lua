@@ -36,7 +36,7 @@ function ManureSystemHusbandryModuleLiquidManure.setupVanillaHusbandry(xmlFile, 
         or xmlFileName == "data/placeables/animalHusbandry/husbandryPigLarge.xml" then
         setXMLString(xmlFile, "placeable.manureSystemConnectors#rootNode", "0|3")
 
-        setXMLString(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#type"):format(0), "coupling")
+        setXMLString(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#type"):format(0), "COUPLING")
         setXMLString(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#linkNode"):format(0), "0|3")
         setXMLBool(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#createNode"):format(0), true)
         setXMLFloat(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#inRangeDistance"):format(0), 2)
