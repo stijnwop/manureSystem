@@ -90,7 +90,7 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
     self.triggerNode = triggerNode
     self.activateText = g_i18n:getText("action_enableMixer")
     self.hasMixer = Utils.getNoNil(getXMLBool(xmlFile, "placeable.manureSystemStorage#hasMixer"), false)
-    self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 500)
+    self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 500) * 2
     self.thickness = 0 -- 0-1 range
     self.isMixerActive = false
     self.playerInRange = false
