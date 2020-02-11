@@ -179,7 +179,7 @@ end
 function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
     connector.setId = Utils.getNoNil(getXMLInt(xmlFile, key .. "#id"), 1)
 
-    local linkNode = I3DUtil.indexToObject(self.components, Utils.getNoNil(getXMLString(xmlFile, key .. "#linkNode"), "0>"), self.i3dMappings)
+    local linkNode = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, key)
     connector.setSharedLinkNode = linkNode
 
     local set = g_manureSystem.connectorManager:getConnectorSet(connector.setId)
