@@ -1027,7 +1027,7 @@ function Hose:constructPlayerJoint(jointDesc, mass)
     end
 
     if not g_manureSystem.debug then
-        local forceAcceleration = 4
+        local forceAcceleration = 6
         local forceLimit = forceAcceleration * mass * 40
         constructor:setBreakable(forceLimit, forceLimit)
     end
