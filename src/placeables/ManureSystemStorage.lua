@@ -90,7 +90,7 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
     self.triggerNode = triggerNode
     self.activateText = g_i18n:getText("action_enableMixer")
     self.hasMixer = Utils.getNoNil(getXMLBool(xmlFile, "placeable.manureSystemStorage#hasMixer"), false)
-    self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 150)
+    self.mixPerSecond = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemStorage#mixPerSecond"), 500)
     self.thickness = 0 -- 0-1 range
     self.isMixerActive = false
     self.playerInRange = false
@@ -168,7 +168,8 @@ function ManureSystemStorage:readStream(streamId, connection)
             end
         end
 
-        self.fillPlane:setHeight(self:getFillUnitFillLevel())
+        self.thickness = streamReadFloat32(streamId)
+        self.fillPlane:setMixingState(self.mixPerSecond, self.thickness)
     end
 end
 
@@ -187,6 +188,9 @@ function ManureSystemStorage:writeStream(streamId, connection)
                 end
             end
         end
+
+        streamWriteFloat32(streamId, self.thickness)
+        self:onMovedFillLevel(self:getFillUnitFillLevel(), 0)
     end
 end
 
@@ -196,12 +200,7 @@ function ManureSystemStorage:readUpdateStream(streamId, timestamp, connection)
     if connection:getIsServer() then
         if streamReadBool(streamId) then
             self.fillPlane:setHeight(self:getFillUnitFillLevel())
-            local isMixerActive = streamReadBool(streamId)
-            if isMixerActive ~= self.isMixerActive then
-                self:updateActivateText()
-            end
-            self.isMixerActive = isMixerActive
-            self.thickness = streamReadUIntN(streamId, ManureSystemStorage.SEND_NUM_BITS)
+            self.thickness = streamReadFloat32(streamId)
         end
     end
 end
@@ -211,8 +210,7 @@ function ManureSystemStorage:writeUpdateStream(streamId, connection, dirtyMask)
 
     if not connection:getIsServer() then
         if streamWriteBool(streamId, bitAND(dirtyMask, self.lagoonDirtyFlag) ~= 0) then
-            streamWriteBool(streamId, self.isMixerActive)
-            streamWriteUIntN(streamId, self.thickness, ManureSystemStorage.SEND_NUM_BITS)
+            streamWriteFloat32(streamId, self.thickness)
         end
     end
 end
@@ -320,17 +318,23 @@ function ManureSystemStorage:update(dt)
         end
     end
 
+    local lastThickness = self.thickness
     if self.isServer then
-        local lastThickness = self.thickness
         if self.hasMixer and self.isMixerActive then
             self:decreaseManureThickness(self.mixPerSecond, dt, self.isMixerActive)
 
             if not (self.thickness > 0) then
-                self.isMixerActive = false
-                self:updateActivateText()
+                self:setIsMixerActive(false)
             end
 
             self:raiseActive()
+        end
+    end
+
+    if self.isClient then
+        if self.isMixerActive then
+            self.fillPlane:setMixingState(self.mixPerSecond, self.thickness)
+            self.fillPlaneIsIdle = false
         end
 
         if not self.fillPlaneIsIdle then
@@ -339,9 +343,7 @@ function ManureSystemStorage:update(dt)
                 self.fillPlaneIsIdle = true
             end
         end
-    end
 
-    if self.isClient then
         if self.playerInRange then
             local capacity = self:getFillUnitCapacity()
             local fillLevel = self:getFillUnitFillLevel()
@@ -573,8 +575,6 @@ function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt, updatePla
     self.thickness = math.max(self.thickness - decrease, 0)
 
     if updatePlane then
-        self.fillPlane:setMixingState(mixPerSecond, self.thickness)
-        self.fillPlaneIsIdle = false
         self:raiseDirtyFlags(self.lagoonDirtyFlag)
     end
 end
@@ -590,9 +590,16 @@ end
 function ManureSystemStorage:drawActivate()
 end
 
+function ManureSystemStorage:setIsMixerActive(isMixerActive, noEventSend)
+    if isMixerActive ~= self.isMixerActive then
+        ManureSystemIsMixingEvent.sendEvent(self, isMixerActive, noEventSend)
+        self.isMixerActive = isMixerActive
+        self:updateActivateText()
+    end
+end
+
 function ManureSystemStorage:onActivateObject()
-    self.isMixerActive = not self.isMixerActive
-    self:updateActivateText()
+    self:setIsMixerActive(not self.isMixerActive)
 end
 
 function ManureSystemStorage:shouldRemoveActivatable()
