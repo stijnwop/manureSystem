@@ -194,7 +194,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
 
         local sharedConnectorKey = getXMLString(xmlFile, key .. ".connector#type")
         if sharedConnectorKey ~= nil then
-            local sharedConnector = set.connectors[sharedConnectorKey]
+            local sharedConnector = set.connectors[sharedConnectorKey:upper()]
 
             if sharedConnector ~= nil then
                 local connectorNode = clone(sharedConnector.node, false, false, false)
@@ -221,14 +221,14 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
 
         local sharedValveKey = getXMLString(xmlFile, key .. ".valve#type")
         if sharedValveKey ~= nil then
-            local sharedValve = set.valves[sharedValveKey]
+            local sharedValve = set.valves[sharedValveKey:upper()]
             if sharedValve ~= nil then
                 local valveNode = clone(sharedValve.node, false, false, false)
                 link(linkNode, valveNode)
 
                 local sharedHandleKey = getXMLString(xmlFile, key .. ".handle#type")
                 if sharedHandleKey ~= nil then
-                    local sharedHandle = sharedValve.handles[sharedHandleKey]
+                    local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
                     if sharedHandle ~= nil then
                         local handleNode = clone(sharedHandle.node, false, false, false)
 
