@@ -28,6 +28,7 @@ source(Utils.getFilename("src/events/HoseAttachDetachEvent.lua", directory))
 source(Utils.getFilename("src/events/HoseGrabDropEvent.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemConnectorIsConnectedEvent.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemConnectorManureFlowEvent.lua", directory))
+source(Utils.getFilename("src/events/ManureSystemIsMixingEvent.lua", directory))
 
 source(Utils.getFilename("src/utils/ManureSystemUtil.lua", directory))
 source(Utils.getFilename("src/utils/ManureSystemXMLUtil.lua", directory))
