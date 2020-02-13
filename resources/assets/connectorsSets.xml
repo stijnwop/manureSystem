@@ -98,8 +98,8 @@
 
     <set filename="resources/assets/funnel_set_1.i3d">
         <connectors>
-            <connector type="funnel_1" node="0"/>
-            <connector type="funnel_2" node="1"/>
+            <connector type="funnel_8inch" node="0"/>
+            <connector type="funnel_10inch" node="1"/>
         </connectors>
     </set>
 </assets>
