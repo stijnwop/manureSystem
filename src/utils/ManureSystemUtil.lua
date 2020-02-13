@@ -28,6 +28,32 @@ function ManureSystemUtil.getFirstPhysicsNode(nodeId)
     return 0
 end
 
+function ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, xmlKey, node, nodeAttribute)
+    local visualNode = I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute))
+    local materialName = Utils.getNoNil(getUserAttribute(node, "materialName"), "colorMat0")
+
+    if visualNode == nil or not getHasShaderParameter(visualNode, materialName) then
+        return
+    end
+
+    local colorStr = getXMLString(xmlFile, xmlKey .. "#color")
+    if colorStr ~= nil then
+        local colorVector = g_brandColorManager:getBrandColorByName(colorStr) or { StringUtil.getVectorFromString(colorStr) }
+        if colorVector ~= nil then
+            local _, _, _, materialId = getShaderParameter(visualNode, materialName)
+            local r, g, b = unpack(colorVector)
+            setShaderParameter(visualNode, materialName, r, g, b, materialId, false)
+        end
+    end
+end
+
+function ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, xmlKey, node, nodeAttribute)
+    local visualNode = I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute))
+    if visualNode ~= nil then
+        setVisibility(visualNode, Utils.getNoNil(getXMLBool(xmlFile, xmlKey), false))
+    end
+end
+
 function ManureSystemUtil.loadSharedAnimation(object, xmlFile, key, animation, parentNode)
     local name = getXMLString(xmlFile, key .. "#name")
     if name ~= nil then
