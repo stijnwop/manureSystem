@@ -68,6 +68,7 @@
             </valve>
         </valves>
     </set>
+
     <set filename="resources/assets/set_2.i3d">
         <connectors>
             <connector type="connector_1" node="0">
@@ -93,5 +94,12 @@
                 </handle>
             </valve>
         </valves>
+    </set>
+
+    <set filename="resources/assets/funnel_set_1.i3d">
+        <connectors>
+            <connector type="funnel_1" node="0"/>
+            <connector type="funnel_2" node="1"/>
+        </connectors>
     </set>
 </assets>
