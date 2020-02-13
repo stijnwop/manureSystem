@@ -202,6 +202,26 @@ function ManureSystemCouplingStrategy:delete(connector)
     end
 end
 
+function ManureSystemCouplingStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)
+
+end
+function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, key, connector, connectorNode, connectorAnimationName, sharedConnector)
+    if sharedConnector.hasAnimation then
+        local spec_animatedVehicle = self.object.spec_animatedVehicle
+        if spec_animatedVehicle ~= nil then
+            local animation = {}
+            if ManureSystemUtil.loadSharedAnimation(self.object, xmlFile, key, animation, connectorNode) then
+                animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
+                spec_animatedVehicle.animations[animation.name] = animation
+                -- Set the loaded animation as given connector animation name.
+                connector[connectorAnimationName] = animation.name
+            end
+        else
+            g_logManager:xmlError(self.object.configFileName, ("Shared %s animation can't be added as the vehicle does not have the AnimatedVehicle spec."):format(connectorAnimationName))
+        end
+    end
+end
+
 function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
     self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
 end
