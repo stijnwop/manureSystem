@@ -625,6 +625,7 @@ function Hose:grab(id, player, noEventSend)
         Logger.info("Grab hose id", id)
     end
 
+    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     grabNode.state = Hose.STATE_ATTACHED
@@ -633,9 +634,9 @@ function Hose:grab(id, player, noEventSend)
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
         local newCollisionFlag = bitXOR(bitAND(grabNode.componentCollisionMask, Player.movementCollisionMask), grabNode.componentCollisionMask)
-        for _, component in ipairs(self.components) do
-            setCollisionMask(component.node, newCollisionFlag)
-        end
+        local centerNode = id > 1 and spec.centerNode2 or spec.centerNode1
+        setCollisionMask(componentNode, newCollisionFlag)
+        setCollisionMask(centerNode, newCollisionFlag)
 
         local desc = {}
 
@@ -659,6 +660,7 @@ function Hose:drop(id, player, noEventSend)
         Logger.info("Drop hose id", id)
     end
 
+    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     grabNode.state = Hose.STATE_DETACHED
@@ -669,9 +671,10 @@ function Hose:drop(id, player, noEventSend)
             removeJoint(grabNode.jointIndex)
         end
 
-        for _, component in ipairs(self.components) do
-            setCollisionMask(component.node, grabNode.componentCollisionMask)
-        end
+        local componentNode = self.components[grabNode.componentIndex].node
+        local centerNode = id > 1 and spec.centerNode2 or spec.centerNode1
+        setCollisionMask(componentNode, grabNode.componentCollisionMask)
+        setCollisionMask(centerNode, grabNode.componentCollisionMask)
     end
 
     grabNode.jointIndex = nil
