@@ -3,8 +3,8 @@
 <i3D name="funnel_set_1" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
 
   <Files>
-    <File fileId="1" filename="funnel_normal.dds" />
-    <File fileId="2" filename="funnel_specular.dds" />
+    <File fileId="1" filename="funnel_normal.png" />
+    <File fileId="2" filename="funnel_specular.png" />
     <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
   </Files>
 
@@ -31,7 +31,7 @@
     <TransformGroup name="set" nodeId="1">
       <TransformGroup name="funnel_eightInch" nodeId="2">
         <TransformGroup name="root" nodeId="3">
-          <Shape name="funnel" translation="-2 0 0" rotation="2.50448e-06 -0 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="3 5" clipDistance="300" nodeId="4">
+          <Shape name="funnel" translation="-2 0 0" rotation="2.50448e-06 0 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="3 5" clipDistance="300" nodeId="4">
             <TransformGroup name="deformer" translation="2 0.135883 -5.93965e-09" rotation="-2.50448e-06 0 0" nodeId="5"/>
           </Shape>
         </TransformGroup>
@@ -41,7 +41,7 @@
       </TransformGroup>
       <TransformGroup name="funnel_tenInch" nodeId="9">
         <TransformGroup name="root" nodeId="10">
-          <Shape name="funnel" rotation="2.50448e-06 -0 0" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="10 12" clipDistance="300" nodeId="11">
+          <Shape name="funnel" rotation="2.50448e-06 0 0" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="10 12" clipDistance="300" nodeId="11">
             <TransformGroup name="deformer" translation="0 0.23 -1.00536e-08" rotation="-2.50448e-06 0 0" nodeId="12"/>
           </Shape>
         </TransformGroup>
@@ -60,6 +60,14 @@
       <Attribute name="flangeRoundNode" type="string" value="2"/>
       <Attribute name="flangeQuadNode" type="string" value="3"/>
       <Attribute name="materialName" type="string" value="colorMat1"/>
+      <Attribute name="deformatioYMaxPush" type="float" value="0.09"/>
+      <Attribute name="deformationYOffset" type="float" value="0.35"/>
+    </UserAttribute>
+    <UserAttribute nodeId="3">
+      <Attribute name="liw" type="boolean" value="false"/>
+    </UserAttribute>
+    <UserAttribute nodeId="5">
+      <Attribute name="liw" type="boolean" value="false"/>
     </UserAttribute>
     <UserAttribute nodeId="9">
       <Attribute name="deformationNode" type="string" value="0|0|0"/>
@@ -67,17 +75,13 @@
       <Attribute name="pipeNode" type="string" value="1"/>
       <Attribute name="flangeRoundNode" type="string" value="2"/>
       <Attribute name="flangeQuadNode" type="string" value="3"/>
+      <Attribute name="deformationYOffset" type="float" value="0.35"/>
+      <Attribute name="deformatioYMaxPush" type="float" value="0.09"/>
     </UserAttribute>
     <UserAttribute nodeId="10">
       <Attribute name="liw" type="boolean" value="false"/>
     </UserAttribute>
     <UserAttribute nodeId="12">
-      <Attribute name="liw" type="boolean" value="false"/>
-    </UserAttribute>
-    <UserAttribute nodeId="3">
-      <Attribute name="liw" type="boolean" value="false"/>
-    </UserAttribute>
-    <UserAttribute nodeId="5">
       <Attribute name="liw" type="boolean" value="false"/>
     </UserAttribute>
   </UserAttributes>
