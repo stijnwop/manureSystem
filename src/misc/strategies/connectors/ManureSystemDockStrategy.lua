@@ -232,16 +232,20 @@ function ManureSystemDockStrategy:deformDockFunnel(connectorId, doDeform, dt, do
 end
 
 function ManureSystemDockStrategy:load(connector, xmlFile, key)
-    local deformationNode = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".funnel")
+    if not connector.hasSharedSet then
+        local deformationNode = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".funnel")
+        if deformationNode ~= nil then
+            connector.deformationNode = deformationNode
+            connector.deformationYOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
+            connector.deformationYMaxPush = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
+        end
+    end
 
-    if deformationNode ~= nil then
-        connector.deformationNode = deformationNode
-        connector.deformationNodeOrgTrans = { getTranslation(deformationNode) }
-        connector.deformationNodeOrgRot = { getRotation(deformationNode) }
+    if connector.deformationNode ~= nil then
+        connector.deformationNodeOrgTrans = { getTranslation(connector.deformationNode) }
+        connector.deformationNodeOrgRot = { getRotation(connector.deformationNode) }
         connector.deformationNodeLastTrans = connector.deformationNodeOrgTrans
         connector.deformationNodeLastRot = connector.deformationNodeOrgRot
-        connector.deformationYOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
-        connector.deformationYMaxPush = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".funnel#deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
     else
         g_logManager:xmlError(self.object.configFileName, "DeformationNode not found!")
         return false
@@ -282,6 +286,26 @@ function ManureSystemDockStrategy:delete(connector)
     elseif connector.node ~= nil then
         removeTrigger(connector.node)
     end
+end
+
+function ManureSystemDockStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)
+    local deformationNodeIndex = getUserAttribute(connectorNode, "deformationNode")
+    if deformationNodeIndex ~= nil then
+        ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode, "funnelNode")
+
+        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".pipe", connectorNode, "pipeNode")
+        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".flangeRound", connectorNode, "flangeRoundNode")
+        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".flangeQuad", connectorNode, "flangeQuadNode")
+
+        connector.deformationNode = I3DUtil.indexToObject(connectorNode, deformationNodeIndex)
+        connector.deformationYOffset = Utils.getNoNil(getUserAttribute(connectorNode, "deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
+        connector.deformationYMaxPush = Utils.getNoNil(getUserAttribute(connectorNode, "deformationYMaxPush"), ManureSystemDockStrategy.DOCK_DEFORM_Y_MAX)
+    else
+        g_logManager:xmlError(self.object.configFileName, "Missing deformationNode user attribute on the funnel!")
+    end
+end
+
+function ManureSystemDockStrategy:loadSharedSetConnectorAnimation(xmlFile, key, connector, connectorNode, connectorAnimationName, sharedConnector)
 end
 
 function ManureSystemDockStrategy:dockingArmEnteredTriggerCallback(triggerId, otherActorId, onEnter, onLeave, onStay, otherShapeId)
