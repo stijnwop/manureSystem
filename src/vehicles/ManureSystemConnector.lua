@@ -71,6 +71,7 @@ function ManureSystemConnector:onLoad(savegame)
         end
 
         local connector = {}
+        connector.type = type
         if self:loadManureSystemConnectorFromXML(connector, self.xmlFile, baseKey, i) then
             local strategy = spec.connectorStrategies[type]
             if strategy == nil or strategy:load(connector, self.xmlFile, baseKey) then
@@ -177,6 +178,8 @@ function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFi
 end
 
 function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
+    local spec = self.spec_manureSystemConnector
+
     connector.setId = Utils.getNoNil(getXMLInt(xmlFile, key .. "#id"), 1)
 
     local linkNode = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, key)
@@ -184,6 +187,8 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
 
     local set = g_manureSystem.connectorManager:getConnectorSet(connector.setId)
     if set ~= nil then
+        local strategy = spec.connectorStrategies[connector.type]
+
         local placeHolderNode = I3DUtil.indexToObject(self.components, getXMLString(xmlFile, key .. "#placeholderNode"), self.i3dMappings)
         if placeHolderNode ~= nil then
             connector.placeHolderNode = placeHolderNode
@@ -191,28 +196,15 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
         end
 
         local sharedXMLFile = loadXMLFile("sharedXMLFile", set.xmlFilename)
-
         local sharedConnectorKey = getXMLString(xmlFile, key .. ".connector#type")
         if sharedConnectorKey ~= nil then
             local sharedConnector = set.connectors[sharedConnectorKey:upper()]
 
             if sharedConnector ~= nil then
                 local connectorNode = clone(sharedConnector.node, false, false, false)
-
-                if sharedConnector.hasAnimation then
-                    local spec = self.spec_animatedVehicle
-                    if spec ~= nil then
-                        local animation = {}
-                        if ManureSystemUtil.loadSharedAnimation(self, sharedXMLFile, sharedConnector.animationKey, animation, connectorNode) then
-                            animation.name = connector.id .. animation.name
-
-                            spec.animations[animation.name] = animation
-                            -- Set the loaded animation as the lock animation.
-                            connector.lockAnimationName = animation.name
-                        end
-                    else
-                        g_logManager:xmlError(self.configFileName, "Shared connector animation can't be added as the vehicle does not have the AnimatedVehicle spec.")
-                    end
+                if strategy ~= nil then
+                    strategy:loadSharedSetConnectorAttributes(xmlFile, key .. ".connector", connector, connectorNode, sharedConnector)
+                    strategy:loadSharedSetConnectorAnimation(sharedXMLFile, sharedConnector.animationKey, connector, connectorNode, "lockAnimationName", sharedConnector)
                 end
 
                 link(linkNode, connectorNode)
@@ -231,20 +223,8 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
                     local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
                     if sharedHandle ~= nil then
                         local handleNode = clone(sharedHandle.node, false, false, false)
-
-                        if sharedHandle.hasAnimation then
-                            local spec = self.spec_animatedVehicle
-                            if spec ~= nil then
-                                local animation = {}
-                                if ManureSystemUtil.loadSharedAnimation(self, sharedXMLFile, sharedHandle.animationKey, animation, handleNode) then
-                                    animation.name = connector.id .. animation.name
-                                    spec.animations[animation.name] = animation
-                                    -- Set the loaded animation as the flow animation.
-                                    connector.manureFlowAnimationName = animation.name
-                                end
-                            else
-                                g_logManager:xmlError(self.configFileName, "Shared handle animation can't be added as the vehicle does not have the AnimatedVehicle spec.")
-                            end
+                        if strategy ~= nil then
+                            strategy:loadSharedSetConnectorAnimation(sharedXMLFile, sharedHandle.animationKey, connector, handleNode, "manureFlowAnimationName", sharedHandle)
                         end
 
                         link(valveNode, handleNode)
