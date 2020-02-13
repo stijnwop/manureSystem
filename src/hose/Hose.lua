@@ -633,7 +633,9 @@ function Hose:grab(id, player, noEventSend)
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
         local newCollisionFlag = bitXOR(bitAND(grabNode.componentCollisionMask, Player.movementCollisionMask), grabNode.componentCollisionMask)
-        setCollisionMask(componentNode, newCollisionFlag)
+        for _, component in ipairs(self.components) do
+            setCollisionMask(component.node, newCollisionFlag)
+        end
 
         local desc = {}
 
@@ -667,8 +669,9 @@ function Hose:drop(id, player, noEventSend)
             removeJoint(grabNode.jointIndex)
         end
 
-        local componentNode = self.components[grabNode.componentIndex].node
-        setCollisionMask(componentNode, grabNode.componentCollisionMask)
+        for _, component in ipairs(self.components) do
+            setCollisionMask(component.node, grabNode.componentCollisionMask)
+        end
     end
 
     grabNode.jointIndex = nil
