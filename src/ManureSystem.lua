@@ -8,18 +8,44 @@
 
 ---@class ManureSystem
 ManureSystem = {}
+ManureSystem.VEHICLE_CLASSNAME = "Vehicle"
 
 local ManureSystem_mt = Class(ManureSystem)
 
-function ManureSystem:new(mission, input, i18n, modDirectory, modName)
+---Sorter to manage saving and loading hoses from savegame.
+local sortByClassAndId = function(arg1, arg2)
+    -- Sort by id when dealing with the same classNames.
+    if arg1.className == arg2.className then
+        if arg1.className == ManureSystem.VEHICLE_CLASSNAME then
+            local id1 = g_manureSystem.savedVehiclesToId[arg1] or 0
+            local id2 = g_manureSystem.savedVehiclesToId[arg2] or 0
+            return id1 < id2
+        else
+            -- When placeable we sort on the current position because the load order is not guarantee by the item system.
+            local item1 = g_manureSystem.savedItemsToId[arg1]
+            local item2 = g_manureSystem.savedItemsToId[arg2]
+            if item1 and item2 ~= nil then
+                local x1, y1, z1 = unpack(item1.pos)
+                local x2, y2, z2 = unpack(item2.pos)
+                return item1.id < item2.id and x1 < x2 and y1 < y2 and z1 < z2
+            end
+        end
+    end
+
+    return arg1.className < arg2.className
+end
+
+function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
     self.isServer = mission:getIsServer()
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
     self.modName = modName
-    self.debug = false
+    self.debug = true
 
+    self.mission = mission
+    self.soundManager = soundManager
     self.connectorManager = ManureSystemConnectorManager:new(self.modDirectory)
     self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
     self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
@@ -42,7 +68,7 @@ function ManureSystem:delete()
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()
 
-    g_soundManager:deleteSamples(self.samples)
+    self.soundManager:deleteSamples(self.samples)
     removeConsoleCommand("msToggleDebug")
 end
 
@@ -51,7 +77,43 @@ function ManureSystem:onMissionLoaded(mission)
     self.fillArmManager:loadMapData()
 end
 
+---Gets the mission item save list.
+function ManureSystem:getSavedItemsList()
+    local savedItemsToId = {}
+
+    local id = 1
+    for item, _ in pairs(self.mission.itemsToSave) do
+        --Only get placeables.
+        if item:isa(Placeable) then
+            savedItemsToId[item] = { id = id, pos = { getTranslation(item.nodeId) } }
+        end
+        id = id + 1
+    end
+
+    return savedItemsToId
+end
+
+---Gets the mission vehicle save list.
+function ManureSystem:getSavedVehiclesList()
+    local savedVehiclesToId = {}
+
+    local id = 1
+    for _, vehicle in pairs(self.mission.vehicles) do
+        if vehicle.isVehicleSaved then
+            savedVehiclesToId[vehicle] = id
+            id = id + 1
+        end
+    end
+
+    return savedVehiclesToId
+end
+
+---Called when mission is loaded.
 function ManureSystem:onMissionLoadFromSavegame(xmlFile)
+    self.savedVehiclesToId = self:getSavedVehiclesList()
+    self.savedItemsToId = self:getSavedItemsList()
+    table.sort(self.manureSystemConnectors, sortByClassAndId)
+
     local i = 0
     while true do
         local key = ("manureSystem.hoses.hose(%d)"):format(i)
@@ -59,7 +121,7 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
             break
         end
 
-        local hoseId = getXMLInt(xmlFile, key .. "#id")
+        local hoseId = getXMLInt(xmlFile, key .. "#objectId")
         if self:connectorObjectExists(hoseId) then
             local object = self:getConnectorObject(hoseId)
             if object.isaHose ~= nil and object:isaHose() then
@@ -71,15 +133,13 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     end
 end
 
-local sortByConfigFileName = function(arg1, arg2)
-    local id1 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg1) or 0
-    local id2 = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, arg2) or 0
-
-    return id1 < id2
-end
-
+---Called when mission is being saved with our own xml file.
 function ManureSystem:onMissionSaveToSavegame(xmlFile)
     setXMLInt(xmlFile, "manureSystem#version", 1)
+
+    self.savedVehiclesToId = self:getSavedVehiclesList()
+    self.savedItemsToId = self:getSavedItemsList()
+    table.sort(self.manureSystemConnectors, sortByClassAndId)
 
     local hoses = {}
     local objectToId = {}
@@ -90,59 +150,60 @@ function ManureSystem:onMissionSaveToSavegame(xmlFile)
         end
     end
 
-    table.sort(hoses, sortByConfigFileName)
-
+    -- We only need to store the hoses information.
     for i, object in ipairs(hoses) do
         local id = objectToId[object]
         local key = ("manureSystem.hoses.hose(%d)"):format(i - 1)
-        setXMLInt(xmlFile, key .. "#id", id)
-        local idVeh = ListUtil.findListElementFirstIndex(g_currentMission.vehicles, object) or 0
-        setXMLInt(xmlFile, key .. "#idVeh", idVeh)
+        setXMLInt(xmlFile, key .. "#objectId", id)
         object:onMissionSaveToSavegame(key, xmlFile)
     end
 end
 
-function ManureSystem:update(dt)
-end
-
+---Loads the shared sample files for the manure system.
 function ManureSystem:loadManureSystemSamples()
     local xmlFile = loadXMLFile("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
     if xmlFile ~= nil then
         local soundsNode = getRootNode()
 
-        self.samples.pump = g_soundManager:loadSampleFromXML(xmlFile, "vehicle.sounds", "pump", self.modDirectory, soundsNode, 1, AudioGroup.VEHICLE, nil, nil)
+        self.samples.pump = self.soundManager:loadSampleFromXML(xmlFile, "vehicle.sounds", "pump", self.modDirectory, soundsNode, 1, AudioGroup.VEHICLE, nil, nil)
 
         delete(xmlFile)
     end
 end
 
+---Returns the current loaded samples.
 function ManureSystem:getManureSystemSamples()
     return self.samples
 end
 
+---Adds connector object to the list and force it being distinct.
 function ManureSystem:addConnectorObject(object)
     if not ListUtil.hasListElement(self.manureSystemConnectors, object) then
         ListUtil.addElementToList(self.manureSystemConnectors, object)
-        table.sort(self.manureSystemConnectors, sortByConfigFileName)
     end
 end
 
+---Removes connector object from the list.
 function ManureSystem:removeConnectorObject(object)
     ListUtil.removeElementFromList(self.manureSystemConnectors, object)
 end
 
+---Returns the connector objects list.
 function ManureSystem:getConnectorObjects()
     return self.manureSystemConnectors
 end
 
+---Returns the connector with the given id.
 function ManureSystem:getConnectorObject(id)
     return self.manureSystemConnectors[id]
 end
 
+---Return the id for the given object.
 function ManureSystem:getConnectorObjectId(object)
     return ListUtil.findListElementFirstIndex(self.manureSystemConnectors, object)
 end
 
+---Return true when the object exists, false otherwise.
 function ManureSystem:connectorObjectExists(id)
     return self.manureSystemConnectors[id] ~= nil
 end

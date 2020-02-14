@@ -85,7 +85,7 @@ end
 local function loadMission(mission)
     assert(g_manureSystem == nil)
 
-    manureSystem = ManureSystem:new(mission, g_inputBinding, g_i18n, directory, modName)
+    manureSystem = ManureSystem:new(mission, g_inputBinding, g_soundManager, directory, modName)
 
     getfenv(0)["g_manureSystem"] = manureSystem
 
