@@ -31,6 +31,7 @@ end
 
 function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
@@ -82,6 +83,10 @@ function ManureSystemConnector:onLoad(savegame)
 
         i = i + 1
     end
+end
+
+function ManureSystemConnector:onPostLoad(savegame)
+    local spec = self.spec_manureSystemConnector
 
     if #spec.manureSystemConnectors ~= 0 then
         g_manureSystem:addConnectorObject(self)

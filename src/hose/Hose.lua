@@ -71,6 +71,7 @@ end
 
 function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onLoadFinished", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onPreDelete", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
@@ -122,9 +123,11 @@ function Hose:onLoad(savegame)
         spec.foundGrabNodeIdSend = 0
     end
 
-    g_manureSystem:addConnectorObject(self)
-
     spec.dirtyFlag = self:getNextDirtyFlag()
+end
+
+function Hose:onPostLoad(savegame)
+    g_manureSystem:addConnectorObject(self)
 end
 
 function Hose:onLoadFinished(savegame)
