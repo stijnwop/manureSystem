@@ -27,7 +27,10 @@ local sortByClassAndId = function(arg1, arg2)
             if item1 and item2 ~= nil then
                 local x1, y1, z1 = unpack(item1.pos)
                 local x2, y2, z2 = unpack(item2.pos)
-                return item1.id < item2.id and x1 < x2 and y1 < y2 and z1 < z2
+                local cord1 = math.abs(x1) + math.abs(y1) + math.abs(z1)
+                local cord2 = math.abs(x2) + math.abs(y2) + math.abs(z2)
+
+                return item1.id < item2.id and cord1 < cord2
             end
         end
     end
