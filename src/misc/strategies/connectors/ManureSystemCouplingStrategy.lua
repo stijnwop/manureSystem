@@ -107,6 +107,8 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
             object:setPumpTargetObject(nil, nil)
             object:setPumpMaxTime(object:getOriginalPumpMaxTime())
         end
+
+        object:setIsPumpSourceWater(false)
     end
 
     for _, connector in ipairs(connectors) do
@@ -115,8 +117,14 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
             if object.spec_manureSystemPumpMotor ~= nil then
                 if desc ~= nil and connector.hasOpenManureFlow then
-                    object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
-                    object:setPumpSourceObject(object, connector.fillUnitIndex)
+                    if desc.vehicle ~= nil then
+                        object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
+                        object:setPumpSourceObject(object, connector.fillUnitIndex)
+                    elseif desc.isNearWater then
+                        object:setPumpSourceObject(object, connector.fillUnitIndex)
+                        object:setIsPumpSourceWater(true)
+                    end
+
                     local impactTime = self:getCalculatedMaxTime(length)
                     object:setPumpMaxTime(impactTime)
                 end
@@ -148,8 +156,13 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
                 return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, length
             end
         else
-            -- Raycasted object.
-            return { vehicle = desc.vehicle, fillUnitIndex = 1 }, length
+            if desc.vehicle ~= nil then
+                -- Raycasted object.
+                return { vehicle = desc.vehicle, fillUnitIndex = 1 }, length
+            else
+                -- Pump from water.
+                return { isNearWater = desc.isNearWater }, length
+            end
         end
     end
 
