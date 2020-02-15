@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="set_3" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+
+  <Files>
+    <File fileId="1" filename="camlock_normal.png" />
+    <File fileId="2" filename="camlock_specular.png" />
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+  </Files>
+
+  <Materials>
+    <Material name="camlock_mat" materialId="1" diffuseColor="0.5 0.5 0.5 1" cosPower="20" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
+      <CustomParameter name="colorMat0" value="0.0278 0.0254 0.0231 0"/>
+      <CustomParameter name="dirtColor" value="0.20 0.14 0.08 0.0"/>
+      <Normalmap fileId="1"/>
+      <Glossmap fileId="2"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="set_3.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="set" nodeId="1">
+      <Shape name="camlock_storz_male" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2"/>
+      <Shape name="camlock_male_flange" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="3"/>
+      <Shape name="camlock_male_90" translation="0 5.55112e-17 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4"/>
+      <Shape name="camlock_male_45" translation="-1.96262e-17 1.96262e-17 3.08149e-33" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="5"/>
+    </TransformGroup>
+  </Scene>
+
+  <UserAttributes>
+  </UserAttributes>
+</i3D>
