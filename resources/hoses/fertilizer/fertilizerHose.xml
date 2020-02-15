@@ -54,15 +54,15 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose type="couplingFertilizer" length="4.945" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>" playerMaxHoseLength="15">
+    <hose type="couplingFertilizer" length="5" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>" playerMaxHoseLength="15">
         <hoseConfigurations>
             <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
                     <grabNode node="grabNode1" raycastNode="grabNode1" componentIndex="1" componentJointIndex="1">
-                        <visuals visualNode="fertilizer_coupling1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
+                        <visuals visualNode="fertilizer_coupling_camplock_1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
                     </grabNode>
                     <grabNode node="grabNode2" raycastNode="grabNode2" componentIndex="4" componentJointIndex="3">
-                        <visuals visualNode="fertilizer_coupling2" hoseTargetNode="targetNode"/>
+                        <visuals visualNode="fertilizer_coupling_camplock_2" hoseTargetNode="targetNode"/>
                     </grabNode>
                 </grabNodes>
             </hoseConfiguration>
@@ -75,7 +75,7 @@
 
     <baseMaterial>
         <material name="hose_mat" baseNode="fertilizer_hose">
-            <shaderParameter name="colorMat0" value="0.004 0.061 0.117 1.0"/>
+            <shaderParameter name="colorMat1" value="0.004 0.061 0.117 1.0"/>
         </material>
     </baseMaterial>
 
@@ -85,19 +85,21 @@
         <baseMaterialConfiguration color="0.04 0.175 0.105 1.0"/><!-- green -->
         <baseMaterialConfiguration color="0.1 0.025 0.005 1.0"/><!-- brown -->
         <baseMaterialConfiguration color="0.19 0.19 0.19 1.0"/> <!-- gray -->
-        <material name="hose_mat" shaderParameter="colorMat0"/>
+        <material name="hose_mat" shaderParameter="colorMat1"/>
     </baseMaterialConfigurations>
 
     <i3dMappings>
-        <i3dMapping id="fertilizer_coupling1" node="0>0" />
-        <i3dMapping id="fertilizer_hose" node="0>1" />
-        <i3dMapping id="grabNode1" node="0>2" />
-        <i3dMapping id="baseNode" node="0>3" />
-        <i3dMapping id="componentJoint1" node="0>4" />
+        <i3dMapping id="fertilizer_coupling_camplock_1" node="0>0" />
+        <i3dMapping id="fertilizer_coupling_1" node="0>1" />
+        <i3dMapping id="fertilizer_hose" node="0>2" />
+        <i3dMapping id="grabNode1" node="0>3" />
+        <i3dMapping id="baseNode" node="0>4" />
+        <i3dMapping id="componentJoint1" node="0>5" />
         <i3dMapping id="componentJoint2" node="1>0" />
         <i3dMapping id="componentJoint3" node="2>0" />
         <i3dMapping id="grabNode2" node="3>0" />
         <i3dMapping id="targetNode" node="3>1" />
-        <i3dMapping id="fertilizer_coupling2" node="3>2" />
+        <i3dMapping id="fertilizer_coupling_camplock_2" node="3>2" />
+        <i3dMapping id="fertilizer_coupling_2" node="3>3" />
     </i3dMappings>
 </vehicle>
