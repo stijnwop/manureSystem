@@ -310,6 +310,11 @@ function Hose:onUpdateTick(dt)
 
         if hasBothSidesAttached() then
             local grabNodeId = next(spec.grabNodesToObjects)
+            local grabNode = self:getGrabNodeById(grabNodeId)
+            if grabNode.isExtension then
+                grabNodeId = next(spec.grabNodesToObjects, grabNodeId)
+            end
+
             local desc = spec.grabNodesToObjects[grabNodeId]
 
             if desc ~= nil and desc.connectorId ~= nil then
@@ -334,7 +339,7 @@ function Hose:onUpdateTick(dt)
                                     Logger.info("Restriction detach distance: ", distance)
                                 end
 
-                                self:detach(grabNodeId, connector1.id, vehicle)
+                                self:detach(grabNodeId, desc.connectorId, vehicle)
                             end
                         end
                     end
