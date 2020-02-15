@@ -527,7 +527,11 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
         raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
 
         if spec.lastRaycastObject ~= nil then
-            return { vehicle = spec.lastRaycastObject }, totalHoseLength
+            if spec.lastRaycastObject:isUnderFillPlane(x, y + 0.1, z) then
+                -- Add forced dirt increment.
+                self:addDirtAmount(0.05, true)
+                return { vehicle = spec.lastRaycastObject }, totalHoseLength
+            end
         end
     end
 
