@@ -18,6 +18,7 @@ ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN = 0.99
 ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT = 0.98
 
 ManureSystemPumpMotor.NO_PUMP_MODE = 0
+ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX = 1
 
 function ManureSystemPumpMotor.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PowerConsumer, specializations)
@@ -43,6 +44,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getPumpTargetObject", ManureSystemPumpMotor.getPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "setPumpSourceObject", ManureSystemPumpMotor.setPumpSourceObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpSourceObject", ManureSystemPumpMotor.getPumpSourceObject)
+    SpecializationUtil.registerFunction(vehicleType, "setIsPumpSourceWater", ManureSystemPumpMotor.setIsPumpSourceWater)
     SpecializationUtil.registerFunction(vehicleType, "setPumpMaxTime", ManureSystemPumpMotor.setPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getPumpMaxTime", ManureSystemPumpMotor.getPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getOriginalPumpMaxTime", ManureSystemPumpMotor.getOriginalPumpMaxTime)
@@ -112,6 +114,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.targetFillUnitIndex = nil
     spec.sourceObject = nil
     spec.sourceFillUnitIndex = nil
+    spec.sourceIsWater = false
 
     if SpecializationUtil.hasSpecialization(Dischargeable, self.specializations) then
         ManureSystemPumpMotor.disableDischargeable(self)
@@ -235,7 +238,7 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             self:setIsPumpRunning(false)
         end
 
-        local hasTargetObject = spec.targetObject ~= nil
+        local hasTargetObject = spec.targetObject ~= nil or spec.sourceIsWater
         local hasLoad = hasTargetObject and spec.pumpHasContact
 
         if isPumpRunning and hasLoad then
@@ -256,7 +259,7 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
 
         local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
         if sourceObject == nil then
-            sourceObject, sourceFillUnitIndex = self, 1
+            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
         end
 
         local isPumpingOut = spec.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT
@@ -372,13 +375,16 @@ function ManureSystemPumpMotor:handlePump(dt)
         return
     end
 
-    local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
-    if self:isPumpRunning() and targetObject ~= nil then
-        local spec = self.spec_manureSystemPumpMotor
+    if not self:isPumpRunning() then
+        return
+    end
 
+    local spec = self.spec_manureSystemPumpMotor
+    local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
+    if targetObject ~= nil then
         local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
         if sourceObject == nil then
-            sourceObject, sourceFillUnitIndex = self, 1
+            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
         end
 
         if self:isPumpingIn() then
@@ -414,6 +420,21 @@ function ManureSystemPumpMotor:handlePump(dt)
                 end
             else
                 self:setIsPumpRunning(false) -- empty
+            end
+        end
+    elseif spec.sourceIsWater then
+        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
+        if sourceObject == nil then
+            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
+        end
+
+        if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, FillType.WATER) then
+            local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
+            if sourceFillLevel > 0 or sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
+                local delta = (spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt
+                sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, delta * self:getPumpDirection(), FillType.WATER, ToolType.UNDEFINED, nil)
+            else
+                self:setIsPumpRunning(false)
             end
         end
     end
@@ -471,6 +492,10 @@ end
 
 function ManureSystemPumpMotor:getPumpSourceObject()
     return self.spec_manureSystemPumpMotor.sourceObject, self.spec_manureSystemPumpMotor.sourceFillUnitIndex
+end
+
+function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
+    self.spec_manureSystemPumpMotor.sourceIsWater = isWater
 end
 
 function ManureSystemPumpMotor:getOriginalPumpMaxTime()
