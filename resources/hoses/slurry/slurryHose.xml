@@ -7,6 +7,9 @@
         <functions>
             <function>$l10n_function_hose</function>
         </functions>
+        <specs>
+            <fillTypeCategories>slurryTank</fillTypeCategories>
+        </specs>
         <image>resources/hoses/slurry/store.png</image>
         <price>150</price>
         <lifetime>600</lifetime>

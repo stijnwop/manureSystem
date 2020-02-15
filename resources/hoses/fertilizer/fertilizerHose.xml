@@ -7,6 +7,9 @@
         <functions>
             <function>$l10n_function_hose</function>
         </functions>
+        <specs>
+            <fillTypeCategories>sprayer</fillTypeCategories>
+        </specs>
         <image>resources/hoses/fertilizer/store.png</image>
         <price>300</price>
         <lifetime>600</lifetime>
