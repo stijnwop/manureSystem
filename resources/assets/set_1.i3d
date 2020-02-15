@@ -36,32 +36,32 @@
 
   <Scene>
     <TransformGroup name="set" collision="false" clipDistance="300" nodeId="1">
-      <Shape name="hose_connector" translation="0 -1.19261e-18 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2">
-        <Shape name="handle_connector" translation="0.0588567 0.112407 -0.0257013" rotation="0 0 -150" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="3"/>
-        <Shape name="hose_clamp" translation="0.13248 -0.136818 0.00015129" rotation="0 0 -20" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4">
-          <Shape name="link" translation="3.78788e-05 0.224781 0.000225914" rotation="0 0 60" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="5"/>
-        </Shape>
+      <Shape name="hose_connector" translation="0 -1.19261e-18 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="2 3 4 5" clipDistance="300" nodeId="2">
+        <TransformGroup name="handle_connector" translation="0.0588567 0.112407 -0.0257013" rotation="0 0 -150" collision="false" clipDistance="300" nodeId="3"/>
+        <TransformGroup name="hose_clamp" translation="0.13248 -0.136818 0.00015129" rotation="0 0 -20" collision="false" clipDistance="300" nodeId="4">
+          <TransformGroup name="link" translation="3.78788e-05 0.224781 0.000225914" rotation="0 0 60" collision="false" clipDistance="300" nodeId="5"/>
+        </TransformGroup>
       </Shape>
-      <Shape name="eightInchMZBrassValve" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
-      <Shape name="eightInchMZcastIronValve" translation="1.11021e-16 0 0" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7"/>
-      <Shape name="handle_new" shapeId="7" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="8">
-        <Shape name="piston" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="9"/>
-        <Shape name="handle_valve" translation="0.0158721 0.25821 0" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="10">
-          <Shape name="handle_bar" translation="-0.130318 -0.0184616 -3.53903e-08" shapeId="10" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="11"/>
-        </Shape>
+      <Shape name="eightInchMZBrassValve" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
+      <Shape name="eightInchMZcastIronValve" translation="1.11021e-16 0 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7"/>
+      <Shape name="handle_new" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="8 9 10 11" clipDistance="300" nodeId="8">
+        <TransformGroup name="piston" collision="false" clipDistance="300" nodeId="9"/>
+        <TransformGroup name="handle_valve" translation="0.0158721 0.25821 0" collision="false" clipDistance="300" nodeId="10">
+          <TransformGroup name="handle_bar" translation="-0.130318 -0.0184616 -3.53903e-08" collision="false" clipDistance="300" nodeId="11"/>
+        </TransformGroup>
       </Shape>
-      <Shape name="handle_old" shapeId="11" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="12">
-        <Shape name="piston" translation="-0.0699028 0.24 -0.000265173" shapeId="12" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="13"/>
-        <Shape name="handle_bar" translation="-0.0691212 0.258523 0.0845319" shapeId="13" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="14">
-          <Shape name="handle_valve" translation="0 0.125811 0.0919794" shapeId="14" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="15"/>
-        </Shape>
+      <Shape name="handle_old" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="12 13 14 15" clipDistance="300" nodeId="12">
+        <TransformGroup name="piston" translation="-0.0699028 0.24 -0.000265173" collision="false" clipDistance="300" nodeId="13"/>
+        <TransformGroup name="handle_bar" translation="-0.0691212 0.258523 0.0845319" collision="false" clipDistance="300" nodeId="14">
+          <TransformGroup name="handle_valve" translation="0 0.125811 0.0919794" collision="false" clipDistance="300" nodeId="15"/>
+        </TransformGroup>
       </Shape>
-      <Shape name="brass_hydraulic" shapeId="15" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="16"/>
-      <Shape name="brass_pneumatic" shapeId="16" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="17"/>
-      <Shape name="tenInchMZCastIronValve" shapeId="17" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="18"/>
-      <Shape name="tenInchBPCastIronValve" shapeId="18" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="19"/>
-      <Shape name="castIron_hydraulic" shapeId="19" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="20"/>
-      <Shape name="castIron_pneumatic" shapeId="20" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="21"/>
+      <Shape name="brass_hydraulic" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="16"/>
+      <Shape name="brass_pneumatic" shapeId="7" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="17"/>
+      <Shape name="tenInchMZCastIronValve" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="18"/>
+      <Shape name="tenInchBPCastIronValve" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="19"/>
+      <Shape name="castIron_hydraulic" shapeId="10" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="20"/>
+      <Shape name="castIron_pneumatic" shapeId="11" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="21"/>
     </TransformGroup>
   </Scene>
 

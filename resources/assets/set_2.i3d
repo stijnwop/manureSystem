@@ -3,8 +3,8 @@
 <i3D name="set_2" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
 
   <Files>
-    <File fileId="1" filename="coupling_normal.dds" />
-    <File fileId="2" filename="coupling_specular.dds" />
+    <File fileId="1" filename="coupling_normal.png" />
+    <File fileId="2" filename="coupling_specular.png" />
     <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
   </Files>
 
@@ -24,18 +24,18 @@
 
   <Scene>
     <TransformGroup name="set" collision="false" clipDistance="300" nodeId="1">
-      <Shape name="hose_connector" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2">
-        <Shape name="handle_connector" translation="0.143933 0.132807 0.0384674" rotation="0 0 -140" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="3"/>
-        <Shape name="hose_clamp" translation="0.226611 -0.134366 1.52588e-05" rotation="0 0 -15" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4">
-          <Shape name="link" translation="0.00154766 0.249973 7.77346e-16" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="5"/>
-        </Shape>
+      <Shape name="hose_connector" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="2 3 4 5" clipDistance="300" nodeId="2">
+        <TransformGroup name="handle_connector" translation="0.143933 0.132807 0.0384674" rotation="0 0 -140" collision="false" clipDistance="300" nodeId="3"/>
+        <TransformGroup name="hose_clamp" translation="0.226611 -0.134366 1.52588e-05" rotation="0 0 -15" collision="false" clipDistance="300" nodeId="4">
+          <TransformGroup name="link" translation="0.00154766 0.249973 7.77346e-16" collision="false" clipDistance="300" nodeId="5"/>
+        </TransformGroup>
       </Shape>
-      <Shape name="eightInchBrassValve" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
-      <Shape name="handle" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7">
-        <Shape name="piston" translation="-0.0473567 0.251437 1.52588e-05" shapeId="7" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="8"/>
-        <Shape name="handle_valve" translation="0.0190589 0.322343 1.52588e-05" rotation="0 0 15" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="9">
-          <Shape name="handle_bar" translation="-0.100586 0.00125885 0.0486603" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="10"/>
-        </Shape>
+      <Shape name="eightInchBrassValve" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
+      <Shape name="handle" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="7 8 9 10" clipDistance="300" nodeId="7">
+        <TransformGroup name="piston" translation="-0.0473567 0.251 1.52588e-05" collision="false" clipDistance="300" nodeId="8"/>
+        <TransformGroup name="handle_valve" translation="0.0190589 0.322343 1.52588e-05" rotation="0 0 15" collision="false" clipDistance="300" nodeId="9">
+          <TransformGroup name="handle_bar" translation="-0.100586 0.00125885 0.0486603" collision="false" clipDistance="300" nodeId="10"/>
+        </TransformGroup>
       </Shape>
     </TransformGroup>
   </Scene>
