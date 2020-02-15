@@ -24,6 +24,7 @@ Hose.VEHICLE_CONNECTOR_SEQUENCE = 6 * 6
 
 Hose.RESPAWN_OFFSET = 0.00001
 Hose.RESPAWN_LENGTH_OFFSET = 0.5
+Hose.RESPAWN_MAX_LENGTH = 10 -- m
 
 Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 Hose.RAYCAST_DISTANCE = 2
@@ -110,6 +111,7 @@ function Hose:onLoad(savegame)
     end
 
     spec.lastInRangePosition = { 0, 0, 0 }
+    spec.playerMaxHoseLength = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#playerMaxHoseLength"), Hose.RESPAWN_MAX_LENGTH)
 
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
@@ -344,12 +346,38 @@ end
 
 function Hose:restrictPlayerMovement(id, player, dt)
     local spec = self.spec_hose
-    local movementIsDirty = player.networkInformation.interpolationTime.isDirty
+    local networkInformation = player.networkInformation
+    local movementIsDirty = networkInformation.interpolationTime.isDirty
+
+    if movementIsDirty then
+        local xt, yt, zt = getTranslation(player.rootNode)
+        local interpolatorPosition = networkInformation.interpolatorPosition
+        movementIsDirty = math.abs(xt - interpolatorPosition.targetPositionX) > 0.001
+            or math.abs(yt - interpolatorPosition.targetPositionY) > 0.001
+            or math.abs(zt - interpolatorPosition.targetPositionZ) > 0.001
+    end
+
     if movementIsDirty then
         local grabNode = self:getGrabNodeById(id)
 
         if self:isAttached(grabNode) then
             local desc, length = self:getConnectorObjectDesc(id)
+
+            if length > spec.playerMaxHoseLength then
+                if player == g_currentMission.player then
+                    g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestrictionLength"), 1000)
+                end
+                local x, y, z = unpack(spec.lastInRangePosition)
+                --Set current position when the last in range position isn't set.
+                if x == 0 or y == 0 or z == 0 then
+                    spec.lastInRangePosition = { getTranslation(player.rootNode) }
+                end
+
+                player:moveToAbsoluteInternal(unpack(spec.lastInRangePosition))
+                return
+            else
+                spec.lastInRangePosition = { getTranslation(player.rootNode) }
+            end
 
             if desc ~= nil and desc.connectorId ~= nil then
                 local connector = desc.vehicle:getConnectorById(desc.connectorId)

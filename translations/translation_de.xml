@@ -26,6 +26,7 @@
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="Der %sm Lagerplatz ist zu klein für den %sm Schlauch!"/>
         <text name="warning_hoseRangeRestriction" text="Die maximale Schlauchlänge ist erreicht. Sie können sich nicht weiter entfernen!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Du bist kein Superheld!"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Enable mixer"/>

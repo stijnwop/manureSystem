@@ -51,7 +51,7 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose type="couplingFertilizer" length="4.945" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>">
+    <hose type="couplingFertilizer" length="4.945" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>" playerMaxHoseLength="15">
         <hoseConfigurations>
             <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
