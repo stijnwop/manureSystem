@@ -520,17 +520,27 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
         end
     end
 
+    -- Do raycast on the other node.
     if doRaycast then
-        local grabNode = self:getGrabNodeById(id)
-        local x, y, z = getWorldTranslation(grabNode.raycastNode)
-        local dx, dy, dz = localDirectionToWorld(grabNode.raycastNode, 0, 0, -1)
-        raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
+        for grabNodeId, _ in ipairs(spec.grabNodes) do
+            if grabNodeId ~= id then
+                local grabNode = self:getGrabNodeById(grabNodeId)
+                local x, y, z = getWorldTranslation(grabNode.raycastNode)
+                local dx, dy, dz = localDirectionToWorld(grabNode.raycastNode, 0, 0, -1)
+                raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
 
-        if spec.lastRaycastObject ~= nil then
-            if spec.lastRaycastObject:isUnderFillPlane(x, y + 0.1, z) then
-                -- Add forced dirt increment.
-                self:addDirtAmount(0.05, true)
-                return { vehicle = spec.lastRaycastObject }, totalHoseLength
+                if spec.lastRaycastObject ~= nil then
+                    if spec.lastRaycastObject:isUnderFillPlane(x, y + 0.1, z) then
+                        -- Add forced dirt increment.
+                        self:addDirtAmount(0.05, true)
+                        return { vehicle = spec.lastRaycastObject }, totalHoseLength
+                    end
+                else
+                    local isNearWater = (y <= g_currentMission.waterY + 0.1)
+                    if isNearWater then
+                        return { vehicle = nil, isNearWater = isNearWater }, totalHoseLength
+                    end
+                end
             end
         end
     end
@@ -660,7 +670,6 @@ function Hose:grab(id, player, noEventSend)
         Logger.info("Grab hose id", id)
     end
 
-    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     grabNode.state = Hose.STATE_ATTACHED
@@ -693,7 +702,6 @@ function Hose:drop(id, player, noEventSend)
         Logger.info("Drop hose id", id)
     end
 
-    local spec = self.spec_hose
     local grabNode = self:getGrabNodeById(id)
 
     grabNode.state = Hose.STATE_DETACHED
