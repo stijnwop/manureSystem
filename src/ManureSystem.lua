@@ -61,6 +61,8 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
 
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
 
+    g_fillTypeManager:addFillTypeToCategory(FillType.WATER, g_fillTypeManager.nameToCategoryIndex["SLURRYTANK"])
+
     return self
 end
 

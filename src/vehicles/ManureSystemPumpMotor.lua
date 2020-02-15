@@ -55,6 +55,7 @@ function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsWorkAreaActive", ManureSystemPumpMotor.getIsWorkAreaActive)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsFillUnitActive", ManureSystemPumpMotor.getIsFillUnitActive)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getConsumingLoad", ManureSystemPumpMotor.getConsumingLoad)
 end
 
@@ -544,6 +545,15 @@ function ManureSystemPumpMotor:getIsWorkAreaActive(superFunc, workArea)
     end
 
     return superFunc(self, workArea)
+end
+
+function ManureSystemPumpMotor:getIsFillUnitActive(superFunc, fillUnitIndex)
+    -- We don't allow spraying water as fertilizer.
+    if self:getFillUnitFillType(fillUnitIndex) == FillType.WATER then
+        return false
+    end
+
+    return superFunc(self, fillUnitIndex)
 end
 
 ---Calculate the load based on the liters per second.
