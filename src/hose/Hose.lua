@@ -311,12 +311,12 @@ function Hose:onUpdateTick(dt)
         if hasBothSidesAttached() then
             local grabNodeId = next(spec.grabNodesToObjects)
             local grabNode = self:getGrabNodeById(grabNodeId)
+            -- Only do the check on the non extension grabNodes.
             if grabNode.isExtension then
                 grabNodeId = next(spec.grabNodesToObjects, grabNodeId)
             end
 
             local desc = spec.grabNodesToObjects[grabNodeId]
-
             if desc ~= nil and desc.connectorId ~= nil then
                 local vehicle = desc.vehicle
                 local connector1 = vehicle:getConnectorById(desc.connectorId)
@@ -894,10 +894,15 @@ function Hose:removeHoseConnections()
     for id, grabNode in ipairs(spec.grabNodes) do
         if self:isAttached(grabNode) then
             self:drop(id, grabNode.player, true)
-        elseif self:isConnected(grabNode) then
+        elseif self:isConnected(grabNode) or self:isExtended(grabNode) then
             local desc = spec.grabNodesToObjects[id]
             if desc ~= nil then
-                self:detach(id, desc.connectorId, desc.vehicle, true)
+                if grabNode.isExtension then
+                    --When the grabNode is an extension we detach it from the other hose.
+                    desc.vehicle:detach(desc.connectorId, id, self, true)
+                else
+                    self:detach(id, desc.connectorId, desc.vehicle, true)
+                end
             end
         end
     end
