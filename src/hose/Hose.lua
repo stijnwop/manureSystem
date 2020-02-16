@@ -298,23 +298,9 @@ function Hose:onUpdateTick(dt)
     local spec = self.spec_hose
 
     if self.isServer and self.firstTimeRun then
-        local function hasBothSidesAttached()
-            local count = 0
-            for id, _ in ipairs(spec.grabNodes) do
-                if spec.grabNodesToObjects[id] ~= nil then
-                    count = count + 1
-                end
-            end
-            return count >= 2
-        end
-
-        if hasBothSidesAttached() then
-            local grabNodeId = next(spec.grabNodesToObjects)
+        local grabNodeId = next(spec.grabNodesToObjects)
+        if grabNodeId ~= nil then
             local grabNode = self:getGrabNodeById(grabNodeId)
-            -- Only do the check on the non extension grabNodes.
-            if grabNode.isExtension then
-                grabNodeId = next(spec.grabNodesToObjects, grabNodeId)
-            end
 
             local desc = spec.grabNodesToObjects[grabNodeId]
             if desc ~= nil and desc.connectorId ~= nil then
@@ -339,7 +325,12 @@ function Hose:onUpdateTick(dt)
                                     Logger.info("Restriction detach distance: ", distance)
                                 end
 
-                                self:detach(grabNodeId, desc.connectorId, vehicle)
+                                if grabNode.isExtension then
+                                    --When the grabNode is an extension we detach it from the other hose.
+                                    desc.vehicle:detach(desc.connectorId, grabNodeId, self)
+                                else
+                                    self:detach(grabNodeId, desc.connectorId, vehicle)
+                                end
                             end
                         end
                     end
