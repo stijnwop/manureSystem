@@ -1,6 +1,6 @@
 //Maya ASCII 2018 scene
 //Name: fertilizerHose.ma
-//Last modified: Sat, Feb 15, 2020 11:51:30 PM
+//Last modified: Sun, Feb 16, 2020 12:34:00 AM
 //Codeset: 1252
 requires maya "2018";
 requires "stereoCamera" "10.0";
@@ -11951,7 +11951,7 @@ createNode phong -n "hose_mat";
 		-dt "string";
 	setAttr ".customShader" -type "string" "$data/shaders/vehicleShader.xml";
 	setAttr ".customParameter_uvScale" -type "string" "1.0 1.5 0.0 0.0";
-	setAttr ".customParameter_lengthAndDiameter" -type "string" "4.945 1 0 0";
+	setAttr ".customParameter_lengthAndDiameter" -type "string" "5 1 0 0";
 	setAttr ".customParameter_RDT" -type "string" "1.0 1.0 0.0 0.0";
 	setAttr ".customParameter_colorMat0" -type "string" "0.80 0.55 0.05 1.0";
 	setAttr ".customParameter_dirtColor" -type "string" "0.20 0.14 0.08 0.0";
@@ -11996,7 +11996,7 @@ createNode place2dTexture -n "place2dTexture1";
 createNode bump2d -n "bump2d1";
 	rename -uid "5AF2A2E9-4A5D-8669-DE28-29A5344BCAF0";
 	setAttr ".bi" 1;
-	setAttr ".vc1" -type "float3" 0 6.9999995e-05 0 ;
+	setAttr ".vc1" -type "float3" 0 9.0000001e-05 0 ;
 	setAttr ".vc2" -type "float3" 9.9999997e-06 9.9999997e-06 0 ;
 createNode file -n "file2";
 	rename -uid "2ACD380F-4598-8AFC-8647-9A87E32B6862";
@@ -12014,7 +12014,7 @@ createNode place2dTexture -n "place2dTexture3";
 createNode bump2d -n "bump2d2";
 	rename -uid "5249E8DA-4CE4-BB75-FACA-48A564E3973D";
 	setAttr ".bi" 1;
-	setAttr ".vc1" -type "float3" 0 6.9999995e-05 0 ;
+	setAttr ".vc1" -type "float3" 0 9.0000001e-05 0 ;
 	setAttr ".vc2" -type "float3" 9.9999997e-06 9.9999997e-06 0 ;
 createNode file -n "file4";
 	rename -uid "DFD89EEC-4A39-C171-7088-E4AA292236E9";
@@ -12122,76 +12122,6 @@ createNode nodeGraphEditorInfo -n "hyperShadePrimaryNodeEditorSavedTabsInfo";
 	setAttr ".tgi[0].tn" -type "string" "Untitled_1";
 	setAttr ".tgi[0].vl" -type "double2" -330.95236780151544 -323.80951094248991 ;
 	setAttr ".tgi[0].vh" -type "double2" 317.85713022663526 338.09522466054096 ;
-createNode script -n "I3DExportSettings";
-	rename -uid "8874DDFA-48E6-C666-43FE-DBA9E01EE17A";
-	addAttr -ci true -sn "i3D_exportLights" -ln "i3D_exportLights" -nn "i3D_exportLights"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportUpdateXML" -ln "i3D_exportUpdateXML" -nn "i3D_exportUpdateXML"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportNormals" -ln "i3D_exportNormals" -nn "i3D_exportNormals"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportShapes" -ln "i3D_exportShapes" -nn "i3D_exportShapes"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportRelativePaths" -ln "i3D_exportRelativePaths" -nn "i3D_exportRelativePaths"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportColors" -ln "i3D_exportColors" -nn "i3D_exportColors"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportSkinWeigths" -ln "i3D_exportSkinWeigths" -nn "i3D_exportSkinWeigths"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportDefaultCameras" -ln "i3D_exportDefaultCameras" -nn "i3D_exportDefaultCameras"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportAnimation" -ln "i3D_exportAnimation" -nn "i3D_exportAnimation"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportIK" -ln "i3D_exportIK" -nn "i3D_exportIK" -min 0
-		-max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportIgnoreBindPoses" -ln "i3D_exportIgnoreBindPoses"
-		-nn "i3D_exportIgnoreBindPoses" -min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportTexCoords" -ln "i3D_exportTexCoords" -nn "i3D_exportTexCoords"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportUseMayaFilename" -ln "i3D_exportUseMayaFilename"
-		-nn "i3D_exportUseMayaFilename" -min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportBynaryFiles" -ln "i3D_exportBynaryFiles" -nn "i3D_exportBynaryFiles"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportXMLConfigFile" -ln "i3D_exportXMLConfigFile" -nn "i3D_exportXMLConfigFile"
-		-dt "string";
-	addAttr -ci true -sn "i3D_exportNurbsCurves" -ln "i3D_exportNurbsCurves" -nn "i3D_exportNurbsCurves"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportOutputFile" -ln "i3D_exportOutputFile" -nn "i3D_exportOutputFile"
-		-dt "string";
-	addAttr -ci true -sn "i3D_exportMergeGroups" -ln "i3D_exportMergeGroups" -nn "i3D_exportMergeGroups"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportParticleSystems" -ln "i3D_exportParticleSystems"
-		-nn "i3D_exportParticleSystems" -min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportUserAttributes" -ln "i3D_exportUserAttributes" -nn "i3D_exportUserAttributes"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportFloatEpsilon" -ln "i3D_exportFloatEpsilon" -nn "i3D_exportFloatEpsilon"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportCameras" -ln "i3D_exportCameras" -nn "i3D_exportCameras"
-		-min 0 -max 1 -at "bool";
-	addAttr -ci true -sn "i3D_exportVerbose" -ln "i3D_exportVerbose" -nn "i3D_exportVerbose"
-		-min 0 -max 1 -at "bool";
-	setAttr ".b" -type "string" (
-		"if(`window -ex \"i3DExport\"`)\n{\n\tif(objExists(\"I3DExportSettings\"))\n\t{\n\t\tint $tmpInt;\n\t\tstring $tmpStr;\n\t\t\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportLights\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUpdateXML\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"Misc2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportNormals\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportShapes\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportRelativePaths\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"Misc\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportColors\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportSkinWeigths\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ShapeIncludes2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportDefaultCameras\"`))\n"
-		+ "\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportAnimation\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportIK\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportIgnoreBindPoses\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts4\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportTexCoords\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUseMayaFilename\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"FilenameInfo\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportBynaryFiles\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts4\";\n\t\tif (!catchQuiet( $tmpStr = `getAttr \"I3DExportSettings.i3D_exportXMLConfigFile\"`))\n\t\t\ttextField -e -text $tmpStr \"giants_xmlConfigFileLocationPath\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportNurbsCurves\"`))\n"
-		+ "\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpStr = `getAttr \"I3DExportSettings.i3D_exportOutputFile\"`))\n\t\t\ttextField -e -text $tmpStr \"giants_outputFileLocationPath\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportMergeGroups\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ShapeIncludes2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportParticleSystems\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUserAttributes\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportFloatEpsilon\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"Misc\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportCameras\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportVerbose\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"Misc\";\n\t}\n}");
-	setAttr ".st" 2;
-	setAttr ".i3D_exportLights" yes;
-	setAttr ".i3D_exportUpdateXML" yes;
-	setAttr ".i3D_exportNormals" yes;
-	setAttr ".i3D_exportShapes" yes;
-	setAttr ".i3D_exportRelativePaths" yes;
-	setAttr ".i3D_exportColors" yes;
-	setAttr ".i3D_exportSkinWeigths" yes;
-	setAttr ".i3D_exportAnimation" yes;
-	setAttr ".i3D_exportTexCoords" yes;
-	setAttr ".i3D_exportBynaryFiles" yes;
-	setAttr ".i3D_exportXMLConfigFile" -type "string" "fertilizerHose.xml";
-	setAttr ".i3D_exportOutputFile" -type "string" "C:/Users/Stijn Wopereis/Documents/My Games/FarmingSimulator2019/mods/FS19_manureSystem/resources/hoses/fertilizer/fertilizerHose.i3d";
-	setAttr ".i3D_exportMergeGroups" yes;
-	setAttr ".i3D_exportUserAttributes" yes;
-	setAttr ".i3D_exportFloatEpsilon" yes;
-	setAttr ".i3D_exportCameras" yes;
-	setAttr ".i3D_exportVerbose" yes;
 createNode polySplitRing -n "polySplitRing1";
 	rename -uid "B5B13501-402D-EEEA-28A9-BAA374053F43";
 	setAttr ".uopa" yes;
@@ -13393,6 +13323,76 @@ createNode polyTweakUV -n "polyTweakUV1";
 	setAttr ".uvtk[963]" -type "float2" 0.92500001 -1 ;
 	setAttr ".uvtk[964]" -type "float2" 0.94999999 -1 ;
 	setAttr ".uvtk[965]" -type "float2" 0.97499996 -1 ;
+createNode script -n "I3DExportSettings";
+	rename -uid "9B9E4265-4CC1-4AA2-F9E3-12B7C18FF495";
+	addAttr -ci true -sn "i3D_exportLights" -ln "i3D_exportLights" -nn "i3D_exportLights"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportUpdateXML" -ln "i3D_exportUpdateXML" -nn "i3D_exportUpdateXML"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportNormals" -ln "i3D_exportNormals" -nn "i3D_exportNormals"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportShapes" -ln "i3D_exportShapes" -nn "i3D_exportShapes"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportRelativePaths" -ln "i3D_exportRelativePaths" -nn "i3D_exportRelativePaths"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportColors" -ln "i3D_exportColors" -nn "i3D_exportColors"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportSkinWeigths" -ln "i3D_exportSkinWeigths" -nn "i3D_exportSkinWeigths"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportDefaultCameras" -ln "i3D_exportDefaultCameras" -nn "i3D_exportDefaultCameras"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportAnimation" -ln "i3D_exportAnimation" -nn "i3D_exportAnimation"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportIK" -ln "i3D_exportIK" -nn "i3D_exportIK" -min 0
+		-max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportIgnoreBindPoses" -ln "i3D_exportIgnoreBindPoses"
+		-nn "i3D_exportIgnoreBindPoses" -min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportTexCoords" -ln "i3D_exportTexCoords" -nn "i3D_exportTexCoords"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportUseMayaFilename" -ln "i3D_exportUseMayaFilename"
+		-nn "i3D_exportUseMayaFilename" -min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportBynaryFiles" -ln "i3D_exportBynaryFiles" -nn "i3D_exportBynaryFiles"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportXMLConfigFile" -ln "i3D_exportXMLConfigFile" -nn "i3D_exportXMLConfigFile"
+		-dt "string";
+	addAttr -ci true -sn "i3D_exportNurbsCurves" -ln "i3D_exportNurbsCurves" -nn "i3D_exportNurbsCurves"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportOutputFile" -ln "i3D_exportOutputFile" -nn "i3D_exportOutputFile"
+		-dt "string";
+	addAttr -ci true -sn "i3D_exportMergeGroups" -ln "i3D_exportMergeGroups" -nn "i3D_exportMergeGroups"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportParticleSystems" -ln "i3D_exportParticleSystems"
+		-nn "i3D_exportParticleSystems" -min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportUserAttributes" -ln "i3D_exportUserAttributes" -nn "i3D_exportUserAttributes"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportFloatEpsilon" -ln "i3D_exportFloatEpsilon" -nn "i3D_exportFloatEpsilon"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportCameras" -ln "i3D_exportCameras" -nn "i3D_exportCameras"
+		-min 0 -max 1 -at "bool";
+	addAttr -ci true -sn "i3D_exportVerbose" -ln "i3D_exportVerbose" -nn "i3D_exportVerbose"
+		-min 0 -max 1 -at "bool";
+	setAttr ".b" -type "string" (
+		"if(`window -ex \"i3DExport\"`)\n{\n\tif(objExists(\"I3DExportSettings\"))\n\t{\n\t\tint $tmpInt;\n\t\tstring $tmpStr;\n\t\t\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportLights\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUpdateXML\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"Misc2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportNormals\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportShapes\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportRelativePaths\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"Misc\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportColors\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportSkinWeigths\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ShapeIncludes2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportDefaultCameras\"`))\n"
+		+ "\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportAnimation\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportIK\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportIgnoreBindPoses\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ExportParts4\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportTexCoords\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ShapeIncludes\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUseMayaFilename\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"FilenameInfo\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportBynaryFiles\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts4\";\n\t\tif (!catchQuiet( $tmpStr = `getAttr \"I3DExportSettings.i3D_exportXMLConfigFile\"`))\n\t\t\ttextField -e -text $tmpStr \"giants_xmlConfigFileLocationPath\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportNurbsCurves\"`))\n"
+		+ "\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpStr = `getAttr \"I3DExportSettings.i3D_exportOutputFile\"`))\n\t\t\ttextField -e -text $tmpStr \"giants_outputFileLocationPath\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportMergeGroups\"`))\n\t\t\tcheckBoxGrp -e -v2 $tmpInt \"ShapeIncludes2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportParticleSystems\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportUserAttributes\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts3\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportFloatEpsilon\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"Misc\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportCameras\"`))\n\t\t\tcheckBoxGrp -e -v3 $tmpInt \"ExportParts2\";\n\t\tif (!catchQuiet( $tmpInt = `getAttr \"I3DExportSettings.i3D_exportVerbose\"`))\n\t\t\tcheckBoxGrp -e -v1 $tmpInt \"Misc\";\n\t}\n}");
+	setAttr ".st" 2;
+	setAttr ".i3D_exportLights" yes;
+	setAttr ".i3D_exportUpdateXML" yes;
+	setAttr ".i3D_exportNormals" yes;
+	setAttr ".i3D_exportShapes" yes;
+	setAttr ".i3D_exportRelativePaths" yes;
+	setAttr ".i3D_exportColors" yes;
+	setAttr ".i3D_exportSkinWeigths" yes;
+	setAttr ".i3D_exportAnimation" yes;
+	setAttr ".i3D_exportTexCoords" yes;
+	setAttr ".i3D_exportBynaryFiles" yes;
+	setAttr ".i3D_exportXMLConfigFile" -type "string" "fertilizerHose.xml";
+	setAttr ".i3D_exportOutputFile" -type "string" "C:/Users/Stijn Wopereis/Documents/My Games/FarmingSimulator2019/mods/FS19_manureSystem/resources/hoses/fertilizer/fertilizerHose.i3d";
+	setAttr ".i3D_exportMergeGroups" yes;
+	setAttr ".i3D_exportUserAttributes" yes;
+	setAttr ".i3D_exportFloatEpsilon" yes;
+	setAttr ".i3D_exportCameras" yes;
+	setAttr ".i3D_exportVerbose" yes;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;

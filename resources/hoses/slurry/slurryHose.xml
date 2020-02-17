@@ -113,20 +113,20 @@
     </baseMaterialConfigurations>
 
     <i3dMappings>
-        <i3dMapping id="hose" node="0>0"/>
-        <i3dMapping id="coupling_normal_start" node="0>1"/>
-        <i3dMapping id="coupling_extend_start" node="0>2"/>
-        <i3dMapping id="top_hook" node="0>2|0"/>
-        <i3dMapping id="bottom_lever" node="0>2|1"/>
-        <i3dMapping id="bottom_hook" node="0>2|1|0"/>
-        <i3dMapping id="grabNode1" node="0>3"/>
-        <i3dMapping id="componentJoint1" node="0>4"/>
-        <i3dMapping id="raycastNode1" node="0>5"/>
-        <i3dMapping id="componentJoint2" node="1>0"/>
-        <i3dMapping id="grabNode2" node="3>0"/>
-        <i3dMapping id="target" node="3>1"/>
-        <i3dMapping id="coupling_normal_end" node="3>2"/>
-        <i3dMapping id="componentJoint3" node="3>3"/>
-        <i3dMapping id="raycastNode2" node="3>4"/>
+        <i3dMapping id="hose" node="0>0" />
+        <i3dMapping id="coupling_normal_start" node="0>1" />
+        <i3dMapping id="coupling_extend_start" node="0>2" />
+        <i3dMapping id="top_hook" node="0>2|0" />
+        <i3dMapping id="bottom_lever" node="0>2|1" />
+        <i3dMapping id="bottom_hook" node="0>2|1|0" />
+        <i3dMapping id="grabNode1" node="0>3" />
+        <i3dMapping id="componentJoint1" node="0>4" />
+        <i3dMapping id="raycastNode1" node="0>5" />
+        <i3dMapping id="componentJoint2" node="1>0" />
+        <i3dMapping id="grabNode2" node="3>0" />
+        <i3dMapping id="target" node="3>1" />
+        <i3dMapping id="coupling_normal_end" node="3>2" />
+        <i3dMapping id="componentJoint3" node="3>3" />
+        <i3dMapping id="raycastNode2" node="3>4" />
     </i3dMappings>
 </vehicle>
