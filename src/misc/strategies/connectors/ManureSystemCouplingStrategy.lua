@@ -79,8 +79,23 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
                     local desc2, lengthHoses2 = self:getConnectorObjectDesc(object, connector2)
 
                     if desc1 ~= nil and desc2 ~= nil then
-                        object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
-                        object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+                        if desc1.vehicle ~= nil then
+                            if desc2.isNearWater then
+                                object:setPumpSourceObject(desc1.vehicle, desc1.fillUnitIndex)
+                                object:setIsPumpSourceWater(true)
+                            else
+                                object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
+                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+                            end
+                        elseif desc2.vehicle ~= nil then
+                            if desc1.isNearWater then
+                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+                                object:setIsPumpSourceWater(true)
+                            else
+                                object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
+                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+                            end
+                        end
 
                         local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
                         object:setPumpMaxTime(impactTime)
