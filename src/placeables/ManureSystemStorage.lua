@@ -570,8 +570,8 @@ function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt, updatePla
     end
 
     -- Mixed amount depends on the fill level because low fill level is mixed faster.
-    local mixedAmount = ((mixPerSecond / 100) * 1000) / self:getFillUnitFillLevel()
-    local decrease = mixedAmount * (dt * 0.001) / 60
+    local mixedAmount = (mixPerSecond / 100) / self:getFillUnitFillLevel()
+    local decrease = (mixedAmount * dt) / 15
     self.thickness = math.max(self.thickness - decrease, 0)
 
     if updatePlane then
