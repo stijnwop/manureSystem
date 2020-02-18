@@ -181,12 +181,28 @@ end
 
 local function getIsFillTriggerActivatable(trigger, superFunc, vehicle)
     if trigger.sourceObject ~= nil then
-        if trigger.sourceObject.spec_manureSystemConnector ~= nil and vehicle.spec_manureSystemConnector ~= nil then
+        local owner = trigger.sourceObject.owner
+        if (trigger.sourceObject.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil) and vehicle.getConnectorById ~= nil then
             return false
         end
     end
 
     return superFunc(trigger, vehicle)
+end
+
+local function getIsLoadTriggerActivatable(trigger, superFunc)
+    if trigger.source ~= nil then
+        local owner = trigger.source.owner
+        if trigger.source.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil then
+            for _, fillableObject in pairs(trigger.fillableObjects) do
+                if fillableObject.object.getConnectorById ~= nil then
+                    return false
+                end
+            end
+        end
+    end
+
+    return superFunc(trigger)
 end
 
 local function init()
@@ -204,6 +220,7 @@ local function init()
 
     Vehicle.load = Utils.overwrittenFunction(Vehicle.load, vehicleLoad)
     FillTrigger.getIsActivatable = Utils.overwrittenFunction(FillTrigger.getIsActivatable, getIsFillTriggerActivatable)
+    LoadTrigger.getIsActivatable = Utils.overwrittenFunction(LoadTrigger.getIsActivatable, getIsLoadTriggerActivatable)
 end
 
 init()
