@@ -35,9 +35,19 @@
         <xml>data/vehicles/veenhuis/premiumIntegral30000/premiumIntegral30000.xml</xml>
         <replaceTypeName>vanillaPremiumIntegral30000</replaceTypeName>
     </vehicle>
+
+    <!-- Sprayers -->
     <vehicle>
         <xml>data/vehicles/hardi/navigator6000/navigator6000.xml</xml>
         <replaceTypeName>vanillaNavigator6000</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kuhn/kuhnPF1500/kuhnPF1500.xml</xml>
+        <replaceTypeName>vanillaKuhnPF1500</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kuhn/kuhnDeltis1302/kuhnDeltis1302.xml</xml>
+        <replaceTypeName>vanillaKuhnDeltis1302</replaceTypeName>
     </vehicle>
 
     <!-- Pallets -->
