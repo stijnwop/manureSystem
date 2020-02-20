@@ -18,6 +18,11 @@ function ManureSystemModulo.registerEventListeners(vehicleType)
 end
 
 function ManureSystemModulo:onPreLoad(savegame)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 150)
+    setXMLString(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump#template", "SLURRY_03")
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump.pitch#indoor", 0.85)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump.pitch#outdoor", 0.85)
+
     -- Insert FillArm.
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#createNode", true)
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#needsDockingCollision", true)

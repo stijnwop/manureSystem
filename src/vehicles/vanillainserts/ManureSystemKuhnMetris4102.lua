@@ -18,7 +18,7 @@ function ManureSystemKuhnMetris4102.registerEventListeners(vehicleType)
 end
 
 function ManureSystemKuhnMetris4102:onPreLoad(savegame)
-    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 75)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 65)
     setXMLString(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump#template", "SLURRY_02")
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump.pitch#indoor", 0.85)
     setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds.pump.pitch#outdoor", 0.75)
