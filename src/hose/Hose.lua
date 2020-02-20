@@ -438,7 +438,7 @@ function Hose:findConnector(id)
 
                         if object.isaHose ~= nil and object:isaHose() then
                             for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
-                                if not grabNode.isExtension and connectorGrabNode.isExtension then
+                                if not grabNode.isExtension and connectorGrabNode.isExtension and not self:isConnected(connectorGrabNode) then
                                     local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
                                     local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
