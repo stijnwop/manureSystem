@@ -49,6 +49,10 @@
         <xml>data/vehicles/kuhn/kuhnDeltis1302/kuhnDeltis1302.xml</xml>
         <replaceTypeName>vanillaKuhnDeltis1302</replaceTypeName>
     </vehicle>
+    <vehicle>
+        <xml>data/vehicles/kuhn/kuhnMetris4102/kuhnMetris4102.xml</xml>
+        <replaceTypeName>vanillaKuhnMetris4102</replaceTypeName>
+    </vehicle>
 
     <!-- Pallets -->
     <vehicle>

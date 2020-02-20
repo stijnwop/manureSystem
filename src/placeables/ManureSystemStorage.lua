@@ -554,11 +554,17 @@ function ManureSystemStorage:increaseManureThickness()
     -- Manure with up to 4% solids content can be handled as a liquid with irrigation equipment
     -- Manure with 4 to 10% solids content can be handled as a slurry
     local ageInHours = math.max(self.age, 1) * 24
-    local capacity = self:getFillUnitCapacity()
-    local fillLevel = self:getFillUnitFillLevel()
+    local percentage = self:getFillUnitFillLevelPercentage()
     -- The more it's filled the slower it thickening is.
-    local mq = (ageInHours * (1.1 - (fillLevel / capacity))) / fillLevel
+    local mq = ageInHours * percentage * 0.001
     -- Todo: take Seasons into account.
+
+    Logger.info("mq", mq)
+    if g_seasons ~= nil then
+        mq = mq + (mq * 6 / g_seasons.environment.daysPerSeason) * 2
+        Logger.info("seasons in mq", mq)
+    end
+
     self.thickness = MathUtil.clamp(self.thickness + mq, 0, 1)
     self.fillPlaneIsIdle = false
     self:raiseDirtyFlags(self.lagoonDirtyFlag)

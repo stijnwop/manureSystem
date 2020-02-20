@@ -43,6 +43,7 @@
         <specialization name="manureSystemNavigator6000" className="ManureSystemNavigator6000" filename="src/vehicles/vanillainserts/ManureSystemNavigator6000.lua"/>
         <specialization name="manureSystemKuhnPF1500" className="ManureSystemKuhnPF1500" filename="src/vehicles/vanillainserts/ManureSystemKuhnPF1500.lua"/>
         <specialization name="manureSystemKuhnDeltis1302" className="ManureSystemKuhnDeltis1302" filename="src/vehicles/vanillainserts/ManureSystemKuhnDeltis1302.lua"/>
+        <specialization name="manureSystemKuhnMetris4102" className="ManureSystemKuhnMetris4102" filename="src/vehicles/vanillainserts/ManureSystemKuhnMetris4102.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -97,6 +98,11 @@
         </type>
         <type name="vanillaKuhnDeltis1302" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemKuhnDeltis1302"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
+        <type name="vanillaKuhnMetris4102" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemKuhnMetris4102"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>
