@@ -18,6 +18,9 @@ function ManureSystemKotteVE8000.registerEventListeners(vehicleType)
 end
 
 function ManureSystemKotteVE8000:onPreLoad(savegame)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 120)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1100)
+
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#type"):format(0), "COUPLING")
     setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#createNode"):format(0), true)
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#position"):format(0), "0.78 0.581 1.028")
@@ -31,5 +34,5 @@ function ManureSystemKotteVE8000:onPreLoad(savegame)
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#type"):format(2), "COUPLING")
     setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#isParkPlace"):format(2), true)
     setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#createNode"):format(2), true)
-    setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#position"):format(2), "-0.95 1.73 -2.65")
+    setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#position"):format(2), "-0.95 1.73 -2.72")
 end

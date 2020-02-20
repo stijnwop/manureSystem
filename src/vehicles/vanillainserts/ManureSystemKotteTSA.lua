@@ -18,6 +18,9 @@ function ManureSystemKotteTSA.registerEventListeners(vehicleType)
 end
 
 function ManureSystemKotteTSA:onPreLoad(savegame)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond", 120)
+    setXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1100)
+
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#type"):format(0), "COUPLING")
     setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#createNode"):format(0), true)
     setXMLFloat(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#inRangeDistance"):format(0), 2.5)
