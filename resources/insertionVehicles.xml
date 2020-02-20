@@ -42,6 +42,10 @@
         <replaceTypeName>vanillaNavigator6000</replaceTypeName>
     </vehicle>
     <vehicle>
+        <xml>data/vehicles/hardi/rubicon9000/rubicon9000.xml</xml>
+        <replaceTypeName>vanillaRubicon9000</replaceTypeName>
+    </vehicle>
+    <vehicle>
         <xml>data/vehicles/kuhn/kuhnPF1500/kuhnPF1500.xml</xml>
         <replaceTypeName>vanillaKuhnPF1500</replaceTypeName>
     </vehicle>
