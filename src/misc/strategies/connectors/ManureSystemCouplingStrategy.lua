@@ -231,8 +231,9 @@ function ManureSystemCouplingStrategy:delete(connector)
 end
 
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)
-
+    ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode)
 end
+
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, key, connector, connectorNode, connectorAnimationName, sharedConnector)
     if sharedConnector.hasAnimation then
         local spec_animatedVehicle = self.object.spec_animatedVehicle

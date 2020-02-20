@@ -29,7 +29,7 @@ function ManureSystemUtil.getFirstPhysicsNode(nodeId)
 end
 
 function ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, xmlKey, node, nodeAttribute)
-    local visualNode = I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute))
+    local visualNode = nodeAttribute ~= nil and I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute)) or node
     local materialName = Utils.getNoNil(getUserAttribute(node, "materialName"), "colorMat0")
 
     if visualNode == nil or not getHasShaderParameter(visualNode, materialName) then
