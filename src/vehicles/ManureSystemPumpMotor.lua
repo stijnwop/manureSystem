@@ -437,6 +437,8 @@ function ManureSystemPumpMotor:handlePump(dt)
             else
                 self:setIsPumpRunning(false)
             end
+        else
+            self:setIsPumpRunning(false)
         end
     end
 end
