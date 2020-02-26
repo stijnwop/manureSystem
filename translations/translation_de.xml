@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-    <translationContributors>$nickers</translationContributors>
+    <translationContributors>$nickers, Wopster</translationContributors>
 
     <texts>
         <!--Inputs-->
@@ -29,16 +29,16 @@
         <text name="warning_hoseRangeRestrictionLength" text="Du bist kein Superheld!"/>
 
         <!--Placeables-->
-        <text name="action_enableMixer" text="Enable mixer"/>
-        <text name="action_disableMixer" text="Disable mixer"/>
-        <text name="info_thickness" text="%s thickness: %d%%"/>
+        <text name="action_enableMixer" text="Mixer aktivieren"/>
+        <text name="action_disableMixer" text="Mixer deaktivieren"/>
+        <text name="info_thickness" text="%s Dicke: %d%%"/>
 
         <!--Hose Configuration-->
         <text name="typeDesc_hose" text="schlauch"/>
         <text name="shopItem_slurryHose" text="Gülleschlauch"/>
         <text name="shopItem_fertilizerHose" text="Düngerschlauch"/>
         <text name="function_hose" text="Mit einem schlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern."/>
-        <text name="configuration_hose" text="Change hose type."/>
-        <text name="configuration_valueExtend" text="Extension"/>
+        <text name="configuration_hose" text="Schlauchtyp wechseln."/>
+        <text name="configuration_valueExtend" text="Verlängerbar"/>
     </texts>
 </l10n>
