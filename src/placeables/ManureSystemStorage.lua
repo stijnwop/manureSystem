@@ -333,7 +333,7 @@ function ManureSystemStorage:update(dt)
 
     if self.isClient then
         if self.isMixerActive then
-            self.fillPlane:setMixingState(self.mixPerSecond, self.thickness)
+            self.fillPlane:setMixingState(self.mixPerSecond * 0.5, self.thickness)
             self.fillPlaneIsIdle = false
         end
 

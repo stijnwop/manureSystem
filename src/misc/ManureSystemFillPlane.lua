@@ -26,6 +26,7 @@ function ManureSystemFillPlane:new(parent, customMt)
     instance.planeOffsetY = 0
     instance.colorChange = false
     instance.capacity = 0
+    instance.impact = 0
 
     return instance
 end
@@ -109,16 +110,19 @@ end
 
 function ManureSystemFillPlane:setMixingState(literPerSecond, thickness)
     local impact = MathUtil.clamp(literPerSecond * (1.1 - thickness) / literPerSecond, 0, 1)
-    local maxOffsetScale = (literPerSecond * 0.5) / 1000
-    local offsetScale = maxOffsetScale * impact
-    local waveY = impact * 1.1
-    local waveZ = impact
 
-    setShaderParameter(self.planeNode, "displacementScaleSpeedFrequency", offsetScale, waveY, waveZ, 0, false)
+    if math.abs(self.impact - impact) > 0.01 then
+        local maxOffsetScale = (literPerSecond * 0.5) / 1000
+        local offsetScale = maxOffsetScale * impact
+        local waveY = impact * 1.1
+        local waveZ = impact
 
-    local angle = 2
-    local yOffset = impact / 2
-    local mixedRoughnessPow = 0.5 + (1 - thickness)
-    local _, _, _, numberOfAngles = getShaderParameter(self.planeNode, "mixParams")
-    setShaderParameter(self.planeNode, "mixParams", mixedRoughnessPow, yOffset, angle, numberOfAngles, false)
+        setShaderParameter(self.planeNode, "displacementScaleSpeedFrequency", offsetScale, waveY, waveZ, 0, false)
+
+        local angle = 2
+        local yOffset = impact / 2
+        local mixedRoughnessPow = 0.5 + (1 - thickness)
+        local _, _, _, numberOfAngles = getShaderParameter(self.planeNode, "mixParams")
+        setShaderParameter(self.planeNode, "mixParams", mixedRoughnessPow, yOffset, angle, numberOfAngles, false)
+    end
 end
