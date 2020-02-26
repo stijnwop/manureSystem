@@ -473,16 +473,16 @@ function ManureSystemStorage:hasFarmAccessToStorage(farmId, storage)
     return g_currentMission.accessHandler:canFarmAccess(farmId, storage)
 end
 
-function ManureSystemStorage.loadSpecValueVolume(xmlFile, customEnvironment)
+function ManureSystemStorage.loadSpecValueCapacityLagoon(xmlFile, customEnvironment)
     return getXMLInt(xmlFile, "placeable.manureSystemStorage.storage#capacityPerFillType")
 end
 
-function ManureSystemStorage.getSpecValueVolume(storeItem, realItem)
-    if storeItem.specs.siloVolume == nil then
+function ManureSystemStorage.getSpecValueCapacityLagoon(storeItem, realItem)
+    if storeItem.specs.capacityLagoon == nil then
         return nil
     end
 
-    return g_i18n:formatVolume(storeItem.specs.siloVolume)
+    return g_i18n:formatVolume(storeItem.specs.capacityLagoon)
 end
 
 function ManureSystemStorage:getConnectorsByType(type)

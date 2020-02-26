@@ -209,6 +209,7 @@ local function init()
     loadInsertionVehicles()
 
     g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")
+    g_storeManager:addSpecType("capacityLagoon", "shopListAttributeIconCapacity", ManureSystemStorage.loadSpecValueCapacityLagoon, ManureSystemStorage.getSpecValueCapacityLagoon)
 
     Mission00.load = Utils.prependedFunction(Mission00.load, loadMission)
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
