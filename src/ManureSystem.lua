@@ -45,7 +45,7 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
     self.modName = modName
-    self.debug = true
+    self.debug = false
 
     self.mission = mission
     self.soundManager = soundManager
