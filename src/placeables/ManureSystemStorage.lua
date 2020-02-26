@@ -49,6 +49,7 @@ function ManureSystemStorage:delete()
 
     g_manureSystem:removeConnectorObject(self)
     g_currentMission:removeActivatableObject(self)
+    g_currentMission.environment:removeHourChangeListener(self)
 
     unregisterObjectClassName(self)
 
@@ -302,11 +303,10 @@ function ManureSystemStorage:finalizePlacement()
     if #self.manureSystemConnectors ~= 0 then
         g_manureSystem:addConnectorObject(self)
     end
+    g_currentMission.environment:addHourChangeListener(self)
 end
 
 function ManureSystemStorage:hourChanged()
-    ManureSystemStorage:superClass().hourChanged(self)
-
     if self.isServer then
         self:increaseManureThickness()
     end
@@ -556,18 +556,14 @@ function ManureSystemStorage:increaseManureThickness()
 
     -- Manure with up to 4% solids content can be handled as a liquid with irrigation equipment
     -- Manure with 4 to 10% solids content can be handled as a slurry
-    local ageInHours = math.max(self.age, 1) * 24
     local percentage = self:getFillUnitFillLevelPercentage()
-    -- The more it's filled the slower it thickening is.
-    local mq = ageInHours * percentage * 0.001
-    -- Todo: take Seasons into account.
-
-    Logger.info("mq", mq)
+    -- The more it's filled the slower thickening is.
+    local mq = (1.1 - percentage) * 0.001
     if g_seasons ~= nil then
-        mq = mq + (mq * 6 / g_seasons.environment.daysPerSeason) * 2
-        Logger.info("seasons in mq", mq)
+        mq = mq + (mq * 6 / g_seasons.environment.daysPerSeason)
     end
 
+    mq = mq * 2
     self.thickness = MathUtil.clamp(self.thickness + mq, 0, 1)
     self.fillPlaneIsIdle = false
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
