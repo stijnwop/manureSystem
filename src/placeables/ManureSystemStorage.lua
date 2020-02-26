@@ -28,6 +28,7 @@ function ManureSystemStorage:delete()
             g_soundManager:deleteSample(self.samples.mix)
             self.samples.mix = nil
         end
+        g_animationManager:deleteAnimations(self.animationNodes)
     end
 
     if self.triggerNode ~= nil then
@@ -99,6 +100,8 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
     self.samples = {}
     if self.isClient then
         self.samples.mix = g_soundManager:loadSampleFromXML(xmlFile, "placeable.manureSystemStorage.sounds", "mix", self.baseDirectory, self.nodeId, 0, AudioGroup.ENVIRONMENT, nil, nil)
+
+        self.animationNodes = g_animationManager:loadAnimations(xmlFile, "placeable.manureSystemStorage.animationNodes", self.nodeId, self, nil)
     end
 
     -- Prepare for hose physics
@@ -601,6 +604,14 @@ function ManureSystemStorage:setIsMixerActive(isMixerActive, noEventSend)
         ManureSystemIsMixingEvent.sendEvent(self, isMixerActive, noEventSend)
         self.isMixerActive = isMixerActive
         self:updateActivateText()
+
+        if self.isClient then
+            if isMixerActive then
+                g_animationManager:startAnimations(self.animationNodes)
+            else
+                g_animationManager:stopAnimations(self.animationNodes)
+            end
+        end
     end
 end
 
