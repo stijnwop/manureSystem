@@ -311,7 +311,7 @@ function Hose:onUpdateTick(dt)
                     local connectorDesc, length = self:getConnectorObjectDesc(grabNodeId)
 
                     if connectorDesc ~= nil and connectorDesc.connectorId ~= nil then
-                        local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed() > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed() > 2
+                        local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed(true) > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed(true) > 2
                         if doCheck then
                             local connector2 = connectorDesc.vehicle:getConnectorById(connectorDesc.connectorId)
                             local ax, _, az = getWorldTranslation(connector1.node)
