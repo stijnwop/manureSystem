@@ -67,6 +67,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "constructConnectorJoint", Hose.constructConnectorJoint)
     SpecializationUtil.registerFunction(vehicleType, "constructPlayerJoint", Hose.constructPlayerJoint)
     SpecializationUtil.registerFunction(vehicleType, "onPlayerJointBreak", Hose.onPlayerJointBreak)
+    SpecializationUtil.registerFunction(vehicleType, "onConnectorJointBreak", Hose.onConnectorJointBreak)
     SpecializationUtil.registerFunction(vehicleType, "fillRaycastCallback", Hose.fillRaycastCallback)
 end
 
@@ -1092,23 +1093,29 @@ function Hose:constructConnectorJoint(jointDesc)
         return
     end
 
-    local constr = JointConstructor:new()
+    local constructor = JointConstructor:new()
 
-    constr:setActors(jointDesc.actor1, jointDesc.actor2)
-    constr:setJointTransforms(jointDesc.transform, jointDesc.transform)
+    constructor:setActors(jointDesc.actor1, jointDesc.actor2)
+    constructor:setJointTransforms(jointDesc.transform, jointDesc.transform)
 
     local springForce = 7500
     local springDamping = 1500
-    constr:setEnableCollision(false)
-    constr:setRotationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
-    constr:setTranslationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
+    constructor:setEnableCollision(false)
+    constructor:setRotationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
+    constructor:setTranslationLimitSpring(springForce, springDamping, springForce, springDamping, springForce, springDamping)
 
     for axis = 0, 2 do
-        constr:setRotationLimit(axis, 0, 0)
-        constr:setTranslationLimit(axis, true, 0, 0)
+        constructor:setRotationLimit(axis, 0, 0)
+        constructor:setTranslationLimit(axis, true, 0, 0)
     end
 
-    return constr:finalize()
+    constructor:setBreakable(20, 15)
+
+    local jointIndex = constructor:finalize()
+
+    addJointBreakReport(jointIndex, "onConnectorJointBreak", self)
+
+    return jointIndex
 end
 
 function Hose:onPlayerJointBreak(jointIndex, breakingImpulse)
@@ -1120,6 +1127,25 @@ function Hose:onPlayerJointBreak(jointIndex, breakingImpulse)
 
         if jointIndex == grabNode.jointIndex then
             hose:drop(grabNode.id, player)
+        end
+    end
+
+    -- Do not delete the joint internally, we already deleted it
+    return false
+end
+
+function Hose:onConnectorJointBreak(jointIndex, breakingImpulse)
+    local spec = self.spec_hose
+
+    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
+        local grabNode = self:getGrabNodeById(grabNodeId)
+        if jointIndex == grabNode.jointIndex then
+            if grabNode.isExtension then
+                --When the grabNode is an extension we detach it from the other hose.
+                desc.vehicle:detach(desc.connectorId, grabNodeId, self)
+            else
+                self:detach(grabNodeId, desc.connectorId, desc.vehicle)
+            end
         end
     end
 
