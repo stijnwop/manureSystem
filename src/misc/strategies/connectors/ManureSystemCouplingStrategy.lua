@@ -117,17 +117,21 @@ end
 function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
     local connectors = object:getConnectorsByType(self.couplingType)
 
-    if object.spec_manureSystemPumpMotor ~= nil then
-        if object:getPumpTargetObject() ~= nil then
-            object:setPumpTargetObject(nil, nil)
-            object:setPumpMaxTime(object:getOriginalPumpMaxTime())
-        end
-
-        object:setIsPumpSourceWater(false)
-    end
-
+    local didPumpTargetReset = false
     for _, connector in ipairs(connectors) do
         if connector.isConnected and not connector.isParkPlace then
+            if not didPumpTargetReset then
+                if object.spec_manureSystemPumpMotor ~= nil then
+                    if object:getPumpTargetObject() ~= nil then
+                        object:setPumpTargetObject(nil, nil)
+                        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+                    end
+
+                    object:setIsPumpSourceWater(false)
+                    didPumpTargetReset = true
+                end
+            end
+
             local desc, length = self:getConnectorObjectDesc(object, connector)
 
             if object.spec_manureSystemPumpMotor ~= nil then
