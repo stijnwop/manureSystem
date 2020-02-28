@@ -423,6 +423,11 @@ function ManureSystemStorage:getFillUnitFreeCapacity(unitIndex)
     return capacity - fillLevel
 end
 
+function ManureSystemStorage:getFillArmFillUnitIndex()
+    -- Always 1 since we don't support multi unit storage.
+    return 1
+end
+
 function ManureSystemStorage:onMovedFillLevel(fillLevel, movedFillLevel)
     self.fillPlane:setHeight(fillLevel)
 

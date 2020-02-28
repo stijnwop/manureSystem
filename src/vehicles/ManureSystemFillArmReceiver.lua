@@ -15,6 +15,7 @@ function ManureSystemFillArmReceiver.prerequisitesPresent(specializations)
 end
 
 function ManureSystemFillArmReceiver.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "getFillArmFillUnitIndex", ManureSystemFillArmReceiver.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(vehicleType, "isUnderFillPlane", ManureSystemFillArmReceiver.isUnderFillPlane)
 end
 
@@ -39,6 +40,7 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
     local spec = self.spec_manureSystemFillArmReceiver
     spec.fillVolumeIndex = fillVolumeIndex
     spec.fillArmOffset = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemFillArmReceiver#fillArmOffset"), 0)
+    spec.fillArmFillUnitIndex = Utils.getNoNil(getXMLInt(self.xmlFile, "vehicle.manureSystemFillArmReceiver#fillUnitIndex"), 1)
 
     spec = self.spec_fillTriggerVehicle
 
@@ -46,6 +48,10 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         spec.fillTrigger:delete()
         spec.fillTrigger = nil
     end
+end
+
+function ManureSystemFillArmReceiver:getFillArmFillUnitIndex()
+    return self.spec_manureSystemFillArmReceiver.fillArmFillUnitIndex
 end
 
 function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
