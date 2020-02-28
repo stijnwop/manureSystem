@@ -87,7 +87,16 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     end
 
                     dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
-                    dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
+                    if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
+                        local fillType = fillObject:getFillUnitFillType(fillUnitIndex)
+                        local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(dockingArmObject, fillType)
+                        if sourceObject ~= nil then
+                            dockingArmObject:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
+                        end
+                    else
+                        dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
+                    end
+
                     object:setIsConnected(connectorId, inRange, fillArm.id, dockingArmObject)
 
                     fillArm.isRaycastAllowed = false
