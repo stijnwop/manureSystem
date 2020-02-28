@@ -29,6 +29,9 @@ Hose.RESPAWN_MAX_LENGTH = 10 -- m
 Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 Hose.RAYCAST_DISTANCE = 2
 
+Hose.JOINT_BREAK_FORCE = 20
+Hose.JOINT_BREAK_TORQUE = 15
+
 function Hose.prerequisitesPresent(specializations)
     return true
 end
@@ -1109,7 +1112,7 @@ function Hose:constructConnectorJoint(jointDesc)
         constructor:setTranslationLimit(axis, true, 0, 0)
     end
 
-    constructor:setBreakable(20, 15)
+    constructor:setBreakable(Hose.JOINT_BREAK_FORCE, Hose.JOINT_BREAK_TORQUE)
 
     local jointIndex = constructor:finalize()
 
