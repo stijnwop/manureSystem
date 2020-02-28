@@ -82,6 +82,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
 
     spec.isStandalone = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#isStandalone"), false)
+    spec.useStandalonePumpText = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#useStandalonePumpText"), spec.isStandalone)
 
     local maxTime = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime"), 1500)
     spec.pumpEfficiency = {
@@ -350,7 +351,7 @@ function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
         local actionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
         if actionEvent ~= nil then
             local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
-            if self:isStandalonePump() then
+            if self:isStandalonePump() and spec.useStandalonePumpText then
                 pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
             end
 
@@ -501,6 +502,36 @@ function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
     self.spec_manureSystemPumpMotor.sourceIsWater = isWater
 end
 
+function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject)
+    if rootObject == nil then
+        rootObject = object
+    end
+
+    if object ~= rootObject and SpecializationUtil.hasSpecialization(FillUnit, object.specializations) then
+        local fillUnits = object:getFillUnits()
+        for fillUnitIndex, _ in ipairs(fillUnits) do
+            if object:getFillUnitSupportsFillType(fillUnitIndex, fillType) then
+                return object, fillUnitIndex
+            end
+        end
+    end
+
+    local rootVehicle = object:getRootVehicle()
+    if rootVehicle ~= nil and rootVehicle.getAttachedImplements ~= nil then
+        for _, implement in ipairs(rootVehicle:getAttachedImplements()) do
+            if implement.object ~= nil and implement.object ~= rootObject then
+                local implementFound, fillUnitIndexFound = ManureSystemPumpMotor.getAttachedPumpSourceObject(implement.object, fillType, rootObject)
+
+                if implementFound ~= nil then
+                    return implementFound, fillUnitIndexFound
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
 function ManureSystemPumpMotor:getOriginalPumpMaxTime()
     return self.spec_manureSystemPumpMotor.pumpEfficiency.orgMaxTime
 end
@@ -582,7 +613,7 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePump, GS_PRIO_HIGH)
 
             local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
-            if self:isStandalonePump() then
+            if self:isStandalonePump() and spec.useStandalonePumpText then
                 pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
             end
 
