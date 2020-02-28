@@ -26,7 +26,7 @@
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="%sm miejsce transportowe, jest za małe dla %sm węża!"/>
         <text name="warning_hoseRangeRestriction" text="Rozciągnąłeś maksymalnie wąż, dalej już nie sięgnie!!"/>
-        <text name="warning_hoseRangeRestrictionLength" text="Nie jesteś Pudzienem!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Nie jesteś Pudzianem!"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Włącz mieszadło"/>
