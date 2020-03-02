@@ -54,6 +54,10 @@ Press the right mouse button in order to attach the hose to the coupling. If the
 
 If the coupling does not have any manure flow animations the flow will be controlled automatically.
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=OqU9gLwtkqU
+" target="_blank"><img src="http://img.youtube.com/vi/OqU9gLwtkqU/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
 #### How to use: FillArm
 Move the fill arm by mouse control and place it inside the target object. The fill arm works with the Kotte FRC container, manure lagoon or in any place you can get water.
 > NOTE: In order to be able to pump inwards the fill arm needs to be UNDER the fill plane.
