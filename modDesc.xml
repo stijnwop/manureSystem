@@ -151,18 +151,23 @@
     <inputBinding>
         <actionBinding action="MS_ACTIVATE_PUMP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_r"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_11"/>
         </actionBinding>
         <actionBinding action="MS_TOGGLE_PUMP_DIRECTION">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_z"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_17"/>
         </actionBinding>
         <actionBinding action="MS_ATTACH_HOSE">
             <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_1"/>
         </actionBinding>
         <actionBinding action="MS_DETACH_HOSE">
             <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_3"/>
         </actionBinding>
         <actionBinding action="MS_TOGGLE_FLOW">
             <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>
