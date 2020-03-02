@@ -502,7 +502,11 @@ function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
     self.spec_manureSystemPumpMotor.sourceIsWater = isWater
 end
 
-function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject)
+function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject, searchedImplements)
+    if fillType == nil or object == nil then
+        return nil
+    end
+
     if rootObject == nil then
         rootObject = object
     end
@@ -510,20 +514,29 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
     if object ~= rootObject and SpecializationUtil.hasSpecialization(FillUnit, object.specializations) then
         local fillUnits = object:getFillUnits()
         for fillUnitIndex, _ in ipairs(fillUnits) do
-            if object:getFillUnitSupportsFillType(fillUnitIndex, fillType) then
+            if object:getFillUnitAllowsFillType(fillUnitIndex, fillType) or fillType == FillType.UNKNOWN then
                 return object, fillUnitIndex
             end
         end
     end
 
-    local rootVehicle = object:getRootVehicle()
-    if rootVehicle ~= nil and rootVehicle.getAttachedImplements ~= nil then
-        for _, implement in ipairs(rootVehicle:getAttachedImplements()) do
-            if implement.object ~= nil and implement.object ~= rootObject then
-                local implementFound, fillUnitIndexFound = ManureSystemPumpMotor.getAttachedPumpSourceObject(implement.object, fillType, rootObject)
+    if searchedImplements == nil then
+        local attachedImplements
+        if object.getAttacherVehicle ~= nil then
+            local attacherVehicle = object:getAttacherVehicle()
+            attachedImplements = attacherVehicle:getAttachedImplements()
+        else
+            attachedImplements = object:getAttachedImplements()
+        end
 
-                if implementFound ~= nil then
-                    return implementFound, fillUnitIndexFound
+        if attachedImplements ~= nil then
+            for _, implement in ipairs(attachedImplements) do
+                if implement.object ~= nil and implement.object ~= object then
+                    local implementFound, fillUnitIndexFound = ManureSystemPumpMotor.getAttachedPumpSourceObject(implement.object, fillType, rootObject, true)
+
+                    if implementFound ~= nil then
+                        return implementFound, fillUnitIndexFound
+                    end
                 end
             end
         end
