@@ -62,7 +62,6 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 Move the fill arm by mouse control and place it inside the target object. The fill arm works with the Kotte FRC container, manure lagoon or in any place you can get water.
 > NOTE: In order to be able to pump inwards the fill arm needs to be UNDER the fill plane.
 
-
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2FW6mRde4Bg
 " target="_blank"><img src="http://img.youtube.com/vi/2FW6mRde4Bg/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
@@ -71,6 +70,10 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 The dock arm automatically functions like a fill arm (mentioned above) plus it can be docked on a docking funnel. Move the dock arm by mouse control carefully inside the docking funnel in order to be able to pump.
 
 > NOTE: Not all vehicles have the docking funnel animated, this is because the vanilla vehicles can't be prepared for that as the funnel model is attached to the whole mesh.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=pn29sn7EVf0
+" target="_blank"><img src="http://img.youtube.com/vi/pn29sn7EVf0/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ### Out of the box vehicle support
 
@@ -88,7 +91,13 @@ The dock arm automatically functions like a fill arm (mentioned above) plus it c
 | Zunhammer TV585 | [HOLMER Terra Variant DLC](https://www.farming-simulator.com/mod.php?lang=en&country=nl&mod_id=132156&title=fs2019) | Fillarm (Dock), hose connector
 | Holmer terraVariant435 | [HOLMER Terra Variant DLC](https://www.farming-simulator.com/mod.php?lang=en&country=nl&mod_id=132156&title=fs2019) | Fillarm (Dock), hose connector
 | Briri Field Master 20 | [Briri Field Master 20](https://www.farming-simulator.com/mod.php?lang=en&country=nl&mod_id=146879&title=fs2019) | Fillarm (Dock), 4 hose connectors and 2 hose park places.
-
+| Hardi Navigator 6000 | - | 3 fertilizer hose connectors. |
+| Hardi Rubicon 9000 | - | 2 fertilizer hose connectors. |
+| Kuhn PF1500 | - | 2 fertilizer hose connector. |
+| Kuhn Deltis 1302 | - | 1 fertilizer hose connectors. |
+| Kuhn Metris 4102 | - | 2 fertilizer hose connectors. |
+| Fertilizer Pallet | - | Fertilizer hose connector. |
+| Herbicide Pallet | - | Fertilizer hose connector. |
 
 ## Copyright
 Copyright (c) 2019 [Wopster](https://github.com/stijnwop).
