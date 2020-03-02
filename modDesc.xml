@@ -7,10 +7,29 @@
     </title>
     <description>
         <en>
-            <![CDATA[With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges.]]>
+            <![CDATA[The Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
+Use the fill arms to actually be able to pump from open sources like: manure containers, lagoons amd water sources.
+Use a specialized dock arm in order to suck from a docking funnel, or simply use a suction hose.
+With a suction hose you´re able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges.
+Pumping does not always happen at full efficiency, manure thickness decreases the pump capacity and also the length of hoses affects your pump time.
+
+All vanilla vehicles are supported (and some have additional changes), for a full list please check the manual below.
+For more information read <a href="https://github.com/stijnwop/manureSystem/blob/master/README.md">the manual on my GitHub</a>.
+
+Special thanks to VertexDezign and BM-Modding for providing awesome assets!
+]]>
         </en>
         <de>
-            <![CDATA[Mit einem schlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern.]]>
+            <![CDATA[Das Gülle System verändert das ganze Spielerlebnis in der Handhabung der Gülle.Erfahre was es heisst, als echter Landwirt Gülle zu pumpen.
+Nutze die Befüllarme um aus offenen Behältern wie Feldrandcontainern, Güllebecken und Wasserbecken zu pumpen.
+Benutze einen speziellen Füllarm um von der Andockstation anzusaugen, oder einfach den Saugschlauch.
+Mit dem Saugschlauch kannst Du Flüssigkeiten von einem in das andere Behältnis pumpen, und diese einfach verlängern, um auch weitere Strecken zu überbrücken.
+Das Pumpen geschieht nicht immer mit der gleichen Geschwindigkeit, da auch dickflüssige Gülle oder die Entfernung die Pumpenleistung beeinflussen.
+
+Alle Standardfahrzeuge sind unterstützt ( und manche haben kleine Veränderungen bekommen ), für die komplette Liste bitte die Anleitung im Link hier drunter lesen.
+Für weitere Informationen, lese dir die <a href="https://github.com/stijnwop/manureSystem/blob/master/README.md">manual aus dem Github</a> durch.
+
+Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tollen assets!]]>
         </de>
     </description>
     <iconFilename>icon.png</iconFilename>

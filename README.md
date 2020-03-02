@@ -1,11 +1,11 @@
 # Manure System for Farming Simulator 19 (GPS)
 ![For Farming Simulator 19](https://img.shields.io/badge/Farming%20Simulator-19-FF7C00.svg) [![Releases](https://img.shields.io/github/release/stijnwop/guidanceSteering.svg)](https://github.com/stijnwop/guidanceSteering/releases)
 
-The Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
-Use the fill arms to actually be able to pump from open sources like: manure containers, lagoons and lakes. 
-Use a specialized dockarm in order to suck from a docking funnel, or simply use a suction hose.
-With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges. 
-Pumping does not always happen at full efficiency, manure thickness decreases the pump capacity and also the length of hoses affects your pump time. 
+he Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
+Use the fill arms to actually be able to pump from open sources like: manure containers, lagoons amd water sources.
+Use a specialized dock arm in order to suck from a docking funnel, or simply use a suction hose.
+With a suction hose you´re able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges.
+Pumping does not always happen at full efficiency, manure thickness decreases the pump capacity and also the length of hoses affects your pump time.
 
 
 ## Publishing
