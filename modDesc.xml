@@ -4,6 +4,7 @@
     <version>1.0.0.0</version>
     <title>
         <en>ManureSystem</en>
+        <de>GülleSystem</de>
     </title>
     <description>
         <en>
@@ -60,10 +61,12 @@ Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tolle
         <specialization name="manureSystemTerraVariant435" className="ManureSystemTerraVariant435" filename="src/vehicles/vanillainserts/ManureSystemTerraVariant435.lua"/>
         <specialization name="manureSystemLiquidTank" className="ManureSystemLiquidTank" filename="src/vehicles/vanillainserts/ManureSystemLiquidTank.lua"/>
         <specialization name="manureSystemNavigator6000" className="ManureSystemNavigator6000" filename="src/vehicles/vanillainserts/ManureSystemNavigator6000.lua"/>
+        <specialization name="manureSystemMega2200" className="ManureSystemMega2200" filename="src/vehicles/vanillainserts/ManureSystemMega2200.lua"/>
         <specialization name="manureSystemRubicon9000" className="ManureSystemRubicon9000" filename="src/vehicles/vanillainserts/ManureSystemRubicon9000.lua"/>
         <specialization name="manureSystemKuhnPF1500" className="ManureSystemKuhnPF1500" filename="src/vehicles/vanillainserts/ManureSystemKuhnPF1500.lua"/>
         <specialization name="manureSystemKuhnDeltis1302" className="ManureSystemKuhnDeltis1302" filename="src/vehicles/vanillainserts/ManureSystemKuhnDeltis1302.lua"/>
         <specialization name="manureSystemKuhnMetris4102" className="ManureSystemKuhnMetris4102" filename="src/vehicles/vanillainserts/ManureSystemKuhnMetris4102.lua"/>
+        <specialization name="manureSystemImperador3" className="ManureSystemImperador3" filename="src/vehicles/vanillainserts/ManureSystemImperador3.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -111,6 +114,11 @@ Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tolle
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>
+        <type name="vanillaMega2200" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemMega2200"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
         <type name="vanillaRubicon9000" parent="selfPropelledSprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemRubicon9000"/>
             <specialization name="manureSystemConnector"/>
@@ -128,6 +136,11 @@ Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tolle
         </type>
         <type name="vanillaKuhnMetris4102" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemKuhnMetris4102"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
+        <type name="vanillaImperador3" parent="selfPropelledSprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemImperador3"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>

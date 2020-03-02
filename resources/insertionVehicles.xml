@@ -38,6 +38,10 @@
 
     <!-- Sprayers -->
     <vehicle>
+        <xml>data/vehicles/hardi/mega2200/mega2200.xml</xml>
+        <replaceTypeName>vanillaMega2200</replaceTypeName>
+    </vehicle>
+    <vehicle>
         <xml>data/vehicles/hardi/navigator6000/navigator6000.xml</xml>
         <replaceTypeName>vanillaNavigator6000</replaceTypeName>
     </vehicle>
@@ -56,6 +60,10 @@
     <vehicle>
         <xml>data/vehicles/kuhn/kuhnMetris4102/kuhnMetris4102.xml</xml>
         <replaceTypeName>vanillaKuhnMetris4102</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>data/vehicles/stara/imperador3/imperador3.xml</xml>
+        <replaceTypeName>vanillaImperador3</replaceTypeName>
     </vehicle>
 
     <!-- Pallets -->
