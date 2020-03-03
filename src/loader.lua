@@ -148,13 +148,15 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
         local data = vehicles[xmlFilename]
         local replacementType = data.replaceTypeName
         local orgEntry = g_vehicleTypeManager:getVehicleTypeByName(vehicleData.typeName)
+        local stringParts = StringUtil.splitString(".", vehicleData.typeName)
 
-        if not SpecializationUtil.hasSpecialization(ManureSystemVehicle, orgEntry.specializations) then
-            if data.copySpecializations then
-                local stringParts = StringUtil.splitString(".", vehicleData.typeName)
-                if #stringParts ~= 1 then
-                    local typeModName = unpack(stringParts)
+        local doReplace = orgEntry ~= nil
+        if #stringParts ~= 1 then
+            local typeModName = unpack(stringParts)
+            doReplace = doReplace and not (g_specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemVehicle") ~= nil)
 
+            if doReplace then
+                if data.copySpecializations then
                     for _, name in pairs(data.specializations) do
                         local specName = typeModName .. "." .. name
                         local spec = g_specializationManager:getSpecializationObjectByName(specName)
@@ -163,11 +165,13 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
                             g_vehicleTypeManager:addSpecialization(replacementType, specName)
                         end
                     end
+
+                    data.copySpecializations = false
                 end
-
-                data.copySpecializations = false
             end
+        end
 
+        if doReplace then
             local typeEntry = g_vehicleTypeManager:getVehicleTypeByName(replacementType)
             if typeEntry ~= nil then
                 vehicleData.typeName = replacementType
