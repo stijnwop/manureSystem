@@ -97,3 +97,34 @@ In this example we're going to add connectors, the pump motor and a fillarm. In 
 ```
 
 If your mod also supports to receiver just simply add the `hasFillArmReceiver="true"` attribute.
+
+## Setting up the PumpMotor
+> In order todo this step you need to make sure you configured the `hasPumpMotor` entry from the chapter `Determine what to add`.
+
+For the pump motor we have a couple of configuration possibilities.
+
+- litersPerSecond: `250` the liters per second the pump can handle at max efficiency.
+- toReachMaxEfficiencyTime: `1000` the time in ms the pump needs to reach the max throughput. (This time is used as a starting point and will be influenced based on the manure thickness or hose length)
+- isStandalone: `true/false` determines if the pump functions as a standalone pump (so a pump without capacity on it's own)
+- useStandalonePumpText: `true/false` determines if the vehicle should use the standalone pump text, which is different than the standard pump text (left/right instead of in/out)
+
+You also have the options to use a custom sound file for the pump.
+An example entry for a standalone pump will be:
+```xml
+<manureSystemPumpMotor isStandalone="true" litersPerSecond="250" toReachMaxEfficiencyTime="1000">
+    <sounds>
+        <pump template="SLURRY_02">
+            <pitch indoor="0.85" outdoor="0.75"/>
+        </pump>
+    </sounds>
+</manureSystemPumpMotor>
+```
+
+Here we tell that it's a standalone pump with the `isStandalone` attribute and with a the pump throughput of 250 liters per second and that it takes 1 second to reach that with the `litersPerSecond` and `toReachMaxEfficiencyTime` attributes. You can also see the <sounds> entry where we use a different template for our pump sound.
+
+An example entry for a normal tanker pump will be:
+```xml
+<manureSystemPumpMotor litersPerSecond="195" toReachMaxEfficiencyTime="1050"/>
+```
+
+As simple as that!
