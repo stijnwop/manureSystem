@@ -147,32 +147,34 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
     if vehicles[xmlFilename] ~= nil then
         local data = vehicles[xmlFilename]
         local replacementType = data.replaceTypeName
+        local orgEntry = g_vehicleTypeManager:getVehicleTypeByName(vehicleData.typeName)
 
-        if data.copySpecializations then
-            local orgEntry = g_vehicleTypeManager:getVehicleTypeByName(vehicleData.typeName)
-            if orgEntry ~= nil then
-                local stringParts = StringUtil.splitString(".", vehicleData.typeName)
-                if #stringParts ~= 1 then
-                    local typeModName = unpack(stringParts)
+        if not SpecializationUtil.hasSpecialization(ManureSystemVehicle, orgEntry.specializations) then
+            if data.copySpecializations then
+                if orgEntry ~= nil then
+                    local stringParts = StringUtil.splitString(".", vehicleData.typeName)
+                    if #stringParts ~= 1 then
+                        local typeModName = unpack(stringParts)
 
-                    for _, name in pairs(data.specializations) do
-                        local specName = typeModName .. "." .. name
-                        local spec = g_specializationManager:getSpecializationObjectByName(specName)
+                        for _, name in pairs(data.specializations) do
+                            local specName = typeModName .. "." .. name
+                            local spec = g_specializationManager:getSpecializationObjectByName(specName)
 
-                        if spec ~= nil then
-                            g_vehicleTypeManager:addSpecialization(replacementType, specName)
+                            if spec ~= nil then
+                                g_vehicleTypeManager:addSpecialization(replacementType, specName)
+                            end
                         end
                     end
                 end
+
+                data.copySpecializations = false
             end
 
-            data.copySpecializations = false
-        end
-
-        local typeEntry = g_vehicleTypeManager:getVehicleTypeByName(replacementType)
-        if typeEntry ~= nil then
-            vehicleData.typeName = replacementType
-            self.typeName = replacementType
+            local typeEntry = g_vehicleTypeManager:getVehicleTypeByName(replacementType)
+            if typeEntry ~= nil then
+                vehicleData.typeName = replacementType
+                self.typeName = replacementType
+            end
         end
     end
 
