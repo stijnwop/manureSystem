@@ -151,18 +151,16 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
 
         if not SpecializationUtil.hasSpecialization(ManureSystemVehicle, orgEntry.specializations) then
             if data.copySpecializations then
-                if orgEntry ~= nil then
-                    local stringParts = StringUtil.splitString(".", vehicleData.typeName)
-                    if #stringParts ~= 1 then
-                        local typeModName = unpack(stringParts)
+                local stringParts = StringUtil.splitString(".", vehicleData.typeName)
+                if #stringParts ~= 1 then
+                    local typeModName = unpack(stringParts)
 
-                        for _, name in pairs(data.specializations) do
-                            local specName = typeModName .. "." .. name
-                            local spec = g_specializationManager:getSpecializationObjectByName(specName)
+                    for _, name in pairs(data.specializations) do
+                        local specName = typeModName .. "." .. name
+                        local spec = g_specializationManager:getSpecializationObjectByName(specName)
 
-                            if spec ~= nil then
-                                g_vehicleTypeManager:addSpecialization(replacementType, specName)
-                            end
+                        if spec ~= nil then
+                            g_vehicleTypeManager:addSpecialization(replacementType, specName)
                         end
                     end
                 end
