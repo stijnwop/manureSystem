@@ -5,6 +5,7 @@
     <title>
         <en>ManureSystem</en>
         <de>GülleSystem</de>
+        <fr>Système de collecte du lisier</fr>
     </title>
     <description>
         <en>
@@ -32,6 +33,19 @@ Für weitere Informationen, lese dir die <a href="https://github.com/stijnwop/ma
 
 Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tollen assets!]]>
         </de>
+        <fr>
+            <![CDATA[Le mod Manure System change tout le gameplay autour de la gestion de votre installation de lisier. Découvrez ce que cela signifie vraiment de pomper des liquides en tant que véritable agriculteur.
+Utilisez les bras de remplissage pour pouvoir pomper à partir de sources ouvertes telles que : les conteneurs de lisier, les lagunes et les sources d'eau.
+Utilisez un bras de remplissage spécialisé afin d'aspirer à partir d'un entonnoir de remplissage, ou utilisez simplement un tuyau d'aspiration.
+Avec un tuyau d'aspiration, vous pouvez pomper un produit liquide de la source à la cible. Le cas échéant, vous pouvez allonger le tuyau d'aspiration pour atteindre de plus grandes distances.
+Le pompage ne se fait pas toujours à pleine capacité, car le volume du lisier diminue la capacité de la pompe et la longueur des tuyaux influe également sur le temps de pompage.
+
+Tous les véhicules de type vanille sont pris en charge (et certains ont des modifications supplémentaires), pour une liste complète, veuillez consulter le manuel ci-dessous.
+Pour plus d'informations, veuillez lire <a href="https://github.com/stijnwop/manureSystem/blob/master/README.md">le manuel sur mon GitHub</a>.
+
+Un grand merci à VertexDezign et BM-Modding pour avoir fourni des fonctionnalités géniales !
+]]>
+        </fr>
     </description>
     <iconFilename>icon.png</iconFilename>
     <multiplayer supported="true"/>
