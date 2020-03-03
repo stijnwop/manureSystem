@@ -1,4 +1,4 @@
-# Manure System for Farming Simulator 19 (GPS)
+# Manure System for Farming Simulator 19
 ![For Farming Simulator 19](https://img.shields.io/badge/Farming%20Simulator-19-FF7C00.svg) [![Releases](https://img.shields.io/github/release/stijnwop/guidanceSteering.svg)](https://github.com/stijnwop/guidanceSteering/releases)
 
 he Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
