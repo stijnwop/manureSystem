@@ -1,2 +1,16 @@
-theme: jekyll-theme-cayman
+
+title: ManureSystem
+description: "Manure system documentation."
+author:
+    name: "Stijn Wopereis"
+
+# Build settings
+baseurl: /
 markdown: kramdown
+source: .
+destination: ./_site
+permalink: /:title
+paginate: 8
+paginate_path: /page:num/
+
+theme: jekyll-theme-cayman
