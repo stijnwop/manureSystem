@@ -88,4 +88,8 @@
             <specialization name="crabSteeringAttacher"/>
         </copySpecializations>
     </vehicle>
+    <vehicle>
+        <xml>vehicles/briri/fieldMaster20/fieldMaster20.xml</xml>
+        <replaceTypeName>modFieldMaster20</replaceTypeName>
+    </vehicle>
 </vehicles>

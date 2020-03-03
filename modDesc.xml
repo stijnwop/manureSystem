@@ -67,6 +67,7 @@ Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tolle
         <specialization name="manureSystemKuhnDeltis1302" className="ManureSystemKuhnDeltis1302" filename="src/vehicles/vanillainserts/ManureSystemKuhnDeltis1302.lua"/>
         <specialization name="manureSystemKuhnMetris4102" className="ManureSystemKuhnMetris4102" filename="src/vehicles/vanillainserts/ManureSystemKuhnMetris4102.lua"/>
         <specialization name="manureSystemImperador3" className="ManureSystemImperador3" filename="src/vehicles/vanillainserts/ManureSystemImperador3.lua"/>
+        <specialization name="manureSystemFieldMaster20" className="ManureSystemFieldMaster20" filename="src/vehicles/vanillainserts/ManureSystemFieldMaster20.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -162,6 +163,10 @@ Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tolle
             <specialization name="manureSystemFillArm"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
+        </type>
+        <!-- Briri Mod -->
+        <type name="modFieldMaster20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="manureSystemFieldMaster20"/>
         </type>
     </vehicleTypes>
 
