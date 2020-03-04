@@ -29,17 +29,21 @@
         <TransformGroup name="hose_clamp" translation="0.226611 -0.134366 1.52588e-05" rotation="0 0 -15" collision="false" clipDistance="300" nodeId="4">
           <TransformGroup name="link" translation="0.00154766 0.249973 7.77346e-16" collision="false" clipDistance="300" nodeId="5"/>
         </TransformGroup>
+        <TransformGroup name="connector_node" translation="0.165507 0 0" rotation="0 90 0" nodeId="6"/>
       </Shape>
-      <Shape name="eightInchBrassValve" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
-      <Shape name="handle" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="7 8 9 10" clipDistance="300" nodeId="7">
-        <TransformGroup name="piston" translation="-0.0473567 0.251 1.52588e-05" collision="false" clipDistance="300" nodeId="8"/>
-        <TransformGroup name="handle_valve" translation="0.0190589 0.322343 1.52588e-05" rotation="0 0 15" collision="false" clipDistance="300" nodeId="9">
-          <TransformGroup name="handle_bar" translation="-0.100586 0.00125885 0.0486603" collision="false" clipDistance="300" nodeId="10"/>
+      <Shape name="eightInchBrassValve" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7"/>
+      <Shape name="handle" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="8 9 10 11" clipDistance="300" nodeId="8">
+        <TransformGroup name="piston" translation="-0.0473567 0.251 1.52588e-05" collision="false" clipDistance="300" nodeId="9"/>
+        <TransformGroup name="handle_valve" translation="0.0190589 0.322343 1.52588e-05" rotation="0 0 15" collision="false" clipDistance="300" nodeId="10">
+          <TransformGroup name="handle_bar" translation="-0.100586 0.00125885 0.0486603" collision="false" clipDistance="300" nodeId="11"/>
         </TransformGroup>
       </Shape>
     </TransformGroup>
   </Scene>
 
   <UserAttributes>
+    <UserAttribute nodeId="2">
+      <Attribute name="connectorNode" type="string" value="2"/>
+    </UserAttribute>
   </UserAttributes>
 </i3D>

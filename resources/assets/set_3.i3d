@@ -24,13 +24,33 @@
 
   <Scene>
     <TransformGroup name="set" nodeId="1">
-      <Shape name="camlock_storz_male" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2"/>
-      <Shape name="camlock_male_flange" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="3"/>
-      <Shape name="camlock_male_90" translation="0 5.55112e-17 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4"/>
-      <Shape name="camlock_male_45" translation="-1.96262e-17 1.96262e-17 3.08149e-33" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="5"/>
+      <Shape name="camlock_storz_male" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2">
+        <TransformGroup name="connector_node" translation="0.107285 -2.09549e-24 -6.16298e-33" rotation="0 90 0" nodeId="3"/>
+      </Shape>
+      <Shape name="camlock_male_flange" translation="-2.77556e-17 2.09549e-24 6.16298e-33" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="4">
+        <TransformGroup name="connector_node" translation="0.115 -2.09549e-24 -6.16298e-33" rotation="0 90 0" nodeId="5"/>
+      </Shape>
+      <Shape name="camlock_male_90" translation="0 5.55112e-17 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6">
+        <TransformGroup name="connector_node" translation="0.236879 0.3077 0" rotation="-90 90 0" nodeId="7"/>
+      </Shape>
+      <Shape name="camlock_male_45" translation="-1.96262e-17 1.96262e-17 3.08149e-33" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="8">
+        <TransformGroup name="connector_node" translation="0.402377 0.190936 0" rotation="-45 90 0" nodeId="9"/>
+      </Shape>
     </TransformGroup>
   </Scene>
 
   <UserAttributes>
+    <UserAttribute nodeId="2">
+      <Attribute name="connectorNode" type="string" value="0"/>
+    </UserAttribute>
+    <UserAttribute nodeId="4">
+      <Attribute name="connectorNode" type="string" value="0"/>
+    </UserAttribute>
+    <UserAttribute nodeId="6">
+      <Attribute name="connectorNode" type="string" value="0"/>
+    </UserAttribute>
+    <UserAttribute nodeId="8">
+      <Attribute name="connectorNode" type="string" value="0"/>
+    </UserAttribute>
   </UserAttributes>
 </i3D>
