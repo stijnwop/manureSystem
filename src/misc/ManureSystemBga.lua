@@ -99,6 +99,8 @@ function ManureSystemBga.inj_bga_load(self, superFunc, id, xmlFile, key, customE
     -- Set component node on a physics node after loading.
     self.components = { { node = self.rootNode } }
     self.xmlFile = nil
+    -- Set owner on the loading station.
+    self.digestateSilo.loadingStation.owner = self
 
     if #self.manureSystemConnectors ~= 0 then
         g_manureSystem:addConnectorObject(self)
@@ -286,10 +288,10 @@ function Bga:addFillUnitFillLevel(farmId, fillUnitIndex, fillLevelDelta, fillTyp
             local newFillLevel = storage:getFillLevel(fillTypeIndex)
 
             movedFillLevel = movedFillLevel + (newFillLevel - oldFillLevel)
-        end
 
-        if movedFillLevel >= fillLevelDelta - 0.001 then
-            movedFillLevel = fillLevelDelta
+            if movedFillLevel >= fillLevelDelta - 0.001 then
+                movedFillLevel = fillLevelDelta
+            end
         end
     end
 
