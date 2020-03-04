@@ -1,3 +1,12 @@
+----------------------------------------------------------------------------------------------------
+-- ManureSystemHusbandryModuleLiquidManure
+----------------------------------------------------------------------------------------------------
+-- Purpose: Add manure system support to the animal husbandry.
+--
+-- Copyright (c) Wopster, 2019
+----------------------------------------------------------------------------------------------------
+
+---@class ManureSystemHusbandryModuleLiquidManure
 ManureSystemHusbandryModuleLiquidManure = {}
 
 local ManureSystemHusbandryModuleLiquidManure_mt = Class(ManureSystemHusbandryModuleLiquidManure)
