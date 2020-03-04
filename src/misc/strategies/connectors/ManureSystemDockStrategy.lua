@@ -298,6 +298,8 @@ function ManureSystemDockStrategy:delete(connector)
 end
 
 function ManureSystemDockStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)
+    connector.node = connectorNode
+
     local deformationNodeIndex = getUserAttribute(connectorNode, "deformationNode")
     if deformationNodeIndex ~= nil then
         ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode, "funnelNode")

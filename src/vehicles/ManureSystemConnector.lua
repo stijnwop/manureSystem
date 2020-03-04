@@ -159,27 +159,32 @@ function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIg
 end
 
 function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
-    local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
+    connector.hasSharedSet = hasXMLProperty(xmlFile, baseKey .. ".sharedSet")
 
-    if node ~= nil then
-        connector.id = id + 1
-        connector.node = node
-        connector.isConnected = false
-        connector.connectedObject = nil
-        connector.connectedNodeId = nil
-        connector.inRangeDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#inRangeDistance"), 1.3)
-        connector.isParkPlace = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#isParkPlace"), false)
-        connector.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
-        connector.hasSharedSet = hasXMLProperty(xmlFile, baseKey .. ".sharedSet")
-
-        if connector.hasSharedSet then
-            self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector)
+    if not connector.hasSharedSet then
+        local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
+        if node == nil then
+            return false
         end
 
-        return true
+        connector.node = node
     end
 
-    return false
+    connector.id = id + 1
+    connector.isConnected = false
+    connector.connectedObject = nil
+    connector.connectedNodeId = nil
+    connector.inRangeDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#inRangeDistance"), 1.3)
+    connector.isParkPlace = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#isParkPlace"), false)
+    connector.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
+
+    if connector.hasSharedSet then
+        if not self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector) then
+            return false
+        end
+    end
+
+    return true
 end
 
 function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
@@ -242,7 +247,10 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
         delete(sharedXMLFile)
     else
         g_logManager:xmlError(self.configFileName, "Shared connector set " .. connector.setId .. " not found!")
+        return false
     end
+
+    return true
 end
 
 function ManureSystemConnector:getConnectors()

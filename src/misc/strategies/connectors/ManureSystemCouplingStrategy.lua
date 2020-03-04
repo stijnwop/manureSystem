@@ -119,6 +119,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
     local didPumpTargetReset = false
     for _, connector in ipairs(connectors) do
+        DebugUtil.drawDebugNode(connector.node, "HERE")
         if connector.isConnected and not connector.isParkPlace then
             if not didPumpTargetReset then
                 if object.spec_manureSystemPumpMotor ~= nil then
@@ -235,6 +236,13 @@ function ManureSystemCouplingStrategy:delete(connector)
 end
 
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)
+    local connectorNodeIndex = getUserAttribute(connectorNode, "connectorNode")
+    if connectorNodeIndex ~= nil then
+        connector.node = I3DUtil.indexToObject(connectorNode, connectorNodeIndex)
+    else
+        connector.node = connectorNode
+    end
+
     ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode)
 end
 
