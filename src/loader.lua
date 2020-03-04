@@ -188,7 +188,11 @@ local function getIsFillTriggerActivatable(trigger, superFunc, vehicle)
     if trigger.sourceObject ~= nil then
         local owner = trigger.sourceObject.owner
         if (trigger.sourceObject.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil) and vehicle.getConnectorById ~= nil then
-            return false
+            if trigger.sourceObject.manureSystemConnectors ~= nil and #trigger.sourceObject.manureSystemConnectors ~= 0
+                or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
+            then
+                return false
+            end
         end
     end
 
@@ -199,9 +203,13 @@ local function getIsLoadTriggerActivatable(trigger, superFunc)
     if trigger.source ~= nil then
         local owner = trigger.source.owner
         if trigger.source.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil then
-            for _, fillableObject in pairs(trigger.fillableObjects) do
-                if fillableObject.object.getConnectorById ~= nil then
-                    return false
+            if trigger.source.manureSystemConnectors ~= nil and #trigger.source.manureSystemConnectors ~= 0
+                or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
+            then
+                for _, fillableObject in pairs(trigger.fillableObjects) do
+                    if fillableObject.object.getConnectorById ~= nil then
+                        return false
+                    end
                 end
             end
         end
