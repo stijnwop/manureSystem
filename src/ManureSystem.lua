@@ -53,6 +53,7 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
     self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
     self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
+    self.bga = ManureSystemBga:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
     self.samples = {}
@@ -69,6 +70,7 @@ end
 function ManureSystem:delete()
     self.player:delete()
     self.husbandryModuleLiquidManure:delete()
+    self.bga:delete()
 
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()

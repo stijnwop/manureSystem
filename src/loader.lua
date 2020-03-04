@@ -15,6 +15,7 @@ source(Utils.getFilename("src/misc/ManureSystemFillPlane.lua", directory))
 source(Utils.getFilename("src/misc/ManureSystemConnectorManager.lua", directory))
 source(Utils.getFilename("src/misc/ManureSystemFillArmManager.lua", directory))
 source(Utils.getFilename("src/misc/ManureSystemHusbandryModuleLiquidManure.lua", directory))
+source(Utils.getFilename("src/misc/ManureSystemBga.lua", directory))
 
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua", directory))
 source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemDockStrategy.lua", directory))
