@@ -17,6 +17,7 @@ IF EXIST %filename% (
    -xr!Substance ^
    -xr!.mayaSwatches ^
    -xr!.idea ^
+   -xr!docs ^
    -aoa -r ^
 
 IF %ERRORLEVEL% NEQ 0 ( exit 1 )
