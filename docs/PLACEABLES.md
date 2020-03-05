@@ -23,7 +23,7 @@ If the following [Download ManureSystemAvailabilityCheck](https://raw.githubuser
 > REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!
 
 ## Adding the ManureSystemAvailabilityCheck
-> Warning: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)
+> **Warning: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)**
 
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
 
@@ -117,7 +117,7 @@ Replace the .. (dots) with a connector entry.
 For our first connector entry we're going to use an existing reference transform group from the i3d file.
 For that we open the i3d file and copy the index of the desired node. 
 
-> Note: placeables don't work with i3d mappings so we have to use node indexes in this case!
+> **Note: placeables don't work with i3d mappings so we have to use node indexes in this case!**
 
 Now that we found our node and copied the index we have to add a connector entry to the `<manureSystemConnectors` tag.
 
@@ -131,7 +131,7 @@ The result will look something like this:
 This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
 
 We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
-> Tip: trough the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.
+> **Tip: trough the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
 This will look something like this:
 ```xml
@@ -144,7 +144,7 @@ This will create a COUPLING node linked to the node on the index `0|3` with the 
 
 
 
-> Tip: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.
+> **Tip: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
 
 ##### Adding connector animations
 
