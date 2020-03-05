@@ -301,10 +301,10 @@ function ManureSystemPumpMotor:setIsPumpRunning(pumpIsRunning, noEventSend)
 
         if pumpIsRunning then
             SpecializationUtil.raiseEvent(self, "onPumpStarted")
-            text = string.format(g_i18n:getText("action_deactivatePump"), self.typeDesc)
+            text = g_i18n:getText("action_deactivatePump"):format(self.typeDesc)
         else
             SpecializationUtil.raiseEvent(self, "onPumpStopped")
-            text = string.format(g_i18n:getText("action_activatePump"), self.typeDesc)
+            text = g_i18n:getText("action_activatePump"):format(self.typeDesc)
         end
 
         if actionEvent ~= nil then
@@ -621,7 +621,11 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
             local _, actionEventIdTogglePump = self:addActionEvent(spec.actionEvents, InputAction.MS_ACTIVATE_PUMP, self, ManureSystemPumpMotor.actionEventTogglePump, false, true, false, true, nil, nil, true)
             local _, actionEventIdTogglePumpDirection = self:addActionEvent(spec.actionEvents, InputAction.MS_TOGGLE_PUMP_DIRECTION, self, ManureSystemPumpMotor.actionEventTogglePumpDirection, false, true, false, true, nil, nil, true)
 
-            g_inputBinding:setActionEventText(actionEventIdTogglePump, g_i18n:getText("action_activatePump"):format(self.typeDesc))
+            local text = g_i18n:getText("action_activatePump"):format(self.typeDesc)
+            if self:isPumpRunning() then
+                text = g_i18n:getText("action_deactivatePump"):format(self.typeDesc)
+            end
+            g_inputBinding:setActionEventText(actionEventIdTogglePump, text)
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePump, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePump, GS_PRIO_HIGH)
 
