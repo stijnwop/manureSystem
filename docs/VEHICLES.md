@@ -25,7 +25,9 @@ How to download the `ManureSystemVehicle.lua` file:
 ## Adding the ManureSystemVehicle specialization
 > In order to start with this step you need to have completed the part `What do I need?`.
 
-### 1
+> TIP: when you don't plan to add extra specializations besides the ManureSystemVehicle and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel` 
+
+### Step 1
 Open the `modDesc.xml` file located in your modfolder.
 
 In order to load the specialization you will need to add the specializations entry to the modDesc.
@@ -41,7 +43,7 @@ If a similar entry already exists you can just add the specialization entry to t
 ```xml
 <specialization name="manureSystemVehicle" className="ManureSystemVehicle" filename="ManureSystemVehicle.lua"/>
 ```
-### 2
+### Step 2
 Now we need to add the newly loaded spec to a vehicle type.
 
 In the example below we parent from the vanilla vehicle type `manureBarrel` for our convenience. This can also be something different depending on the vehicle you're adapting.
@@ -58,7 +60,7 @@ Here we add the newly registered spec name `manureSystemVehicle`.
 
 Copy the new vehicle type name (In our case `myNewBarrel`) and close the modDesc file.
 
-### 3
+### Step 3
 Open the vehicle xml file and change the type="" entry on the second line of the file.
 Which looks similar to this:
 ```xml
@@ -72,14 +74,12 @@ Rename the manureBarrel to your newly added vehicle type name:
 
 > Note: if your vehicle uses vehicleTypeConfigurations you also need to change the types there!
 
-#### 4
+#### Step 4
 Awesome, we added the `ManureSystemVehicle` to your mod!
 
 ## Determine what to add
 
 In order to tell the `ManureSystem` what specializations to add you need to add the following entry to your vehicle XML.
-
-For this we need to add the following entry to the vehicle XML:
 ```xml
 <manureSystem />
 ```
@@ -120,7 +120,7 @@ An example entry for a standalone pump will be:
 </manureSystemPumpMotor>
 ```
 
-Here we tell that it's a standalone pump with the `isStandalone` attribute and with a the pump throughput of 250 liters per second and that it takes 1 second to reach that with the `litersPerSecond` and `toReachMaxEfficiencyTime` attributes. You can also see the <sounds> entry where we use a different template for our pump sound.
+Here we tell that it's a standalone pump with the `isStandalone` attribute and with a the pump throughput of 250 liters per second and that it takes 1 second to reach that with the `litersPerSecond` and `toReachMaxEfficiencyTime` attributes. In the example above you can also see the `<sounds>` entry where we use a different template for our pump sound.
 
 An example entry for a normal tanker pump will be:
 ```xml
@@ -128,3 +128,57 @@ An example entry for a normal tanker pump will be:
 ```
 
 As simple as that!
+
+## Setting up the FillArm
+> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter `Determine what to add`.
+
+For the fill arm we have to following configuration possibilities:
+
+- fillYOffset: `float` e.g. `-0.5` the offset for the fill arm on fillable sources (in order to reach places easier).
+- fillUnitIndex: `int` e.g. `1` the fillUnitIndex of which it should fill.
+- needsDockingCollision: `true/false` if the fill arm supports docking and needs to required collision for that.
+
+For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
+
+Through the entire mod you have the option to create a node with the `createNode` attribute or just refer to an existing node with the `node` attribute.
+
+This options, for creating nodes, comes with the following settings:
+
+- createNode: `true/false`
+- When createNode is set to `true`:
+    - linkNode: `0>` it's defaulted to the rootNode of your object, but allows setting a custom linkNode for our node to create.
+    - position: `0 0 0` the xyz translations of the node to create.
+    - rotation: `0 0 0` tje xyz rotations of the node to create.
+- When createNode is set to `false`:
+    - node: `0>` the index of the node it should use for the fill arm.
+
+An example entry for creating a node through the XML would be:
+```xml
+<manureSystemFillArm createNode="true" linkNode="armLinkNode" position="-0.888 0.7 3.065" rotation="0 -90 0" />
+```
+
+In the example above we let the script create a fill arm node and link it to the given `armLinkNode` and give it a custom position and rotation with the `position` and `rotation` attributes.
+
+You don't have to use this option and have to freedom to choose if you want to refer to an existing node you placed yourself in the i3d file.
+> Personally I prefer using the createNode setting which allows for i3d avoidance.
+
+An example entry without the option for creating a node would be:
+
+```xml
+<manureSystemFillArm node="armNode"/>
+```
+In this case the `armNode` will be the node to use for the fill arm, instead of the node we created with the createNode option from above.
+
+When you set the `needsDockingCollision` the `ManureSystem` will load a docking collision on your fillArm.
+This is needed in order to allow vehicles with funnels to detect the fill arm.
+This collision might not always be on the correct positions as it by defaults takes the same locations as the fill arm node you defined earlier.
+If you want to offset the position or rotation of this docking collision you have to add the collision entry.
+
+This will look like this:
+```xml
+<manureSystemFillArm node="armNode">
+    <collision position="0 0.1 0" rotation="90 0 0"/>
+</manureSystemFillArm>
+```
+
+In most cases it's not needed to set the position or rotation on the collision.
