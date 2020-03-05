@@ -61,7 +61,7 @@ local storeItemXMLFile = "OUR_XML_FILENAME.xml"
 
 Change `OUR_XML_FILENAME` from that variable to the name of your placeable xml filename.
 
-For example in the FS19_manureSystemLagoon mod the xml filename is name `manureLagoon`. 
+For example in the FS19_manureSystemLagoon mod the xml filename is named `manureLagoon`. 
 So this results in:
 ```lua
 -- Modify this name when dealing with other objects!
@@ -119,6 +119,8 @@ For that we open the i3d file and copy the index of the desired node.
 
 > **Note: placeables don't work with i3d mappings so we have to use node indexes in this case!**
 
+![index of connector](images/placeables/indexOfConnector.png)
+
 Now that we found our node and copied the index we have to add a connector entry to the `<manureSystemConnectors` tag.
 
 The result will look something like this:
@@ -127,6 +129,7 @@ The result will look something like this:
     <connector type="COUPLING" node="1|1|2|1"/>
 </manureSystemConnectors>
 ```
+Note that I removed 0> from the index, this is not used on placeables in general!
 
 This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
 
@@ -143,8 +146,8 @@ This will look something like this:
 This will create a COUPLING node linked to the node on the index `0|3` with the given position and rotation.
 
 
-
 > **Tip: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
+> ![msToggleDebug](images/msToggleDebug.png)
 
 ##### Adding connector animations
 
@@ -182,6 +185,8 @@ These look like this (DON'T BLINDLY COPY):
 </animatedObjects>
 ```
 
+![couting animations](images/placeables/countingAnimations.png)
+
 Above we have two animationObject entries which we can count as 1 and 2 (you can simply count the `</animatedObject>` (ending) tags)
 
 In order to trigger the animation on our connectors we have to set the index we just counted on either the `lockAnimationIndex` or `manureFlowAnimationIndex` attribute.
@@ -204,5 +209,5 @@ For the COUPLING and COUPLINGFERTILIZER type you have to option to set:
 - inRangeDistance `int` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
 - isParkPlace: `true/false` This flags if the connector is just used to park the hose on.
 
-
 ## Adding ManureSystemStorage support
+
