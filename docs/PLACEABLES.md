@@ -210,4 +210,74 @@ For the COUPLING and COUPLINGFERTILIZER type you have to option to set:
 - isParkPlace: `true/false` This flags if the connector is just used to park the hose on.
 
 ## Adding ManureSystemStorage support
+> Before you continue make sure you finished adding the ManureSystemAvailabilityCheck in [Adding the ManureSystemAvailabilityCheck](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#adding-the-manuresystemavailabilitycheck).
 
+Open your placeable xml file again.
+
+In order to load the ManureSystemStorage you will have to set the following placeableType.
+
+```xml
+<placeableType>FS19_manureSystem.manureSystemStorage</placeableType>
+```
+
+The added ManureSystemAvailabilityCheck will make sure that the mod won't conflict when the `ManureSystem` isn't loaded.
+
+In order to setup the bare minimum for the storage you will need to add the `<storage>` entry.
+
+The options for the storage entry are:
+- node: `string` e.g. `1|2` The node index of the storage.
+- fillTypeCategories: `string` e.g. `slurryTank` The supported filltype categories.
+- fillTypes: `string` e.g. `liquidManure` The supported fillType (ONLY NEEDED WHEN YOU WANT TO SPECIFY SPECIFIC FILLETYPES)
+- capacityPerFillType: `int` e.g. `500` The capacity of the storage.
+
+
+We also need a `<trigger>` entry in order to show the player info on our storage. This is simply a `node` reference to the trigger in your mod i3d.
+
+Make sure the trigger is actually checked as `trigger` in the i3d and has a collision mask (HEX) of `100000`.
+
+And example entry will be:
+```xml
+<manureSystemStorage>
+    <trigger node="1|4"/>
+    <storage node="0" fillTypeCategories="slurryTank" capacityPerFillType="1718000"/>
+</manureSystemStorage>
+```
+
+If the storage has a fillplane you can configure the following on the `<fillPlane>` entry.
+- node: `string` e.g. `1|2` The node index of the visible plane.
+- planeMinY: `float` e.g. `-4.1` The min Y the plane can travel.
+- planeMaxY: `float` e.g. `0.5` The max Y the plane can travel.
+- planeOffsetY: `float` e.g. `0.1` The offset Y for fill arms.
+
+And example entry with fillplane will be:
+```xml
+<manureSystemStorage>
+    <fillPlane node="1|2" planeMinY="-3.6" planeMaxY="0.28"/>
+    <storage node="0" fillTypeCategories="slurryTank" capacityPerFillType="1718000"/>
+</manureSystemStorage>
+```
+
+The storage also has a couple of options we can configure for the mixer.
+
+- hasMixer: `true/false` Sets if the storage has a mixer
+- mixPerSecond: `int` e.g. `150` The amount of liters it can mix per second.
+
+When the hasMixer is set to `true` we have to option to add sounds and animationNodes for that, like know from vanilla implementations.
+
+A complete entry would look something like this:
+
+```xml
+<manureSystemStorage hasMixer="true" mixPerSecond="150">
+    <fillPlane node="1|2" planeMinY="-3.6" planeMaxY="0.28" detectionNode="1|3"/>
+    <storage node="0" fillTypeCategories="slurryTank" capacityPerFillType="1718000"/>
+    <trigger node="1|4"/>
+    <animationNodes>
+        <animationNode node="2|0" rotSpeed="-2700" rotAxis="1" turnOnFadeTime="2" turnOffFadeTime="5"/>
+    </animationNodes>
+    <sounds>
+        <mix template="FORAGE_WAGON_01" linkNode="2"/>
+    </sounds>
+</manureSystemStorage>
+```
+
+The example above includes sounds and animation nodes for the mixer.
