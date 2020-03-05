@@ -13,7 +13,7 @@ To successfully execute the required steps in this tutorial you will need the fo
 For placeables (non build-in map placeables) you also need an extra script in order to check if the `ManureSystem` exists.
 You will need to get a copy of the latest `ManureSystemAvailabilityCheck.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemAvailabilityCheck.lua).
 
-How to download the `ManureSystemAvailabilityCheck.lua` file:
+If the following [Download ManureSystemAvailabilityCheck](https://raw.githubusercontent.com/stijnwop/manureSystem/master/docs/ManureSystemVehicle.lua?token=AC3ZARBV53TJ7SBGI2KYODC6NK3BG) link does not work you can follow the following steps on how to download the `ManureSystemAvailabilityCheck.lua` file:
 1. Go to the `docs` folder located in the root directory.
 2. Click on the `ManureSystemAvailabilityCheck.lua` file.
 3. A window will open with the script file.
@@ -25,7 +25,47 @@ How to download the `ManureSystemAvailabilityCheck.lua` file:
 ## Adding the ManureSystemAvailabilityCheck
 > Warning: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)
 
-> In order to start with this step you need to have completed the part `What do I need?`.
+> In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
+
+### Sourcing the availability check
+In the previous part of the tutorial you downloaded the ManureSystemAvailabilityCheck script in this part we're going to integrate this with your mod.
+
+First you will need to open the `modDesc.xml` of your mod.
+We will have to add the availability check to the `<extraSourceFiles>` tag of your modDesc. If your mod already has it just add the extra `<sourceFile>` entry.
+
+This will result in something like:
+
+```xml
+<extraSourceFiles>
+    <sourceFile filename="ManureSystemAvailabilityCheck.lua"/>
+</extraSourceFiles>
+```
+The filename must be the exact location of the `ManureSystemAvailabilityCheck.lua` file you downloaded earlier. In this case it's loaded from the root directory of the mod.
+
+We're done in the modDesc, your mod now does the availability check.
+
+### Modifying the availability check
+WOW, you heard that right! We're going todo some small scripting.
+
+In the `ManureSystemAvailabilityCheck.lua` we need to modify the `storeItemXMLFile` variable in order to check for the correct xml file.
+You will find this variable on line `13`.
+
+This will look like:
+```lua
+-- Modify this name when dealing with other objects!
+local storeItemXMLFile = "OUR_XML_FILENAME.xml"
+```
+
+Change `OUR_XML_FILENAME` from that variable to the name of your placeable xml filename.
+
+For example in the FS19_manureSystemLagoon mod the xml filename is name `manureLagoon`. 
+So this results in:
+```lua
+-- Modify this name when dealing with other objects!
+local storeItemXMLFile = "manureLagoon.xml"
+```
+
+Thats it!
 
 ## Adding connectors
 In order to be able to add connectors you have to make sure your placeable type is either:
@@ -34,7 +74,7 @@ In order to be able to add connectors you have to make sure your placeable type 
 - `bgaPlaceable` - vanilla placeable type for bga
 - `FS19_manureSystem.manureSystemStorage` - storage script on the manure system
 
-How you can setup the `FS19_manureSystem.manureSystemStorage` will be handled in the chapter below.
+How you can setup the `FS19_manureSystem.manureSystemStorage` will be handled in the [chapter below](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#adding-manuresystemstorage-support).
 
 ### Connector types
 Connectors are needed to tell for example hoses or fillarms where to connect to. Simply said it bridges functions together.
