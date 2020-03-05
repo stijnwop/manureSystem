@@ -119,7 +119,10 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
     local didPumpTargetReset = false
     for _, connector in ipairs(connectors) do
-        DebugUtil.drawDebugNode(connector.node, "HERE")
+        if g_manureSystem.debug then
+            DebugUtil.drawDebugNode(connector.node, "CONNECTOR")
+        end
+
         if connector.isConnected and not connector.isParkPlace then
             if not didPumpTargetReset then
                 if object.spec_manureSystemPumpMotor ~= nil then
