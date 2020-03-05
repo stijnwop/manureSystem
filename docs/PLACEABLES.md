@@ -27,8 +27,11 @@ If the following [Download ManureSystemAvailabilityCheck](https://raw.githubuser
 
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
 
+In this part of the tutorial we´re going to add an availability check, this is needed to ensure the user activated the `ManureSystem` mod in order to make our placeable fully functional!
+If the `ManureSystem` isn't activated/available the `ManureSystemAvailabilityCheck.lua` will remove your placeable from the store in order to avoid possible errors for the end-user.
+
 ### Sourcing the availability check
-In the previous part of the tutorial you downloaded the ManureSystemAvailabilityCheck script in this part we're going to integrate this with your mod.
+In the previous part of the tutorial you downloaded the ManureSystemAvailabilityCheck script, in this part we're going to integrate this with your mod.
 
 First you will need to open the `modDesc.xml` of your mod.
 We will have to add the availability check to the `<extraSourceFiles>` tag of your modDesc. If your mod already has it just add the extra `<sourceFile>` entry.
