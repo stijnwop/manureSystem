@@ -146,15 +146,15 @@ These look like this (DON'T BLINDLY COPY):
     <animatedObject>
         <animation duration="0.25">
             <part node="1|1|1">
-                <keyFrame time="0" rotation="0 0 0"/>
-                <keyFrame time="1" rotation="0 0 50"/>
+                <keyFrame time="0.0" rotation="0 0 0"/>
+                <keyFrame time="1" rotation="0 0 -125"/>
             </part>            
         </animation>
     </animatedObject>
     <animatedObject>
         <animation duration="0.25">
             <part node="1|1|3">
-                <keyFrame time="0" rotation="0 0 0"/>
+                <keyFrame time="0.0" rotation="0 0 0"/>
                 <keyFrame time="1" rotation="0 0 90"/>
             </part>
         </animation>
