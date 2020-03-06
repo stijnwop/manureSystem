@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------
 -- ManureSystemAvailabilityCheck
 ----------------------------------------------------------------------------------------------------
--- Purpose:  Removes ManureSystem-dependend store items from the store if ManureSystem is not available.
+-- Purpose: Removes ManureSystem-dependend store items from the store if ManureSystem is not available.
 --
 -- Copyright (c) Wopster, 2019
 ----------------------------------------------------------------------------------------------------
@@ -9,8 +9,19 @@
 local modDirectory = g_currentModDirectory
 local modName = g_currentModName
 
--- Modify this name when dealing with other objects!
-local storeItemXMLFile = "OUR_XML_FILENAME.xml"
+local storeItems = {}
+local modDesc = loadXMLFile("modDesc", modDirectory .. "modDesc.xml")
+
+local i = 0
+while true do
+    local storeItemKey = ("modDesc.storeItems.storeItem(%d)"):format(i)
+    if not hasXMLProperty(modDesc, storeItemKey) then break end
+    local xmlFilename = getXMLString(modDesc, storeItemKey .. "#xmlFilename")
+    storeItems[xmlFilename] = true
+    i = i + 1
+end
+
+delete(modDesc)
 
 local function isManureSystemActive()
     -- Might not be set at this point
@@ -22,7 +33,7 @@ local function isManureSystemActive()
 end
 
 local function ignoreStoreItems(self, superFunc, xmlFilename, baseDir, ...)
-    if baseDir == modDirectory and xmlFilename == storeItemXMLFile then
+    if baseDir == modDirectory and storeItems[xmlFilename] ~= nil then
         return nil
     end
 
