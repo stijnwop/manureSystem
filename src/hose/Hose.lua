@@ -438,7 +438,7 @@ function Hose:findConnector(id)
                     local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
                     if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                        or object:isa(Placeable) then
+                        or object:isa(Placeable) or object:isa(Bga) then
 
                         if object.isaHose ~= nil and object:isaHose() then
                             for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
