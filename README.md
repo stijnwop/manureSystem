@@ -34,12 +34,14 @@ Special thanks to BM-Modding for providing awesome assets!
 - Pump from/to vehicle to vehicle
 - Pump from/to a storage
 - Dynamic pumping sounds
+- Pump efficiency impact (longer ranges and manure thickness have influence on your pump time)
 - Pump directions [in/out left/right]
 - Toggle manure flow state
 - Dynamic parking position [only define the start parking node and set an offset if needed.. the script will do the rest]
   - If applicable you could use animation on the park function for moving some arms/levers around
 - Extend your hoses with the extendable hose type for larger ranges with the extendable configuration
 - Plane shader
+- Mixing manure on storages
 - Manure tankers support water.
 - Docking support
 - Fillarm support
@@ -50,7 +52,7 @@ You can pickup the hose like any other pickup object: Move towards the hose, aim
 Once you picked up the hose you have to walk towards the hose couplings on a supported vehicle. Once you get close aim for the coupling and the input help appears in the player HUD.
 Press the right mouse button in order to attach the hose to the coupling. If the coupling supports the manure flow animation the option will appear in the HUD too. Press the left mouse button in order to toggle the manure flow.
 
-> NOTE: If the vehicle supports manure flow animation and you DIDN'T open the manure flow you're not able to pump!
+> **NOTE: If the vehicle supports manure flow animation and you DIDN'T open the manure flow you're not able to pump!**
 
 If the coupling does not have any manure flow animations the flow will be controlled automatically.
 
@@ -60,7 +62,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 #### How to use: FillArm
 Move the fill arm by mouse control and place it inside the target object. The fill arm works with the Kotte FRC container, manure lagoon or in any place you can get water.
-> NOTE: In order to be able to pump inwards the fill arm needs to be UNDER the fill plane.
+> **NOTE: In order to be able to pump inwards the fill arm needs to be UNDER the fill plane.**
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2FW6mRde4Bg
 " target="_blank"><img src="http://img.youtube.com/vi/2FW6mRde4Bg/0.jpg" 
@@ -69,13 +71,14 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 #### How to use: DockArm
 The dock arm automatically functions like a fill arm (mentioned above) plus it can be docked on a docking funnel. Move the dock arm by mouse control carefully inside the docking funnel in order to be able to pump.
 
-> NOTE: Not all vehicles have the docking funnel animated, this is because the vanilla vehicles can't be prepared for that as the funnel model is attached to the whole mesh.
+> **NOTE: Not all vehicles have the docking funnel animated, this is because the vanilla vehicles can't be prepared for that as the funnel model is attached to the whole mesh.**
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=pn29sn7EVf0
 " target="_blank"><img src="http://img.youtube.com/vi/pn29sn7EVf0/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
-### Out of the box vehicle support
+### Out of the box support
+The ManureSystem supports a rich list of vehicles and objects out of the box, which means that those vehicles and objects don't need extra preparation!
 
 | Vehicles        | Vanilla / Mod        | Supports        |
 | ------------- | ------------------ | ------------------ |
@@ -100,6 +103,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 | Stara Imperador 3 | - | Fertilizer hose connector. |
 | Fertilizer Pallet | - | Fertilizer hose connector. |
 | Herbicide Pallet | - | Fertilizer hose connector. |
+| Animal husbandry (cows and pigs) | - | Hose connector. |
 
 
 ## Modding
