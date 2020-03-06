@@ -111,7 +111,7 @@ Note that I removed 0> from the index, this is not used on placeables in general
 This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
 
 We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
-> **TIP: trough the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
 This will look something like this:
 ```xml

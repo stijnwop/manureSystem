@@ -20,15 +20,15 @@ How to download the `ManureSystemVehicle.lua` file:
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
  
-> REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!
+> **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
 ## Adding the ManureSystemVehicle specialization
-> In order to start with this step you need to have completed the part `What do I need?`.
+> In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#what-do-i-need).
 
-> TIP: when you don't plan to add extra specializations besides the ManureSystemVehicle and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel` 
+> **TIP: when you don't plan to add extra specializations besides the ManureSystemVehicle and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
 
 ### Step 1
-Open the `modDesc.xml` file located in your modfolder.
+Open the `modDesc.xml` file located in your mod directory.
 
 In order to load the specialization you will need to add the specializations entry to the modDesc.
 ```xml
@@ -47,7 +47,7 @@ If a similar entry already exists you can just add the specialization entry to t
 Now we need to add the newly loaded spec to a vehicle type.
 
 In the example below we parent from the vanilla vehicle type `manureBarrel` for our convenience. This can also be something different depending on the vehicle you're adapting.
-> NOTE: DON'T BLINDLY COPY PASTE THE PARENT IN THIS CASE AS THIS WON'T SUIT ALL CASES
+> **NOTE: Don't blindly copy paste the `parent` in this case as this won't suit all cases but only manureBarrels in our example.**
 
 Here we add the newly registered spec name `manureSystemVehicle`.
 ```xml
@@ -61,21 +61,22 @@ Here we add the newly registered spec name `manureSystemVehicle`.
 Copy the new vehicle type name (In our case `myNewBarrel`) and close the modDesc file.
 
 ### Step 3
-Open the vehicle xml file and change the type="" entry on the second line of the file.
+Open your vehicle XML file and search for the type="" entry which can be found on the second line of the file.
+
 Which looks similar to this:
 ```xml
 <vehicle type="manureBarrel">
 ```
 
-Rename the manureBarrel to your newly added vehicle type name:
+We're going to rename the type `manureBarrel` to our newly added vehicle type name we copied earlier in step 2:
 ```xml
 <vehicle type="myNewBarrel">
 ```
 
-> Note: if your vehicle uses vehicleTypeConfigurations you also need to change the types there!
+> **Note: if your vehicle uses vehicleTypeConfigurations you also need to change the types there!**
 
 #### Step 4
-Awesome, we added the `ManureSystemVehicle` to your mod!
+Awesome, we added the `ManureSystemVehicle` specialization to your mod!
 
 ## Determine what to add
 
@@ -91,15 +92,15 @@ We have 4 options/attributes we can set here:
 - hasFillArm: `true/false` if the mod has a ManureSystem fill arm (e.g. normal fill arm or docking arm)
 - hasFillArmReceiver: `true/false` if the mod allows ManureSystem fill arms to fill from it's fillVolume (e.g. containers)
 
-In this example we're going to add connectors, the pump motor and a fillarm. In order to tell that to the ManureSystem mod we do the following:
+In this example we're going to add connectors, the pump motor and a fillarm. In order to tell that to the `ManureSystem` mod we do the following:
 ```xml
 <manureSystem hasConnectors="true" hasPumpMotor="true" hasFillArm="true"/>
 ```
 
-If your mod also supports to receiver just simply add the `hasFillArmReceiver="true"` attribute.
+If your mod also needs support for fillarm receiver just simply add the `hasFillArmReceiver="true"` attribute.
 
 ## Setting up the PumpMotor
-> In order todo this step you need to make sure you configured the `hasPumpMotor` entry from the chapter `Determine what to add`.
+> In order todo this step you need to make sure you configured the `hasPumpMotor` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
 For the pump motor we have a couple of configuration possibilities.
 
@@ -130,7 +131,7 @@ An example entry for a normal tanker pump will be:
 As simple as that!
 
 ## Setting up the FillArm
-> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter `Determine what to add`.
+> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
 For the fill arm we have to following configuration possibilities:
 
@@ -138,9 +139,10 @@ For the fill arm we have to following configuration possibilities:
 - fillUnitIndex: `int` e.g. `1` the fillUnitIndex of which it should fill.
 - needsDockingCollision: `true/false` if the fill arm supports docking and needs to required collision for that.
 
+### Adding fillarm node
 For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
 
-Through the entire mod you have the option to create a node with the `createNode` attribute or just refer to an existing node with the `node` attribute.
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
 This options, for creating nodes, comes with the following settings:
 
@@ -157,7 +159,7 @@ An example entry for creating a node through the XML would be:
 <manureSystemFillArm createNode="true" linkNode="armLinkNode" position="-0.888 0.7 3.065" rotation="0 -90 0" />
 ```
 
-In the example above we let the script create a fill arm node and link it to the given `armLinkNode` and give it a custom position and rotation with the `position` and `rotation` attributes.
+In the example above we let the `ManureSystem` create a fill arm node and link it to the given `armLinkNode` and give it a custom position and rotation with the `position` and `rotation` attributes.
 
 You don't have to use this option and have to freedom to choose if you want to refer to an existing node you placed yourself in the i3d file.
 > Personally I prefer using the createNode setting which allows for i3d avoidance.
@@ -169,6 +171,7 @@ An example entry without the option for creating a node would be:
 ```
 In this case the `armNode` will be the node to use for the fill arm, instead of the node we created with the createNode option from above.
 
+### Adding docking collision (only required for dock arms)
 When you set the `needsDockingCollision` the `ManureSystem` will load a docking collision on your fillArm.
 This is needed in order to allow vehicles with funnels to detect the fill arm.
 This collision might not always be on the correct positions as it by defaults takes the same locations as the fill arm node you defined earlier.
@@ -176,9 +179,20 @@ If you want to offset the position or rotation of this docking collision you hav
 
 This will look like this:
 ```xml
-<manureSystemFillArm node="armNode">
+<manureSystemFillArm node="armNode" needsDockingCollision="true">
     <collision position="0 0.1 0" rotation="90 0 0"/>
 </manureSystemFillArm>
 ```
 
 In most cases it's not needed to set the position or rotation on the collision.
+
+### Verify
+You can verify that your fill arm is setup correctly in F5 mode (for physics) with the `msToggleDebug` command in the developer console.
+> ![msToggleDebug](images/msToggleDebug.png)
+
+This will highlight the collisions and visualize the raycast line (red line)
+
+- For dock arms make sure the collision cube is visible at the end of the fillarm. (Not required for normal fillarms)
+- For all fillarms (including dock arms) make sure the raycast line is pointing away from your fillarm node, as shown on the image, to get the best results.
+
+![arm collision and ray](images/vehicles/armCollisionAndRay.jpg)
