@@ -47,29 +47,6 @@ The filename must be the exact location of the `ManureSystemAvailabilityCheck.lu
 
 We're done in the modDesc, your mod now does the availability check.
 
-### Modifying the availability check
-WOW, you heard that right! We're going todo some small scripting.
-
-In the `ManureSystemAvailabilityCheck.lua` we need to modify the `storeItemXMLFile` variable in order to check for the correct xml file.
-You will find this variable on line `13`.
-
-This will look like:
-```lua
--- Modify this name when dealing with other objects!
-local storeItemXMLFile = "OUR_XML_FILENAME.xml"
-```
-
-Change `OUR_XML_FILENAME` from that variable to the name of your placeable xml filename.
-
-For example in the FS19_manureSystemLagoon mod the xml filename is named `manureLagoon`. 
-So this results in:
-```lua
--- Modify this name when dealing with other objects!
-local storeItemXMLFile = "manureLagoon.xml"
-```
-
-Thats it!
-
 ## Adding connectors
 In order to be able to add connectors you have to make sure your placeable type is either:
 
