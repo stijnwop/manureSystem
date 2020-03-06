@@ -20,10 +20,10 @@ If the following [Download ManureSystemAvailabilityCheck](https://raw.githubuser
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
  
-> REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!
+> **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
 ## Adding the ManureSystemAvailabilityCheck
-> **Warning: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)**
+> **WARNING: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)**
 
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
 
@@ -72,7 +72,7 @@ In our first example we're going to look at adding a COUPLING connector type to 
 ##### Adding the connector node
 Open the placeable XML and add the `<manureSystemConnectors` tag as child of the `placeable` tag.
 
-> Note: when dealing with BGA placeables the `<manureSystemConnectors` needs to be a child of the `<bga></bga>` tag like:
+> NOTE: when dealing with BGA placeables the `<manureSystemConnectors` needs to be a child of the `<bga></bga>` tag like:
 > ```xml
 > <bga>
 > ...
@@ -94,7 +94,7 @@ Replace the .. (dots) with a connector entry.
 For our first connector entry we're going to use an existing reference transform group from the i3d file.
 For that we open the i3d file and copy the index of the desired node. 
 
-> **Note: placeables don't work with i3d mappings so we have to use node indexes in this case!**
+> **NOTE: placeables don't work with i3d mappings so we have to use node indexes in this case!**
 
 ![index of connector](images/placeables/indexOfConnector.png)
 
@@ -111,7 +111,7 @@ Note that I removed 0> from the index, this is not used on placeables in general
 This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
 
 We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
-> **Tip: trough the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+> **TIP: trough the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
 This will look something like this:
 ```xml
@@ -123,7 +123,7 @@ This will look something like this:
 This will create a COUPLING node linked to the node on the index `0|3` with the given position and rotation.
 
 
-> **Tip: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
+> **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
 > ![msToggleDebug](images/msToggleDebug.png)
 
 ##### Adding connector animations
@@ -187,7 +187,7 @@ For the COUPLING and COUPLINGFERTILIZER type you have to option to set:
 - isParkPlace: `true/false` This flags if the connector is just used to park the hose on.
 
 ## Adding ManureSystemStorage support
-> Before you continue make sure you finished adding the ManureSystemAvailabilityCheck in [Adding the ManureSystemAvailabilityCheck](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#adding-the-manuresystemavailabilitycheck).
+> Before continuing make sure you finished adding the ManureSystemAvailabilityCheck in [Adding the ManureSystemAvailabilityCheck](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#adding-the-manuresystemavailabilitycheck).
 
 Open your placeable xml file again.
 
@@ -210,7 +210,7 @@ The options for the storage entry are:
 
 We also need a `<trigger>` entry in order to show the player info on our storage. This is simply a `node` reference to the trigger in your mod i3d.
 
-Make sure the trigger is actually checked as `trigger` in the i3d and has a collision mask (HEX) of `100000`.
+Make sure the trigger is checked as `trigger` in the rigid body tab and that the trigger has a collision mask (HEX) of `100000`.
 
 And example entry will be:
 ```xml
@@ -220,28 +220,30 @@ And example entry will be:
 </manureSystemStorage>
 ```
 
-If the storage has a fillplane you can configure the following on the `<fillPlane>` entry.
+If you want to add a fillplane to your storage you can configure the following on the `<fillPlane>` entry.
 - node: `string` e.g. `1|2` The node index of the visible plane.
-- planeMinY: `float` e.g. `-4.1` The min Y the plane can travel.
-- planeMaxY: `float` e.g. `0.5` The max Y the plane can travel.
-- planeOffsetY: `float` e.g. `0.1` The offset Y for fill arms.
+- planeMinY: `float` e.g. `-4.1` The minimum Y translation the plane can travel.
+- planeMaxY: `float` e.g. `0.5` The maximum Y translation the plane can travel.
+- planeOffsetY: `float` e.g. `0.1` The offset Y translation for fill arms to be in range.
 
-And example entry with fillplane will be:
+And example entry with the fillplane will be:
 ```xml
 <manureSystemStorage>
     <fillPlane node="1|2" planeMinY="-3.6" planeMaxY="0.28"/>
     <storage node="0" fillTypeCategories="slurryTank" capacityPerFillType="1718000"/>
 </manureSystemStorage>
 ```
+The example above will add mark the node on index `1|2` as visible plane that is on Y translation `-3.6` when emtpy and on Y translation `0.28` when completely full.
 
-The storage also has a couple of options we can configure for the mixer.
+
+The storage also has a couple of options we can configure for the optional mixer.
 
 - hasMixer: `true/false` Sets if the storage has a mixer
 - mixPerSecond: `int` e.g. `150` The amount of liters it can mix per second.
 
-When the hasMixer is set to `true` we have to option to add sounds and animationNodes for that, like know from vanilla implementations.
+When the hasMixer is set to `true` we have to option to add sounds and animationNodes for that, this should be known from vanilla implementations so I am not going in-depth.
 
-A complete entry would look something like this:
+A complete manureSystemStorage entry would look something like this:
 
 ```xml
 <manureSystemStorage hasMixer="true" mixPerSecond="150">
