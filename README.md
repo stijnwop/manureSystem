@@ -101,6 +101,17 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 | Fertilizer Pallet | - | Fertilizer hose connector. |
 | Herbicide Pallet | - | Fertilizer hose connector. |
 
+
+## Modding
+Learn more about making compatible mods for the ManureSystem, improving maps, vehicles and placeables.
+
+Available tutorials can be found here:
+
+- [Modding with placeables](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md)
+- [Modding with vehicles](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md)
+
+For help you can try to open an issue here, contact me on my discord or try the forums to get answers from the community.
+
 ## Copyright
 Copyright (c) 2019 [Wopster](https://github.com/stijnwop).
 All rights reserved.
