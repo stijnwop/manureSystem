@@ -104,10 +104,10 @@ If your mod also needs support for fillarm receiver just simply add the `hasFill
 
 For the pump motor we have a couple of configuration possibilities.
 
-- litersPerSecond: `250` the liters per second the pump can handle at max efficiency.
-- toReachMaxEfficiencyTime: `1000` the time in ms the pump needs to reach the max throughput. (This time is used as a starting point and will be influenced based on the manure thickness or hose length)
-- isStandalone: `true/false` determines if the pump functions as a standalone pump (so a pump without capacity on it's own)
-- useStandalonePumpText: `true/false` determines if the vehicle should use the standalone pump text, which is different than the standard pump text (left/right instead of in/out)
+- litersPerSecond: `250` [OPTIONAL - default: `100`] the liters per second the pump can handle at max efficiency.
+- toReachMaxEfficiencyTime: `1000` [OPTIONAL - default: `1000`] the time in ms the pump needs to reach the max throughput. (This time is used as a starting point and will be influenced based on the manure thickness or hose length)
+- isStandalone: `true/false` [OPTIONAL - default: `false`] determines if the pump functions as a standalone pump (so a pump without capacity on it's own)
+- useStandalonePumpText: `true/false` [OPTIONAL - default: `false`] determines if the vehicle should use the standalone pump text, which is different than the standard pump text (left/right instead of in/out)
 
 You also have the options to use a custom sound file for the pump.
 An example entry for a standalone pump will be:
@@ -135,9 +135,9 @@ As simple as that!
 
 For the fill arm we have to following configuration possibilities:
 
-- fillYOffset: `float` e.g. `-0.5` the offset for the fill arm on fillable sources (in order to reach places easier).
-- fillUnitIndex: `int` e.g. `1` the fillUnitIndex of which it should fill.
-- needsDockingCollision: `true/false` if the fill arm supports docking and needs to required collision for that.
+- fillYOffset: `float` e.g. `-0.5` [OPTIONAL - default: `0`] the offset for the fill arm on fillable sources (in order to reach places easier).
+- fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] the fillUnitIndex of which it should fill.
+- needsDockingCollision: `true/false` [OPTIONAL - default: `false`] if the fill arm supports docking and needs to required collision for that.
 
 ### Adding fillarm node
 For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
@@ -146,13 +146,13 @@ For setting the fillArm node you have the option to create a transform group man
 
 This options, for creating nodes, comes with the following settings:
 
-- createNode: `true/false`
+- createNode: `true/false` [OPTIONAL - default: `false`]
 - When createNode is set to `true`:
-    - linkNode: `0>` it's defaulted to the rootNode of your object, but allows setting a custom linkNode for our node to create.
-    - position: `0 0 0` the xyz translations of the node to create.
-    - rotation: `0 0 0` tje xyz rotations of the node to create.
+    - linkNode: `0>` [OPTIONAL - default: `0>`] it's defaulted to the rootNode of your object, but allows setting a custom linkNode for our node to create.
+    - position: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz translations of the node to create.
+    - rotation: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz rotations of the node to create.
 - When createNode is set to `false`:
-    - node: `0>` the index of the node it should use for the fill arm.
+    - node: `0>` [REQUIRED] the index of the node it should use for the fill arm.
 
 An example entry for creating a node through the XML would be:
 ```xml
@@ -196,3 +196,24 @@ This will highlight the collisions and visualize the raycast line (red line)
 - For all fillarms (including dock arms) make sure the raycast line is pointing away from your fillarm node, as shown on the image, to get the best results.
 
 ![arm collision and ray](images/vehicles/armCollisionAndRay.jpg)
+
+## Setting up the FillArmReceiver
+> In order todo this step you need to make sure you configured the `hasFillArmReceiver` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+If you want to configure your vehicle to be able to allow sucking from the fill volume you will need the `FillArmReceiver` option.
+
+For the fill arm receiver we have to following configuration possibilities:
+
+- fillVolumeIndex: `int` e.g. `1` [REQUIRED] The fillVolume index of where filarms can suck from.
+- fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] The fillUnit index of where filarms can suck from.
+- fillArmOffset: `float` e.g. `0.1` [OPTIONAL - default: `0`] The offset for fillarms to be inrange (this might be used to allow for reaching hard to reach places).
+
+```xml
+<manureSystemFillArmReceiver fillVolumeIndex="1"/>
+```
+
+If you want fillarms to suck from a different fillunit you can simply define that with:
+
+```xml
+<manureSystemFillArmReceiver fillVolumeIndex="1" fillUnitIndex="2"/>
+```
