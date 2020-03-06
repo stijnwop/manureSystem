@@ -13,7 +13,7 @@ To successfully execute the required steps in this tutorial you will need the fo
 For placeables (non build-in map placeables) you also need an extra script in order to check if the `ManureSystem` exists.
 You will need to get a copy of the latest `ManureSystemAvailabilityCheck.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemAvailabilityCheck.lua).
 
-If the following [Download ManureSystemAvailabilityCheck](https://raw.githubusercontent.com/stijnwop/manureSystem/master/docs/ManureSystemVehicle.lua?token=AC3ZARBV53TJ7SBGI2KYODC6NK3BG) link does not work you can follow the following steps on how to download the `ManureSystemAvailabilityCheck.lua` file:
+If the following [Download ManureSystemAvailabilityCheck](https://raw.githubusercontent.com/stijnwop/manureSystem/master/docs/ManureSystemAvailabilityCheck.lua?token=AC3ZARBT2EZBDZ2R5YTS6NC6NNVU6) link does not work you can follow the following steps on how to download the `ManureSystemAvailabilityCheck.lua` file:
 1. Go to the `docs` folder located in the root directory.
 2. Click on the `ManureSystemAvailabilityCheck.lua` file.
 3. A window will open with the script file.
