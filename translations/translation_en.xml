@@ -34,7 +34,7 @@
         <text name="info_thickness" text="%s thickness: %d%%"/>
 
         <!--Hose Configuration-->
-        <text name="typeDesc_hose" text="hose"/>
+        <text name="typeDesc_hose" text="Hose"/>
         <text name="shopItem_slurryHose" text="Slurry hose"/>
         <text name="shopItem_fertilizerHose" text="Fertilizer hose"/>
         <text name="function_hose" text="With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the hose to reach larger ranges."/>

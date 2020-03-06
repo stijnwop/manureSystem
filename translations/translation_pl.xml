@@ -34,7 +34,7 @@
         <text name="info_thickness" text="%s sedymentacja: %d%%"/>
 
         <!--Hose Configuration-->
-        <text name="typeDesc_hose" text="wąż"/>
+        <text name="typeDesc_hose" text="Wąż"/>
         <text name="shopItem_slurryHose" text="Wąż do gnojówki"/>
         <text name="shopItem_fertilizerHose" text="Wąż do nawozów płynnych"/>
         <text name="function_hose" text="Za pomocą węża możesz pompować ciecze ze zbiornika do pojazdu. W razie potrzeby możesz przedłużyć wąż, aby osiągnąć większy zasięg."/>
