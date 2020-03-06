@@ -892,7 +892,7 @@ function Hose:removeHoseConnections()
         elseif self:isConnected(grabNode) or self:isExtended(grabNode) then
             local desc = spec.grabNodesToObjects[id]
             if desc ~= nil then
-                if grabNode.isExtension then
+                if grabNode.isExtension and self:isExtended(grabNode) then
                     --When the grabNode is an extension we detach it from the other hose.
                     desc.vehicle:detach(desc.connectorId, id, self, true)
                 else
