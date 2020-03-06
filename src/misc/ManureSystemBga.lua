@@ -147,6 +147,10 @@ end
 
 function ManureSystemBga.inj_bga_update(self, dt)
     if self.connectorStrategies ~= nil then
+        if g_manureSystem.debug then
+            self:raiseActive()
+        end
+
         for _, class in pairs(self.connectorStrategies) do
             if class.onUpdate ~= nil then
                 class:onUpdate(dt)
@@ -211,6 +215,11 @@ function Bga:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
     end
 
     return false
+end
+
+---Add function
+function Bga:getName()
+    return self.owner:getName()
 end
 
 ---Set owner object (placeable) for playing animations.
