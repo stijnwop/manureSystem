@@ -275,5 +275,12 @@ end
 
 function ManureSystem:consoleCommandToggleDebug()
     self.debug = not self.debug
+
+    if self.debug then
+        for _, object in ipairs(self.manureSystemConnectors) do
+            object:raiseActive()
+        end
+    end
+
     return tostring(self.debug)
 end
