@@ -217,3 +217,76 @@ If you want fillarms to suck from a different fillunit you can simply define tha
 ```xml
 <manureSystemFillArmReceiver fillVolumeIndex="1" fillUnitIndex="2"/>
 ```
+
+## Setting up the Connectors
+> In order todo this step you need to make sure you configured the `hasConnectors` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+> This paragraph is still W.I.P.
+
+### Connector types
+Connectors are needed to tell for example hoses or fillarms where to connect to. Simply said it bridges functions together.
+
+Currently the mod supports 4 types of connectors:
+
+- COUPLING (manure hose coupling)
+- COUPLINGFERTILIZER (fertilizer hose coupling)
+- DOCK (funnel)
+- OPTICAL (as the name already suggests non functional, just optical)
+
+#### Couplings
+In our first example we're going to look at adding a COUPLING connector type to our vehicle, this example also works for the COUPLINGFERTILIZER type.
+
+##### Adding the connector node
+Open the vehicle XML and add the `<manureSystemConnectors` tag as child of the `vehicle` tag.
+
+Our step will result into this:
+```xml
+<manureSystemConnectors>
+..
+</manureSystemConnectors>
+```
+
+Replace the .. (dots) with a connector entry.
+For our first connector entry we're going to use an existing reference transform group from the i3d file.
+For that we open the i3d file and copy the index of the desired node. 
+
+![index of connector](images/placeables/indexOfConnector.png)
+
+Now that we found our node and copied the index we have to add a connector entry to the `<manureSystemConnectors` tag.
+
+The result will look something like this:
+```xml
+<manureSystemConnectors>
+    <connector type="COUPLING" node="1|1|2|1"/>
+</manureSystemConnectors>
+```
+
+This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
+
+For vehicles you can also use the identifier defined in the `i3dMappings` section which is highly recommended!
+
+
+We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+
+This will look something like this:
+```xml
+<manureSystemConnectors>
+    <connector type="COUPLING" linkNode="0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0" />
+</manureSystemConnectors>
+```
+
+This will create a COUPLING node linked to the node on the index `0|3` with the given position and rotation.
+
+
+> **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
+> ![msToggleDebug](images/msToggleDebug.png)
+
+##### Adding the connector animation
+W.I.P.
+
+##### Adding the dock connector 
+W.I.P.
+
+##### Working with shared sets
+W.I.P.
