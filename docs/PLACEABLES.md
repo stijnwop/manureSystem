@@ -122,6 +122,18 @@ This will look something like this:
 
 This will create a COUPLING node linked to the node on the index `0|3` with the given position and rotation.
 
+###### IMPORTANT
+If you're experiencing direct detach or dragging behaviour of the hose when you try to connect it to your object you will have to add a `rootNode` entry to the `<manureSystemConnectors>` tag.
+
+This rootNode is the base physics (rigid body) node that is required to handle hose connections.
+So use for example the closes rigid body node you can find to your defined connector node.
+
+When we add a rootNode to the example from above it would result into this:
+```xml
+<manureSystemConnectors rootNode="0|1">
+    <connector type="COUPLING" linkNode="0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0" />
+</manureSystemConnectors>
+```
 
 > **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
 > ![msToggleDebug](images/msToggleDebug.png)
