@@ -86,9 +86,12 @@ end
 function HosePlayer.inj_player_updateActionEvents(player)
     local eventList = player.inputInformation.registrationList
     local function disableInput(inputAction)
-        local id = eventList[inputAction].eventId
-        g_inputBinding:setActionEventActive(id, false)
-        g_inputBinding:setActionEventTextVisibility(id, false)
+        -- Check if the input exists in order to prevent callstacks with mods that load dummy players (e.g. ContractorMod).
+        if eventList[inputAction] ~= nil then
+            local id = eventList[inputAction].eventId
+            g_inputBinding:setActionEventActive(id, false)
+            g_inputBinding:setActionEventTextVisibility(id, false)
+        end
     end
 
     local function enableInput(inputAction)

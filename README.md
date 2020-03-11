@@ -1,7 +1,7 @@
 # Manure System for Farming Simulator 19
 ![For Farming Simulator 19](https://img.shields.io/badge/Farming%20Simulator-19-FF7C00.svg) [![Releases](https://img.shields.io/github/release/stijnwop/manureSystem.svg)](https://github.com/stijnwop/manureSystem/releases)
 
-he Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
+The Manure System mod changes the whole gameplay around handling your manure application. Experience what it really means to pump liquids as a real farmer.
 Use the fill arms to actually be able to pump from open sources like: manure containers, lagoons amd water sources.
 Use a specialized dock arm in order to suck from a docking funnel, or simply use a suction hose.
 With a suction hose you´re able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges.
@@ -89,7 +89,7 @@ The ManureSystem supports a rich list of vehicles and objects out of the box, wh
 | Kotte TSA | - | Funnel, hose connector and 2 hose park places. |
 | Kotte VE8000 | - | 2 hose connectors and 1 hose park place. |
 | Joskin Modulo | - | Fillarm (Dock), new shared hose connector and 2 hose park places. |
-| Zunhammer 18500PE | - | Fillarm (Dock), hose connector and 2 hose park places. |
+| Zunhammer 18500PE | - | Hose connector and 2 hose park places. |
 | Veenhuis Premium Integral 30000 | - | Hose connector. |
 | Zunhammer TV585 | [HOLMER Terra Variant DLC](https://www.farming-simulator.com/mod.php?lang=en&country=nl&mod_id=132156&title=fs2019) | Fillarm (Dock), hose connector
 | Holmer terraVariant435 | [HOLMER Terra Variant DLC](https://www.farming-simulator.com/mod.php?lang=en&country=nl&mod_id=132156&title=fs2019) | Fillarm (Dock), hose connector

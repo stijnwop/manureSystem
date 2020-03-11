@@ -72,6 +72,15 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
             if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
                 table.sort(connectors, sortConnectorsByManureFlowState)
 
+                local function resetPumpTargetObject()
+                    if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
+                        object:setPumpTargetObject(nil, nil)
+                        object:setPumpSourceObject(nil, nil)
+                        object:setIsPumpSourceWater(false)
+                        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+                    end
+                end
+
                 local connector1, connector2 = unpack(connectors, 1, 2)
                 if connector1.isConnected and not connector1.isParkPlace
                     and connector2.isConnected and not connector2.isParkPlace then
@@ -100,12 +109,10 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
                         local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
                         object:setPumpMaxTime(impactTime)
                     else
-                        if object:getPumpTargetObject() ~= nil and object:getPumpSourceObject() ~= nil then
-                            object:setPumpTargetObject(nil, nil)
-                            object:setPumpSourceObject(nil, nil)
-                            object:setPumpMaxTime(object:getOriginalPumpMaxTime())
-                        end
+                        resetPumpTargetObject()
                     end
+                else
+                    resetPumpTargetObject()
                 end
             end
         else
