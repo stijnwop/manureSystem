@@ -40,11 +40,13 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "handlePump", ManureSystemPumpMotor.handlePump)
     SpecializationUtil.registerFunction(vehicleType, "runPump", ManureSystemPumpMotor.runPump)
     SpecializationUtil.registerFunction(vehicleType, "isStandalonePump", ManureSystemPumpMotor.isStandalonePump)
+    SpecializationUtil.registerFunction(vehicleType, "isPumpTargetObjectValid", ManureSystemPumpMotor.isPumpTargetObjectValid)
     SpecializationUtil.registerFunction(vehicleType, "setPumpTargetObject", ManureSystemPumpMotor.setPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpTargetObject", ManureSystemPumpMotor.getPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "setPumpSourceObject", ManureSystemPumpMotor.setPumpSourceObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpSourceObject", ManureSystemPumpMotor.getPumpSourceObject)
     SpecializationUtil.registerFunction(vehicleType, "setIsPumpSourceWater", ManureSystemPumpMotor.setIsPumpSourceWater)
+    SpecializationUtil.registerFunction(vehicleType, "getIsPumpSourceWater", ManureSystemPumpMotor.getIsPumpSourceWater)
     SpecializationUtil.registerFunction(vehicleType, "setPumpMaxTime", ManureSystemPumpMotor.setPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getPumpMaxTime", ManureSystemPumpMotor.getPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getOriginalPumpMaxTime", ManureSystemPumpMotor.getOriginalPumpMaxTime)
@@ -240,7 +242,7 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             self:setIsPumpRunning(false)
         end
 
-        local hasTargetObject = spec.targetObject ~= nil or spec.sourceIsWater
+        local hasTargetObject = self:isPumpTargetObjectValid()
         local hasLoad = hasTargetObject and spec.pumpHasContact
 
         if isPumpRunning and hasLoad then
@@ -480,6 +482,27 @@ function ManureSystemPumpMotor:isStandalonePump()
     return self.spec_manureSystemPumpMotor.isStandalone
 end
 
+---Returns true when the target object is valid, false otherwise.
+function ManureSystemPumpMotor:isPumpTargetObjectValid()
+    local spec = self.spec_manureSystemPumpMotor
+
+    if spec.sourceIsWater then
+        return true
+    end
+
+    local object = spec.targetObject
+    if object ~= nil then
+        -- When the target is a standalone pump we don't allow.
+        if object.isStandalonePump ~= nil and object:isStandalonePump() then
+            return false
+        end
+
+        return true
+    end
+
+    return false
+end
+
 function ManureSystemPumpMotor:setPumpTargetObject(object, fillUnitIndex)
     self.spec_manureSystemPumpMotor.targetObject = object
     self.spec_manureSystemPumpMotor.targetFillUnitIndex = fillUnitIndex
@@ -500,6 +523,10 @@ end
 
 function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
     self.spec_manureSystemPumpMotor.sourceIsWater = isWater
+end
+
+function ManureSystemPumpMotor:getIsPumpSourceWater()
+    return self.spec_manureSystemPumpMotor.sourceIsWater
 end
 
 function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject, searchedImplements)
