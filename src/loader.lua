@@ -143,7 +143,7 @@ end
 
 local function vehicleLoad(self, superFunc, vehicleData, ...)
     local _, baseDir = Utils.getModNameAndBaseDirectory(vehicleData.filename)
-    local xmlFilename = vehicleData.filename:gsub(baseDir, "")
+    local xmlFilename = ManureSystemUtil.replaceSanitized(vehicleData.filename, baseDir, "")
 
     if vehicles[xmlFilename] ~= nil then
         local data = vehicles[xmlFilename]
