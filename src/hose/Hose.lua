@@ -168,13 +168,14 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
             local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i - 1)
 
             if desc ~= nil then
-                local vehicle = desc.vehicle
-                local connector = vehicle:getConnectorById(desc.connectorId)
+                local object = desc.vehicle
+                local connector = object:getConnectorById(desc.connectorId)
 
                 setXMLInt(xmlFile, saveKey .. "#grabNodeId", id)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
-                local objectId = g_manureSystem:getConnectorObjectId(vehicle)
+                local objectId = g_manureSystem:getConnectorObjectId(object)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
+                setXMLString(xmlFile, saveKey .. "#objectName", object:getName())
 
                 -- No need to store anything else.
                 if connector.isParkPlace then
@@ -197,10 +198,17 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile)
         local grabNodeId = getXMLInt(xmlFile, loadKey .. "#grabNodeId")
         local connectorId = getXMLInt(xmlFile, loadKey .. "#connectorId")
         local objectId = getXMLInt(xmlFile, loadKey .. "#objectId")
+        local objectName = getXMLString(xmlFile, loadKey .. "#objectName")
 
         if g_manureSystem:connectorObjectExists(objectId) then
             local object = g_manureSystem:getConnectorObject(objectId)
-            self:attach(grabNodeId, connectorId, object)
+
+            --Do a check on the saved object name to filter out obvious cases.
+            if objectName ~= nil and object:getName() ~= objectName then
+                Logger.error(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
+            else
+                self:attach(grabNodeId, connectorId, object)
+            end
         end
 
         i = i + 1
