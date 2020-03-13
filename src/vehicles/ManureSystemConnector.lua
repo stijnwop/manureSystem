@@ -27,6 +27,8 @@ function ManureSystemConnector.registerFunctions(vehicleType)
 end
 
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
 end
 
 function ManureSystemConnector.registerEventListeners(vehicleType)
@@ -309,6 +311,55 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
             if canPlayAnimation then
                 local dir = state and 1 or -1
                 self:playAnimation(connector.manureFlowAnimationName, dir, nil, true)
+            end
+        end
+    end
+end
+
+----------------
+-- Overwrites --
+----------------
+
+---Load extra depending part on connectors for moving tools.
+function ManureSystemConnector:loadExtraDependentParts(superFunc, xmlFile, baseName, entry)
+    if not superFunc(self, xmlFile, baseName, entry) then
+        return false
+    end
+
+    local indices = StringUtil.getVectorNFromString(getXMLString(xmlFile, baseName .. ".manureSystemConnectors#indices"))
+    if indices ~= nil then
+        entry.manureSystemConnectors = {}
+
+        for _, id in ipairs(indices) do
+            local connector = self:getConnectorById(id)
+
+            if connector ~= nil then
+                if connector.type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING) then
+                    table.insert(entry.manureSystemConnectors, id)
+                end
+            else
+                g_logManager:xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(entry.node))
+            end
+        end
+    end
+
+    return true
+end
+
+---Update moving tool depending part to set the hose joint frame.
+function ManureSystemConnector:updateExtraDependentParts(superFunc, part, dt)
+    superFunc(self, part, dt)
+
+    if part.manureSystemConnectors ~= nil and self.isServer then
+        for _, id in ipairs(part.manureSystemConnectors) do
+            local connector = self:getConnectorById(id)
+            if connector ~= nil and connector.isConnected then
+                local object = connector.connectedObject
+                local grabNode = object:getGrabNodeById(connector.connectedNodeId)
+
+                if grabNode.jointIndex ~= nil then
+                    setJointFrame(grabNode.jointIndex, 0, grabNode.jointTransform)
+                end
             end
         end
     end
