@@ -441,21 +441,21 @@ function Hose:findConnector(id)
                         or object:isa(Placeable) or object:isa(Bga) then
 
                         if object.isaHose ~= nil and object:isaHose() then
-                            for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
+                            for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
                                 if not grabNode.isExtension and connectorGrabNode.isExtension and not self:isConnected(connectorGrabNode) then
                                     local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
                                     local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
 
                                     if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connectorId
+                                        spec.foundConnectorId = connectorGrabNode.id
                                         spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
                                         spec.foundGrabNodeId = id
                                     end
                                 end
                             end
                         elseif not grabNode.isExtension then
-                            for connectorId, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
+                            for _, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
                                 if not connector.hasOpenManureFlow or connector.isConnected then
                                     local rx, ry, rz = getWorldTranslation(connector.node)
                                     local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
@@ -469,7 +469,7 @@ function Hose:findConnector(id)
 
                                     if connectorInRange then
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connectorId
+                                        spec.foundConnectorId = connector.id
                                         spec.foundConnectorIsConnected = connector.isConnected
                                         spec.foundGrabNodeId = id
                                     end
