@@ -1126,10 +1126,12 @@ function Hose:onPlayerJointBreak(jointIndex, breakingImpulse)
 
     if player ~= nil then
         local hose = NetworkUtil.getObject(player.lastFoundHose)
-        local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
+        if hose ~= nil then
+            local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
 
-        if jointIndex == grabNode.jointIndex then
-            hose:drop(grabNode.id, player)
+            if jointIndex == grabNode.jointIndex then
+                hose:drop(grabNode.id, player)
+            end
         end
     end
 
