@@ -737,6 +737,11 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
 
     local connector = vehicle:getConnectorById(connectorId)
 
+    if connector.type ~= self.spec_hose.connectorType then
+        Logger.error("Corrupted savegame, the loaded connector type does not match the hose connector type!", connector.type)
+        return
+    end
+
     if not connector.isParkPlace then
         self:connectGrabNode(grabNode, connector, vehicle)
     else
