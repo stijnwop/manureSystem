@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Wopster, Prom</translationContributors>
+
+    <texts>
+        <!--Inputs-->
+        <text name="input_MS_ATTACH_HOSE" text="Acoplar manguera"/>
+        <text name="input_MS_DETACH_HOSE" text="Desacoplar manguera"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Cambiar flujo"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Activar/desactivar bomba"/>
+        <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Cambiar sentido bomba"/>
+
+        <!--Actions-->
+        <text name="action_toggleManureFlow" text="%s fujo"/>
+        <text name="action_toggleManureFlowStateOpen" text="Abrir"/>
+        <text name="action_toggleManureFlowStateClose" text="Cerrar"/>
+
+        <text name="action_activatePump" text="Activar bomba de %s"/>
+        <text name="action_deactivatePump" text="Desactivar bomba de %s"/>
+
+        <text name="action_directionOut" text="Cambiar modo bomba a: vaciado"/>
+        <text name="action_directionIn" text="Cambiar modo bomba a: to: filling"/>
+        <text name="action_directionLeftRight" text="Cambiar modo bomba de izda a dcha"/>
+        <text name="action_directionRightLeft" text="Cambiar modo bomba de dcha a izda"/>
+
+        <!--Warnings-->
+        <text name="warning_parkingPlaceTooSmall" text="El %sm sitio es muy pequeño para la manguera de %sm!"/>
+        <text name="warning_hoseRangeRestriction" text="El límite de lobgitud de la manguera no te permite ir más lejos!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Tu no tienes superpoderes!"/>
+
+        <!--Placeables-->
+        <text name="action_enableMixer" text="Encender mezclador"/>
+        <text name="action_disableMixer" text="Apagar mezclador"/>
+        <text name="info_thickness" text="%s grosor: %d%%"/>
+
+        <!--Hose Configuration-->
+        <text name="typeDesc_hose" text="Mangueras"/>
+        <text name="shopItem_slurryHose" text="Manguera de Puurines"/>
+        <text name="shopItem_fertilizerHose" text="Manguera de fertilizante"/>
+        <text name="function_hose" text="Con este sistema serás capaz de bombear liquidos de un tanque a otro, pudoiendo conectar varias mangueras si fuera necesario."/>
+        <text name="configuration_hose" text="Cambiar tipo de manguera."/>
+        <text name="configuration_valueExtend" text="Extensión de manguera"/>
+    </texts>
+</l10n>
