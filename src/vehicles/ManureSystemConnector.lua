@@ -331,15 +331,7 @@ function ManureSystemConnector:loadExtraDependentParts(superFunc, xmlFile, baseN
         entry.manureSystemConnectors = {}
 
         for _, id in ipairs(indices) do
-            local connector = self:getConnectorById(id)
-
-            if connector ~= nil then
-                if connector.type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING) then
-                    table.insert(entry.manureSystemConnectors, id)
-                end
-            else
-                g_logManager:xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(entry.node))
-            end
+            table.insert(entry.manureSystemConnectors, id)
         end
     end
 
@@ -351,14 +343,22 @@ function ManureSystemConnector:updateExtraDependentParts(superFunc, part, dt)
     superFunc(self, part, dt)
 
     if part.manureSystemConnectors ~= nil and self.isServer then
-        for _, id in ipairs(part.manureSystemConnectors) do
+        for i, id in ipairs(part.manureSystemConnectors) do
             local connector = self:getConnectorById(id)
-            if connector ~= nil and connector.isConnected then
-                local object = connector.connectedObject
-                local grabNode = object:getGrabNodeById(connector.connectedNodeId)
 
-                if grabNode.jointIndex ~= nil then
-                    setJointFrame(grabNode.jointIndex, 0, grabNode.jointTransform)
+            if connector == nil then
+                part.manureSystemConnectors[i] = nil
+                g_logManager:xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(part.node))
+            else
+                if connector.isConnected then
+                    local object = connector.connectedObject
+                    if object.isaHose ~= nil and object:isaHose() then
+                        local grabNode = object:getGrabNodeById(connector.connectedNodeId)
+
+                        if grabNode.jointIndex ~= nil then
+                            setJointFrame(grabNode.jointIndex, 0, grabNode.jointTransform)
+                        end
+                    end
                 end
             end
         end
