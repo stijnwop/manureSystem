@@ -6,7 +6,10 @@
 -- Copyright (c) Wopster, 2019
 ----------------------------------------------------------------------------------------------------
 
+---@class ManureSystemConnectorManureFlowEvent
 ManureSystemConnectorManureFlowEvent = {}
+getfenv(0)["ManureSystemConnectorManureFlowEvent"] = ManureSystemConnectorManureFlowEvent -- Make accessible by other mods
+
 local ManureSystemConnectorManureFlowEvent_mt = Class(ManureSystemConnectorManureFlowEvent, Event)
 
 InitEventClass(ManureSystemConnectorManureFlowEvent, "ManureSystemConnectorManureFlowEvent")

@@ -6,7 +6,10 @@
 -- Copyright (c) Wopster, 2019
 ----------------------------------------------------------------------------------------------------
 
+---@class ManureSystemConnectorIsConnectedEvent
 ManureSystemConnectorIsConnectedEvent = {}
+getfenv(0)["ManureSystemConnectorIsConnectedEvent"] = ManureSystemConnectorIsConnectedEvent -- Make accessible by other mods
+
 local ManureSystemConnectorIsConnectedEvent_mt = Class(ManureSystemConnectorIsConnectedEvent, Event)
 
 InitEventClass(ManureSystemConnectorIsConnectedEvent, "ManureSystemConnectorIsConnectedEvent")
