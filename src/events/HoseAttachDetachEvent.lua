@@ -32,7 +32,7 @@ end
 function HoseAttachDetachEvent:readStream(streamId, connection)
     self.object = NetworkUtil.readNodeObject(streamId)
     self.id = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
-    self.connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
+    self.connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
     self.vehicle = NetworkUtil.readNodeObject(streamId)
     self.state = streamReadBool(streamId)
 
@@ -42,7 +42,7 @@ end
 function HoseAttachDetachEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObject(streamId, self.object)
     streamWriteUIntN(streamId, self.id - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
-    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
     NetworkUtil.writeNodeObject(streamId, self.vehicle)
     streamWriteBool(streamId, self.state)
 end

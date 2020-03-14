@@ -229,7 +229,7 @@ function Hose:onReadStream(streamId, connection)
             elseif self:isConnected(grabNode) then
                 if streamReadBool(streamId) then
                     local vehicleId = NetworkUtil.readNodeObjectId(streamId)
-                    local connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
+                    local connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
                     table.insert(spec.hosesToLoadFromNetwork, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
                 end
             end
@@ -254,7 +254,7 @@ function Hose:onWriteStream(streamId, connection)
                 streamWriteBool(streamId, desc ~= nil)
                 if desc ~= nil then
                     NetworkUtil.writeNodeObjectId(streamId, NetworkUtil.getObjectId(desc.vehicle))
-                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
                 end
             end
         end
@@ -266,7 +266,7 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
         if streamReadBool(streamId) then
             local spec = self.spec_hose
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
-            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
             spec.foundConnectorIsConnected = streamReadBool(streamId)
             spec.foundGrabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         end
@@ -278,7 +278,7 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
         local spec = self.spec_hose
         if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
-            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
             streamWriteBool(streamId, spec.foundConnectorIsConnected)
             streamWriteUIntN(streamId, spec.foundGrabNodeId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
