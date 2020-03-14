@@ -23,6 +23,7 @@ source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemDockStrateg
 source(Utils.getFilename("src/utils/Logger.lua", directory))
 source(Utils.getFilename("src/ManureSystem.lua", directory))
 
+source(Utils.getFilename("src/events/ManureSystemEventBits.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemPumpDirectionEvent.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemPumpIsRunningEvent.lua", directory))
 source(Utils.getFilename("src/events/HoseAttachDetachEvent.lua", directory))
