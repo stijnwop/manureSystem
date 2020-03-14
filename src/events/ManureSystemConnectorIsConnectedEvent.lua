@@ -38,7 +38,7 @@ function ManureSystemConnectorIsConnectedEvent:writeStream(streamId, connection)
     streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
 
     if self.isConnected then
-        streamWriteUIntN(streamId, self.grabNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+        streamWriteUIntN(streamId, self.grabNodeId - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         NetworkUtil.writeNodeObject(streamId, self.hose)
     end
 end
@@ -49,7 +49,7 @@ function ManureSystemConnectorIsConnectedEvent:readStream(streamId, connection)
     self.connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
 
     if self.isConnected then
-        self.grabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+        self.grabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
         self.hose = NetworkUtil.readNodeObject(streamId)
     end
 

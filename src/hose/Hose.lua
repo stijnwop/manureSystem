@@ -17,8 +17,6 @@ Hose.STATE_CONNECTED = 2
 Hose.STATE_PARKED = 3
 Hose.STATE_EXTENDED = 4
 
-Hose.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2
-
 Hose.CONNECTOR_SEQUENCE = 0.6 * 0.6
 Hose.VEHICLE_CONNECTOR_SEQUENCE = 6 * 6
 
@@ -270,7 +268,7 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
             spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
             spec.foundConnectorIsConnected = streamReadBool(streamId)
-            spec.foundGrabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS)
+            spec.foundGrabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         end
     end
 end
@@ -282,7 +280,7 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
             streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
             streamWriteBool(streamId, spec.foundConnectorIsConnected)
-            streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundGrabNodeId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
 end
@@ -1200,14 +1198,14 @@ function Hose.loadGrabNodes(self)
     end
 
     local i = 0
-    while i <= 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS do
+    while i <= 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS do
         local key = ("%s.grabNodes.grabNode(%d)"):format(baseKey, i)
 
         if not hasXMLProperty(self.xmlFile, key) then
             break
         end
 
-        if #spec.grabNodes == 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS then
+        if #spec.grabNodes == 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS then
             Logger.error("Max amount of grabNodes reached!")
             break
         end

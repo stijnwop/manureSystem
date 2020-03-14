@@ -32,7 +32,7 @@ end
 function ManureSystemCouplingStrategy:onReadStream(connector, streamId, connection)
     local isConnected = streamReadBool(streamId)
     if streamReadBool(streamId) then
-        connector.connectedNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+        connector.connectedNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
         connector.connectedObject = NetworkUtil.readNodeObject(streamId)
     end
 
@@ -46,7 +46,7 @@ function ManureSystemCouplingStrategy:onWriteStream(connector, streamId, connect
     streamWriteBool(streamId, connector.connectedNodeId ~= nil)
 
     if connector.connectedNodeId ~= nil then
-        streamWriteUIntN(streamId, connector.connectedNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+        streamWriteUIntN(streamId, connector.connectedNodeId - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         NetworkUtil.writeNodeObject(streamId, connector.connectedObject)
     end
 
