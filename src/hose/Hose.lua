@@ -1216,6 +1216,7 @@ function Hose.loadGrabNodes(self)
             local grabNode = {}
 
             grabNode.id = i + 1
+            grabNode.type = spec.connectorType
             grabNode.node = node
             grabNode.raycastNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. "#raycastNode"), self.i3dMappings)
 
