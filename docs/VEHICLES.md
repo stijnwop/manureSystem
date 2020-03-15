@@ -286,7 +286,7 @@ This will create a COUPLING node linked to the node on the index `0|3` with the 
 For every connector type you will the following options available:
 
 - inRangeDistance `int` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
-- isParkPlace: `true/false` This flags if the connector is just used to park the hose on.
+- isParkPlace: `true/false` This flags is used to determine if the connector is used as a parking place (for hoses or just connectors that should behave as a parking place).
 
 ##### Adding the connector animation
 W.I.P.
