@@ -257,11 +257,11 @@ Now that we found our node and copied the index we have to add a connector entry
 The result will look something like this:
 ```xml
 <manureSystemConnectors>
-    <connector type="COUPLING" node="1|1|2|1"/>
+    <connector type="COUPLING" node="0>1|1|2|1"/>
 </manureSystemConnectors>
 ```
 
-This tells the `ManureSystem` mod that the node on index `1|1|2|1` is a COUPLING for manure hoses.
+This tells the `ManureSystem` mod that the node on index `0>1|1|2|1` is a COUPLING for manure hoses.
 
 For vehicles you can also use the identifier defined in the `i3dMappings` section which is highly recommended!
 
@@ -272,11 +272,11 @@ We can also use the option to tell the `ManureSystem` to create a node (as menti
 This will look something like this:
 ```xml
 <manureSystemConnectors>
-    <connector type="COUPLING" linkNode="0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0" />
+    <connector type="COUPLING" linkNode="0>0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0" />
 </manureSystemConnectors>
 ```
 
-This will create a COUPLING node linked to the node on the index `0|3` with the given position and rotation.
+This will create a COUPLING node linked to the node on the index `0>0|3` with the given position and rotation.
 
 
 > **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
