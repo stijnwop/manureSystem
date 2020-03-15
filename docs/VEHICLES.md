@@ -282,6 +282,12 @@ This will create a COUPLING node linked to the node on the index `0|3` with the 
 > **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
 > ![msToggleDebug](images/msToggleDebug.png)
 
+##### Configuring additional connector options
+For every connector type you will the following options available:
+
+- inRangeDistance `int` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
+- isParkPlace: `true/false` This flags if the connector is just used to park the hose on.
+
 ##### Adding the connector animation
 W.I.P.
 
