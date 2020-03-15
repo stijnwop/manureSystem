@@ -87,7 +87,7 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
                     local desc1, lengthHoses1 = self:getConnectorObjectDesc(object, connector1)
                     local desc2, lengthHoses2 = self:getConnectorObjectDesc(object, connector2)
 
-                    if desc1 ~= nil and desc2 ~= nil then
+                    if desc1 ~= nil and desc1.hasOpenManureFlow and desc2 ~= nil and desc2.hasOpenManureFlow then
                         if desc1.vehicle ~= nil then
                             if desc2.isNearWater then
                                 object:setPumpSourceObject(desc1.vehicle, desc1.fillUnitIndex)
@@ -146,7 +146,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
             local desc, length = self:getConnectorObjectDesc(object, connector)
 
             if object.spec_manureSystemPumpMotor ~= nil then
-                if desc ~= nil and connector.hasOpenManureFlow then
+                if desc ~= nil and desc.hasOpenManureFlow and connector.hasOpenManureFlow then
                     if desc.vehicle ~= nil then
                         object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
                         object:setPumpSourceObject(object, connector.fillUnitIndex)
@@ -182,16 +182,28 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
         if desc.connectorId ~= nil then
             local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
-            if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-                return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, length
+            if connector.hasOpenManureFlow and descConnector.isConnected then
+                return {
+                    vehicle = desc.vehicle,
+                    hasOpenManureFlow = descConnector.hasOpenManureFlow,
+                    fillUnitIndex = descConnector.fillUnitIndex
+                }, length
             end
         else
+            local hasOpenManureFlow = true
             if desc.vehicle ~= nil then
                 -- Raycasted object.
-                return { vehicle = desc.vehicle, fillUnitIndex = 1 }, length
+                return {
+                    vehicle = desc.vehicle,
+                    hasOpenManureFlow = hasOpenManureFlow,
+                    fillUnitIndex = 1
+                }, length
             else
                 -- Pump from water.
-                return { isNearWater = desc.isNearWater }, length
+                return {
+                    isNearWater = desc.isNearWater,
+                    hasOpenManureFlow = hasOpenManureFlow
+                }, length
             end
         end
     end
