@@ -61,10 +61,6 @@ end
 function ManureSystemHusbandryModuleLiquidManure.inj_husbandry_update(husbandry, dt)
     local liquidManureModule = husbandry:getModuleByName("liquidManure")
     if liquidManureModule ~= nil and liquidManureModule.connectorStrategies ~= nil then
-        if g_manureSystem.debug then
-            husbandry:raiseActive()
-        end
-
         for _, class in pairs(liquidManureModule.connectorStrategies) do
             if class.onUpdate ~= nil then
                 class:onUpdate(dt)

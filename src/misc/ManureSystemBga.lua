@@ -147,10 +147,6 @@ end
 
 function ManureSystemBga.inj_bga_update(self, dt)
     if self.connectorStrategies ~= nil then
-        if g_manureSystem.debug then
-            self:raiseActive()
-        end
-
         for _, class in pairs(self.connectorStrategies) do
             if class.onUpdate ~= nil then
                 class:onUpdate(dt)
