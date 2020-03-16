@@ -45,6 +45,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getPumpTargetObject", ManureSystemPumpMotor.getPumpTargetObject)
     SpecializationUtil.registerFunction(vehicleType, "setPumpSourceObject", ManureSystemPumpMotor.setPumpSourceObject)
     SpecializationUtil.registerFunction(vehicleType, "getPumpSourceObject", ManureSystemPumpMotor.getPumpSourceObject)
+    SpecializationUtil.registerFunction(vehicleType, "getPumpSourceObjectOrSelf", ManureSystemPumpMotor.getPumpSourceObjectOrSelf)
     SpecializationUtil.registerFunction(vehicleType, "setIsPumpSourceWater", ManureSystemPumpMotor.setIsPumpSourceWater)
     SpecializationUtil.registerFunction(vehicleType, "getIsPumpSourceWater", ManureSystemPumpMotor.getIsPumpSourceWater)
     SpecializationUtil.registerFunction(vehicleType, "setPumpMaxTime", ManureSystemPumpMotor.setPumpMaxTime)
@@ -261,32 +262,30 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             end
         end
 
-        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
-        if sourceObject == nil then
-            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
+        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObjectOrSelf()
+        if sourceObject ~= nil then
+            local isPumpingOut = spec.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT
+            if sourceObject:getFillUnitFillLevelPercentage(sourceFillUnitIndex) >= spec.autoStopPercentage.inDirection
+                or isPumpingOut and sourceObject:getFillUnitFillLevelPercentage(sourceFillUnitIndex) <= 1 - spec.autoStopPercentage.outDirection
+                or isPumpRunning and not hasTargetObject then
+                spec.pumpEfficiency.currentLoad = math.random()
+            else
+                spec.pumpEfficiency.currentLoad = MathUtil.clamp(spec.pumpEfficiency.currentTime / spec.pumpEfficiency.maxTime, 0, 1)
+            end
+
+            spec.pumpHasLoad = hasLoad
+            spec.hasTargetObject = hasTargetObject
+
+            if spec.pumpEfficiency.currentLoad ~= spec.pumpEfficiency.currentLoadSent
+                or spec.pumpHasLoad ~= spec.pumpHasLoadSent then
+                spec.pumpEfficiency.currentLoadSent = spec.pumpEfficiency.currentLoad
+                spec.pumpHasLoadSent = spec.pumpHasLoad
+                self:raiseDirtyFlags(spec.dirtyFlag)
+            end
+
+            -- Reset contact
+            spec.pumpHasContact = true
         end
-
-        local isPumpingOut = spec.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT
-        if sourceObject:getFillUnitFillLevelPercentage(sourceFillUnitIndex) >= spec.autoStopPercentage.inDirection
-            or isPumpingOut and sourceObject:getFillUnitFillLevelPercentage(sourceFillUnitIndex) <= 1 - spec.autoStopPercentage.outDirection
-            or isPumpRunning and not hasTargetObject then
-            spec.pumpEfficiency.currentLoad = math.random()
-        else
-            spec.pumpEfficiency.currentLoad = MathUtil.clamp(spec.pumpEfficiency.currentTime / spec.pumpEfficiency.maxTime, 0, 1)
-        end
-
-        spec.pumpHasLoad = hasLoad
-        spec.hasTargetObject = hasTargetObject
-
-        if spec.pumpEfficiency.currentLoad ~= spec.pumpEfficiency.currentLoadSent
-            or spec.pumpHasLoad ~= spec.pumpHasLoadSent then
-            spec.pumpEfficiency.currentLoadSent = spec.pumpEfficiency.currentLoad
-            spec.pumpHasLoadSent = spec.pumpHasLoad
-            self:raiseDirtyFlags(spec.dirtyFlag)
-        end
-
-        -- Reset contact
-        spec.pumpHasContact = true
     end
 end
 
@@ -386,62 +385,60 @@ function ManureSystemPumpMotor:handlePump(dt)
     local spec = self.spec_manureSystemPumpMotor
     local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
     if targetObject ~= nil then
-        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
-        if sourceObject == nil then
-            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
-        end
+        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObjectOrSelf()
 
-        if self:isPumpingIn() then
-            if sourceObject:getFillUnitFreeCapacity(sourceFillUnitIndex) > 0 then
-                local targetFillType = targetObject:getFillUnitFillType(targetFillUnitIndex)
+        if sourceObject ~= nil then
+            if self:isPumpingIn() then
+                if sourceObject:getFillUnitFreeCapacity(sourceFillUnitIndex) > 0 then
+                    local targetFillType = targetObject:getFillUnitFillType(targetFillUnitIndex)
 
-                if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillType) then
-                    local targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
-                    local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
+                    if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillType) then
+                        local targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
+                        local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
 
-                    if targetFillLevel > 0 and sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
-                        if spec.pumpEfficiency.currentLoad > 0 then
-                            local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, targetFillLevel)
-                            self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, targetFillType, deltaFillLevel)
+                        if targetFillLevel > 0 and sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
+                            if spec.pumpEfficiency.currentLoad > 0 then
+                                local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, targetFillLevel)
+                                self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, targetFillType, deltaFillLevel)
+                            end
+                        else
+                            self:setIsPumpRunning(false) -- empty
                         end
                     else
-                        self:setIsPumpRunning(false) -- empty
+                        self:setIsPumpRunning(false) -- invalid
+                    end
+                end
+            elseif self:isPumpingOut() then
+                local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
+                if sourceFillLevel > 0 then
+                    local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
+
+                    if targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
+                        local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
+                        self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
+                    else
+                        self:setIsPumpRunning(false) -- invalid
                     end
                 else
-                    self:setIsPumpRunning(false) -- invalid
+                    self:setIsPumpRunning(false) -- empty
                 end
-            end
-        elseif self:isPumpingOut() then
-            local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
-            if sourceFillLevel > 0 then
-                local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
-
-                if targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
-                    local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
-                    self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
-                else
-                    self:setIsPumpRunning(false) -- invalid
-                end
-            else
-                self:setIsPumpRunning(false) -- empty
             end
         end
     elseif spec.sourceIsWater then
-        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObject()
-        if sourceObject == nil then
-            sourceObject, sourceFillUnitIndex = self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
-        end
+        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObjectOrSelf()
 
-        if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, FillType.WATER) then
-            local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
-            if sourceFillLevel > 0 or sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
-                local delta = (spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt
-                sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, delta * self:getPumpDirection(), FillType.WATER, ToolType.UNDEFINED, nil)
+        if sourceObject ~= nil then
+            if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, FillType.WATER) then
+                local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
+                if sourceFillLevel > 0 or sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
+                    local delta = (spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt
+                    sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, delta * self:getPumpDirection(), FillType.WATER, ToolType.UNDEFINED, nil)
+                else
+                    self:setIsPumpRunning(false)
+                end
             else
                 self:setIsPumpRunning(false)
             end
-        else
-            self:setIsPumpRunning(false)
         end
     end
 end
@@ -519,6 +516,18 @@ end
 
 function ManureSystemPumpMotor:getPumpSourceObject()
     return self.spec_manureSystemPumpMotor.sourceObject, self.spec_manureSystemPumpMotor.sourceFillUnitIndex
+end
+
+---Get the source object, else default on ourselves when we have the FillUnit spec.
+function ManureSystemPumpMotor:getPumpSourceObjectOrSelf()
+    local object, fillUnitIndex = self:getPumpSourceObject()
+
+    --When the current source object isn't set, we use ourselves as source when we have the FillUnit specialization.
+    if object == nil and SpecializationUtil.hasSpecialization(FillUnit, self.specializations) then
+        return self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
+    end
+
+    return object, fillUnitIndex
 end
 
 function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
