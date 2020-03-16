@@ -45,7 +45,10 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
     self.modName = modName
+
+    --Debug flags
     self.debug = false
+    self.debugShowConnectors = false
 
     self.mission = mission
     self.soundManager = soundManager
@@ -61,6 +64,7 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self:loadManureSystemSamples()
 
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
+    addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
 
     g_fillTypeManager:addFillTypeToCategory(FillType.WATER, g_fillTypeManager.nameToCategoryIndex["SLURRYTANK"])
 
@@ -77,6 +81,7 @@ function ManureSystem:delete()
 
     self.soundManager:deleteSamples(self.samples)
     removeConsoleCommand("msToggleDebug")
+    removeConsoleCommand("msToggleConnectorNodes")
 end
 
 function ManureSystem:onMissionLoaded(mission)
@@ -273,14 +278,31 @@ end
 -- Commands
 ----------------------
 
+---Raise all manure system connector objects active.
+function ManureSystem:wakeupManureSystemConnectors()
+    for _, object in ipairs(self.manureSystemConnectors) do
+        object:raiseActive()
+    end
+end
+
+---Console command for showing general debug information.
 function ManureSystem:consoleCommandToggleDebug()
     self.debug = not self.debug
 
     if self.debug then
-        for _, object in ipairs(self.manureSystemConnectors) do
-            object:raiseActive()
-        end
+        self:wakeupManureSystemConnectors()
     end
 
     return tostring(self.debug)
+end
+
+---Console command for highlighting the connector nodes.
+function ManureSystem:consoleCommandToggleConnectors()
+    self.debugShowConnectors = not self.debugShowConnectors
+
+    if self.debugShowConnectors then
+        self:wakeupManureSystemConnectors()
+    end
+
+    return tostring(self.debugShowConnectors)
 end
