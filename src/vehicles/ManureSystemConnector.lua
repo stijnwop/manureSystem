@@ -22,6 +22,8 @@ function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getConnectors", ManureSystemConnector.getConnectors)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorById", ManureSystemConnector.getConnectorById)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorsByType", ManureSystemConnector.getConnectorsByType)
+    SpecializationUtil.registerFunction(vehicleType, "getActiveConnectorsByType", ManureSystemConnector.getActiveConnectorsByType)
+    SpecializationUtil.registerFunction(vehicleType, "setIsConnectorActive", ManureSystemConnector.setIsConnectorActive)
 end
 
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
@@ -46,6 +48,7 @@ function ManureSystemConnector:onLoad(savegame)
     spec.connectorStrategies = {}
     spec.manureSystemConnectors = {}
     spec.manureSystemConnectorsByType = {}
+    spec.manureSystemActiveConnectorsByType = {}
 
     local i = 0
     while true do
@@ -65,6 +68,7 @@ function ManureSystemConnector:onLoad(savegame)
 
         if spec.manureSystemConnectorsByType[type] == nil then
             spec.manureSystemConnectorsByType[type] = {}
+            spec.manureSystemActiveConnectorsByType[type] = {}
         end
 
         if spec.connectorStrategies[type] == nil then
@@ -253,23 +257,50 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
     return true
 end
 
+---Returns a list of all the connectors.
 function ManureSystemConnector:getConnectors()
     return self.spec_manureSystemConnector.manureSystemConnectors
 end
 
+---Returns a connector for the given id.
 function ManureSystemConnector:getConnectorById(id)
     return self.spec_manureSystemConnector.manureSystemConnectors[id]
 end
 
+---Returns a list of connectors based on the given type.
 function ManureSystemConnector:getConnectorsByType(type)
     local types = self.spec_manureSystemConnector.manureSystemConnectorsByType[type]
     if types ~= nil then
         return types
     end
-
+    --Given type does not exist, so return empty table.
     return {}
 end
 
+---Returns a list of active connectors based on the given type.
+function ManureSystemConnector:getActiveConnectorsByType(type)
+    local types = self.spec_manureSystemConnector.manureSystemActiveConnectorsByType[type]
+    if types ~= nil then
+        return types
+    end
+    --Given type does not exist, so return empty table.
+    return {}
+end
+
+---Sets the given connector active or not.
+function ManureSystemConnector:setIsConnectorActive(connector, state)
+    local spec = self.spec_manureSystemConnector
+    --Add the connector to the active table to reduce processing of non active connectors
+    if state then
+        if not ListUtil.hasListElement(spec.manureSystemActiveConnectorsByType[connector.type], connector) then
+            ListUtil.addElementToList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+        end
+    else
+        ListUtil.removeElementFromList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+    end
+end
+
+---Sets the `isConnected` state on the connector with additional information of the connected hose object, if present it will play the animations.
 function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEventSend)
     local connector = self:getConnectorById(id)
 
@@ -292,9 +323,13 @@ function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEve
         connector.isConnected = state
         connector.connectedObject = hose
         connector.connectedNodeId = grabNodeId
+
+        --Add or remove connector to the table for further interaction.
+        self:setIsConnectorActive(connector, state)
     end
 end
 
+---Sets the `hasOpenManureFlow` state on the connector, if present it will play the animations.
 function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend)
     local connector = self:getConnectorById(id)
 
