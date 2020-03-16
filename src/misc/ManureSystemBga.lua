@@ -223,9 +223,14 @@ function Bga:setOwner(owner)
     self.owner = owner
 end
 
----Add gateway to the owner object
+---Add gateway to the owner object for getting the animation time.
 function Bga:getAnimationTime(animationName)
     return self.owner:getAnimationTime(animationName)
+end
+
+---Add gateway to the owner object for checking if the animation is playing.
+function Bga:getIsAnimationPlaying(animationName)
+    return self.owner:getIsAnimationPlaying(animationName)
 end
 
 function Bga:getStorage()
