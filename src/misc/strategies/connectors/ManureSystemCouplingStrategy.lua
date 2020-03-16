@@ -225,7 +225,6 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.jointOrigTrans = { getTranslation(connector.node) }
 
     if connector.isParkPlace then
-        connector.parkPlaceAnimationName = getXMLString(xmlFile, key .. "#parkPlaceAnimationName")
         connector.parkPlaceLength = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceLength"), 5) -- Default length of 5m
 
         connector.parkOffsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkOffsetThreshold"), 0)
