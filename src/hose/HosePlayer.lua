@@ -116,14 +116,14 @@ function HosePlayer.inj_player_updateActionEvents(player)
             elseif hose:isConnected(grabNode) then
                 local desc = spec.grabNodesToObjects[grabNode.id]
                 if desc ~= nil then
-                    local vehicle = desc.vehicle
-                    local connector = vehicle:getConnectorById(desc.connectorId)
+                    local object = desc.vehicle
+                    local connector = object:getConnectorById(desc.connectorId)
                     local hasManureFlowControl = connector.manureFlowAnimationName ~= nil or connector.manureFlowAnimationIndex ~= nil
                     local animationName = connector.manureFlowAnimationName ~= nil and connector.manureFlowAnimationName or connector.manureFlowAnimationIndex
 
                     if hasManureFlowControl then
                         enableInput(InputAction.MS_TOGGLE_FLOW)
-                        local state = vehicle:getAnimationTime(animationName) == 0
+                        local state = object:getAnimationTime(animationName) == 0
                         local text = state and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
                         local id = eventList[InputAction.MS_TOGGLE_FLOW].eventId
 

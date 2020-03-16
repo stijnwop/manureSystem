@@ -227,6 +227,11 @@ function Bga:setOwner(owner)
     self.owner = owner
 end
 
+---Add gateway to the owner object
+function Bga:getAnimationTime(animationName)
+    return self.owner:getAnimationTime(animationName)
+end
+
 function Bga:getStorage()
     if self.digestateSilo.storages ~= nil then
         return self.digestateSilo.storages[1]
