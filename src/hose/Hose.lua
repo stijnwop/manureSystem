@@ -173,7 +173,11 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
                 local objectId = g_manureSystem:getConnectorObjectId(object)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
-                setXMLString(xmlFile, saveKey .. "#objectName", object:getName())
+
+                --Check if the object supports the getName method, somehow there are still objects who don't.
+                if object.getName ~= nil then
+                    setXMLString(xmlFile, saveKey .. "#objectName", object:getName())
+                end
 
                 -- No need to store anything else.
                 if connector.isParkPlace then
