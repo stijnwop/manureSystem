@@ -23,6 +23,12 @@
         <text name="action_directionLeftRight" text="Cambiar modo bomba de izda a dcha"/>
         <text name="action_directionRightLeft" text="Cambiar modo bomba de dcha a izda"/>
 
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
+        <text name="warning_objectFull" text="The pump target is full!"/>
+        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>
+        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/>
+
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="El %sm sitio es muy pequeño para la manguera de %sm!"/>
         <text name="warning_hoseRangeRestriction" text="El límite de lobgitud de la manguera no te permite ir más lejos!"/>

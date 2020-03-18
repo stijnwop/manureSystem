@@ -23,6 +23,12 @@
         <text name="action_directionLeftRight" text="Changement de sens de la pompe de : gauche à droite"/>
         <text name="action_directionRightLeft" text="Changer le sens de la pompe de : droite à gauche"/>
 
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
+        <text name="warning_objectFull" text="The pump target is full!"/>
+        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>
+        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/>
+
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="L'emplacement de %sm est trop petit pour le tuyau de %sm!"/>
         <text name="warning_hoseRangeRestriction" text="La limite de portée des tuyaux ne vous permettra pas d'aller plus loin!"/>

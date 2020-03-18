@@ -20,6 +20,14 @@ ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT = 0.98
 ManureSystemPumpMotor.NO_PUMP_MODE = 0
 ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX = 1
 
+---Messages
+ManureSystemPumpMotor.WARNING_TIME = 1500
+
+ManureSystemPumpMotor.WARNING_NONE = 0
+ManureSystemPumpMotor.WARNING_EMPTY = 1
+ManureSystemPumpMotor.WARNING_FULL = 2
+ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE = 3
+
 function ManureSystemPumpMotor.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PowerConsumer, specializations)
 end
@@ -27,12 +35,15 @@ end
 function ManureSystemPumpMotor.registerEvents(vehicleType)
     SpecializationUtil.registerEvent(vehicleType, "onPumpStarted")
     SpecializationUtil.registerEvent(vehicleType, "onPumpStopped")
+    SpecializationUtil.registerEvent(vehicleType, "onPumpInvalid")
 end
 
 function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "setIsPumpRunning", ManureSystemPumpMotor.setIsPumpRunning)
     SpecializationUtil.registerFunction(vehicleType, "isPumpRunning", ManureSystemPumpMotor.isPumpRunning)
     SpecializationUtil.registerFunction(vehicleType, "canTurnOnPump", ManureSystemPumpMotor.canTurnOnPump)
+    SpecializationUtil.registerFunction(vehicleType, "getTurnOnPumpNotAllowedWarning", ManureSystemPumpMotor.getTurnOnPumpNotAllowedWarning)
+    SpecializationUtil.registerFunction(vehicleType, "checkPumpNotAllowedWarning", ManureSystemPumpMotor.checkPumpNotAllowedWarning)
     SpecializationUtil.registerFunction(vehicleType, "setPumpDirection", ManureSystemPumpMotor.setPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "getPumpDirection", ManureSystemPumpMotor.getPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "isPumpingIn", ManureSystemPumpMotor.isPumpingIn)
@@ -111,6 +122,16 @@ function ManureSystemPumpMotor:onLoad(savegame)
         spec.samples = {}
         spec.samples.pump = samplePump
     end
+
+    spec.warningMessage = {
+        currentId = ManureSystemPumpMotor.WARNING_NONE,
+        howLongToShow = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#warningTime"), ManureSystemPumpMotor.WARNING_TIME),
+        messages = {}
+    }
+
+    spec.warningMessage.messages[ManureSystemPumpMotor.WARNING_EMPTY] = g_i18n:getText('warning_objectEmpty')
+    spec.warningMessage.messages[ManureSystemPumpMotor.WARNING_FULL] = g_i18n:getText('warning_objectFull')
+    spec.warningMessage.messages[ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE] = g_i18n:getText('warning_invalidFillType')
 
     spec.dirtyFlag = self:getNextDirtyFlag()
 
@@ -239,7 +260,7 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
     if self.isServer then
         self:handlePump(dt)
 
-        if not self:canTurnOnPump() then
+        if isPumpRunning and not self:canTurnOnPump() then
             self:setIsPumpRunning(false)
         end
 
@@ -333,6 +354,67 @@ function ManureSystemPumpMotor:canTurnOnPump()
     return true
 end
 
+---Checks if we allow pumping on server and we show the warning to the client.
+function ManureSystemPumpMotor:checkPumpNotAllowedWarning(warningId)
+    if self.isServer then
+        local warning = self:getTurnOnPumpNotAllowedWarning()
+        if warning ~= nil then
+            --Broadcast warning to other clients
+            g_server:broadcastEvent(ManureSystemPumpIsAllowedEvent:new(self, warning), nil, nil, self)
+        end
+    else
+        if warningId ~= nil then
+            if self:getIsActiveForInput(true) then
+                local spec = self.spec_manureSystemPumpMotor
+                g_currentMission:showBlinkingWarning(spec.warningMessage.messages[warningId])
+            end
+        end
+    end
+end
+
+---Checks if we allow pumping.
+function ManureSystemPumpMotor:getTurnOnPumpNotAllowedWarning()
+    local spec = self.spec_manureSystemPumpMotor
+    local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
+    if targetObject ~= nil or spec.sourceIsWater then
+        local sourceObject, sourceFillUnitIndex = self:getPumpSourceObjectOrSelf()
+
+        if sourceObject ~= nil then
+            if self:isPumpingIn() then
+                local targetFillType = spec.sourceIsWater and FillType.WATER or targetObject:getFillUnitFillType(targetFillUnitIndex)
+                if targetFillType ~= FillType.UNKNOWN and not sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillType) then
+                    return ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE -- source does not allow the target fill type
+                end
+                if not spec.sourceIsWater then
+                    local targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
+                    if not (targetFillLevel > 0) then
+                        return ManureSystemPumpMotor.WARNING_EMPTY -- empty target
+                    end
+                end
+            elseif self:isPumpingOut() then
+                local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
+                if not (sourceFillLevel > 0) then
+                    return ManureSystemPumpMotor.WARNING_EMPTY -- empty source
+                end
+
+                if not spec.sourceIsWater then
+                    local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
+                    if sourceFillType ~= FillType.UNKNOWN and not targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
+                        return ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE -- invalid source fill type
+                    end
+
+                    local targetObjectFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
+                    if targetObjectFillLevel >= (targetObject:getFillUnitCapacity(targetFillUnitIndex)) then
+                        return ManureSystemPumpMotor.WARNING_FULL -- full target
+                    end
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
 function ManureSystemPumpMotor:getPumpLoadPercentage()
     if self:isPumpRunning() then
         return self.spec_manureSystemPumpMotor.pumpEfficiency.currentLoad
@@ -402,7 +484,7 @@ function ManureSystemPumpMotor:handlePump(dt)
                                 self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, targetFillType, deltaFillLevel)
                             end
                         else
-                            self:setIsPumpRunning(false) -- empty
+                            self:setIsPumpRunning(false) -- empty target
                         end
                     else
                         self:setIsPumpRunning(false) -- invalid
@@ -420,7 +502,7 @@ function ManureSystemPumpMotor:handlePump(dt)
                         self:setIsPumpRunning(false) -- invalid
                     end
                 else
-                    self:setIsPumpRunning(false) -- empty
+                    self:setIsPumpRunning(false) -- empty self
                 end
             end
         end
@@ -679,7 +761,8 @@ end
 
 function ManureSystemPumpMotor.actionEventTogglePump(self, actionName, inputValue, callbackState, isAnalog)
     local spec = self.spec_manureSystemPumpMotor
-    local allowAction = self:canTurnOnPump()
+    local canTurnOnPump = self:canTurnOnPump()
+    local allowAction = canTurnOnPump
     if not spec.pumpIsRunning then
         allowAction = allowAction and spec.hasTargetObject
     else
@@ -687,7 +770,21 @@ function ManureSystemPumpMotor.actionEventTogglePump(self, actionName, inputValu
     end
 
     if allowAction then
+        if self.isServer then
+            local warning = self:getTurnOnPumpNotAllowedWarning()
+            if warning ~= nil then
+                g_currentMission:showBlinkingWarning(spec.warningMessage.messages[warning])
+            end
+        else
+            g_client:getServerConnection():sendEvent(ManureSystemPumpIsAllowedEvent:new(self))
+        end
+
         self:setIsPumpRunning(not spec.pumpIsRunning)
+    else
+        --When motor is started but we miss target we raise event to show possible warning messages.
+        if canTurnOnPump then
+            SpecializationUtil.raiseEvent(self, "onPumpInvalid")
+        end
     end
 end
 
