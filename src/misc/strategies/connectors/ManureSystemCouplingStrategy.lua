@@ -88,6 +88,28 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
     end
 end
 
+---Returns warning message when the manure flow is closed on connected hoses.
+function ManureSystemCouplingStrategy:getPumpInvalidWarningMessage()
+    local connectors = self.object:getActiveConnectorsByType(self.connectorType)
+
+    for _, connector in ipairs(connectors) do
+        if connector.isConnected and not connector.isParkPlace then
+            --We have a closed manure flow.
+            if not connector.hasOpenManureFlow then
+                return g_i18n:getText("warning_checkManureFlow"):format(self.object:getName())
+            end
+
+            local desc = self:getConnectorObjectDesc(self.object, connector)
+            --Target has closed manure flow.
+            if desc ~= nil and desc.vehicle ~= nil and not desc.hasOpenManureFlow then
+                return g_i18n:getText("warning_checkManureFlow"):format(desc.vehicle:getName())
+            end
+        end
+    end
+
+    return nil
+end
+
 ---Set the pump efficiency time based on the given length.
 function ManureSystemCouplingStrategy:getCalculatedMaxTime(length)
     local orgMaxTime = self.object:getOriginalPumpMaxTime()

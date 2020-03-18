@@ -38,6 +38,7 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onPumpInvalid", ManureSystemConnector)
 end
 
 function ManureSystemConnector:onLoad(savegame)
@@ -159,6 +160,25 @@ function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIg
         if strategy.onUpdate ~= nil then
             strategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
         end
+    end
+end
+
+function ManureSystemConnector:onPumpInvalid()
+    local spec = self.spec_manureSystemConnector
+
+    local message
+    for _, strategy in pairs(spec.connectorStrategies) do
+        if strategy.getPumpInvalidWarningMessage ~= nil then
+            message = strategy:getPumpInvalidWarningMessage()
+        end
+
+        if message ~= nil then
+            break
+        end
+    end
+
+    if message ~= nil then
+        g_currentMission:showBlinkingWarning(message)
     end
 end
 
