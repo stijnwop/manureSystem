@@ -319,6 +319,16 @@ function ManureSystemConnector:setIsConnectorActive(connector, state)
         end
     else
         ListUtil.removeElementFromList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+
+        --Reset pump target when no connectors are active for strategy.
+        if #spec.manureSystemActiveConnectorsByType[connector.type] == 0 then
+            if self.spec_manureSystemPumpMotor ~= nil then
+                local strategy = spec.connectorStrategies[connector.type]
+                if strategy.resetPumpTargetObject ~= nil then
+                    strategy:resetPumpTargetObject(self)
+                end
+            end
+        end
     end
 end
 
