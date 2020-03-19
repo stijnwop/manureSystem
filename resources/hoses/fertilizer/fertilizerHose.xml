@@ -28,14 +28,14 @@
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0.25" solverIterationCount="20" mass="5"/>
 
-            <joint component1="1" component2="2" node="componentJoint1" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="1" component2="2" node="componentJoint1" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="2" component2="3" node="componentJoint2" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="2" component2="3" node="componentJoint2" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="4" component2="3" node="componentJoint3" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="4" component2="3" node="componentJoint3" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
         <schemaOverlay attacherJointPosition="0 0">
