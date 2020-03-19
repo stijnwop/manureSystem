@@ -504,10 +504,12 @@ function Hose:findConnector(id)
     end
 end
 
-function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
+---Find connector object based on the attached hoses recursively.
+function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
     local spec = self.spec_hose
 
     doRaycast = doRaycast or false
+    startHose = startHose or self
     totalHoseLength = totalHoseLength or self:getLength()
 
     spec.lastRaycastDistance = 0
@@ -518,9 +520,9 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
             local vehicle = desc.vehicle
 
             -- Recursively get the connector object.
-            if vehicle.isaHose ~= nil and vehicle:isaHose() then
+            if vehicle.isaHose ~= nil and vehicle:isaHose() and vehicle ~= startHose then
                 totalHoseLength = totalHoseLength + vehicle:getLength()
-                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast)
+                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast, startHose)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
