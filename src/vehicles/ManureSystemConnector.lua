@@ -242,6 +242,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
                 end
 
                 link(linkNode, connectorNode)
+                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".connector", connectorNode)
             end
         end
 
@@ -251,6 +252,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
             if sharedValve ~= nil then
                 local valveNode = clone(sharedValve.node, false, false, false)
                 link(linkNode, valveNode)
+                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".valve", valveNode)
 
                 local sharedHandleKey = getXMLString(xmlFile, key .. ".handle#type")
                 if sharedHandleKey ~= nil then

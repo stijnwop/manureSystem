@@ -47,16 +47,7 @@ function ManureSystemXMLUtil.getOrCreateNode(vehicle, xmlFile, key, index)
             return nil
         end
 
-        local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, key .. "#position")) }
-        if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
-            setTranslation(node, unpack(translation))
-        end
-
-        local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, key .. "#rotation")) }
-        if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
-            setRotation(node, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
-        end
-
+        ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key, node)
         link(linkNode, node)
 
         return node

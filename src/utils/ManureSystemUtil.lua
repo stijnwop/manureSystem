@@ -35,6 +35,19 @@ function ManureSystemUtil.getFirstPhysicsNode(nodeId)
     return 0
 end
 
+---Loads the optional rotation and position for the given node and applies it.
+function ManureSystemUtil.loadNodePositionAndRotation(xmlFile, xmlKey, node)
+    local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#position")) }
+    if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
+        setTranslation(node, unpack(translation))
+    end
+
+    local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#rotation")) }
+    if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
+        setRotation(node, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
+    end
+end
+
 function ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, xmlKey, node, nodeAttribute)
     local visualNode = nodeAttribute ~= nil and I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute)) or node
     local materialName = Utils.getNoNil(getUserAttribute(node, "materialName"), "colorMat0")
