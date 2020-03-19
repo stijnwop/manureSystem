@@ -963,7 +963,7 @@ function Hose:parkHose(connector, vehicle)
         local tx, ty, tz = MathUtil.vector3Lerp(xStartOffPos, yStartOffPos, zStartOffPos, xEndOffPos, yEndOffPos, zEndOffPos, 1 / division * alpha)
         local x, y, z = localToWorld(parkNode, tx, ty, tz + (length / division * alpha))
 
-        local ox, oy, oz = 0, 0, 0
+        local ox, oy, oz = MathUtil.vector3Lerp(xStartOffRot, yStartOffRot, zStartOffRot, xEndOffRot, yEndOffRot, zEndOffRot, 1 / division * alpha)
         if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
             oy = oy + math.pi
         end
