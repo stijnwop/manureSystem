@@ -1164,14 +1164,16 @@ end
 function Hose:onConnectorJointBreak(jointIndex, breakingImpulse)
     local spec = self.spec_hose
 
-    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
-        local grabNode = self:getGrabNodeById(grabNodeId)
-        if jointIndex == grabNode.jointIndex then
-            if grabNode.isExtension then
-                --When the grabNode is an extension we detach it from the other hose.
-                desc.vehicle:detach(desc.connectorId, grabNodeId, self)
-            else
-                self:detach(grabNodeId, desc.connectorId, desc.vehicle)
+    if self.firstTimeRun then
+        for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
+            local grabNode = self:getGrabNodeById(grabNodeId)
+            if jointIndex == grabNode.jointIndex then
+                if grabNode.isExtension then
+                    --When the grabNode is an extension we detach it from the other hose.
+                    desc.vehicle:detach(desc.connectorId, grabNodeId, self)
+                else
+                    self:detach(grabNodeId, desc.connectorId, desc.vehicle)
+                end
             end
         end
     end
