@@ -444,7 +444,12 @@ function Hose:findConnector(id)
             local objects = g_manureSystem:getConnectorObjects()
             for _, object in pairs(objects) do
                 if object ~= self then
-                    local vx, _, vz = getWorldTranslation(object.components[1].node)
+                    local inRangeNode = object.components[1].node
+                    if object.getConnectorInRangeNode ~= nil then
+                        inRangeNode = object:getConnectorInRangeNode()
+                    end
+
+                    local vx, _, vz = getWorldTranslation(inRangeNode)
                     local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
                     if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE

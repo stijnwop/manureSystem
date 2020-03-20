@@ -24,6 +24,7 @@ function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorsByType", ManureSystemConnector.getConnectorsByType)
     SpecializationUtil.registerFunction(vehicleType, "getActiveConnectorsByType", ManureSystemConnector.getActiveConnectorsByType)
     SpecializationUtil.registerFunction(vehicleType, "setIsConnectorActive", ManureSystemConnector.setIsConnectorActive)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectorInRangeNode", ManureSystemConnector.getConnectorInRangeNode)
 end
 
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
@@ -50,6 +51,12 @@ function ManureSystemConnector:onLoad(savegame)
     spec.manureSystemConnectors = {}
     spec.manureSystemConnectorsByType = {}
     spec.manureSystemActiveConnectorsByType = {}
+
+    --Load optional in range node in order to define a different node to use for the hose to check if the vehicle is in a certain radius.
+    local inRangeNodeStr = getXMLString(self.xmlFile, "vehicle.manureSystemConnectors#inRangeNode")
+    if inRangeNodeStr ~= nil then
+        spec.inRangeNode = I3DUtil.indexToObject(self.components, inRangeNodeStr, self.i3dMappings)
+    end
 
     local i = 0
     while true do
@@ -330,6 +337,17 @@ function ManureSystemConnector:setIsConnectorActive(connector, state)
             end
         end
     end
+end
+
+---Gets the inRange node for the connector vehicle.
+function ManureSystemConnector:getConnectorInRangeNode()
+    local spec = self.spec_manureSystemConnector
+
+    if spec.inRangeNode ~= nil then
+        return spec.inRangeNode
+    end
+
+    return self.components[1].node
 end
 
 ---Sets the `isConnected` state on the connector with additional information of the connected hose object, if present it will play the animations.
