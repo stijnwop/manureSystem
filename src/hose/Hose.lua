@@ -28,7 +28,7 @@ Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 Hose.RAYCAST_DISTANCE = 2
 
 Hose.JOINT_BREAK_FORCE = 20
-Hose.JOINT_BREAK_TORQUE = 15
+Hose.JOINT_BREAK_TORQUE = 20
 
 function Hose.prerequisitesPresent(specializations)
     return true
@@ -209,7 +209,7 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile)
             if objectName ~= nil and object:getName() ~= objectName then
                 Logger.error(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
             else
-                self:attach(grabNodeId, connectorId, object)
+                self:attach(grabNodeId, connectorId, object) -- server only
             end
         end
 
@@ -220,7 +220,7 @@ end
 function Hose:onReadStream(streamId, connection)
     if connection:getIsServer() then
         local spec = self.spec_hose
-        spec.hosesToLoadFromNetwork = {}
+        spec.hosesToLoad = {}
 
         local numOfGrabNodes = streamReadInt8(streamId)
         for id = 1, numOfGrabNodes do
@@ -234,7 +234,7 @@ function Hose:onReadStream(streamId, connection)
                 if streamReadBool(streamId) then
                     local vehicleId = NetworkUtil.readNodeObjectId(streamId)
                     local connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
-                    table.insert(spec.hosesToLoadFromNetwork, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
+                    table.insert(spec.hosesToLoad, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
                 end
             end
         end
@@ -298,13 +298,13 @@ end
 function Hose:onUpdate(dt)
     local spec = self.spec_hose
 
-    if spec.hosesToLoadFromNetwork ~= nil then
-        for _, toLoad in ipairs(spec.hosesToLoadFromNetwork) do
+    if spec.hosesToLoad ~= nil then
+        for _, toLoad in ipairs(spec.hosesToLoad) do
             local vehicle = NetworkUtil.getObject(toLoad.vehicleId)
             self:attach(toLoad.grabNodeId, toLoad.connectorId, vehicle, true)
         end
 
-        spec.hosesToLoadFromNetwork = nil
+        spec.hosesToLoad = nil
     end
 end
 
