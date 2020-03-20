@@ -289,7 +289,60 @@ For every connector type you will the following options available:
 - isParkPlace: `true/false` This flags is used to determine if the connector is used as a parking place (for hoses or just connectors that should behave as a parking place).
 
 ##### Adding the connector animation
-W.I.P.
+> **NOTE: When using shared sets the animation is already done, so there's no need to add entries for shared set connectors!**
+
+The connector types `COUPLING` and `COUPLINGFERTILIZER` have animation support for locking the hose and opening the manure flow.
+This is done over the well known vehicle animations.
+
+***For the sake of the tutorial I assume you know how to add vehicle animations.***
+
+For vehicle animations the connector supports two entries:
+
+- lockAnimationName: `string` e.g. `myAnimationName` this is the animation name of the `animation` entry in the xml
+- manureFlowAnimationName: `string` e.g. `myAnimationName` this is the animation name of the `animation` entry in the xml
+
+Locking animation is an animation that triggers when the hose connects to the connector.
+Manure flow is the an animation that triggers when the player interacts with the connector in order to open the manure flow.
+
+For the example connector entry I added an animation entry to my vehicle for the locking animation.
+
+This looks like this (don't blindly copy this):
+```xml
+<animations>
+    <animation name="lockCoupling">
+        <part node="handleBack" startTime="0" endTime="0.5" startRot="-145 0 0" endRot="-15 0 0"/>
+        <part node="lockBack" startTime="0" endTime="0.5" startRot="-31 -90 0" endRot="-15 -90 0"/>
+        <part node="lockPartBack" startTime="0" endTime="0.5" startRot="-7.5 0 0" endRot="-15 0 0"/>
+    </animation>
+</animations>
+```
+
+Above we see an animation entry with the name `lockCoupling`, we have to remember that name because in order to tell the `ManureSystem` to play that animation when the player attaches/detaches the hose.
+
+In order todo that we're going to set the `lockAnimationName` attribute on our connector.
+This will result in the following entry:
+
+```xml
+<manureSystemConnectors>
+    <connector type="COUPLING" node="refBack" lockAnimationName="lockCoupling"/>
+</manureSystemConnectors>
+```
+
+In the example above the animation with the name `lockCoupling` will be played for the locking animation of the hose.
+
+The same can be done with the manure flow, that will require you to add the additional `manureFlowAnimationName` attribute on the connector.
+
+Like:
+```xml
+
+<manureSystemConnectors>
+    <connector type="COUPLING" node="refBack" lockAnimationName="lockCoupling" manureFlowAnimationName="flowCoupling"/>
+</manureSystemConnectors>
+```
+
+The `flowCoupling` will be another animation entry like the `lockCoupling`.
+
+> **NOTE: `lockAnimationName` works with and without the `manureFlowAnimationName` but `manureFlowAnimationName` requires the `lockAnimationName`!**
 
 ##### Adding the dock connector 
 W.I.P.

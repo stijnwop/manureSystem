@@ -140,15 +140,15 @@ When we add a rootNode to the example from above it would result into this:
 
 ##### Adding connector animations
 
-The connector types COUPLING and COUPLINGFERTILIZER support animation support for locking and opening the manure flow.
+The connector types COUPLING and COUPLINGFERTILIZER have animation support for locking and opening the manure flow.
 This is done over the AnimatedObjects entries.
 
-***For the sake of the tutorial I assume you know how to add AnimatedObject entries.***
+*****For the sake of the tutorial I assume you know how to add AnimatedObject entries.***
 
 For object animations the connector supports two entries:
 
 - lockAnimationIndex: `int` e.g. `1` this is the index of the animatedObject entry in the xml
-- manureFlowAnimationIndex: `int` e.g. `1` this is the index of the animatedObject entry in the xml
+- manureFlowAnimationIndex: `int` e.g. `1` this is the index of the animatedObject entry in the xml**
 
 For the example I added two simple animation entries that rotate a node on a given keyFrame.
 
@@ -179,7 +179,7 @@ These look like this (DON'T BLINDLY COPY):
 Above we have two animationObject entries which we can count as 1 and 2 (you can simply count the `</animatedObject>` (ending) tags)
 
 In order to trigger the animation on our connectors we have to set the index we just counted on either the `lockAnimationIndex` or `manureFlowAnimationIndex` attribute.
-This will result in the following entry.
+This will result in the **following entry.
 
 ```xml
 <manureSystemConnectors>
@@ -188,6 +188,8 @@ This will result in the following entry.
 ```
 
 In the example above the animatedObject with index `1` will be played for the lock animation and the animatedObject with index `2` will be played for the manure flow.
+
+> **NOTE: `lockAnimationIndex` works with and without the `manureFlowAnimationIndex` but `manureFlowAnimationIndex` requires the `lockAnimationIndex`!**
 
 ##### Configuring additional connector options
 
