@@ -59,7 +59,7 @@ end
 function ManureSystemFillPlane:loadFromXMLFile(xmlFile, key, resetVehicles)
     if self.planeNode ~= nil then
         local thickness = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#thickness"), 0)
-        self:setHeight(self:getFillUnitFillLevel())
+        self:setHeight(self.parent:getFillUnitFillLevel())
         self:resetMixingState(thickness)
     end
 end
