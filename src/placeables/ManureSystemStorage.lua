@@ -230,8 +230,9 @@ function ManureSystemStorage:loadFromXMLFile(xmlFile, key, resetVehicles)
     end
 
     self.thickness = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#thickness"), self.thickness)
-    self.fillPlane:setHeight(self:getFillUnitFillLevel())
-    self.fillPlane:resetMixingState(self.thickness)
+    if self.fillPlane ~= nil then
+        self.fillPlane:loadFromXMLFile(xmlFile, key, resetVehicles)
+    end
 
     local i = 0
     while true do
