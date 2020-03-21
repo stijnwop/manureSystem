@@ -329,7 +329,9 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, k
 end
 
 function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
-    self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
+    if connector.isConnected then
+        self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
+    end
 end
 
 function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)
