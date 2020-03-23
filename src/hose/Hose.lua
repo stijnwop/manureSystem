@@ -945,19 +945,28 @@ function Hose:parkHose(connector, vehicle)
     -- First we remove the hose from physics
     self:removeFromPhysics()
 
-    local xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
-    local xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
+    -- Set offset data
+    local xStartOffPos, yStartOffPos, zStartOffPos = 0, 0, 0
+    local xEndOffPos, yEndOffPos, zEndOffPos = 0, 0, 0
+    local xStartOffRot, yStartOffRot, zStartOffRot = 0, 0, 0
+    local xEndOffRot, yEndOffRot, zEndOffRot = 0, 0, 0
 
-    local xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
-    local xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
+    if spec.length >= connector.parkOffsetThreshold then
+        xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
+        xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
+        xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
+        xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
+    end
 
     local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
     local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
 
     -- Do correction on the end offset with the start offset.
-    xEndOffPos = xEndOffPos - xStartOffPos
-    yEndOffPos = yEndOffPos - yStartOffPos
-    zEndOffPos = zEndOffPos - zStartOffPos
+    if spec.length >= connector.parkOffsetThreshold then
+        xEndOffPos = xEndOffPos - xStartOffPos
+        yEndOffPos = yEndOffPos - yStartOffPos
+        zEndOffPos = zEndOffPos - zStartOffPos
+    end
 
     -- We place the components correctly.
     for i = 1, #self.components do
