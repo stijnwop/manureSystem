@@ -206,6 +206,7 @@ Tuyau à fertilisant:
 
     <storeItems>
         <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>
+        <storeItem xmlFilename="resources/hoses/slurry/slurryHose5m.xml"/>
         <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>
     </storeItems>
 
