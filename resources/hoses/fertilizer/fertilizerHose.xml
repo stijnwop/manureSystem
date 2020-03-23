@@ -8,6 +8,7 @@
             <function>$l10n_function_hose</function>
         </functions>
         <specs>
+            <workingWidth>5</workingWidth>
             <fillTypeCategories>sprayer</fillTypeCategories>
         </specs>
         <image>resources/hoses/fertilizer/store.png</image>
