@@ -118,12 +118,14 @@ function Hose:onLoad(savegame)
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
     spec.foundConnectorIsConnected = false
+    spec.foundConnectorIsParkPlace = false
     spec.foundGrabNodeId = 0
 
     if self.isServer then
         spec.foundVehicleIdSend = 0
         spec.foundConnectorIdSend = 0
         spec.foundConnectorIsConnectedSend = false
+        spec.foundConnectorIsParkPlaceSend = false
         spec.foundGrabNodeIdSend = 0
     end
 
@@ -272,6 +274,7 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
             spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
             spec.foundConnectorIsConnected = streamReadBool(streamId)
+            spec.foundConnectorIsParkPlace = streamReadBool(streamId)
             spec.foundGrabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         end
     end
@@ -284,6 +287,7 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
             streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
             streamWriteBool(streamId, spec.foundConnectorIsConnected)
+            streamWriteBool(streamId, spec.foundConnectorIsParkPlace)
             streamWriteUIntN(streamId, spec.foundGrabNodeId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
@@ -434,6 +438,7 @@ function Hose:findConnector(id)
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
     spec.foundConnectorIsConnected = false
+    spec.foundConnectorIsParkPlace = false
     spec.foundGrabNodeId = 0
 
     local grabNode = self:getGrabNodeById(id)
@@ -486,6 +491,7 @@ function Hose:findConnector(id)
                                         spec.foundVehicleId = NetworkUtil.getObjectId(object)
                                         spec.foundConnectorId = connector.id
                                         spec.foundConnectorIsConnected = connector.isConnected
+                                        spec.foundConnectorIsParkPlace = connector.isParkPlace
                                         spec.foundGrabNodeId = id
                                     end
                                 end
@@ -500,10 +506,12 @@ function Hose:findConnector(id)
     if spec.foundVehicleId ~= spec.foundVehicleIdSend
         or spec.foundConnectorId ~= spec.foundConnectorIdSend
         or spec.foundConnectorIsConnected ~= spec.foundConnectorIsConnectedSend
+        or spec.foundConnectorIsParkPlace ~= spec.foundConnectorIsParkPlaceSend
         or spec.foundGrabNodeId ~= spec.foundGrabNodeIdSend then
         spec.foundVehicleIdSend = spec.foundVehicleId
         spec.foundConnectorIdSend = spec.foundConnectorId
         spec.foundConnectorIsConnectedSend = spec.foundConnectorIsConnected
+        spec.foundConnectorIsParkPlaceSend = spec.foundConnectorIsParkPlace
         spec.foundGrabNodeIdSend = spec.foundGrabNodeId
         self:raiseDirtyFlags(spec.dirtyFlag)
     end

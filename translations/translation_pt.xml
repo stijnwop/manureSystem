@@ -11,6 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Alternar direção da bomba"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Store hose"/><!-- TODO -->
         <text name="action_toggleManureFlow" text="%s fluxo de estrume"/>
         <text name="action_toggleManureFlowStateOpen" text="Abrir"/>
         <text name="action_toggleManureFlowStateClose" text="Fechar"/>
@@ -24,10 +25,10 @@
         <text name="action_directionRightLeft" text="Mudar a direção da bomba de: direita para esquerda"/>
 
         <!--Warnings pump-->
-        <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
-        <text name="warning_objectFull" text="The pump target is full!"/>
-        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>
-        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/>
+        <text name="warning_objectEmpty" text="The pump source or target is empty!"/><!-- TODO -->
+        <text name="warning_objectFull" text="The pump target is full!"/><!-- TODO -->
+        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/><!-- TODO -->
+        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/><!-- TODO -->
 
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="O local de estacionamento %sm é muito pequeno para a mangueira %sm!"/>

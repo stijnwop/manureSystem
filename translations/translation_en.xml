@@ -11,6 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Toggle pump direction"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Store hose"/>
         <text name="action_toggleManureFlow" text="%s manure flow"/>
         <text name="action_toggleManureFlowStateOpen" text="Open"/>
         <text name="action_toggleManureFlowStateClose" text="Close"/>

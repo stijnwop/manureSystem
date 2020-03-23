@@ -11,6 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Přepnout směr přečerpávání"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Store hose"/><!-- TODO -->
         <text name="action_toggleManureFlow" text="%s průtoku"/>
         <text name="action_toggleManureFlowStateOpen" text="Otevření"/>
         <text name="action_toggleManureFlowStateClose" text="Zavření"/>

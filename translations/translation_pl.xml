@@ -11,6 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Zmień kierunek pompy"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Store hose"/><!-- TODO -->
         <text name="action_toggleManureFlow" text="%s przepływ cieczy"/>
         <text name="action_toggleManureFlowStateOpen" text="Otwórz"/>
         <text name="action_toggleManureFlowStateClose" text="Zamknij"/>
@@ -24,10 +25,10 @@
         <text name="action_directionRightLeft" text="Zmień kierunek pompy z: prawej na lewą"/>
 
         <!--Warnings pump-->
-        <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
-        <text name="warning_objectFull" text="The pump target is full!"/>
-        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>
-        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/>
+        <text name="warning_objectEmpty" text="The pump source or target is empty!"/><!-- TODO -->
+        <text name="warning_objectFull" text="The pump target is full!"/><!-- TODO -->
+        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/><!-- TODO -->
+        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/><!-- TODO -->
 
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="%sm miejsce transportowe, jest za małe dla %sm węża!"/>

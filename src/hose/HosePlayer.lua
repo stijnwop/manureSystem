@@ -98,6 +98,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
         local id = eventList[inputAction].eventId
         g_inputBinding:setActionEventActive(id, true)
         g_inputBinding:setActionEventTextVisibility(id, true)
+        g_inputBinding:setActionEventTextPriority(id, GS_PRIO_HIGH)
     end
 
     disableInput(InputAction.MS_ATTACH_HOSE)
@@ -113,6 +114,9 @@ function HosePlayer.inj_player_updateActionEvents(player)
 
             if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 and not spec.foundConnectorIsConnected then
                 enableInput(InputAction.MS_ATTACH_HOSE)
+                local event = eventList[InputAction.MS_ATTACH_HOSE]
+                local text = spec.foundConnectorIsParkPlace and g_i18n:getText("action_storeHose") or event.text
+                g_inputBinding:setActionEventText(event.eventId, text)
             elseif hose:isConnected(grabNode) then
                 local desc = spec.grabNodesToObjects[grabNode.id]
                 if desc ~= nil then
