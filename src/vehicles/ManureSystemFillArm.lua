@@ -166,7 +166,7 @@ function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distan
 
                     return false
                 end
-            elseif object:isa(ManureSystemStorage) then
+            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
                 spec.fillArm.lastRaycastDistance = distance
                 spec.fillArm.lastRaycastObject = object
 
