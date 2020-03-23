@@ -48,6 +48,7 @@ end
 function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
+    self.version = 1.1
     self.isServer = mission:getIsServer()
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
@@ -129,6 +130,12 @@ end
 
 ---Called when mission is loaded.
 function ManureSystem:onMissionLoadFromSavegame(xmlFile)
+    local version = getXMLInt(xmlFile, "manureSystem#version")
+    if version ~= nil and version < self.version then
+        Logger.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
+        --return
+    end
+
     self.savedVehiclesToId = self:getSavedVehiclesList()
     self.savedItemsToId = self:getSavedItemsList()
     table.sort(self.manureSystemConnectors, sortByClassAndId)
@@ -154,7 +161,7 @@ end
 
 ---Called when mission is being saved with our own xml file.
 function ManureSystem:onMissionSaveToSavegame(xmlFile)
-    setXMLInt(xmlFile, "manureSystem#version", 1)
+    setXMLInt(xmlFile, "manureSystem#version", self.version)
 
     self.savedVehiclesToId = self:getSavedVehiclesList()
     self.savedItemsToId = self:getSavedItemsList()
