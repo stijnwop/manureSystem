@@ -676,6 +676,10 @@ end
 function Hose:computeCatmullSpline()
     local spec = self.spec_hose
 
+    if not entityExists(spec.mesh) then
+        return
+    end
+
     local p0x, p0y, p0z = 0, 0, -spec.length -- calculate base offset
     local p1x, p1y, p1z = 0, 0, 0
     local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
