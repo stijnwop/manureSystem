@@ -211,10 +211,10 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
 
             --Do a check on the saved object name to filter out obvious cases.
             local isTheSameObject = objectName ~= nil and object:getName() ~= objectName
-            if valid and isTheSameObject then
+            if valid and not isTheSameObject then
                 self:attach(grabNodeId, connectorId, object)
             else
-                if not isTheSameObject then
+                if isTheSameObject then
                     Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
                 end
                 --Force reset on connected and flow state.
