@@ -216,6 +216,30 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
         else
             self:resetPumpTargetObject(object)
         end
+    elseif #connectors > 0 then
+        local connector1 = unpack(connectors, 1)
+        if connector1.isConnected and not connector1.isParkPlace then
+            local desc1, lengthHoses1 = self:getConnectorObjectDesc(object, connector1)
+
+            if desc1 ~= nil and desc1.hasOpenManureFlow then
+                if desc1.vehicle ~= nil then
+                    local fillType = desc1.vehicle:getFillUnitFillType(desc1.fillUnitIndex)
+                    local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType)
+                    if sourceObject ~= nil then
+                        local desc2 = { vehicle = sourceObject, isNearWater = false, fillUnitIndex = sourceFillUnitIndex }
+                        object:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
+                        self:setStandalonePumpTargetObject(object, desc1, desc2)
+
+                        local impactTime = self:getCalculatedMaxTime(lengthHoses1)
+                        object:setPumpMaxTime(impactTime)
+                    end
+                end
+            else
+                self:resetPumpTargetObject(object)
+            end
+        else
+            self:resetPumpTargetObject(object)
+        end
     end
 end
 
