@@ -152,6 +152,7 @@ function Hose:onPreDelete()
     g_manureSystem:removeConnectorObject(self)
 end
 
+---Save connected hoses to the savegame server sided only.
 function Hose:onMissionSaveToSavegame(key, xmlFile)
     local spec = self.spec_hose
 
@@ -190,7 +191,8 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
     end
 end
 
-function Hose:onMissionLoadFromSavegame(key, xmlFile)
+---Load connected hoses from the savegame server sided only.
+function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
     local i = 0
     while true do
         local loadKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i)
@@ -208,10 +210,16 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile)
             local object = g_manureSystem:getConnectorObject(objectId)
 
             --Do a check on the saved object name to filter out obvious cases.
-            if objectName ~= nil and object:getName() ~= objectName then
-                Logger.error(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
+            local isTheSameObject = objectName ~= nil and object:getName() ~= objectName
+            if valid and isTheSameObject then
+                self:attach(grabNodeId, connectorId, object)
             else
-                self:attach(grabNodeId, connectorId, object) -- server only
+                if not isTheSameObject then
+                    Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
+                end
+                --Force reset on connected and flow state.
+                object:setIsConnected(connectorId, false)
+                object:setIsManureFlowOpen(connectorId, false, true)
             end
         end
 

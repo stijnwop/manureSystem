@@ -131,9 +131,10 @@ end
 ---Called when mission is loaded.
 function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     local version = getXMLInt(xmlFile, "manureSystem#version")
-    if version ~= nil and version < self.version then
+    local valid = not (version ~= nil and version < self.version)
+
+    if not valid then
         Logger.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
-        --return
     end
 
     self.savedVehiclesToId = self:getSavedVehiclesList()
@@ -151,7 +152,7 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
         if self:connectorObjectExists(hoseId) then
             local object = self:getConnectorObject(hoseId)
             if object.isaHose ~= nil and object:isaHose() then
-                object:onMissionLoadFromSavegame(key, xmlFile)
+                object:onMissionLoadFromSavegame(key, xmlFile, valid)
             end
         end
 
