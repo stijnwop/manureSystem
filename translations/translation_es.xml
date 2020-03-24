@@ -47,5 +47,9 @@
         <text name="function_hose" text="Con este sistema serás capaz de bombear liquidos de un tanque a otro, pudoiendo conectar varias mangueras si fuera necesario."/>
         <text name="configuration_hose" text="Cambiar tipo de manguera."/>
         <text name="configuration_valueExtend" text="Extensión de manguera"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Disappear"/><!--TODO-->
+        <text name="global_configuration_refillable" text="Refillable"/><!--TODO-->
     </texts>
 </l10n>

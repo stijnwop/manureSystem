@@ -140,6 +140,7 @@ local function saveToXMLFile(missionInfo)
 end
 
 local function validateVehicleTypes(vehicleTypeManager)
+    ManureSystem.addModTranslations(g_i18n)
     ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
 end
 
@@ -154,6 +155,8 @@ local function unload()
         -- GC
         manureSystem = nil
         getfenv(0)["g_manureSystem"] = nil
+    else
+        ManureSystem.removeModTranslations(g_i18n)
     end
 end
 

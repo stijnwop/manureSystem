@@ -47,5 +47,9 @@
         <text name="function_hose" text="Met een slang kun je vloeibare vultypes van bron naar een doel overpompen. Indien nodig kun je de slang verlengen om grotere afstanden te overbruggen."/>
         <text name="configuration_hose" text="Verander slang type."/>
         <text name="configuration_valueExtend" text="Verlengbaar"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Verdwijn"/>
+        <text name="global_configuration_refillable" text="Navulbaar"/>
     </texts>
 </l10n>

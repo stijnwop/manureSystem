@@ -47,5 +47,9 @@
         <text name="function_hose" text="Avec un tuyau, vous pouvez pomper un type de liquide de la source à la cible. Le cas échéant, vous pouvez allonger le tuyau pour atteindre de plus grandes distances."/>
         <text name="configuration_hose" text="Changer de type de tuyau."/>
         <text name="configuration_valueExtend" text="Extension"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Disappear"/><!--TODO-->
+        <text name="global_configuration_refillable" text="Refillable"/><!--TODO-->
     </texts>
 </l10n>

@@ -288,6 +288,26 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
     end
 end
 
+---Add our global translations to the global table.
+function ManureSystem.addModTranslations(i18n)
+    local global = getfenv(0).g_i18n.texts
+    for key, text in pairs(i18n.texts) do
+        if StringUtil.startsWith(key, "global_") then
+            global[key:sub(8)] = text
+        end
+    end
+end
+
+---Remove are global entries to avoid duplications.
+function ManureSystem.removeModTranslations(i18n)
+    local global = getfenv(0).g_i18n.texts
+    for key, _ in pairs(i18n.texts) do
+        if StringUtil.startsWith(key, "global_") then
+            global[key:sub(8)] = nil
+        end
+    end
+end
+
 ----------------------
 -- Commands
 ----------------------
