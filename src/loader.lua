@@ -143,6 +143,20 @@ local function validateVehicleTypes(vehicleTypeManager)
     ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
 end
 
+---Unload the mod when the game is closed.
+local function unload()
+    if not isEnabled() then
+        return
+    end
+
+    if manureSystem ~= nil then
+        manureSystem:delete()
+        -- GC
+        manureSystem = nil
+        getfenv(0)["g_manureSystem"] = nil
+    end
+end
+
 local function vehicleLoad(self, superFunc, vehicleData, ...)
     local _, baseDir = Utils.getModNameAndBaseDirectory(vehicleData.filename)
     local xmlFilename = ManureSystemUtil.replaceSanitized(vehicleData.filename, baseDir, "")
@@ -221,6 +235,8 @@ local function getIsLoadTriggerActivatable(trigger, superFunc)
 end
 
 local function init()
+    FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
+
     loadInsertionVehicles()
 
     g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")
