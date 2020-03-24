@@ -49,7 +49,7 @@
         <text name="configuration_valueExtend" text="Verlengbaar"/>
 
         <!--Pallets-->
-        <text name="global_configuration_disappearOnEmpty" text="Verdwijn"/>
+        <text name="global_configuration_disappearOnEmpty" text="Standaard"/>
         <text name="global_configuration_refillable" text="Navulbaar"/>
     </texts>
 </l10n>

@@ -49,7 +49,7 @@
         <text name="configuration_valueExtend" text="Extension"/>
 
         <!--Pallets-->
-        <text name="global_configuration_disappearOnEmpty" text="Disappear"/>
+        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Refillable"/>
     </texts>
 </l10n>

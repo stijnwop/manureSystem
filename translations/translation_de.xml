@@ -49,7 +49,7 @@
         <text name="configuration_valueExtend" text="Verlängerbar"/>
 
         <!--Pallets-->
-        <text name="global_configuration_disappearOnEmpty" text="Disappear"/><!--TODO-->
-        <text name="global_configuration_refillable" text="Refillable"/><!--TODO-->
+        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
+        <text name="global_configuration_refillable" text="Nachfüllbar "/>
     </texts>
 </l10n>
