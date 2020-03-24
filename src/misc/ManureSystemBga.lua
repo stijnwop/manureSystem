@@ -31,6 +31,9 @@ function ManureSystemBga:new(isClient, isServer, mission, input)
     return self
 end
 
+function ManureSystemBga:delete()
+end
+
 function ManureSystemBga.inj_bga_load(self, superFunc, id, xmlFile, key, customEnvironment)
     if not superFunc(self, id, xmlFile, key, customEnvironment) then
         return false
