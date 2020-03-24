@@ -31,7 +31,7 @@
         <text name="warning_checkManureFlow" text="Zkontrolujte uzávěr průtoku na zařízení %s!"/>
 
         <!--Warnings-->
-        <text name="warning_parkingPlaceTooSmall" text="Místo pro uložení hadice je malé!"/>
+        <text name="warning_parkingPlaceTooSmall" text="Místo pro uložení %sm je malé!"/>
         <text name="warning_hoseRangeRestriction" text="Délka hadice ti nedovolí jít dále!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Opravdu nejsi Superman!"/>
 
