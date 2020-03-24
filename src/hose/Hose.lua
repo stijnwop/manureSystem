@@ -210,11 +210,11 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
             local object = g_manureSystem:getConnectorObject(objectId)
 
             --Do a check on the saved object name to filter out obvious cases.
-            local isTheSameObject = objectName ~= nil and object:getName() ~= objectName
-            if valid and not isTheSameObject then
+            local isNotTheSameObject = objectName ~= nil and object:getName() ~= objectName
+            if valid and not isNotTheSameObject then
                 self:attach(grabNodeId, connectorId, object)
             else
-                if isTheSameObject then
+                if isNotTheSameObject then
                     Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
                 end
                 --Force reset on connected and flow state.
