@@ -30,6 +30,8 @@ Hose.RAYCAST_DISTANCE = 2
 Hose.JOINT_BREAK_FORCE = 20
 Hose.JOINT_BREAK_TORQUE = 20
 
+Hose.EXTENSION_IN_RANGE_DISTANCE = 1.5
+
 function Hose.prerequisitesPresent(specializations)
     return true
 end
@@ -436,6 +438,14 @@ function Hose:restrictPlayerMovement(id, player, dt)
     end
 end
 
+---Returns true when the connector node is in range of the grab node, false otherwise.
+function Hose.isConnectorInRange(node, x, y, z, inRangeDistance)
+    local rx, ry, rz = getWorldTranslation(node)
+    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+    return distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < inRangeDistance
+end
+
+---Find possible connector objects for the given grab node id.
 function Hose:findConnector(id)
     if not self.isServer then
         return
@@ -450,58 +460,57 @@ function Hose:findConnector(id)
     spec.foundGrabNodeId = 0
 
     local grabNode = self:getGrabNodeById(id)
-    if grabNode ~= nil then
-        if self:isAttached(grabNode) or self:isConnected(grabNode) then
-            local x, y, z = getWorldTranslation(grabNode.node)
+    if grabNode == nil then
+        return
+    end
 
-            local objects = g_manureSystem:getConnectorObjects()
-            for _, object in pairs(objects) do
-                if object ~= self then
-                    local inRangeNode = object.components[1].node
-                    if object.getConnectorInRangeNode ~= nil then
-                        inRangeNode = object:getConnectorInRangeNode()
-                    end
+    --Dismiss grab nodes that are not attached by player or connected.
+    if not (self:isAttached(grabNode) or self:isConnected(grabNode)) then
+        return
+    end
 
-                    local vx, _, vz = getWorldTranslation(inRangeNode)
-                    local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+    local x, y, z = getWorldTranslation(grabNode.node)
 
-                    if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                        or object:isa(Placeable) or object:isa(Bga) then
+    for _, object in ipairs(g_manureSystem:getConnectorObjects()) do
+        if object ~= self then
+            local inRangeNode = object.components[1].node
+            if object.getConnectorInRangeNode ~= nil then
+                inRangeNode = object:getConnectorInRangeNode()
+            end
 
-                        if object.isaHose ~= nil and object:isaHose() then
-                            for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
-                                if not grabNode.isExtension and connectorGrabNode.isExtension and not self:isConnected(connectorGrabNode) then
-                                    local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
-                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+            local vx, _, vz = getWorldTranslation(inRangeNode)
+            local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+            if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
+                or object:isa(Placeable) or object:isa(Bga) then
 
-                                    if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
-                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connectorGrabNode.id
-                                        spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
-                                        spec.foundGrabNodeId = id
-                                    end
+                if object.isaHose ~= nil and object:isaHose() then
+                    for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
+                        if not self:isConnected(connectorGrabNode) then
+                            if not grabNode.isExtension and connectorGrabNode.isExtension then
+                                if Hose.isConnectorInRange(connectorGrabNode.node, x, y, z, Hose.EXTENSION_IN_RANGE_DISTANCE) then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connectorGrabNode.id
+                                    spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
+                                    spec.foundGrabNodeId = id
                                 end
                             end
-                        elseif not grabNode.isExtension then
-                            for _, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
-                                if not connector.hasOpenManureFlow or connector.isConnected then
-                                    local rx, ry, rz = getWorldTranslation(connector.node)
-                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                        end
+                    end
+                else
+                    for _, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
+                        if not connector.hasOpenManureFlow or connector.isConnected then
+                            if not (grabNode.isExtension and not connector.isParkPlace) then
+                                local connectorInRange = Hose.isConnectorInRange(connector.node, x, y, z, connector.inRangeDistance)
+                                if not connectorInRange and connector.isParkPlace then
+                                    connectorInRange = Hose.isConnectorInRange(connector.parkPlaceLengthNode, x, y, z, connector.inRangeDistance)
+                                end
 
-                                    local connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
-                                    if not connectorInRange and connector.isParkPlace then
-                                        rx, ry, rz = getWorldTranslation(connector.parkPlaceLengthNode)
-                                        distance = MathUtil.vector2LengthSq(x - rx, z - rz)
-                                        connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
-                                    end
-
-                                    if connectorInRange then
-                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connector.id
-                                        spec.foundConnectorIsConnected = connector.isConnected
-                                        spec.foundConnectorIsParkPlace = connector.isParkPlace
-                                        spec.foundGrabNodeId = id
-                                    end
+                                if connectorInRange then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connector.id
+                                    spec.foundConnectorIsConnected = connector.isConnected
+                                    spec.foundConnectorIsParkPlace = connector.isParkPlace
+                                    spec.foundGrabNodeId = id
                                 end
                             end
                         end
