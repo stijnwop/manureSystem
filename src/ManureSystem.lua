@@ -48,7 +48,7 @@ end
 function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
-    self.version = 1.1
+    self.version = 2
     self.isServer = mission:getIsServer()
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
