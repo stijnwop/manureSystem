@@ -42,7 +42,9 @@ function ManureSystemFillArm:onLoad(savegame)
     spec.fillArm.lastRaycastDistance = 0
     spec.fillArm.lastRaycastObject = nil
 
-    self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, "vehicle.manureSystemFillArm", 0)
+    if not self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, "vehicle.manureSystemFillArm", 0) then
+        spec.hasFillArm = false
+    end
 end
 
 function ManureSystemFillArm:onDelete()
