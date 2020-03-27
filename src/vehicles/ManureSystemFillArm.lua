@@ -17,6 +17,10 @@ function ManureSystemFillArm.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end
 
+function ManureSystemFillArm.initSpecialization()
+    g_configurationManager:addConfigurationType("manureSystemFillArm", g_i18n:getText("configuration_manureSystemFillArm"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+end
+
 function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "loadManureSystemFillArmFromXML", ManureSystemFillArm.loadManureSystemFillArmFromXML)
     SpecializationUtil.registerFunction(vehicleType, "getFillArm", ManureSystemFillArm.getFillArm)
@@ -36,13 +40,22 @@ function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
 
-    spec.hasFillArm = hasXMLProperty(self.xmlFile, "vehicle.manureSystemFillArm")
+    local configurationId = Utils.getNoNil(self.configurations["manureSystemFillArm"], 1)
+    local baseKey = ("vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(%d)"):format(configurationId - 1)
+    ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration", configurationId, self.components, self)
+
+    --Fallback
+    if not hasXMLProperty(self.xmlFile, baseKey) then
+        baseKey = "vehicle"
+    end
+
+    spec.hasFillArm = hasXMLProperty(self.xmlFile, ("%s.manureSystemFillArm"):format(baseKey))
     spec.fillArm = {}
     spec.fillArm.isRaycastAllowed = true
     spec.fillArm.lastRaycastDistance = 0
     spec.fillArm.lastRaycastObject = nil
 
-    if not self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, "vehicle.manureSystemFillArm", 0) then
+    if not self:loadManureSystemFillArmFromXML(spec.fillArm, self.xmlFile, ("%s.manureSystemFillArm"):format(baseKey), 0) then
         spec.hasFillArm = false
     end
 end

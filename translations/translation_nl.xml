@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="De slang is niet langer, je kunt niet verder lopen!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Je bent Superman niet!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Zuig arm"/>
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Mixer inschakelen"/>
         <text name="action_disableMixer" text="Mixer uitschakelen"/>

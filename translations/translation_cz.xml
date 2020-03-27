@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="Délka hadice ti nedovolí jít dále!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Opravdu nejsi Superman!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Zapnout míchadlo"/>
         <text name="action_disableMixer" text="Vypnout míchadlo"/>

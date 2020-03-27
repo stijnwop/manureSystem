@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="El límite de lobgitud de la manguera no te permite ir más lejos!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Tu no tienes superpoderes!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Encender mezclador"/>
         <text name="action_disableMixer" text="Apagar mezclador"/>

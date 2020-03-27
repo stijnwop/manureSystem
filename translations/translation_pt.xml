@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="A restrição do alcance das mangueiras não permite que vá mais longe!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Você não é super humano!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Ativar misturador"/>
         <text name="action_disableMixer" text="Desativar misturador"/>

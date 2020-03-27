@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="Die maximale Schlauchlänge ist erreicht. Sie können sich nicht weiter entfernen!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Du bist kein Superheld!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Saugarm"/>
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Mixer aktivieren"/>
         <text name="action_disableMixer" text="Mixer deaktivieren"/>

@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="Rozciągnąłeś maksymalnie wąż, dalej już nie sięgnie!!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Nie jesteś Pudzianem!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Włącz mieszadło"/>
         <text name="action_disableMixer" text="Wyłącz mieszadło"/>

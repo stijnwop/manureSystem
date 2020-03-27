@@ -35,6 +35,9 @@
         <text name="warning_hoseRangeRestriction" text="La limite de portée des tuyaux ne vous permettra pas d'aller plus loin!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Vous n'êtes pas un surhomme!"/>
 
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Activer le mélangeur"/>
         <text name="action_disableMixer" text="Désactiver le mélangeur"/>
