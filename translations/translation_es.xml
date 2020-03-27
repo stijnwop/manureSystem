@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-    <translationContributors>Wopster, Prom</translationContributors>
+    <translationContributors>Wopster, Prom, Vanquish081</translationContributors>
 
     <texts>
         <!--Inputs-->
@@ -11,8 +11,8 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Cambiar sentido bomba"/>
 
         <!--Actions-->
-        <text name="action_storeHose" text="Store hose"/><!-- TODO -->
-        <text name="action_toggleManureFlow" text="%s fujo"/>
+        <text name="action_storeHose" text="Guardar manguera"/>
+        <text name="action_toggleManureFlow" text="%s flujo"/>
         <text name="action_toggleManureFlowStateOpen" text="Abrir"/>
         <text name="action_toggleManureFlowStateClose" text="Cerrar"/>
 
@@ -25,10 +25,10 @@
         <text name="action_directionRightLeft" text="Cambiar modo bomba de dcha a izda"/>
 
         <!--Warnings pump-->
-        <text name="warning_objectEmpty" text="The pump source or target is empty!"/><!-- TODO -->
-        <text name="warning_objectFull" text="The pump target is full!"/><!-- TODO -->
-        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/><!-- TODO -->
-        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/><!-- TODO -->
+        <text name="warning_objectEmpty" text="¡El depósito esta vacío!"/> 
+        <text name="warning_objectFull" text="¡El depósito destino esta lleno!"/>
+        <text name="warning_invalidFillType" text="¡La bomba no soporta este material!"/>
+        <text name="warning_checkManureFlow" text="Compruebe el flujo de estiércol para el conector de %s!"/>
 
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="El %sm sitio es muy pequeño para la manguera de %sm!"/>
@@ -36,7 +36,7 @@
         <text name="warning_hoseRangeRestrictionLength" text="Tu no tienes superpoderes!"/>
 
         <!--Configuration fill arm-->
-        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+        <text name="configuration_manureSystemFillArm" text="Brazo de Llenado"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Encender mezclador"/>
@@ -45,14 +45,14 @@
 
         <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Mangueras"/>
-        <text name="shopItem_slurryHose" text="Manguera de Puurines"/>
+        <text name="shopItem_slurryHose" text="Manguera de Purín"/>
         <text name="shopItem_fertilizerHose" text="Manguera de fertilizante"/>
         <text name="function_hose" text="Con este sistema serás capaz de bombear liquidos de un tanque a otro, pudoiendo conectar varias mangueras si fuera necesario."/>
         <text name="configuration_hose" text="Cambiar tipo de manguera."/>
         <text name="configuration_valueExtend" text="Extensión de manguera"/>
 
         <!--Pallets-->
-        <text name="global_configuration_disappearOnEmpty" text="Disappear"/><!--TODO-->
-        <text name="global_configuration_refillable" text="Refillable"/><!--TODO-->
+        <text name="global_configuration_disappearOnEmpty" text="Desaparece al 0%"/>
+        <text name="global_configuration_refillable" text="Reutilizable"/>
     </texts>
 </l10n>
