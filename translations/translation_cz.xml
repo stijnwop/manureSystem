@@ -36,8 +36,8 @@
         <text name="warning_hoseRangeRestrictionLength" text="Opravdu nejsi Superman!"/>
 
         <!--Configuration fill arm-->
-        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
-
+        <text name="configuration_manureSystemFillArm" text="Sací rameno"/>
+        
         <!--Placeables-->
         <text name="action_enableMixer" text="Zapnout míchadlo"/>
         <text name="action_disableMixer" text="Vypnout míchadlo"/>
