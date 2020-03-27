@@ -36,7 +36,7 @@
         <text name="warning_hoseRangeRestrictionLength" text="Nie jesteś Pudzianem!"/>
 
         <!--Configuration fill arm-->
-        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+        <text name="configuration_manureSystemFillArm" text="Ramię napełniające"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Włącz mieszadło"/>
