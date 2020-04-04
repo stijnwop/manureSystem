@@ -125,8 +125,10 @@ This will create a COUPLING node linked to the node on the index `0|3` with the 
 ###### IMPORTANT
 If you're experiencing direct detach or dragging behaviour of the hose when you try to connect it to your object you will have to add a `rootNode` entry to the `<manureSystemConnectors>` tag.
 
-This rootNode is the base physics (rigid body) node that is required to handle hose connections.
+This rootNode is the base physics (requires rigid body) node that is required to handle hose connections.
 So use for example the closes rigid body node you can find to your defined connector node.
+
+Please not that scaled rootNodes (or physics nodes in general) won't work! So check if your node of choice has a scaling of 1 on all axis.
 
 When we add a rootNode to the example from above it would result into this:
 ```xml
