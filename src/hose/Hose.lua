@@ -219,9 +219,14 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
                 if isNotTheSameObject then
                     Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
                 end
+
                 --Force reset on connected and flow state.
                 object:setIsConnected(connectorId, false)
-                object:setIsManureFlowOpen(connectorId, false, true)
+
+                --Check if we are not dealing with a hose.
+                if object.setIsManureFlowOpen ~= nil then
+                    object:setIsManureFlowOpen(connectorId, false, true)
+                end
             end
         end
 
