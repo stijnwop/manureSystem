@@ -106,7 +106,13 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
     end
 
     -- Prepare for hose physics
-    self.rootNode = ManureSystemUtil.getFirstPhysicsNode(self.nodeId)
+    local rootNodeStr = getXMLString(xmlFile, "placeable.manureSystemConnectors#rootNode")
+    if rootNodeStr ~= nil then
+        self.rootNode = I3DUtil.indexToObject(self.nodeId, rootNodeStr)
+    else
+        self.rootNode = ManureSystemUtil.getFirstPhysicsNode(self.nodeId)
+    end
+
     self.components = { { node = self.nodeId } }
 
     local i = 0
