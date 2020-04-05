@@ -626,7 +626,7 @@ function Hose:fillRaycastCallback(hitObjectId, x, y, z, distance)
 
                     return false
                 end
-            elseif object:isa(ManureSystemStorage) then
+            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
                 spec.lastRaycastDistance = distance
                 spec.lastRaycastObject = object
                 return false
