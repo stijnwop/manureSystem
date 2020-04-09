@@ -10,8 +10,6 @@
 ManureSystemConnector = {}
 ManureSystemConnector.MOD_NAME = g_currentModName
 
-ManureSystemConnector.CONNECTORS_SEND_NUM_BITS = 4 -- 2 ^ 4
-
 function ManureSystemConnector.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end
@@ -24,9 +22,14 @@ function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getConnectors", ManureSystemConnector.getConnectors)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorById", ManureSystemConnector.getConnectorById)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorsByType", ManureSystemConnector.getConnectorsByType)
+    SpecializationUtil.registerFunction(vehicleType, "getActiveConnectorsByType", ManureSystemConnector.getActiveConnectorsByType)
+    SpecializationUtil.registerFunction(vehicleType, "setIsConnectorActive", ManureSystemConnector.setIsConnectorActive)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectorInRangeNode", ManureSystemConnector.getConnectorInRangeNode)
 end
 
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
 end
 
 function ManureSystemConnector.registerEventListeners(vehicleType)
@@ -36,6 +39,7 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onPumpInvalid", ManureSystemConnector)
 end
 
 function ManureSystemConnector:onLoad(savegame)
@@ -46,6 +50,13 @@ function ManureSystemConnector:onLoad(savegame)
     spec.connectorStrategies = {}
     spec.manureSystemConnectors = {}
     spec.manureSystemConnectorsByType = {}
+    spec.manureSystemActiveConnectorsByType = {}
+
+    --Load optional in range node in order to define a different node to use for the hose to check if the vehicle is in a certain radius.
+    local inRangeNodeStr = getXMLString(self.xmlFile, "vehicle.manureSystemConnectors#inRangeNode")
+    if inRangeNodeStr ~= nil then
+        spec.inRangeNode = I3DUtil.indexToObject(self.components, inRangeNodeStr, self.i3dMappings)
+    end
 
     local i = 0
     while true do
@@ -65,6 +76,7 @@ function ManureSystemConnector:onLoad(savegame)
 
         if spec.manureSystemConnectorsByType[type] == nil then
             spec.manureSystemConnectorsByType[type] = {}
+            spec.manureSystemActiveConnectorsByType[type] = {}
         end
 
         if spec.connectorStrategies[type] == nil then
@@ -158,6 +170,25 @@ function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIg
     end
 end
 
+function ManureSystemConnector:onPumpInvalid()
+    local spec = self.spec_manureSystemConnector
+
+    local message
+    for _, strategy in pairs(spec.connectorStrategies) do
+        if strategy.getPumpInvalidWarningMessage ~= nil then
+            message = strategy:getPumpInvalidWarningMessage()
+        end
+
+        if message ~= nil then
+            break
+        end
+    end
+
+    if message ~= nil then
+        g_currentMission:showBlinkingWarning(message)
+    end
+end
+
 function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
     connector.hasSharedSet = hasXMLProperty(xmlFile, baseKey .. ".sharedSet")
 
@@ -218,6 +249,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
                 end
 
                 link(linkNode, connectorNode)
+                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".connector", connectorNode)
             end
         end
 
@@ -227,6 +259,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
             if sharedValve ~= nil then
                 local valveNode = clone(sharedValve.node, false, false, false)
                 link(linkNode, valveNode)
+                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".valve", valveNode)
 
                 local sharedHandleKey = getXMLString(xmlFile, key .. ".handle#type")
                 if sharedHandleKey ~= nil then
@@ -253,23 +286,71 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
     return true
 end
 
+---Returns a list of all the connectors.
 function ManureSystemConnector:getConnectors()
     return self.spec_manureSystemConnector.manureSystemConnectors
 end
 
+---Returns a connector for the given id.
 function ManureSystemConnector:getConnectorById(id)
     return self.spec_manureSystemConnector.manureSystemConnectors[id]
 end
 
+---Returns a list of connectors based on the given type.
 function ManureSystemConnector:getConnectorsByType(type)
     local types = self.spec_manureSystemConnector.manureSystemConnectorsByType[type]
     if types ~= nil then
         return types
     end
-
+    --Given type does not exist, so return empty table.
     return {}
 end
 
+---Returns a list of active connectors based on the given type.
+function ManureSystemConnector:getActiveConnectorsByType(type)
+    local types = self.spec_manureSystemConnector.manureSystemActiveConnectorsByType[type]
+    if types ~= nil then
+        return types
+    end
+    --Given type does not exist, so return empty table.
+    return {}
+end
+
+---Sets the given connector active or not.
+function ManureSystemConnector:setIsConnectorActive(connector, state)
+    local spec = self.spec_manureSystemConnector
+    --Add the connector to the active table to reduce processing of non active connectors
+    if state then
+        if not ListUtil.hasListElement(spec.manureSystemActiveConnectorsByType[connector.type], connector) then
+            ListUtil.addElementToList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+        end
+    else
+        ListUtil.removeElementFromList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+
+        --Reset pump target when no connectors are active for strategy.
+        if #spec.manureSystemActiveConnectorsByType[connector.type] == 0 then
+            if self.spec_manureSystemPumpMotor ~= nil then
+                local strategy = spec.connectorStrategies[connector.type]
+                if strategy.resetPumpTargetObject ~= nil then
+                    strategy:resetPumpTargetObject(self)
+                end
+            end
+        end
+    end
+end
+
+---Gets the inRange node for the connector vehicle.
+function ManureSystemConnector:getConnectorInRangeNode()
+    local spec = self.spec_manureSystemConnector
+
+    if spec.inRangeNode ~= nil then
+        return spec.inRangeNode
+    end
+
+    return self.components[1].node
+end
+
+---Sets the `isConnected` state on the connector with additional information of the connected hose object, if present it will play the animations.
 function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEventSend)
     local connector = self:getConnectorById(id)
 
@@ -292,9 +373,13 @@ function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEve
         connector.isConnected = state
         connector.connectedObject = hose
         connector.connectedNodeId = grabNodeId
+
+        --Add or remove connector to the table for further interaction.
+        self:setIsConnectorActive(connector, state)
     end
 end
 
+---Sets the `hasOpenManureFlow` state on the connector, if present it will play the animations.
 function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend)
     local connector = self:getConnectorById(id)
 
@@ -309,6 +394,55 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
             if canPlayAnimation then
                 local dir = state and 1 or -1
                 self:playAnimation(connector.manureFlowAnimationName, dir, nil, true)
+            end
+        end
+    end
+end
+
+----------------
+-- Overwrites --
+----------------
+
+---Load extra depending part on connectors for moving tools.
+function ManureSystemConnector:loadExtraDependentParts(superFunc, xmlFile, baseName, entry)
+    if not superFunc(self, xmlFile, baseName, entry) then
+        return false
+    end
+
+    local indices = StringUtil.getVectorNFromString(getXMLString(xmlFile, baseName .. ".manureSystemConnectors#indices"))
+    if indices ~= nil then
+        entry.manureSystemConnectors = {}
+
+        for _, id in ipairs(indices) do
+            table.insert(entry.manureSystemConnectors, id)
+        end
+    end
+
+    return true
+end
+
+---Update moving tool depending part to set the hose joint frame.
+function ManureSystemConnector:updateExtraDependentParts(superFunc, part, dt)
+    superFunc(self, part, dt)
+
+    if part.manureSystemConnectors ~= nil and self.isServer then
+        for i, id in ipairs(part.manureSystemConnectors) do
+            local connector = self:getConnectorById(id)
+
+            if connector == nil then
+                part.manureSystemConnectors[i] = nil
+                g_logManager:xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(part.node))
+            else
+                if connector.isConnected then
+                    local object = connector.connectedObject
+                    if object.isaHose ~= nil and object:isaHose() then
+                        local grabNode = object:getGrabNodeById(connector.connectedNodeId)
+
+                        if grabNode.jointIndex ~= nil then
+                            setJointFrame(grabNode.jointIndex, 0, grabNode.jointTransform)
+                        end
+                    end
+                end
             end
         end
     end

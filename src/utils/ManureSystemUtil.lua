@@ -11,6 +11,13 @@ ManureSystemUtil = {}
 
 ManureSystemUtil.NO_RIGID_BODY = "norigidbody"
 
+---Does a sanitized replacement with the given `what` value in the given `input` with the `with` value.
+function ManureSystemUtil.replaceSanitized(input, what, with)
+    what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
+    with = string.gsub(with, "[%%]", "%%%%") -- escape replacement
+    return input:gsub(what, with)
+end
+
 ---Gets the first found physics node when the root node isn't a rigid body.
 function ManureSystemUtil.getFirstPhysicsNode(nodeId)
     if getRigidBodyType(nodeId):lower() ~= ManureSystemUtil.NO_RIGID_BODY then
@@ -26,6 +33,19 @@ function ManureSystemUtil.getFirstPhysicsNode(nodeId)
     end
 
     return 0
+end
+
+---Loads the optional rotation and position for the given node and applies it.
+function ManureSystemUtil.loadNodePositionAndRotation(xmlFile, xmlKey, node)
+    local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#position")) }
+    if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
+        setTranslation(node, unpack(translation))
+    end
+
+    local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#rotation")) }
+    if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
+        setRotation(node, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
+    end
 end
 
 function ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, xmlKey, node, nodeAttribute)

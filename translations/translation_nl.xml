@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Wopster</translationContributors>
+
+    <texts>
+        <!--Inputs-->
+        <text name="input_MS_ATTACH_HOSE" text="Koppel slang aan"/>
+        <text name="input_MS_DETACH_HOSE" text="Koppel slang af"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Wissel afsluiter"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Activeer/deactiveer pomp"/>
+        <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Verander pomp richting"/>
+
+        <!--Actions-->
+        <text name="action_storeHose" text="Berg slan op"/>
+        <text name="action_toggleManureFlow" text="%s afsluiter"/>
+        <text name="action_toggleManureFlowStateOpen" text="Open"/>
+        <text name="action_toggleManureFlowStateClose" text="Sluit"/>
+
+        <text name="action_activatePump" text="Activeer pomp van %s"/>
+        <text name="action_deactivatePump" text="Deactiveer pomp van %s"/>
+
+        <text name="action_directionOut" text="Verander pomp richting naar: legen"/>
+        <text name="action_directionIn" text="Verander pomp richting naar: vullen"/>
+        <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
+        <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
+
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="De pomp bron of doel is leeg!"/>
+        <text name="warning_objectFull" text="De pomp doel is vol!"/>
+        <text name="warning_invalidFillType" text="De pomp filltype is niet ondersteund!"/>
+        <text name="warning_checkManureFlow" text="Controleer de afluister voor de connector van %s!"/>
+
+        <!--Warnings hose-->
+        <text name="warning_parkingPlaceTooSmall" text="Het %sm opbergvak is te klein voor de %sm slang!"/>
+        <text name="warning_hoseRangeRestriction" text="De slang is niet langer, je kunt niet verder lopen!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Je bent Superman niet!"/>
+
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Zuig arm"/>
+
+        <!--Placeables-->
+        <text name="action_enableMixer" text="Mixer inschakelen"/>
+        <text name="action_disableMixer" text="Mixer uitschakelen"/>
+        <text name="info_thickness" text="%s dikte: %d%%"/>
+
+        <!--Hose Configuration-->
+        <text name="typeDesc_hose" text="Slang"/>
+        <text name="shopItem_slurryHose" text="Mestslang"/>
+        <text name="shopItem_fertilizerHose" text="Meststofslang"/>
+        <text name="function_hose" text="Met een slang kun je vloeibare vultypes van bron naar een doel overpompen. Indien nodig kun je de slang verlengen om grotere afstanden te overbruggen."/>
+        <text name="configuration_hose" text="Verander slang type."/>
+        <text name="configuration_valueExtend" text="Verlengbaar"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Standaard"/>
+        <text name="global_configuration_refillable" text="Navulbaar"/>
+    </texts>
+</l10n>

@@ -17,8 +17,6 @@ Hose.STATE_CONNECTED = 2
 Hose.STATE_PARKED = 3
 Hose.STATE_EXTENDED = 4
 
-Hose.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2
-
 Hose.CONNECTOR_SEQUENCE = 0.6 * 0.6
 Hose.VEHICLE_CONNECTOR_SEQUENCE = 6 * 6
 
@@ -30,7 +28,9 @@ Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
 Hose.RAYCAST_DISTANCE = 2
 
 Hose.JOINT_BREAK_FORCE = 20
-Hose.JOINT_BREAK_TORQUE = 15
+Hose.JOINT_BREAK_TORQUE = 20
+
+Hose.EXTENSION_IN_RANGE_DISTANCE = 1.5
 
 function Hose.prerequisitesPresent(specializations)
     return true
@@ -120,12 +120,14 @@ function Hose:onLoad(savegame)
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
     spec.foundConnectorIsConnected = false
+    spec.foundConnectorIsParkPlace = false
     spec.foundGrabNodeId = 0
 
     if self.isServer then
         spec.foundVehicleIdSend = 0
         spec.foundConnectorIdSend = 0
         spec.foundConnectorIsConnectedSend = false
+        spec.foundConnectorIsParkPlaceSend = false
         spec.foundGrabNodeIdSend = 0
     end
 
@@ -152,6 +154,7 @@ function Hose:onPreDelete()
     g_manureSystem:removeConnectorObject(self)
 end
 
+---Save connected hoses to the savegame server sided only.
 function Hose:onMissionSaveToSavegame(key, xmlFile)
     local spec = self.spec_hose
 
@@ -168,13 +171,18 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
             local saveKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i - 1)
 
             if desc ~= nil then
-                local vehicle = desc.vehicle
-                local connector = vehicle:getConnectorById(desc.connectorId)
+                local object = desc.vehicle
+                local connector = object:getConnectorById(desc.connectorId)
 
                 setXMLInt(xmlFile, saveKey .. "#grabNodeId", id)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
-                local objectId = g_manureSystem:getConnectorObjectId(vehicle)
+                local objectId = g_manureSystem:getConnectorObjectId(object)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
+
+                --Check if the object supports the getName method, somehow there are still objects who don't.
+                if object.getName ~= nil then
+                    setXMLString(xmlFile, saveKey .. "#objectName", object:getName())
+                end
 
                 -- No need to store anything else.
                 if connector.isParkPlace then
@@ -185,7 +193,8 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
     end
 end
 
-function Hose:onMissionLoadFromSavegame(key, xmlFile)
+---Load connected hoses from the savegame server sided only.
+function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
     local i = 0
     while true do
         local loadKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i)
@@ -197,10 +206,28 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile)
         local grabNodeId = getXMLInt(xmlFile, loadKey .. "#grabNodeId")
         local connectorId = getXMLInt(xmlFile, loadKey .. "#connectorId")
         local objectId = getXMLInt(xmlFile, loadKey .. "#objectId")
+        local objectName = getXMLString(xmlFile, loadKey .. "#objectName")
 
         if g_manureSystem:connectorObjectExists(objectId) then
             local object = g_manureSystem:getConnectorObject(objectId)
-            self:attach(grabNodeId, connectorId, object)
+
+            --Do a check on the saved object name to filter out obvious cases.
+            local isNotTheSameObject = objectName ~= nil and object:getName() ~= objectName
+            if valid and not isNotTheSameObject then
+                self:attach(grabNodeId, connectorId, object)
+            else
+                if isNotTheSameObject then
+                    Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
+                end
+
+                --Force reset on connected and flow state.
+                object:setIsConnected(connectorId, false)
+
+                --Check if we are not dealing with a hose.
+                if object.setIsManureFlowOpen ~= nil then
+                    object:setIsManureFlowOpen(connectorId, false, true)
+                end
+            end
         end
 
         i = i + 1
@@ -210,7 +237,7 @@ end
 function Hose:onReadStream(streamId, connection)
     if connection:getIsServer() then
         local spec = self.spec_hose
-        spec.hosesToLoadFromNetwork = {}
+        spec.hosesToLoad = {}
 
         local numOfGrabNodes = streamReadInt8(streamId)
         for id = 1, numOfGrabNodes do
@@ -223,8 +250,8 @@ function Hose:onReadStream(streamId, connection)
             elseif self:isConnected(grabNode) then
                 if streamReadBool(streamId) then
                     local vehicleId = NetworkUtil.readNodeObjectId(streamId)
-                    local connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
-                    table.insert(spec.hosesToLoadFromNetwork, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
+                    local connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
+                    table.insert(spec.hosesToLoad, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
                 end
             end
         end
@@ -248,7 +275,7 @@ function Hose:onWriteStream(streamId, connection)
                 streamWriteBool(streamId, desc ~= nil)
                 if desc ~= nil then
                     NetworkUtil.writeNodeObjectId(streamId, NetworkUtil.getObjectId(desc.vehicle))
-                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
                 end
             end
         end
@@ -260,9 +287,10 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
         if streamReadBool(streamId) then
             local spec = self.spec_hose
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
-            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
             spec.foundConnectorIsConnected = streamReadBool(streamId)
-            spec.foundGrabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS)
+            spec.foundConnectorIsParkPlace = streamReadBool(streamId)
+            spec.foundGrabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         end
     end
 end
@@ -272,9 +300,10 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
         local spec = self.spec_hose
         if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
-            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
             streamWriteBool(streamId, spec.foundConnectorIsConnected)
-            streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteBool(streamId, spec.foundConnectorIsParkPlace)
+            streamWriteUIntN(streamId, spec.foundGrabNodeId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
 end
@@ -288,13 +317,13 @@ end
 function Hose:onUpdate(dt)
     local spec = self.spec_hose
 
-    if spec.hosesToLoadFromNetwork ~= nil then
-        for _, toLoad in ipairs(spec.hosesToLoadFromNetwork) do
+    if spec.hosesToLoad ~= nil then
+        for _, toLoad in ipairs(spec.hosesToLoad) do
             local vehicle = NetworkUtil.getObject(toLoad.vehicleId)
             self:attach(toLoad.grabNodeId, toLoad.connectorId, vehicle, true)
         end
 
-        spec.hosesToLoadFromNetwork = nil
+        spec.hosesToLoad = nil
     end
 end
 
@@ -414,6 +443,14 @@ function Hose:restrictPlayerMovement(id, player, dt)
     end
 end
 
+---Returns true when the connector node is in range of the grab node, false otherwise.
+function Hose.isConnectorInRange(node, x, y, z, inRangeDistance)
+    local rx, ry, rz = getWorldTranslation(node)
+    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+    return distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < inRangeDistance
+end
+
+---Find possible connector objects for the given grab node id.
 function Hose:findConnector(id)
     if not self.isServer then
         return
@@ -424,55 +461,61 @@ function Hose:findConnector(id)
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
     spec.foundConnectorIsConnected = false
+    spec.foundConnectorIsParkPlace = false
     spec.foundGrabNodeId = 0
 
     local grabNode = self:getGrabNodeById(id)
-    if grabNode ~= nil then
-        if self:isAttached(grabNode) or self:isConnected(grabNode) then
-            local x, y, z = getWorldTranslation(grabNode.node)
+    if grabNode == nil then
+        return
+    end
 
-            local objects = g_manureSystem:getConnectorObjects()
-            for _, object in pairs(objects) do
-                if object ~= self then
-                    local vx, _, vz = getWorldTranslation(object.components[1].node)
-                    local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+    --Dismiss grab nodes that are not attached by player or connected.
+    if not (self:isAttached(grabNode) or self:isConnected(grabNode)) then
+        return
+    end
 
-                    if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                        or object:isa(Placeable) or object:isa(Bga) then
+    local x, y, z = getWorldTranslation(grabNode.node)
 
-                        if object.isaHose ~= nil and object:isaHose() then
-                            for connectorId, connectorGrabNode in ipairs(object:getGrabNodes()) do
-                                if not grabNode.isExtension and connectorGrabNode.isExtension and not self:isConnected(connectorGrabNode) then
-                                    local rx, ry, rz = getWorldTranslation(connectorGrabNode.node)
-                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+    for _, object in ipairs(g_manureSystem:getConnectorObjects()) do
+        if object ~= self then
+            local inRangeNode = object.components[1].node
+            if object.getConnectorInRangeNode ~= nil then
+                inRangeNode = object:getConnectorInRangeNode()
+            end
 
-                                    if distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < 1.5 then
-                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connectorId
-                                        spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
-                                        spec.foundGrabNodeId = id
-                                    end
+            local vx, _, vz = getWorldTranslation(inRangeNode)
+            local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+            if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
+                or object:isa(Placeable) or object:isa(Bga) then
+
+                if object.isaHose ~= nil and object:isaHose() then
+                    for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
+                        if not self:isConnected(connectorGrabNode) then
+                            if not grabNode.isExtension and connectorGrabNode.isExtension then
+                                if Hose.isConnectorInRange(connectorGrabNode.node, x, y, z, Hose.EXTENSION_IN_RANGE_DISTANCE) then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connectorGrabNode.id
+                                    spec.foundConnectorIsConnected = self:isExtended(connectorGrabNode)
+                                    spec.foundGrabNodeId = id
                                 end
                             end
-                        elseif not grabNode.isExtension then
-                            for connectorId, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
-                                if not connector.hasOpenManureFlow or connector.isConnected then
-                                    local rx, ry, rz = getWorldTranslation(connector.node)
-                                    local distance = MathUtil.vector2LengthSq(x - rx, z - rz)
+                        end
+                    end
+                else
+                    for _, connector in ipairs(object:getConnectorsByType(spec.connectorType)) do
+                        if not connector.hasOpenManureFlow or connector.isConnected then
+                            if not (grabNode.isExtension and not connector.isParkPlace) then
+                                local connectorInRange = Hose.isConnectorInRange(connector.node, x, y, z, connector.inRangeDistance)
+                                if not connectorInRange and connector.isParkPlace then
+                                    connectorInRange = Hose.isConnectorInRange(connector.parkPlaceLengthNode, x, y, z, connector.inRangeDistance)
+                                end
 
-                                    local connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
-                                    if not connectorInRange and connector.isParkPlace then
-                                        rx, ry, rz = getWorldTranslation(connector.parkPlaceLengthNode)
-                                        distance = MathUtil.vector2LengthSq(x - rx, z - rz)
-                                        connectorInRange = distance < Hose.CONNECTOR_SEQUENCE and math.abs(y - ry) < connector.inRangeDistance
-                                    end
-
-                                    if connectorInRange then
-                                        spec.foundVehicleId = NetworkUtil.getObjectId(object)
-                                        spec.foundConnectorId = connectorId
-                                        spec.foundConnectorIsConnected = connector.isConnected
-                                        spec.foundGrabNodeId = id
-                                    end
+                                if connectorInRange then
+                                    spec.foundVehicleId = NetworkUtil.getObjectId(object)
+                                    spec.foundConnectorId = connector.id
+                                    spec.foundConnectorIsConnected = connector.isConnected
+                                    spec.foundConnectorIsParkPlace = connector.isParkPlace
+                                    spec.foundGrabNodeId = id
                                 end
                             end
                         end
@@ -485,19 +528,23 @@ function Hose:findConnector(id)
     if spec.foundVehicleId ~= spec.foundVehicleIdSend
         or spec.foundConnectorId ~= spec.foundConnectorIdSend
         or spec.foundConnectorIsConnected ~= spec.foundConnectorIsConnectedSend
+        or spec.foundConnectorIsParkPlace ~= spec.foundConnectorIsParkPlaceSend
         or spec.foundGrabNodeId ~= spec.foundGrabNodeIdSend then
         spec.foundVehicleIdSend = spec.foundVehicleId
         spec.foundConnectorIdSend = spec.foundConnectorId
         spec.foundConnectorIsConnectedSend = spec.foundConnectorIsConnected
+        spec.foundConnectorIsParkPlaceSend = spec.foundConnectorIsParkPlace
         spec.foundGrabNodeIdSend = spec.foundGrabNodeId
         self:raiseDirtyFlags(spec.dirtyFlag)
     end
 end
 
-function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
+---Find connector object based on the attached hoses recursively.
+function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
     local spec = self.spec_hose
 
     doRaycast = doRaycast or false
+    startHose = startHose or self
     totalHoseLength = totalHoseLength or self:getLength()
 
     spec.lastRaycastDistance = 0
@@ -508,9 +555,9 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast)
             local vehicle = desc.vehicle
 
             -- Recursively get the connector object.
-            if vehicle.isaHose ~= nil and vehicle:isaHose() then
+            if vehicle.isaHose ~= nil and vehicle:isaHose() and vehicle ~= startHose then
                 totalHoseLength = totalHoseLength + vehicle:getLength()
-                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast)
+                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast, startHose)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
@@ -579,7 +626,7 @@ function Hose:fillRaycastCallback(hitObjectId, x, y, z, distance)
 
                     return false
                 end
-            elseif object:isa(ManureSystemStorage) then
+            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
                 spec.lastRaycastDistance = distance
                 spec.lastRaycastObject = object
                 return false
@@ -642,6 +689,10 @@ end
 ---Computes a catmull rom spline over shader
 function Hose:computeCatmullSpline()
     local spec = self.spec_hose
+
+    if not entityExists(spec.mesh) then
+        return
+    end
 
     local p0x, p0y, p0z = 0, 0, -spec.length -- calculate base offset
     local p1x, p1y, p1z = 0, 0, 0
@@ -736,6 +787,11 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
     end
 
     local connector = vehicle:getConnectorById(connectorId)
+
+    if connector.type ~= self.spec_hose.connectorType then
+        Logger.error("Corrupted savegame, the loaded connector type does not match the hose connector type!", connector.type)
+        return
+    end
 
     if not connector.isParkPlace then
         self:connectGrabNode(grabNode, connector, vehicle)
@@ -923,19 +979,28 @@ function Hose:parkHose(connector, vehicle)
     -- First we remove the hose from physics
     self:removeFromPhysics()
 
-    local xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
-    local xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
+    -- Set offset data
+    local xStartOffPos, yStartOffPos, zStartOffPos = 0, 0, 0
+    local xEndOffPos, yEndOffPos, zEndOffPos = 0, 0, 0
+    local xStartOffRot, yStartOffRot, zStartOffRot = 0, 0, 0
+    local xEndOffRot, yEndOffRot, zEndOffRot = 0, 0, 0
 
-    local xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
-    local xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
+    if spec.length >= connector.parkOffsetThreshold then
+        xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
+        xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
+        xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
+        xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
+    end
 
     local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
     local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
 
     -- Do correction on the end offset with the start offset.
-    xEndOffPos = xEndOffPos - xStartOffPos
-    yEndOffPos = yEndOffPos - yStartOffPos
-    zEndOffPos = zEndOffPos - zStartOffPos
+    if spec.length >= connector.parkOffsetThreshold then
+        xEndOffPos = xEndOffPos - xStartOffPos
+        yEndOffPos = yEndOffPos - yStartOffPos
+        zEndOffPos = zEndOffPos - zStartOffPos
+    end
 
     -- We place the components correctly.
     for i = 1, #self.components do
@@ -948,7 +1013,7 @@ function Hose:parkHose(connector, vehicle)
         local tx, ty, tz = MathUtil.vector3Lerp(xStartOffPos, yStartOffPos, zStartOffPos, xEndOffPos, yEndOffPos, zEndOffPos, 1 / division * alpha)
         local x, y, z = localToWorld(parkNode, tx, ty, tz + (length / division * alpha))
 
-        local ox, oy, oz = 0, 0, 0
+        local ox, oy, oz = MathUtil.vector3Lerp(xStartOffRot, yStartOffRot, zStartOffRot, xEndOffRot, yEndOffRot, zEndOffRot, 1 / division * alpha)
         if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
             oy = oy + math.pi
         end
@@ -1126,10 +1191,12 @@ function Hose:onPlayerJointBreak(jointIndex, breakingImpulse)
 
     if player ~= nil then
         local hose = NetworkUtil.getObject(player.lastFoundHose)
-        local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
+        if hose ~= nil then
+            local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
 
-        if jointIndex == grabNode.jointIndex then
-            hose:drop(grabNode.id, player)
+            if jointIndex == grabNode.jointIndex then
+                hose:drop(grabNode.id, player)
+            end
         end
     end
 
@@ -1140,14 +1207,16 @@ end
 function Hose:onConnectorJointBreak(jointIndex, breakingImpulse)
     local spec = self.spec_hose
 
-    for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
-        local grabNode = self:getGrabNodeById(grabNodeId)
-        if jointIndex == grabNode.jointIndex then
-            if grabNode.isExtension then
-                --When the grabNode is an extension we detach it from the other hose.
-                desc.vehicle:detach(desc.connectorId, grabNodeId, self)
-            else
-                self:detach(grabNodeId, desc.connectorId, desc.vehicle)
+    if self.firstTimeRun then
+        for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
+            local grabNode = self:getGrabNodeById(grabNodeId)
+            if jointIndex == grabNode.jointIndex then
+                if grabNode.isExtension then
+                    --When the grabNode is an extension we detach it from the other hose.
+                    desc.vehicle:detach(desc.connectorId, grabNodeId, self)
+                else
+                    self:detach(grabNodeId, desc.connectorId, desc.vehicle)
+                end
             end
         end
     end
@@ -1185,14 +1254,14 @@ function Hose.loadGrabNodes(self)
     end
 
     local i = 0
-    while i <= 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS do
+    while i <= 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS do
         local key = ("%s.grabNodes.grabNode(%d)"):format(baseKey, i)
 
         if not hasXMLProperty(self.xmlFile, key) then
             break
         end
 
-        if #spec.grabNodes == 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS then
+        if #spec.grabNodes == 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS then
             Logger.error("Max amount of grabNodes reached!")
             break
         end
@@ -1203,6 +1272,7 @@ function Hose.loadGrabNodes(self)
             local grabNode = {}
 
             grabNode.id = i + 1
+            grabNode.type = spec.connectorType
             grabNode.node = node
             grabNode.raycastNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. "#raycastNode"), self.i3dMappings)
 

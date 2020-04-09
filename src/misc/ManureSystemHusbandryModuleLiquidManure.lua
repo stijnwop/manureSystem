@@ -24,7 +24,7 @@ function ManureSystemHusbandryModuleLiquidManure:new(isClient, isServer, mission
     HusbandryModuleLiquidManure.load = Utils.overwrittenFunction(HusbandryModuleLiquidManure.load, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_load)
     HusbandryModuleLiquidManure.loadFromXMLFile = Utils.appendedFunction(HusbandryModuleLiquidManure.loadFromXMLFile, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_loadFromXMLFile)
     HusbandryModuleLiquidManure.saveToXMLFile = Utils.appendedFunction(HusbandryModuleLiquidManure.saveToXMLFile, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_saveToXMLFile)
-    HusbandryModuleLiquidManure.delete = Utils.appendedFunction(HusbandryModuleLiquidManure.delete, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_delete)
+    HusbandryModuleLiquidManure.delete = Utils.prependedFunction(HusbandryModuleLiquidManure.delete, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_delete)
     HusbandryModuleLiquidManure.finalizePlacement = Utils.overwrittenFunction(HusbandryModuleLiquidManure.finalizePlacement, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_finalizePlacement)
     HusbandryModuleLiquidManure.readStream = Utils.appendedFunction(HusbandryModuleLiquidManure.readStream, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_readStream)
     HusbandryModuleLiquidManure.writeStream = Utils.appendedFunction(HusbandryModuleLiquidManure.writeStream, ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_writeStream)
@@ -43,6 +43,7 @@ function ManureSystemHusbandryModuleLiquidManure.setupVanillaHusbandry(xmlFile, 
         or xmlFileName == "data/placeables/animalHusbandry/husbandryCowLarge.xml"
         or xmlFileName == "data/placeables/animalHusbandry/husbandryPig.xml"
         or xmlFileName == "data/placeables/animalHusbandry/husbandryPigLarge.xml" then
+        setXMLBool(xmlFile, ("placeable.manureSystemFillArmReceiver#allowFillArm"), false) -- vanilla husbandry does not support fill arms.
         setXMLString(xmlFile, "placeable.manureSystemConnectors#rootNode", "0|3")
 
         setXMLString(xmlFile, ("placeable.manureSystemConnectors.connector(%d)#type"):format(0), "COUPLING")
@@ -61,10 +62,6 @@ end
 function ManureSystemHusbandryModuleLiquidManure.inj_husbandry_update(husbandry, dt)
     local liquidManureModule = husbandry:getModuleByName("liquidManure")
     if liquidManureModule ~= nil and liquidManureModule.connectorStrategies ~= nil then
-        if g_manureSystem.debug then
-            husbandry:raiseActive()
-        end
-
         for _, class in pairs(liquidManureModule.connectorStrategies) do
             if class.onUpdate ~= nil then
                 class:onUpdate(dt)
@@ -86,6 +83,9 @@ function ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_load(module
     module.connectorStrategies = {}
     module.manureSystemConnectors = {}
     module.manureSystemConnectorsByType = {}
+
+    module.allowFillArm = Utils.getNoNil(getXMLBool(xmlFile, "placeable.manureSystemFillArmReceiver#allowFillArm"), true)
+    module.fillArmOffset = Utils.getNoNil(getXMLFloat(xmlFile, "placeable.manureSystemFillArmReceiver#fillArmOffset"), 0)
 
     -- Prepare for hose physics
     module.rootNode = ManureSystemUtil.getFirstPhysicsNode(rootNode)
@@ -245,6 +245,35 @@ end
 ------------------------------------------------
 -- New methods on the AnimalHusbandry class
 ------------------------------------------------
+
+---Checks if the given Y translation is under the fill plane.
+function AnimalHusbandry:isUnderFillPlane(x, y, z)
+    local liquidManureModule = self:getModuleByName("liquidManure")
+
+    if liquidManureModule ~= nil then
+        if not liquidManureModule.allowFillArm then
+            return false
+        end
+
+        local node = liquidManureModule.fillPlane.node
+        if node == nil then
+            return true
+        end
+
+        local _, py, _ = getWorldTranslation(node)
+        py = py + liquidManureModule.fillArmOffset
+
+        return py >= y
+    end
+
+    return false
+end
+
+---Gets the fillUnit index for the fill arm.
+function AnimalHusbandry:getFillArmFillUnitIndex()
+    -- Always 1 since we don't support multi unit storage.
+    return 1
+end
 
 function AnimalHusbandry:getFillUnitFillType(unitIndex)
     local liquidManureModule = self:getModuleByName("liquidManure")

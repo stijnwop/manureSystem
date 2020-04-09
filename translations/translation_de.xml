@@ -7,10 +7,11 @@
         <text name="input_MS_ATTACH_HOSE" text="Schlauch ankoppeln"/>
         <text name="input_MS_DETACH_HOSE" text="Schlauch abkoppeln"/>
         <text name="input_MS_TOGGLE_FLOW" text="Güllefluss umschalten"/>
-        <text name="input_MS_ACTIVATE_PUMP" text="Pumpe Ein/Aus schalten"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Pumpe Ein/Ausschalten"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Pumprichtung wechseln"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Schlauch verstauen"/>
         <text name="action_toggleManureFlow" text="%s Güllefluss"/>
         <text name="action_toggleManureFlowStateOpen" text="Offen"/>
         <text name="action_toggleManureFlowStateClose" text="Geschlossen"/>
@@ -23,10 +24,19 @@
         <text name="action_directionLeftRight" text="Ändere Pumprichtung in: links nach rechts"/>
         <text name="action_directionRightLeft" text="Ändere Pumprichtung in: rechts nach links"/>
 
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="Start- oder Zielbehälter ist leer!"/>
+        <text name="warning_objectFull" text="Pumpziel ist voll!"/>
+        <text name="warning_invalidFillType" text="Pumpmaterial wird nicht unterstützt!"/>
+        <text name="warning_checkManureFlow" text="Bitte den Güllefluss am Verbinder %s prüfen!"/>
+
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="Der %sm Lagerplatz ist zu klein für den %sm Schlauch!"/>
         <text name="warning_hoseRangeRestriction" text="Die maximale Schlauchlänge ist erreicht. Sie können sich nicht weiter entfernen!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Du bist kein Superheld!"/>
+
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Saugarm"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Mixer aktivieren"/>
@@ -40,5 +50,9 @@
         <text name="function_hose" text="Mit einem Schlauch können Sie Flüssigkeiten umpumpen. Wahlweise können Sie auch die Schläuche mit Verlängerungen erweitern."/>
         <text name="configuration_hose" text="Schlauchtyp wechseln."/>
         <text name="configuration_valueExtend" text="Verlängerbar"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
+        <text name="global_configuration_refillable" text="Nachfüllbar "/>
     </texts>
 </l10n>

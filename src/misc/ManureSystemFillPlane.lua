@@ -48,20 +48,20 @@ function ManureSystemFillPlane:load(rootNode, xmlFile, xmlNode, capacity)
             assert(self.planeMinY <= self.planeMaxY)
             self:setHeight(0)
             self:resetMixingState(0)
-
-            --local detectionNodeIndex = XMLUtil.getValueFromXMLFileOrUserAttribute(xmlFile, xmlNode, "detectionNode", getXMLString, rootNode)
-            --if detectionNodeIndex ~= nil then
-            --    self.detectionNode = I3DUtil.indexToObject(rootNode, detectionNodeIndex)
-            --    g_currentMission:addNodeObject(self.detectionNode, self.parent)
-            --end
         end
     end
 end
 
 function ManureSystemFillPlane:delete()
-    --if self.detectionNode ~= nil then
-    --    g_currentMission:removeNodeObject(self.detectionNode)
-    --end
+end
+
+---Load the fill plane from the savegame.
+function ManureSystemFillPlane:loadFromXMLFile(xmlFile, key, resetVehicles)
+    if self.planeNode ~= nil then
+        local thickness = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#thickness"), 0)
+        self:setHeight(self.parent:getFillUnitFillLevel())
+        self:resetMixingState(thickness)
+    end
 end
 
 function ManureSystemFillPlane:setHeight(fillLevel)

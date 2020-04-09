@@ -18,13 +18,19 @@ ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS = 2
 
 local ManureSystemCouplingStrategy_mt = Class(ManureSystemCouplingStrategy)
 
+---Sort function on hasOpenManureFlow.
+local sortConnectorsByManureFlowState = function(con1, con2)
+    return con1.hasOpenManureFlow and not con2.hasOpenManureFlow
+end
+
+---Creates a new instance of ManureSystemCouplingStrategy.
+---@return ManureSystemCouplingStrategy
 function ManureSystemCouplingStrategy:new(object, type, customMt)
     local instance = {}
+    setmetatable(instance, customMt or ManureSystemCouplingStrategy_mt)
 
     instance.object = object
-    instance.couplingType = type
-
-    setmetatable(instance, customMt or ManureSystemCouplingStrategy_mt)
+    instance.connectorType = type
 
     return instance
 end
@@ -32,7 +38,7 @@ end
 function ManureSystemCouplingStrategy:onReadStream(connector, streamId, connection)
     local isConnected = streamReadBool(streamId)
     if streamReadBool(streamId) then
-        connector.connectedNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+        connector.connectedNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
         connector.connectedObject = NetworkUtil.readNodeObject(streamId)
     end
 
@@ -46,99 +52,105 @@ function ManureSystemCouplingStrategy:onWriteStream(connector, streamId, connect
     streamWriteBool(streamId, connector.connectedNodeId ~= nil)
 
     if connector.connectedNodeId ~= nil then
-        streamWriteUIntN(streamId, connector.connectedNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+        streamWriteUIntN(streamId, connector.connectedNodeId - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
         NetworkUtil.writeNodeObject(streamId, connector.connectedObject)
     end
 
     streamWriteBool(streamId, connector.hasOpenManureFlow)
 end
 
-local sortConnectorsByManureFlowState = function(con1, con2)
-    return con1.hasOpenManureFlow and not con2.hasOpenManureFlow
+---Called on update frame by the object that implements the connector strategy.
+function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local object = self.object
+
+    --Only server sided.
+    if not object.isServer then
+        return
+    end
+
+    if g_manureSystem.debugShowConnectors then
+        object:raiseActive()
+
+        for _, connector in ipairs(object:getConnectorsByType(self.connectorType)) do
+            DebugUtil.drawDebugNode(connector.node, "CONNECTOR NODE")
+        end
+    end
+
+    --We don't have to search for possible source object on placeables.
+    if object.getActiveConnectorsByType == nil then
+        return
+    end
+
+    if object.isStandalonePump ~= nil and object:isStandalonePump() then
+        self:findStandalonePumpObjects(object, dt)
+    else
+        self:findPumpObjects(object, dt)
+    end
 end
 
+---Returns warning message when the manure flow is closed on connected hoses.
+function ManureSystemCouplingStrategy:getPumpInvalidWarningMessage()
+    local connectors = self.object:getActiveConnectorsByType(self.connectorType)
+
+    for _, connector in ipairs(connectors) do
+        if connector.isConnected and not connector.isParkPlace then
+            --We have a closed manure flow.
+            if not connector.hasOpenManureFlow then
+                return g_i18n:getText("warning_checkManureFlow"):format(self.object:getName())
+            end
+
+            local desc = self:getConnectorObjectDesc(self.object, connector)
+            --Target has closed manure flow.
+            if desc ~= nil and desc.vehicle ~= nil and not desc.hasOpenManureFlow then
+                return g_i18n:getText("warning_checkManureFlow"):format(desc.vehicle:getName())
+            end
+        end
+    end
+
+    return nil
+end
+
+---Set the pump efficiency time based on the given length.
 function ManureSystemCouplingStrategy:getCalculatedMaxTime(length)
     local orgMaxTime = self.object:getOriginalPumpMaxTime()
     return orgMaxTime + orgMaxTime * ManureSystemCouplingStrategy.MAX_TIME_SCALE * length
 end
 
-function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
-    local object = self.object
-
-    if object.isServer then
-        if object.isStandalonePump ~= nil and object:isStandalonePump() then
-            local connectors = ListUtil.copyTable(object:getConnectorsByType(self.couplingType))
-
-            if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
-                table.sort(connectors, sortConnectorsByManureFlowState)
-
-                local function resetPumpTargetObject()
-                    if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
-                        object:setPumpTargetObject(nil, nil)
-                        object:setPumpSourceObject(nil, nil)
-                        object:setIsPumpSourceWater(false)
-                        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
-                    end
-                end
-
-                local connector1, connector2 = unpack(connectors, 1, 2)
-                if connector1.isConnected and not connector1.isParkPlace
-                    and connector2.isConnected and not connector2.isParkPlace then
-                    local desc1, lengthHoses1 = self:getConnectorObjectDesc(object, connector1)
-                    local desc2, lengthHoses2 = self:getConnectorObjectDesc(object, connector2)
-
-                    if desc1 ~= nil and desc2 ~= nil then
-                        if desc1.vehicle ~= nil then
-                            if desc2.isNearWater then
-                                object:setPumpSourceObject(desc1.vehicle, desc1.fillUnitIndex)
-                                object:setIsPumpSourceWater(true)
-                            else
-                                object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
-                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
-                            end
-                        elseif desc2.vehicle ~= nil then
-                            if desc1.isNearWater then
-                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
-                                object:setIsPumpSourceWater(true)
-                            else
-                                object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
-                                object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
-                            end
-                        end
-
-                        local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
-                        object:setPumpMaxTime(impactTime)
-                    else
-                        resetPumpTargetObject()
-                    end
-                else
-                    resetPumpTargetObject()
-                end
-            end
-        else
-            self:findPumpObjects(object, dt)
-        end
+---Resets the pump settings.
+function ManureSystemCouplingStrategy:resetPumpTargetObject(object)
+    if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
+        object:setPumpTargetObject(nil, nil)
+        object:setPumpSourceObject(nil, nil)
+        object:setIsPumpSourceWater(false)
+        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
     end
 end
 
+---Sets standalone pump targets based on the given desc entries.
+function ManureSystemCouplingStrategy:setStandalonePumpTargetObject(object, desc1, desc2)
+    if desc2.isNearWater then
+        object:setPumpSourceObject(desc1.vehicle, desc1.fillUnitIndex)
+        object:setIsPumpSourceWater(true)
+    else
+        object:setPumpTargetObject(desc1.vehicle, desc1.fillUnitIndex)
+        object:setPumpSourceObject(desc2.vehicle, desc2.fillUnitIndex)
+    end
+end
+
+---Find pump objects for normal pumps.
 function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
-    local connectors = object:getConnectorsByType(self.couplingType)
+    local connectors = object:getActiveConnectorsByType(self.connectorType)
 
     local didPumpTargetReset = false
     for _, connector in ipairs(connectors) do
         if g_manureSystem.debug then
-            DebugUtil.drawDebugNode(connector.node, "CONNECTOR")
+            DebugUtil.drawDebugNode(connector.node, "ACTIVE CONNECTOR")
         end
 
         if connector.isConnected and not connector.isParkPlace then
             if not didPumpTargetReset then
                 if object.spec_manureSystemPumpMotor ~= nil then
-                    if object:getPumpTargetObject() ~= nil then
-                        object:setPumpTargetObject(nil, nil)
-                        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
-                    end
-
-                    object:setIsPumpSourceWater(false)
+                    self:resetPumpTargetObject(object)
                     didPumpTargetReset = true
                 end
             end
@@ -146,7 +158,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
             local desc, length = self:getConnectorObjectDesc(object, connector)
 
             if object.spec_manureSystemPumpMotor ~= nil then
-                if desc ~= nil and connector.hasOpenManureFlow then
+                if desc ~= nil and desc.hasOpenManureFlow and connector.hasOpenManureFlow then
                     if desc.vehicle ~= nil then
                         object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
                         object:setPumpSourceObject(object, connector.fillUnitIndex)
@@ -160,6 +172,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
                 end
             end
 
+            --When the desc is nil but our connector has open manure flow we slowly empty the object.
             if desc == nil then
                 if connector.hasOpenManureFlow and connector.manureFlowAnimationName ~= nil then
                     local fillType = object:getFillUnitFillType(connector.fillUnitIndex)
@@ -175,6 +188,61 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
     end
 end
 
+---Find pump objects for standalone pumps.
+function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
+    local connectors = ListUtil.copyTable(object:getConnectorsByType(self.connectorType))
+
+    if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
+        table.sort(connectors, sortConnectorsByManureFlowState)
+
+        local connector1, connector2 = unpack(connectors, 1, 2)
+        if connector1.isConnected and not connector1.isParkPlace
+            and connector2.isConnected and not connector2.isParkPlace then
+            local desc1, lengthHoses1 = self:getConnectorObjectDesc(object, connector1)
+            local desc2, lengthHoses2 = self:getConnectorObjectDesc(object, connector2)
+
+            if desc1 ~= nil and desc1.hasOpenManureFlow and desc2 ~= nil and desc2.hasOpenManureFlow then
+                if desc1.vehicle ~= nil then
+                    self:setStandalonePumpTargetObject(object, desc1, desc2)
+                elseif desc2.vehicle ~= nil then
+                    self:setStandalonePumpTargetObject(object, desc2, desc1)
+                end
+
+                local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
+                object:setPumpMaxTime(impactTime)
+            else
+                self:resetPumpTargetObject(object)
+            end
+        else
+            self:resetPumpTargetObject(object)
+        end
+    elseif #connectors > 0 then
+        local connector1 = unpack(connectors, 1)
+        if connector1.isConnected and not connector1.isParkPlace then
+            local desc1, lengthHoses1 = self:getConnectorObjectDesc(object, connector1)
+
+            if desc1 ~= nil and desc1.hasOpenManureFlow then
+                if desc1.vehicle ~= nil then
+                    local fillType = desc1.vehicle:getFillUnitFillType(desc1.fillUnitIndex)
+                    local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType)
+                    if sourceObject ~= nil then
+                        local desc2 = { vehicle = sourceObject, isNearWater = false, fillUnitIndex = sourceFillUnitIndex }
+                        object:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
+                        self:setStandalonePumpTargetObject(object, desc1, desc2)
+
+                        local impactTime = self:getCalculatedMaxTime(lengthHoses1)
+                        object:setPumpMaxTime(impactTime)
+                    end
+                end
+            else
+                self:resetPumpTargetObject(object)
+            end
+        else
+            self:resetPumpTargetObject(object)
+        end
+    end
+end
+
 function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
     local desc, length = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId, 1, true) -- do raycast too.
 
@@ -182,16 +250,28 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
         if desc.connectorId ~= nil then
             local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
-            if connector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
-                return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, length
+            if connector.hasOpenManureFlow and descConnector.isConnected then
+                return {
+                    vehicle = desc.vehicle,
+                    hasOpenManureFlow = descConnector.hasOpenManureFlow,
+                    fillUnitIndex = descConnector.fillUnitIndex
+                }, length
             end
         else
+            local hasOpenManureFlow = true
             if desc.vehicle ~= nil then
                 -- Raycasted object.
-                return { vehicle = desc.vehicle, fillUnitIndex = 1 }, length
+                return {
+                    vehicle = desc.vehicle,
+                    hasOpenManureFlow = hasOpenManureFlow,
+                    fillUnitIndex = 1
+                }, length
             else
                 -- Pump from water.
-                return { isNearWater = desc.isNearWater }, length
+                return {
+                    isNearWater = desc.isNearWater,
+                    hasOpenManureFlow = hasOpenManureFlow
+                }, length
             end
         end
     end
@@ -213,7 +293,6 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.jointOrigTrans = { getTranslation(connector.node) }
 
     if connector.isParkPlace then
-        connector.parkPlaceAnimationName = getXMLString(xmlFile, key .. "#parkPlaceAnimationName")
         connector.parkPlaceLength = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceLength"), 5) -- Default length of 5m
 
         connector.parkOffsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkOffsetThreshold"), 0)
@@ -274,7 +353,9 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, k
 end
 
 function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
-    self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
+    if connector.isConnected then
+        self.object:setIsManureFlowOpen(connector.id, getXMLBool(xmlFile, key .. "#hasOpenManureFlow"), true)
+    end
 end
 
 function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)

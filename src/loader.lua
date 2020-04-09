@@ -23,8 +23,10 @@ source(Utils.getFilename("src/misc/strategies/connectors/ManureSystemDockStrateg
 source(Utils.getFilename("src/utils/Logger.lua", directory))
 source(Utils.getFilename("src/ManureSystem.lua", directory))
 
+source(Utils.getFilename("src/events/ManureSystemEventBits.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemPumpDirectionEvent.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemPumpIsRunningEvent.lua", directory))
+source(Utils.getFilename("src/events/ManureSystemPumpIsAllowedEvent.lua", directory))
 source(Utils.getFilename("src/events/HoseAttachDetachEvent.lua", directory))
 source(Utils.getFilename("src/events/HoseGrabDropEvent.lua", directory))
 source(Utils.getFilename("src/events/ManureSystemConnectorIsConnectedEvent.lua", directory))
@@ -138,12 +140,29 @@ local function saveToXMLFile(missionInfo)
 end
 
 local function validateVehicleTypes(vehicleTypeManager)
+    ManureSystem.addModTranslations(g_i18n)
     ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
+end
+
+---Unload the mod when the game is closed.
+local function unload()
+    if not isEnabled() then
+        return
+    end
+
+    if manureSystem ~= nil then
+        manureSystem:delete()
+        -- GC
+        manureSystem = nil
+        getfenv(0)["g_manureSystem"] = nil
+    else
+        ManureSystem.removeModTranslations(g_i18n)
+    end
 end
 
 local function vehicleLoad(self, superFunc, vehicleData, ...)
     local _, baseDir = Utils.getModNameAndBaseDirectory(vehicleData.filename)
-    local xmlFilename = vehicleData.filename:gsub(baseDir, "")
+    local xmlFilename = ManureSystemUtil.replaceSanitized(vehicleData.filename, baseDir, "")
 
     if vehicles[xmlFilename] ~= nil then
         local data = vehicles[xmlFilename]
@@ -219,6 +238,8 @@ local function getIsLoadTriggerActivatable(trigger, superFunc)
 end
 
 local function init()
+    FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
+
     loadInsertionVehicles()
 
     g_placeableTypeManager:addPlaceableType("manureSystemStorage", "ManureSystemStorage", directory .. "src/placeables/ManureSystemStorage.lua")

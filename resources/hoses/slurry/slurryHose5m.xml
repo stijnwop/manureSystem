@@ -8,11 +8,11 @@
             <function>$l10n_function_hose</function>
         </functions>
         <specs>
-            <workingWidth>3</workingWidth>
+            <workingWidth>5</workingWidth>
             <fillTypeCategories>slurryTank</fillTypeCategories>
         </specs>
         <image>resources/hoses/slurry/store.png</image>
-        <price>150</price>
+        <price>250</price>
         <lifetime>600</lifetime>
         <rotation>0</rotation>
         <brand>LIZARD</brand>
@@ -21,8 +21,8 @@
 
     <base>
         <typeDesc>$l10n_typeDesc_hose</typeDesc>
-        <filename>resources/hoses/slurry/slurryHose.i3d</filename>
-        <size width="0.2" length="3"/>
+        <filename>resources/hoses/slurry/slurryHose5m.i3d</filename>
+        <size width="0.2" length="5"/>
         <components>
             <component centerOfMass="0 0 -0.25" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
@@ -50,7 +50,7 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>">
+    <hose length="5" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>">
         <hoseConfigurations>
             <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>

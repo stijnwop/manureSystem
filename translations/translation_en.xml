@@ -11,6 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Toggle pump direction"/>
 
         <!--Actions-->
+        <text name="action_storeHose" text="Store hose"/>
         <text name="action_toggleManureFlow" text="%s manure flow"/>
         <text name="action_toggleManureFlowStateOpen" text="Open"/>
         <text name="action_toggleManureFlowStateClose" text="Close"/>
@@ -23,7 +24,16 @@
         <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
         <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
 
-        <!--Warnings-->
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
+        <text name="warning_objectFull" text="The pump target is full!"/>
+        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>
+        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/>
+
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Fill arm"/>
+
+        <!--Warnings hose-->
         <text name="warning_parkingPlaceTooSmall" text="The %sm parking place is too small for the %sm hose!"/>
         <text name="warning_hoseRangeRestriction" text="The hose range restriction won't allow you to go any further!"/>
         <text name="warning_hoseRangeRestrictionLength" text="You are not super human!"/>
@@ -40,5 +50,9 @@
         <text name="function_hose" text="With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the hose to reach larger ranges."/>
         <text name="configuration_hose" text="Change hose type."/>
         <text name="configuration_valueExtend" text="Extension"/>
+
+        <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
+        <text name="global_configuration_refillable" text="Refillable"/>
     </texts>
 </l10n>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Gonimy_Vetrom</translationContributors>
+
+    <texts>
+        <!--Inputs-->
+        <text name="input_MS_ATTACH_HOSE" text="Присоединить шланг"/>
+        <text name="input_MS_DETACH_HOSE" text="Отсоединить шланг"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Переключить поток навоза"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="ВКЛ/ВЫКЛ насос"/>
+        <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Изменить направление перекачивания"/>
+
+        <!--Actions-->
+		<text name="action_storeHose" text="Уложить шланг"/>
+        <text name="action_toggleManureFlow" text="%s поток навоза"/>
+        <text name="action_toggleManureFlowStateOpen" text="Открыть"/>
+        <text name="action_toggleManureFlowStateClose" text="Закрыть"/>
+
+        <text name="action_activatePump" text="ВКЛ насос на %s"/>
+        <text name="action_deactivatePump" text="ВЫКЛ насос на %s"/>
+
+        <text name="action_directionOut" text="Изменить направление перекачивания на: опустошение"/>
+        <text name="action_directionIn" text="Изменить направление перекачивания на: наполнение"/>
+        <text name="action_directionLeftRight" text="Изменить направление перекачивания: слева направо"/>
+        <text name="action_directionRightLeft" text="Изменить направление перекачивания: справа налево"/>
+
+        <!--Warnings pump-->
+        <text name="warning_objectEmpty" text="Цель или источник насоса пуст!"/>
+        <text name="warning_objectFull" text="Цель насоса полная!"/>
+        <text name="warning_invalidFillType" text="Данный тип жидкости не поддерживается!"/>
+        <text name="warning_checkManureFlow" text="Пожалуйста, проверьте поток навоза для соединителя %s!"/>
+
+        <!--Configuration fill arm-->
+        <text name="configuration_manureSystemFillArm" text="Штанга-наполнитель"/>
+
+		<!--Warnings hose-->
+        <text name="warning_parkingPlaceTooSmall" text="Место для парковки %sм слишком маленькое для шланга %sм!"/>
+        <text name="warning_hoseRangeRestriction" text="Ограничение длинны шланга не позволит вам идти дальше!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Вы не супермен!"/>
+
+        <!--Placeables-->
+        <text name="action_enableMixer" text="Включить миксер"/>
+        <text name="action_disableMixer" text="Выключить миксер"/>
+        <text name="info_thickness" text="%s толщина: %d%%"/>
+
+        <!--Hose Configuration-->
+        <text name="typeDesc_hose" text="Шланг"/>
+        <text name="shopItem_slurryHose" text="Шланг для навоза"/>
+        <text name="shopItem_fertilizerHose" text="Шланг для удобрений"/>
+        <text name="function_hose" text="Со шлангом вы можете перекачивать жидкости от источника к цели. Если применимо, вы можете удлинить шланг, присоединив ещё один."/>
+        <text name="configuration_hose" text="Тип шланга"/>
+        <text name="configuration_valueExtend" text="Расширение"/>
+		
+		    <!--Pallets-->
+        <text name="global_configuration_disappearOnEmpty" text="Обычный"/>
+        <text name="global_configuration_refillable" text="Заправляемый"/>
+    </texts>
+</l10n>

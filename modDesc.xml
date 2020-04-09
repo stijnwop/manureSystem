@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="47">
     <author>Wopster</author>
-    <version>1.0.0.0</version>
+    <version>1.0.9.0-beta</version>
     <title>
         <en>Manure System</en>
         <de>Gülle System</de>
@@ -110,6 +110,7 @@ Tuyau à fertilisant:
             <specialization name="washable"/>
             <specialization name="wearable"/>
             <specialization name="foliageBending"/>
+            <specialization name="tensionBeltObject"/>
             <specialization name="hose"/>
         </type>
         <type name="vanillaPGII20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
@@ -205,6 +206,7 @@ Tuyau à fertilisant:
 
     <storeItems>
         <storeItem xmlFilename="resources/hoses/slurry/slurryHose.xml"/>
+        <storeItem xmlFilename="resources/hoses/slurry/slurryHose5m.xml"/>
         <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>
     </storeItems>
 

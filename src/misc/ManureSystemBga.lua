@@ -31,21 +31,16 @@ function ManureSystemBga:new(isClient, isServer, mission, input)
     return self
 end
 
+function ManureSystemBga:delete()
+end
+
 function ManureSystemBga.inj_bga_load(self, superFunc, id, xmlFile, key, customEnvironment)
     if not superFunc(self, id, xmlFile, key, customEnvironment) then
         return false
     end
 
-    --if xmlFileName == "data/placeables/animalHusbandry/husbandryCow.xml"then
-    --setXMLString(xmlFile, "placeable.bga.manureSystemConnectors#rootNode", "1|0|0")
-    --
-    --setXMLString(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#type"):format(0), "COUPLING")
-    --setXMLString(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#linkNode"):format(0), "1|0|0")
-    --setXMLBool(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#createNode"):format(0), true)
-    --setXMLFloat(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#inRangeDistance"):format(0), 2)
-    --setXMLString(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#position"):format(0), "0 -8 0")
-    --setXMLString(xmlFile, ("placeable.bga.manureSystemConnectors.connector(%d)#rotation"):format(0), "0 90 0")
-    --end
+    self.allowFillArm = Utils.getNoNil(getXMLBool(xmlFile, key .. ".manureSystemFillArmReceiver#allowFillArm"), true)
+    self.fillArmOffset = Utils.getNoNil(getXMLFloat(xmlFile, key .. ".manureSystemFillArmReceiver#fillArmOffset"), 0)
 
     self.connectorStrategies = {}
     self.manureSystemConnectors = {}
@@ -147,10 +142,6 @@ end
 
 function ManureSystemBga.inj_bga_update(self, dt)
     if self.connectorStrategies ~= nil then
-        if g_manureSystem.debug then
-            self:raiseActive()
-        end
-
         for _, class in pairs(self.connectorStrategies) do
             if class.onUpdate ~= nil then
                 class:onUpdate(dt)
@@ -217,6 +208,25 @@ function Bga:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
     return false
 end
 
+---Checks if the given Y translation is under the fill plane.
+function Bga:isUnderFillPlane(x, y, z)
+    if not self.allowFillArm then
+        return false
+    end
+
+    if self.fillPlane == nil then
+        return false
+    end
+
+    return self.fillPlane:isUnder(x, y, z)
+end
+
+---Gets the fillUnit index for the fill arm.
+function Bga:getFillArmFillUnitIndex()
+    -- Always 1 since we don't support multi unit storage.
+    return 1
+end
+
 ---Add function
 function Bga:getName()
     return self.owner:getName()
@@ -225,6 +235,16 @@ end
 ---Set owner object (placeable) for playing animations.
 function Bga:setOwner(owner)
     self.owner = owner
+end
+
+---Add gateway to the owner object for getting the animation time.
+function Bga:getAnimationTime(animationName)
+    return self.owner:getAnimationTime(animationName)
+end
+
+---Add gateway to the owner object for checking if the animation is playing.
+function Bga:getIsAnimationPlaying(animationName)
+    return self.owner:getIsAnimationPlaying(animationName)
 end
 
 function Bga:getStorage()

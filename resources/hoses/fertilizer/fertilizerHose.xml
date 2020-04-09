@@ -8,6 +8,7 @@
             <function>$l10n_function_hose</function>
         </functions>
         <specs>
+            <workingWidth>5</workingWidth>
             <fillTypeCategories>sprayer</fillTypeCategories>
         </specs>
         <image>resources/hoses/fertilizer/store.png</image>
@@ -28,14 +29,14 @@
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0.25" solverIterationCount="20" mass="5"/>
 
-            <joint component1="1" component2="2" node="componentJoint1" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="1" component2="2" node="componentJoint1" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="2" component2="3" node="componentJoint2" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="2" component2="3" node="componentJoint2" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
-            <joint component1="4" component2="3" node="componentJoint3" rotLimit="33 33 33"
-                   rotMinLimit="-33 -33 -33"
+            <joint component1="4" component2="3" node="componentJoint3" rotLimit="44 44 44"
+                   rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
         <schemaOverlay attacherJointPosition="0 0">
@@ -68,6 +69,15 @@
         <bendingNode minX="-1.35" maxX="1.35" minZ="-3.5" maxZ="4.1" yOffset="0.2"/>
     </foliageBending>
 
+    <tensionBeltObject>
+        <meshNodes>
+            <meshNode node="hose_main_component1"/>
+            <meshNode node="hose_main_component2"/>
+            <meshNode node="hose_main_component3"/>
+            <meshNode node="hose_main_component4"/>
+        </meshNodes>
+    </tensionBeltObject>
+
     <baseMaterial>
         <material name="hose_mat" baseNode="fertilizer_hose">
             <shaderParameter name="colorMat1" value="0.004 0.061 0.117 1.0"/>
@@ -84,14 +94,18 @@
     </baseMaterialConfigurations>
 
     <i3dMappings>
+        <i3dMapping id="hose_main_component1" node="0>" />
         <i3dMapping id="fertilizer_coupling_camplock_1" node="0>0" />
         <i3dMapping id="fertilizer_coupling_1" node="0>1" />
         <i3dMapping id="fertilizer_hose" node="0>2" />
         <i3dMapping id="grabNode1" node="0>3" />
         <i3dMapping id="baseNode" node="0>4" />
         <i3dMapping id="componentJoint1" node="0>5" />
+        <i3dMapping id="hose_main_component2" node="1>" />
         <i3dMapping id="componentJoint2" node="1>0" />
+        <i3dMapping id="hose_main_component3" node="2>" />
         <i3dMapping id="componentJoint3" node="2>0" />
+        <i3dMapping id="hose_main_component4" node="3>" />
         <i3dMapping id="grabNode2" node="3>0" />
         <i3dMapping id="targetNode" node="3>1" />
         <i3dMapping id="fertilizer_coupling_camplock_2" node="3>2" />

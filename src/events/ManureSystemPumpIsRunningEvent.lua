@@ -6,6 +6,7 @@
 -- Copyright (c) Wopster, 2019
 ----------------------------------------------------------------------------------------------------
 
+---@class ManureSystemPumpIsRunningEvent
 ManureSystemPumpIsRunningEvent = {}
 local ManureSystemPumpIsRunningEvent_mt = Class(ManureSystemPumpIsRunningEvent, Event)
 

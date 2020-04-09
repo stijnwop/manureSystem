@@ -7,6 +7,20 @@ Use a specialized dock arm in order to suck from a docking funnel, or simply use
 With a suction hose you´re able to pump a liquid fill type from source to target. If applicable you could extend the liquid manure hose to reach larger ranges.
 Pumping does not always happen at full efficiency, manure thickness decreases the pump capacity and also the length of hoses affects your pump time.
 
+## FAQ
+- Will the Manure System come to console?
+> No sadly not, as this mod includes tons of scripts in order to make the functionality possible. This is not possible due to the disallowance of scripts by Microsoft and Sony.
+- Why is mod X not working with the Manure System? 
+> Most mods need to be prepared for the Manure System in order to work. [Down below you can find a list of vehicles](https://github.com/stijnwop/manureSystem#out-of-the-box-support) that are supported out of the box. Please be patient with the modders that are willing to prepare their vehicles for this system specially for you, it will come soon!
+- Why is map X not working with the Manure System?
+> Same as for vehicles, when maps use custom placeables for animals or the bga they will need to be prepared for the Manure System.
+- How can I add the Manure System to my map?
+> Understand that all maps are running the new placeable system for the animal areas and BGA. You only need to follow [the tutorial](https://github.com/stijnwop/manureSystem#modding) included for adding Manure System support to the included placeables of the given map.
+- I am using a mod from your out of the box support list, but it does not work!?
+> Make sure you actually use the mod from the given link in the list, support for a slightly edited version will drop.
+- Why can't I suck water from the mod map I am using?
+> Check with the mapper if your mod map actually supports the water plane, you can also easily confirm this with running a vanilla water tanker.
+
 
 ## Publishing
 Only Wopster is allowed to publish any of this code as a mod to any mod site, or file sharing site. The code is open for your own use, but give credit where due. I will not accept support for any 'version' of the Manure System that is obtained from a sketchy mod page. Versioning is controlled by me and not by any other page. This confuses people and really holds back the development which results in no fun for me!

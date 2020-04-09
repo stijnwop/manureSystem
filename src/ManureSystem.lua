@@ -30,7 +30,14 @@ local sortByClassAndId = function(arg1, arg2)
                 local cord1 = math.abs(x1) + math.abs(y1) + math.abs(z1)
                 local cord2 = math.abs(x2) + math.abs(y2) + math.abs(z2)
 
-                return item1.id < item2.id and cord1 < cord2
+                local name1 = arg1:getName()
+                local name2 = arg2:getName()
+                -- Compare same placeables based on the position.
+                if name1 == name2 then
+                    return cord1 < cord2
+                end
+
+                return name1 < name2
             end
         end
     end
@@ -41,11 +48,15 @@ end
 function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
+    self.version = 2
     self.isServer = mission:getIsServer()
     self.isClient = mission:getIsClient()
     self.modDirectory = modDirectory
     self.modName = modName
+
+    --Debug flags
     self.debug = false
+    self.debugShowConnectors = false
 
     self.mission = mission
     self.soundManager = soundManager
@@ -61,6 +72,7 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self:loadManureSystemSamples()
 
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
+    addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
 
     g_fillTypeManager:addFillTypeToCategory(FillType.WATER, g_fillTypeManager.nameToCategoryIndex["SLURRYTANK"])
 
@@ -77,6 +89,7 @@ function ManureSystem:delete()
 
     self.soundManager:deleteSamples(self.samples)
     removeConsoleCommand("msToggleDebug")
+    removeConsoleCommand("msToggleConnectorNodes")
 end
 
 function ManureSystem:onMissionLoaded(mission)
@@ -92,7 +105,7 @@ function ManureSystem:getSavedItemsList()
     for item, _ in pairs(self.mission.itemsToSave) do
         --Only get placeables.
         if item:isa(Placeable) then
-            savedItemsToId[item] = { id = id, pos = { getTranslation(item.nodeId) } }
+            savedItemsToId[item] = { id = id, pos = { getWorldTranslation(item.nodeId) } }
         end
         id = id + 1
     end
@@ -117,6 +130,13 @@ end
 
 ---Called when mission is loaded.
 function ManureSystem:onMissionLoadFromSavegame(xmlFile)
+    local version = getXMLInt(xmlFile, "manureSystem#version")
+    local valid = not (version ~= nil and version < self.version)
+
+    if not valid then
+        Logger.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
+    end
+
     self.savedVehiclesToId = self:getSavedVehiclesList()
     self.savedItemsToId = self:getSavedItemsList()
     table.sort(self.manureSystemConnectors, sortByClassAndId)
@@ -132,7 +152,7 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
         if self:connectorObjectExists(hoseId) then
             local object = self:getConnectorObject(hoseId)
             if object.isaHose ~= nil and object:isaHose() then
-                object:onMissionLoadFromSavegame(key, xmlFile)
+                object:onMissionLoadFromSavegame(key, xmlFile, valid)
             end
         end
 
@@ -142,7 +162,7 @@ end
 
 ---Called when mission is being saved with our own xml file.
 function ManureSystem:onMissionSaveToSavegame(xmlFile)
-    setXMLInt(xmlFile, "manureSystem#version", 1)
+    setXMLInt(xmlFile, "manureSystem#version", self.version)
 
     self.savedVehiclesToId = self:getSavedVehiclesList()
     self.savedItemsToId = self:getSavedItemsList()
@@ -269,18 +289,55 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
     end
 end
 
+---Add our global translations to the global table.
+function ManureSystem.addModTranslations(i18n)
+    local global = getfenv(0).g_i18n.texts
+    for key, text in pairs(i18n.texts) do
+        if StringUtil.startsWith(key, "global_") then
+            global[key:sub(8)] = text
+        end
+    end
+end
+
+---Remove are global entries to avoid duplications.
+function ManureSystem.removeModTranslations(i18n)
+    local global = getfenv(0).g_i18n.texts
+    for key, _ in pairs(i18n.texts) do
+        if StringUtil.startsWith(key, "global_") then
+            global[key:sub(8)] = nil
+        end
+    end
+end
+
 ----------------------
 -- Commands
 ----------------------
 
+---Raise all manure system connector objects active.
+function ManureSystem:wakeupManureSystemConnectors()
+    for _, object in ipairs(self.manureSystemConnectors) do
+        object:raiseActive()
+    end
+end
+
+---Console command for showing general debug information.
 function ManureSystem:consoleCommandToggleDebug()
     self.debug = not self.debug
 
     if self.debug then
-        for _, object in ipairs(self.manureSystemConnectors) do
-            object:raiseActive()
-        end
+        self:wakeupManureSystemConnectors()
     end
 
     return tostring(self.debug)
+end
+
+---Console command for highlighting the connector nodes.
+function ManureSystem:consoleCommandToggleConnectors()
+    self.debugShowConnectors = not self.debugShowConnectors
+
+    if self.debugShowConnectors then
+        self:wakeupManureSystemConnectors()
+    end
+
+    return tostring(self.debugShowConnectors)
 end

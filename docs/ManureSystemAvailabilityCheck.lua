@@ -29,7 +29,7 @@ local function isManureSystemActive()
         return true
     end
 
-    return g_modIsLoaded["FS19_manureSystem"]
+    return g_modIsLoaded["FS19_manureSystem"] or g_modIsLoaded["fs19_manureSystem"]
 end
 
 local function ignoreStoreItems(self, superFunc, xmlFilename, baseDir, ...)
