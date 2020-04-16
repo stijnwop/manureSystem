@@ -642,7 +642,9 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
         local attachedImplements
         if object.getAttacherVehicle ~= nil then
             local attacherVehicle = object:getAttacherVehicle()
-            attachedImplements = attacherVehicle:getAttachedImplements()
+            if attacherVehicle ~= nil then
+                attachedImplements = attacherVehicle:getAttachedImplements()
+            end
         else
             attachedImplements = object:getAttachedImplements()
         end
