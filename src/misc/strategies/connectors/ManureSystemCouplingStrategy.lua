@@ -190,7 +190,7 @@ end
 
 ---Find pump objects for standalone pumps.
 function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
-    local connectors = ListUtil.copyTable(object:getConnectorsByType(self.connectorType))
+    local connectors = ListUtil.copyTable(object:getActiveConnectorsByType(self.connectorType))
 
     if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
         table.sort(connectors, sortConnectorsByManureFlowState)
