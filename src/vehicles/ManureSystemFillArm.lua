@@ -27,15 +27,13 @@ function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "fillArmRaycastCallback", ManureSystemFillArm.fillArmRaycastCallback)
 end
 
-function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
-end
-
 function ManureSystemFillArm.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemFillArm)
 end
 
+---Called on load.
 function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
@@ -60,6 +58,7 @@ function ManureSystemFillArm:onLoad(savegame)
     end
 end
 
+---Called on delete.
 function ManureSystemFillArm:onDelete()
     local spec = self.spec_manureSystemFillArm
     local fillArm = spec.fillArm
@@ -68,6 +67,7 @@ function ManureSystemFillArm:onDelete()
     end
 end
 
+---Called on update tick.
 function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
@@ -93,6 +93,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 end
 
                 local objectFillUnitIndex = object:getFillArmFillUnitIndex()
+                self:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM)
                 self:setPumpTargetObject(object, objectFillUnitIndex)
 
                 if self.isStandalonePump ~= nil and self:isStandalonePump() then
@@ -116,15 +117,18 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
             end
         end
+
         -- Reset
         fillArm.isRaycastAllowed = true
     end
 end
 
+---Gets the current active fill arm.
 function ManureSystemFillArm:getFillArm()
     return self.spec_manureSystemFillArm.fillArm
 end
 
+---Load the current fill arm from the xml.
 function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, id)
     local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
 
@@ -161,9 +165,12 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         return true
     end
 
+    g_logManager:xmlWarning(self.configFileName, "Could not load fillArm from XML, missing node entry!")
+
     return false
 end
 
+---Raycast callback for detecting fill arm object.
 function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distance)
     if hitObjectId ~= 0 then
         if hitObjectId == g_currentMission.terrainRootNode then

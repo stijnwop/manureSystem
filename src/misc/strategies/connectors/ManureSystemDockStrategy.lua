@@ -87,6 +87,7 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     end
 
                     dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
+                    dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM)
                     if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
                         local fillType = fillObject:getFillUnitFillType(fillUnitIndex)
                         local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(dockingArmObject, fillType)

@@ -159,6 +159,8 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
             if object.spec_manureSystemPumpMotor ~= nil then
                 if desc ~= nil and desc.hasOpenManureFlow and connector.hasOpenManureFlow then
+                    object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
+
                     if desc.vehicle ~= nil then
                         object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
                         object:setPumpSourceObject(object, connector.fillUnitIndex)
