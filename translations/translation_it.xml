@@ -24,7 +24,11 @@
         <text name="action_directionLeftRight" text="Cambia direzione della pompa a: sinistra verso destra"/>
         <text name="action_directionRightLeft" text="Cambia direzione della pompa a: destra verso sinistra"/>
 
+        <text name="info_directionOut" text="emptying"/><!--TODO-->
+        <text name="info_directionIn" text="filling"/><!--TODO-->
+
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Pump direction is limited to only: %s"/><!--TODO-->
         <text name="warning_objectEmpty" text="La sorgente o la destinazione sono vouti!"/>
         <text name="warning_objectFull" text="La destinazione è piena!"/>
         <text name="warning_invalidFillType" text="Il tipo di liquido non è supportato!"/>

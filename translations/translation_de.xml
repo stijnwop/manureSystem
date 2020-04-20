@@ -24,7 +24,11 @@
         <text name="action_directionLeftRight" text="Ändere Pumprichtung in: links nach rechts"/>
         <text name="action_directionRightLeft" text="Ändere Pumprichtung in: rechts nach links"/>
 
+        <text name="info_directionOut" text="entleeren"/>
+        <text name="info_directionIn" text="befüllen"/>
+
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Die Pumprichtung ist begrenzt auf nur: %s"/>
         <text name="warning_objectEmpty" text="Start- oder Zielbehälter ist leer!"/>
         <text name="warning_objectFull" text="Pumpziel ist voll!"/>
         <text name="warning_invalidFillType" text="Pumpmaterial wird nicht unterstützt!"/>

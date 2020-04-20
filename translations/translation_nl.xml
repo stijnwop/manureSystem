@@ -19,12 +19,16 @@
         <text name="action_activatePump" text="Activeer pomp van %s"/>
         <text name="action_deactivatePump" text="Deactiveer pomp van %s"/>
 
-        <text name="action_directionOut" text="Verander pomp richting naar: legen"/>
-        <text name="action_directionIn" text="Verander pomp richting naar: vullen"/>
-        <text name="action_directionLeftRight" text="Verander pomp richting van: links naar rechts"/>
-        <text name="action_directionRightLeft" text="Verander pomp richting van: rechts naar links"/>
+        <text name="action_directionOut" text="Verander pomprichting naar: legen"/>
+        <text name="action_directionIn" text="Verander pomprichting naar: vullen"/>
+        <text name="action_directionLeftRight" text="Verander pomprichting van: links naar rechts"/>
+        <text name="action_directionRightLeft" text="Verander pomprichting van: rechts naar links"/>
+
+        <text name="info_directionOut" text="legen"/>
+        <text name="info_directionIn" text="vullen"/>
 
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Pomprichting is gelimiteerd naar enkel: %s"/>
         <text name="warning_objectEmpty" text="De pomp bron of doel is leeg!"/>
         <text name="warning_objectFull" text="De pomp doel is vol!"/>
         <text name="warning_invalidFillType" text="De pomp vultype is niet ondersteund!"/>

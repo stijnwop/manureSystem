@@ -14,6 +14,9 @@ ManureSystemPumpMotor.MOD_DIR = g_CurrentModDirectory
 ManureSystemPumpMotor.PUMP_DIRECTION_IN = 1
 ManureSystemPumpMotor.PUMP_DIRECTION_OUT = -1
 
+ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR = "IN"
+ManureSystemPumpMotor.PUMP_DIRECTION_OUT_STR = "OUT"
+
 ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN = 0.99
 ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT = 0.98
 
@@ -50,6 +53,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "checkPumpNotAllowedWarning", ManureSystemPumpMotor.checkPumpNotAllowedWarning)
     SpecializationUtil.registerFunction(vehicleType, "setPumpMode", ManureSystemPumpMotor.setPumpMode)
     SpecializationUtil.registerFunction(vehicleType, "getPumpMode", ManureSystemPumpMotor.getPumpMode)
+    SpecializationUtil.registerFunction(vehicleType, "canChangePumpDirection", ManureSystemPumpMotor.canChangePumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "setPumpDirection", ManureSystemPumpMotor.setPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "getPumpDirection", ManureSystemPumpMotor.getPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "isPumpingIn", ManureSystemPumpMotor.isPumpingIn)
@@ -459,6 +463,11 @@ function ManureSystemPumpMotor:getPumpMode()
     return self.spec_manureSystemPumpMotor.pumpMode
 end
 
+---Allows for overwriting pump limitations.
+function ManureSystemPumpMotor:canChangePumpDirection()
+    return true
+end
+
 function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
     local spec = self.spec_manureSystemPumpMotor
 
@@ -828,8 +837,13 @@ end
 
 function ManureSystemPumpMotor.actionEventTogglePumpDirection(self, actionName, inputValue, callbackState, isAnalog)
     if not self:isPumpRunning() then
-        local spec = self.spec_manureSystemPumpMotor
-        self:setPumpDirection(-spec.pumpDirection)
+        if self:canChangePumpDirection() then
+            local spec = self.spec_manureSystemPumpMotor
+            self:setPumpDirection(-spec.pumpDirection)
+        else
+            local limitedText = self:isPumpingIn() and g_i18n:getText("info_directionIn") or g_i18n:getText("info_directionOut")
+            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_pumpDirectionLimited"):format(limitedText), 2000)
+        end
     end
 end
 

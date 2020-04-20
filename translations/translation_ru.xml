@@ -24,7 +24,11 @@
         <text name="action_directionLeftRight" text="Изменить направление перекачивания: слева направо"/>
         <text name="action_directionRightLeft" text="Изменить направление перекачивания: справа налево"/>
 
+        <text name="info_directionOut" text="emptying"/><!--TODO-->
+        <text name="info_directionIn" text="filling"/><!--TODO-->
+
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Pump direction is limited to only: %s"/><!--TODO-->
         <text name="warning_objectEmpty" text="Цель или источник для перекачивания пуст!"/>
         <text name="warning_objectFull" text="Цель перекачивания полная!"/>
         <text name="warning_invalidFillType" text="Данный тип жидкости не поддерживается!"/>
