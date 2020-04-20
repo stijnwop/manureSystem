@@ -27,6 +27,10 @@ function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "fillArmRaycastCallback", ManureSystemFillArm.fillArmRaycastCallback)
 end
 
+function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "canChangePumpDirection", ManureSystemFillArm.canChangePumpDirection)
+end
+
 function ManureSystemFillArm.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemFillArm)
@@ -103,7 +107,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 local x, y, z = getWorldTranslation(fillArm.node)
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
-                raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", 2, self, ManureSystemFillArm.RAYCAST_MASK, true)
+                raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
 
                 local r, g, b = 1, 0, 0
 
@@ -163,8 +167,15 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         fillArm.type = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
         fillArm.fillYOffset = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#fillYOffset"), 0)
         fillArm.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
-        fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
+        fillArm.rayCastDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#rayCastDistance"), 2)
+        fillArm.controlGroupIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#controlGroupIndex"), 0)
 
+        local limit = getXMLString(xmlFile, baseKey .. "#limitedFillDirection")
+        if limit ~= nil then
+            fillArm.limitedFillDirection = limit:upper() == ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR and ManureSystemPumpMotor.PUMP_DIRECTION_IN or HoseSystemPumpMotor.PUMP_DIRECTION_OUT
+        end
+
+        fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
         if fillArm.needsDockingCollision then
             local collision = clone(g_manureSystem.fillArmManager.collision, false, false, false)
 
@@ -223,4 +234,31 @@ function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distan
     end
 
     return true
+end
+
+----------------
+-- Overwrites --
+----------------
+
+---Allow limiting the pump direction for a given fill arm.
+function ManureSystemFillArm:canChangePumpDirection(superFunc)
+    local spec = self.spec_cylindered
+    --We need cylindered (for moving tools) to check the limited fill direction of the arm.
+    if spec ~= nil then
+        local currentDirection = self:getPumpDirection()
+        for _, fillArm in ipairs(self:getFillArms()) do
+            if fillArm.limitedFillDirection ~= nil then
+                local isSelectedFillArm = fillArm.controlGroupIndex == 0
+                    or fillArm.controlGroupIndex == spec.currentControlGroupIndex
+
+                if isSelectedFillArm then
+                    if currentDirection == fillArm.limitedFillDirection then
+                        return false
+                    end
+                end
+            end
+        end
+    end
+
+    return superFunc(self)
 end
