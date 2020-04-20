@@ -64,10 +64,10 @@ function ManureSystemDockStrategy:onUpdate(dt)
     end
 
     for _, dockingArmObject in pairs(self.dockingArmObjects) do
-        local inRange, connectorId = self:getDockArmInRange(dockingArmObject)
+        local inRange, fillArm, connectorId = self:getFillArmInRange(dockingArmObject)
 
         if object.isClient and inRange then
-            self:deformDockFunnel(connectorId, true, dt, dockingArmObject)
+            self:deformDockFunnel(connectorId, fillArm, true, dt)
         end
 
         if object.isServer and dockingArmObject ~= nil and dockingArmObject ~= object then
@@ -76,7 +76,6 @@ function ManureSystemDockStrategy:onUpdate(dt)
                 if not connector.isParkPlace then
                     local fillObject = object
                     local fillUnitIndex = connector.fillUnitIndex
-                    local fillArm = dockingArmObject:getFillArm()
 
                     if connector.isStationary then
                         local desc = self:getStationaryConnectorDesc(connector)
@@ -117,7 +116,7 @@ function ManureSystemDockStrategy:onUpdate(dt)
         -- Reset dock funnels
         for connectorId, inRange in pairs(self.lastInRangeConnectorIds) do
             if not inRange then
-                self:deformDockFunnel(connectorId, false, dt)
+                self:deformDockFunnel(connectorId, nil, false, dt)
             end
         end
     end
@@ -143,37 +142,37 @@ function ManureSystemDockStrategy:getStationaryConnectorDesc(connector)
     return nil
 end
 
-function ManureSystemDockStrategy:getDockArmInRange(object)
+function ManureSystemDockStrategy:getFillArmInRange(object)
     if object ~= nil then
-        local fillArm = object:getFillArm()
+        for _, fillArm in ipairs(object:getFillArms()) do
+            if fillArm.node ~= nil and entityExists(fillArm.node) then
+                local x, y, z = getWorldTranslation(fillArm.node)
+                local distanceSequence = ManureSystemDockStrategy.DOCK_IN_RANGE_DISTANCE
 
-        if fillArm.node ~= nil and entityExists(fillArm.node) then
-            local x, y, z = getWorldTranslation(fillArm.node)
-            local distanceSequence = ManureSystemDockStrategy.DOCK_IN_RANGE_DISTANCE
+                for _, connector in pairs(self.object:getConnectorsByType(fillArm.type)) do
+                    local connectorId = connector.id -- Use the actual index
+                    if (not connector.isConnected or connector.connectedObject ~= nil and connector.connectedObject == object) and connector.deformationNode ~= nil then
+                        local dx, dy, dz = getWorldTranslation(connector.deformationNode)
+                        local distance = MathUtil.vector2Length(x - dx, z - dz)
 
-            for _, connector in pairs(self.object:getConnectorsByType(fillArm.type)) do
-                local connectorId = connector.id -- Use the actual index
-                if (not connector.isConnected or connector.connectedObject ~= nil and connector.connectedObject == object) and connector.deformationNode ~= nil then
-                    local dx, dy, dz = getWorldTranslation(connector.deformationNode)
-                    local distance = MathUtil.vector2Length(x - dx, z - dz)
+                        distanceSequence = Utils.getNoNil(connector.inRangeDistance, distanceSequence)
 
-                    distanceSequence = Utils.getNoNil(connector.inRangeDistance, distanceSequence)
+                        if distance < distanceSequence
+                            and y < dy + connector.deformationYOffset
+                            and y > dy - (connector.deformationYOffset * 0.5) then
 
-                    if distance < distanceSequence
-                        and y < dy + connector.deformationYOffset
-                        and y > dy - (connector.deformationYOffset * 0.5) then
+                            distanceSequence = distance
+                            return true, fillArm, connectorId
+                        else
+                            -- When connector was in range we force reset.
+                            if self.lastInRangeConnectorIds[connectorId] then
+                                self.lastInRangeConnectorIds[connectorId] = false
+                            end
 
-                        distanceSequence = distance
-                        return true, connectorId
-                    else
-                        -- When connector was in range we force reset.
-                        if self.lastInRangeConnectorIds[connectorId] then
-                            self.lastInRangeConnectorIds[connectorId] = false
-                        end
-
-                        if self.object.isServer then
-                            if connector.isConnected then
-                                self.object:setIsConnected(connectorId, false, nil, nil)
+                            if self.object.isServer then
+                                if connector.isConnected then
+                                    self.object:setIsConnected(connectorId, false, nil, nil)
+                                end
                             end
                         end
                     end
@@ -182,14 +181,13 @@ function ManureSystemDockStrategy:getDockArmInRange(object)
         end
     end
 
-    return false, nil
+    return false, nil, nil
 end
 
-function ManureSystemDockStrategy:deformDockFunnel(connectorId, doDeform, dt, dockingArmObject)
+function ManureSystemDockStrategy:deformDockFunnel(connectorId, fillArm, doDeform, dt)
     local connector = self.object:getConnectorById(connectorId)
 
     if doDeform then
-        local fillArm = dockingArmObject:getFillArm()
         local x, y, z = worldToLocal(connector.deformationNode, getWorldTranslation(fillArm.node))
         local rx, _, rz = getRotation(connector.deformationNode)
         local pushImpact = connector.deformationYOffset * 0.5 -- Start halfway the offset with pushing
@@ -323,7 +321,7 @@ end
 function ManureSystemDockStrategy:dockingArmEnteredTriggerCallback(triggerId, otherActorId, onEnter, onLeave, onStay, otherShapeId)
     if otherActorId ~= 0 then
         local object = g_currentMission:getNodeObject(otherActorId)
-        if object ~= nil and object.getFillArm ~= nil then
+        if object ~= nil and object.getFillArms ~= nil then
             if onEnter then
                 if self.dockingArmObjectsDelayedDelete[object] ~= nil then
                     self.dockingArmObjectsDelayedDelete[object] = nil
