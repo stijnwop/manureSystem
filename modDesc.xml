@@ -179,7 +179,7 @@ Tuyau à fertilisant:
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>
-        <type name="vanillaLiquidTank" parent="pallet" filename="$dataS/scripts/vehicles/Vehicle.lua">
+        <type name="vanillaLiquidTankPallet" parent="pallet" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemLiquidTank"/>
             <specialization name="manureSystemConnector"/>
         </type>
