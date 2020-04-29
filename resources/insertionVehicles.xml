@@ -69,11 +69,11 @@
     <!-- Pallets -->
     <vehicle>
         <xml>data/objects/pallets/liquidTank/fertilizerTank.xml</xml>
-        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+        <replaceTypeName>vanillaLiquidTankPallet</replaceTypeName>
     </vehicle>
     <vehicle>
         <xml>data/objects/pallets/liquidTank/herbicideTank.xml</xml>
-        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+        <replaceTypeName>vanillaLiquidTankPallet</replaceTypeName>
     </vehicle>
 
     <!-- Mods -->
