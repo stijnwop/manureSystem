@@ -329,16 +329,16 @@ function ManureSystemStorage:update(dt)
     end
 
     local lastThickness = self.thickness
-    if self.isServer then
-        if self.hasMixer and self.isMixerActive then
+    if self.hasMixer and self.isMixerActive then
+        if self.isServer then
             self:decreaseManureThickness(self.mixPerSecond, dt, self.isMixerActive)
 
             if not (self.thickness > 0) then
                 self:setIsMixerActive(false)
             end
-
-            self:raiseActive()
         end
+
+        self:raiseActive()
     end
 
     if self.isClient then
