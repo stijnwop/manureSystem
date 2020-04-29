@@ -27,7 +27,7 @@ function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "fillArmRaycastCallback", ManureSystemFillArm.fillArmRaycastCallback)
 end
 
-function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
+function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "canChangePumpDirection", ManureSystemFillArm.canChangePumpDirection)
 end
 
