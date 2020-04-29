@@ -690,7 +690,8 @@ end
 function Hose:computeCatmullSpline()
     local spec = self.spec_hose
 
-    if not entityExists(spec.mesh) then
+    if not entityExists(spec.mesh)
+        or not entityExists(spec.targetNode) then
         return
     end
 
