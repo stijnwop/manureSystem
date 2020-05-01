@@ -212,6 +212,7 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
 
                 local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
                 object:setPumpMaxTime(impactTime)
+                object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
             else
                 self:resetPumpTargetObject(object)
             end
@@ -234,6 +235,7 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
 
                         local impactTime = self:getCalculatedMaxTime(lengthHoses1)
                         object:setPumpMaxTime(impactTime)
+                        object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
                     end
                 end
             else
