@@ -331,6 +331,8 @@ function ManureSystemDockStrategy:dockingArmEnteredTriggerCallback(triggerId, ot
             else
                 self.dockingArmObjectsDelayedDelete[object] = g_currentMission.time + ManureSystemDockStrategy.DEFORMATION_RESET_TIME
             end
+
+            self.object:raiseActive()
         end
     end
 end
