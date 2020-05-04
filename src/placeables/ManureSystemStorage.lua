@@ -612,6 +612,7 @@ function ManureSystemStorage:setIsMixerActive(isMixerActive, noEventSend)
         ManureSystemIsMixingEvent.sendEvent(self, isMixerActive, noEventSend)
         self.isMixerActive = isMixerActive
         self:updateActivateText()
+        self:raiseActive() -- raise initially.
 
         if self.isClient then
             if isMixerActive then
