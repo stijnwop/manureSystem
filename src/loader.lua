@@ -204,8 +204,17 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
     return superFunc(self, vehicleData, ...)
 end
 
-local function isCoursePlayOrAutoDriveActive(vehicle)
+local function isCoursePlayOrAutoDriveActiveForVehicle(vehicle)
     return (vehicle.cp ~= nil and vehicle.cp.isDriving) or (vehicle.ad ~= nil and vehicle.ad.isActive)
+end
+
+local function isCoursePlayOrAutoDriveActive(vehicle)
+    if isCoursePlayOrAutoDriveActiveForVehicle(vehicle) then
+        return true
+    end
+
+    local rootVehicle = vehicle:getRootVehicle()
+    return rootVehicle ~= nil and isCoursePlayOrAutoDriveActiveForVehicle(rootVehicle)
 end
 
 local function getIsFillTriggerActivatable(trigger, superFunc, vehicle, ...)
@@ -231,7 +240,7 @@ local function getIsLoadTriggerActivatable(trigger, superFunc, ...)
                 or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
             then
                 for _, fillableObject in pairs(trigger.fillableObjects) do
-                    if not isCoursePlayOrAutoDriveActive(fillableObject) and fillableObject.object.getConnectorById ~= nil then
+                    if not isCoursePlayOrAutoDriveActive(fillableObject.object) and fillableObject.object.getConnectorById ~= nil then
                         return false
                     end
                 end
