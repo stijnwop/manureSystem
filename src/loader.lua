@@ -204,8 +204,12 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
     return superFunc(self, vehicleData, ...)
 end
 
-local function getIsFillTriggerActivatable(trigger, superFunc, vehicle)
-    if trigger.sourceObject ~= nil then
+local function isCoursePlayOrAutoDriveActive(vehicle)
+    return (vehicle.cp ~= nil and vehicle.cp.isDriving) or (vehicle.ad ~= nil and vehicle.ad.isActive)
+end
+
+local function getIsFillTriggerActivatable(trigger, superFunc, vehicle, ...)
+    if not isCoursePlayOrAutoDriveActive(vehicle) and trigger.sourceObject ~= nil then
         local owner = trigger.sourceObject.owner
         if (trigger.sourceObject.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil) and vehicle.getConnectorById ~= nil then
             if trigger.sourceObject.manureSystemConnectors ~= nil and #trigger.sourceObject.manureSystemConnectors ~= 0
@@ -216,10 +220,10 @@ local function getIsFillTriggerActivatable(trigger, superFunc, vehicle)
         end
     end
 
-    return superFunc(trigger, vehicle)
+    return superFunc(trigger, vehicle, ...)
 end
 
-local function getIsLoadTriggerActivatable(trigger, superFunc)
+local function getIsLoadTriggerActivatable(trigger, superFunc, ...)
     if trigger.source ~= nil then
         local owner = trigger.source.owner
         if trigger.source.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil then
@@ -227,7 +231,7 @@ local function getIsLoadTriggerActivatable(trigger, superFunc)
                 or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
             then
                 for _, fillableObject in pairs(trigger.fillableObjects) do
-                    if fillableObject.object.getConnectorById ~= nil then
+                    if not isCoursePlayOrAutoDriveActive(fillableObject) and fillableObject.object.getConnectorById ~= nil then
                         return false
                     end
                 end
@@ -235,7 +239,7 @@ local function getIsLoadTriggerActivatable(trigger, superFunc)
         end
     end
 
-    return superFunc(trigger)
+    return superFunc(trigger, ...)
 end
 
 local function init()
