@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+﻿﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="47">
     <author>Wopster</author>
     <version>1.0.9.0-beta</version>
@@ -48,17 +48,17 @@ Düngerschlauch:
         </de>
         <fr>
             <![CDATA[Le mod Manure System change tout le gameplay autour de la gestion de votre installation de lisier. Découvrez ce que cela signifie vraiment de pomper des liquides en tant que véritable agriculteur.
-Utilisez les bras de remplissage pour pouvoir pomper à partir de sources ouvertes telles que : les conteneurs de lisier, les lagunes et les sources d'eau.
-Utilisez un bras de remplissage spécialisé afin d'aspirer à partir d'un entonnoir de remplissage, ou utilisez simplement un tuyau d'aspiration.
-Avec un tuyau d'aspiration, vous pouvez pomper un produit liquide de la source à la cible. Le cas échéant, vous pouvez allonger le tuyau d'aspiration pour atteindre de plus grandes distances.
+Utilisez les bras de remplissage pour pouvoir pomper à partir de sources ouvertes telles que : les conteneurs de lisier, les bassins et les sources d'eau.
+Utilisez un bras de remplissage spécialisé afin d'aspirer à partir du cône de raccordement, ou utilisez simplement un tuyau d'aspiration.
+Avec un tuyau d'aspiration, vous pouvez pomper liquide de la source à la cible. Le cas échéant, vous pouvez allonger le tuyau d'aspiration pour atteindre de plus grandes distances.
 Le pompage ne se fait pas toujours à pleine capacité, car le volume du lisier diminue la capacité de la pompe et la longueur des tuyaux influe également sur le temps de pompage.
 
-Tous les véhicules de type vanille sont pris en charge (et certains ont des modifications supplémentaires), pour une liste complète, veuillez consulter le manuel ci-dessous.
+Tous les véhicules de type vanilla sont pris en charge (et certains ont des modifications supplémentaires), pour une liste complète, veuillez consulter le manuel ci-dessous.
 Pour plus d'informations, veuillez lire <a href="https://github.com/stijnwop/manureSystem/blob/master/README.md">le manuel sur mon GitHub</a>.
 
 Un grand merci à VertexDezign et BM-Modding pour avoir fourni des fonctionnalités géniales !
 
-Tuyau:
+Tuyau à lisier:
 - Prix: €150
 
 Tuyau à fertilisant:
