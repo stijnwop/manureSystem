@@ -12,9 +12,9 @@
 
         <!--Actions-->
         <text name="action_storeHose" text="Schlauch verstauen"/>
-        <text name="action_toggleManureFlow" text="%s Güllefluss"/>
-        <text name="action_toggleManureFlowStateOpen" text="Offen"/>
-        <text name="action_toggleManureFlowStateClose" text="Geschlossen"/>
+        <text name="action_toggleManureFlow" text="Güllefluss %s />
+        <text name="action_toggleManureFlowStateOpen" text="öffnen"/>
+        <text name="action_toggleManureFlowStateClose" text="schließen"/>
 
         <text name="action_activatePump" text="Pumpe von %s einschalten"/>
         <text name="action_deactivatePump" text="Pumpe von %s ausschalten"/>
@@ -45,7 +45,7 @@
         <!--Placeables-->
         <text name="action_enableMixer" text="Mixer aktivieren"/>
         <text name="action_disableMixer" text="Mixer deaktivieren"/>
-        <text name="info_thickness" text="%s Dicke: %d%%"/>
+        <text name="info_thickness" text="%s Dickflüssigkeit: %d%%"/>
 
         <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Schlauch"/>
