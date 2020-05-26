@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-    <translationContributors>$nickers, Wopster</translationContributors>
+    <translationContributors>Wopster, $nickers, Farmer Andy</translationContributors>
 
     <texts>
         <!--Inputs-->
@@ -12,9 +12,9 @@
 
         <!--Actions-->
         <text name="action_storeHose" text="Schlauch verstauen"/>
-        <text name="action_toggleManureFlow" text="%s Güllefluss"/>
-        <text name="action_toggleManureFlowStateOpen" text="Offen"/>
-        <text name="action_toggleManureFlowStateClose" text="Geschlossen"/>
+        <text name="action_toggleManureFlow" text="Absperrschieber %s"/>
+        <text name="action_toggleManureFlowStateOpen" text="öffnen"/>
+        <text name="action_toggleManureFlowStateClose" text="schließen"/>
 
         <text name="action_activatePump" text="Pumpe von %s einschalten"/>
         <text name="action_deactivatePump" text="Pumpe von %s ausschalten"/>
@@ -32,7 +32,7 @@
         <text name="warning_objectEmpty" text="Start- oder Zielbehälter ist leer!"/>
         <text name="warning_objectFull" text="Pumpziel ist voll!"/>
         <text name="warning_invalidFillType" text="Pumpmaterial wird nicht unterstützt!"/>
-        <text name="warning_checkManureFlow" text="Bitte den Güllefluss am Verbinder %s prüfen!"/>
+        <text name="warning_checkManureFlow" text="Bitte den Absperrschieber am Verbinder %s prüfen!"/>
 
         <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="Der %sm Lagerplatz ist zu klein für den %sm Schlauch!"/>
@@ -45,7 +45,7 @@
         <!--Placeables-->
         <text name="action_enableMixer" text="Mixer aktivieren"/>
         <text name="action_disableMixer" text="Mixer deaktivieren"/>
-        <text name="info_thickness" text="%s Dicke: %d%%"/>
+        <text name="info_thickness" text="%s Dickflüssigkeit: %d%%"/>
 
         <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Schlauch"/>
