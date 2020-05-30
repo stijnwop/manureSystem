@@ -99,7 +99,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
 
-        if spec.isRaycastAllowed and self:getIsActiveForInput() then
+        if spec.isRaycastAllowed then
             spec.lastRaycastDistance = 0
             spec.lastRaycastObject = nil
 
@@ -145,10 +145,10 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
                 end
             end
-
-            -- Reset
-            spec.isRaycastAllowed = true
         end
+
+        -- Reset
+        spec.isRaycastAllowed = true
     end
 end
 
