@@ -19,10 +19,10 @@
         <text name="action_activatePump" text="ВКЛ насос на %s"/>
         <text name="action_deactivatePump" text="ВЫКЛ насос на %s"/>
 
-        <text name="action_directionOut" text="Изменить направление перекачивания: активно заполнение емкости"/>
-        <text name="action_directionIn" text="Изменить направление перекачивания: активно опорожнение емкости"/>
-        <text name="action_directionLeftRight" text="Изменить направление перекачивания: слева направо"/>
-        <text name="action_directionRightLeft" text="Изменить направление перекачивания: справа налево"/>
+        <text name="action_directionOut" text="Текущее направление перекачивания: заполнение"/>
+        <text name="action_directionIn" text="Текущее направление перекачивания: опорожнение"/>
+        <text name="action_directionLeftRight" text="Направление перекачивания: слева направо"/>
+        <text name="action_directionRightLeft" text="Направление перекачивания: справа налево"/>
 
         <text name="info_directionOut" text="заполнение"/>
         <text name="info_directionIn" text="опорожнение"/>
@@ -32,13 +32,13 @@
         <text name="warning_objectEmpty" text="Цель или источник для перекачивания пуст!"/>
         <text name="warning_objectFull" text="Цель перекачивания полная!"/>
         <text name="warning_invalidFillType" text="Данный тип жидкости не поддерживается!"/>
-        <text name="warning_checkManureFlow" text="Пожалуйста, проверьте задвижку/кран %s!"/>
+        <text name="warning_checkManureFlow" text="Пожалуйста, проверьте задвижку/кран на %s!"/>
 
         <!--Configuration fill arm-->
         <text name="configuration_manureSystemFillArm" text="Штанга-наполнитель"/>
 
         <!--Warnings hose-->
-        <text name="warning_parkingPlaceTooSmall" text="Место для парковки %sм слишком маленькое для рукава %sм!"/>
+        <text name="warning_parkingPlaceTooSmall" text="Место для укладки в %sм слишком маленькое для %sм-го рукава!"/>
         <text name="warning_hoseRangeRestriction" text="Ограничение длинны рукава не позволит Вам идти дальше!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Вы не супермен!"/>
 
