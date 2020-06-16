@@ -65,6 +65,25 @@
         <xml>data/vehicles/stara/imperador3/imperador3.xml</xml>
         <replaceTypeName>vanillaImperador3</replaceTypeName>
     </vehicle>
+    <!-- kverneland DLC -->
+	<vehicle>
+        <xml>vehicles/kverneland/iXtrackT4/iXtrackT4.xml</xml>
+        <replaceTypeName>kvernelandDLCiXtrackT4</replaceTypeName>
+		<copySpecializations>
+            <specialization name="foldableFoliageBendingModifiers"/>
+        </copySpecializations>
+    </vehicle>
+	<vehicle>
+        <xml>vehicles/kverneland/iXterB18/iXterB18.xml</xml>
+        <replaceTypeName>kvernelandDLCiXterB18</replaceTypeName>
+		<copySpecializations>
+            <specialization name="foldableFoliageBendingModifiers"/>
+        </copySpecializations>
+    </vehicle>
+	<vehicle>
+        <xml>vehicles/kverneland/iXterB18/IXterB18FrontTank.xml</xml>
+        <replaceTypeName>kvernelandDLCIXterB18FrontTank</replaceTypeName>
+    </vehicle>
 
     <!-- Pallets -->
     <vehicle>
