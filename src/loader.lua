@@ -8,6 +8,11 @@
 local directory = g_currentModDirectory
 local modName = g_currentModName
 
+source(Utils.getFilename("src/objects/ManureSystemObject.lua", directory))
+source(Utils.getFilename("src/objects/ManureSystemObjectHusbandry.lua", directory))
+source(Utils.getFilename("src/objects/ManureSystemObjectFactory.lua", directory))
+source(Utils.getFilename("src/objects/ManureSystemObjectFacade.lua", directory))
+
 source(Utils.getFilename("src/placeables/ManureSystemAnimatedObjectExtension.lua", directory))
 source(Utils.getFilename("src/misc/ManureSystemFillPlane.lua", directory))
 
@@ -219,7 +224,7 @@ end
 
 local function getIsFillTriggerActivatable(trigger, superFunc, vehicle, ...)
     if not isCoursePlayOrAutoDriveActive(vehicle) and trigger.sourceObject ~= nil then
-        local owner = trigger.sourceObject.owner
+        local owner = trigger.sourceObject.manureSystemObject
         if (trigger.sourceObject.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil) and vehicle.getConnectorById ~= nil then
             if trigger.sourceObject.manureSystemConnectors ~= nil and #trigger.sourceObject.manureSystemConnectors ~= 0
                 or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
@@ -234,7 +239,7 @@ end
 
 local function getIsLoadTriggerActivatable(trigger, superFunc, ...)
     if trigger.source ~= nil then
-        local owner = trigger.source.owner
+        local owner = trigger.source.manureSystemObject
         if trigger.source.getConnectorById ~= nil or owner ~= nil and owner.getConnectorById ~= nil then
             if trigger.source.manureSystemConnectors ~= nil and #trigger.source.manureSystemConnectors ~= 0
                 or owner ~= nil and owner.manureSystemConnectors ~= nil and #owner.manureSystemConnectors ~= 0
