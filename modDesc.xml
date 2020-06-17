@@ -101,6 +101,10 @@ Tuyau à fertilisant:
         <specialization name="manureSystemKuhnMetris4102" className="ManureSystemKuhnMetris4102" filename="src/vehicles/vanillainserts/ManureSystemKuhnMetris4102.lua"/>
         <specialization name="manureSystemImperador3" className="ManureSystemImperador3" filename="src/vehicles/vanillainserts/ManureSystemImperador3.lua"/>
         <specialization name="manureSystemFieldMaster20" className="ManureSystemFieldMaster20" filename="src/vehicles/vanillainserts/ManureSystemFieldMaster20.lua"/>
+        <!-- kverneland DLC -->
+        <specialization name="ManureSystemiXtrackT4" className="ManureSystemiXtrackT4" filename="src/vehicles/vanillainserts/ManureSystemiXtrackT4.lua"/>
+        <specialization name="ManureSystemiXterB18" className="ManureSystemiXterB18" filename="src/vehicles/vanillainserts/ManureSystemiXterB18.lua"/>
+        <specialization name="ManureSystemIXterB18FrontTank" className="ManureSystemIXterB18FrontTank" filename="src/vehicles/vanillainserts/ManureSystemIXterB18FrontTank.lua"/>
     </specializations>
 
     <vehicleTypes>
@@ -182,6 +186,22 @@ Tuyau à fertilisant:
         <type name="vanillaLiquidTankPallet" parent="pallet" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="manureSystemLiquidTank"/>
             <specialization name="manureSystemConnector"/>
+        </type>
+        <!-- kverneland DLC -->
+		<type name="kvernelandDLCiXtrackT4" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="ManureSystemiXtrackT4"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
+		<type name="kvernelandDLCiXterB18" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="ManureSystemiXterB18"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
+        </type>
+		<type name="kvernelandDLCIXterB18FrontTank" parent="fillableImplement" filename="$dataS/scripts/vehicles/Vehicle.lua">
+            <specialization name="ManureSystemIXterB18FrontTank"/>
+            <specialization name="manureSystemConnector"/>
+            <specialization name="manureSystemPumpMotor"/>
         </type>
         <!-- HOLMER DLC -->
         <type name="dlcTV585" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
