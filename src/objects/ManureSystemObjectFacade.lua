@@ -58,6 +58,7 @@ local unpackLoadFunctions = Set()
 unpackLoadFunctions:set("BuyingStation", unpackStationLoadParams)
 unpackLoadFunctions:set("LoadingStation", unpackStationLoadParams)
 unpackLoadFunctions:set("HusbandryModuleLiquidManure", unpackHusbandryLoadParams)
+unpackLoadFunctions:set("HusbandryModuleMilk", unpackHusbandryLoadParams)
 
 ---Unpack methods for the `update` function.
 local unpackUpdateFunctions = Set()

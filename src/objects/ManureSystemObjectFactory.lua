@@ -20,7 +20,7 @@ end
 
 ---Factory method to get the correct manure system object.
 function ManureSystemObjectFactory.getManureSystemObject(object)
-    if object:isa(HusbandryModuleLiquidManure) then
+    if object:isa(HusbandryModuleLiquidManure) or object:isa(HusbandryModuleMilk) then
         return ManureSystemObjectHusbandry:new(object, g_server ~= nil, g_client ~= nil)
     elseif object:isa(BuyingStation) or object:isa(LoadingStation) then
         return ManureSystemObject:new(object, g_server ~= nil, g_client ~= nil)
@@ -51,6 +51,8 @@ function ManureSystemObjectFactory:validateObjectClass(objectClass)
     if objectClass.className == nil then
         if objectClass:isa(HusbandryModuleLiquidManure) then
             objectClass.className = "HusbandryModuleLiquidManure"
+        elseif objectClass:isa(HusbandryModuleMilk) then
+            objectClass.className = "HusbandryModuleMilk"
         end
     end
 end
