@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------
 -- Purpose: Insert fertilizer function into the Kverneland iXter B18.
 --
--- Copyright (c) Wopster, 2019
+-- Copyright (c) Wopster, 2020
 ----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystemiXterB18
@@ -27,7 +27,7 @@ function ManureSystemiXterB18:onPreLoad(savegame)
     setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#createNode"):format(0), true)
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#position"):format(0), "1.019 0.579 1.433")
     setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d)#rotation"):format(0), "0 90 -50")
-    
+
     --setXMLBool(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d).sharedSet#createNode"):format(0), true)
     --setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d).sharedSet#position"):format(0), "1.019 0.579 1.433")
     --setXMLString(self.xmlFile, ("vehicle.manureSystemConnectors.connector(%d).sharedSet#rotation"):format(0), "0 0 -50")

@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------
 -- Purpose: Insert fertilizer function into the Kverneland iXtra 1100 Comfort.
 --
--- Copyright (c) Wopster, 2019
+-- Copyright (c) Wopster, 2020
 ----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystemIXterB18FrontTank

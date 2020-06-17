@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------
 -- Purpose: Insert fertilizer function into the Kverneland iXtrack T4.
 --
--- Copyright (c) Wopster, 2019
+-- Copyright (c) Wopster, 2020
 ----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystemiXtrackT4

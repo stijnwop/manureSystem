@@ -188,17 +188,17 @@ Tuyau à fertilisant:
             <specialization name="manureSystemConnector"/>
         </type>
         <!-- kverneland DLC -->
-		<type name="kvernelandDLCiXtrackT4" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+        <type name="kvernelandDLCiXtrackT4" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="ManureSystemiXtrackT4"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>
-		<type name="kvernelandDLCiXterB18" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
+        <type name="kvernelandDLCiXterB18" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="ManureSystemiXterB18"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
         </type>
-		<type name="kvernelandDLCIXterB18FrontTank" parent="fillableImplement" filename="$dataS/scripts/vehicles/Vehicle.lua">
+        <type name="kvernelandDLCIXterB18FrontTank" parent="fillableImplement" filename="$dataS/scripts/vehicles/Vehicle.lua">
             <specialization name="ManureSystemIXterB18FrontTank"/>
             <specialization name="manureSystemConnector"/>
             <specialization name="manureSystemPumpMotor"/>
