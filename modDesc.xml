@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="51">
     <author>Wopster</author>
-    <version>1.0.9.2-beta</version>
+    <version>1.1.0.0</version>
     <title>
         <en>Manure System</en>
         <de>Gülle System</de>
@@ -25,6 +25,16 @@ Slurry hose:
 
 Fertilizer hose:
 - Price: €300
+
+Changelog:
+- Fixed several bugs
+- Several improvements/optimisations
+- Added 5M hose
+- Added more object support
+- Added compatibility with Courseplay
+- Added support for Kverneland DLC and Horsch Pack
+
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
         </en>
         <de>
@@ -44,6 +54,16 @@ Gülleschlauch:
 
 Düngerschlauch:
 - Preis: €300
+
+Changelog:
+- Fixed several bugs
+- Several improvements/optimisations
+- Added 5M hose
+- Added more object support
+- Added compatibility with Courseplay
+- Added support for Kverneland DLC and Horsch Pack
+
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
         </de>
         <fr>
@@ -63,6 +83,16 @@ Tuyau à lisier:
 
 Tuyau à fertilisant:
 - Prix: €300
+
+Changelog:
+- Fixed several bugs
+- Several improvements/optimisations
+- Added 5M hose
+- Added more object support
+- Added compatibility with Courseplay
+- Added support for Kverneland DLC and Horsch Pack
+
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
         </fr>
     </description>
