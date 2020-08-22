@@ -24,8 +24,12 @@
         <text name="action_directionLeftRight" text="Cambiar modo bomba de izda a dcha"/>
         <text name="action_directionRightLeft" text="Cambiar modo bomba de dcha a izda"/>
 
+        <text name="info_directionOut" text="emptying"/><!--TODO-->
+        <text name="info_directionIn" text="filling"/><!--TODO-->
+
         <!--Warnings pump-->
-        <text name="warning_objectEmpty" text="¡El depósito esta vacío!"/> 
+        <text name="warning_pumpDirectionLimited" text="Pump direction is limited to only: %s"/><!--TODO-->
+        <text name="warning_objectEmpty" text="¡El depósito esta vacío!"/>
         <text name="warning_objectFull" text="¡El depósito destino esta lleno!"/>
         <text name="warning_invalidFillType" text="¡La bomba no soporta este material!"/>
         <text name="warning_checkManureFlow" text="Compruebe el flujo de estiércol para el conector de %s!"/>

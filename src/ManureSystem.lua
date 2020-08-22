@@ -30,8 +30,8 @@ local sortByClassAndId = function(arg1, arg2)
                 local cord1 = math.abs(x1) + math.abs(y1) + math.abs(z1)
                 local cord2 = math.abs(x2) + math.abs(y2) + math.abs(z2)
 
-                local name1 = arg1:getName()
-                local name2 = arg2:getName()
+                local name1 = arg1:getName() or "placeable"
+                local name2 = arg2:getName() or "placeable"
                 -- Compare same placeables based on the position.
                 if name1 == name2 then
                     return cord1 < cord2

@@ -11,7 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Verander pomp richting"/>
 
         <!--Actions-->
-        <text name="action_storeHose" text="Berg slan op"/>
+        <text name="action_storeHose" text="Berg slang op"/>
         <text name="action_toggleManureFlow" text="%s afsluiter"/>
         <text name="action_toggleManureFlowStateOpen" text="Open"/>
         <text name="action_toggleManureFlowStateClose" text="Sluit"/>
@@ -19,15 +19,19 @@
         <text name="action_activatePump" text="Activeer pomp van %s"/>
         <text name="action_deactivatePump" text="Deactiveer pomp van %s"/>
 
-        <text name="action_directionOut" text="Verander pomp richting naar: legen"/>
-        <text name="action_directionIn" text="Verander pomp richting naar: vullen"/>
-        <text name="action_directionLeftRight" text="Change pump direction from: left to right"/>
-        <text name="action_directionRightLeft" text="Change pump direction from: right to left"/>
+        <text name="action_directionOut" text="Verander pomprichting naar: legen"/>
+        <text name="action_directionIn" text="Verander pomprichting naar: vullen"/>
+        <text name="action_directionLeftRight" text="Verander pomprichting van: links naar rechts"/>
+        <text name="action_directionRightLeft" text="Verander pomprichting van: rechts naar links"/>
+
+        <text name="info_directionOut" text="legen"/>
+        <text name="info_directionIn" text="vullen"/>
 
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Pomprichting is gelimiteerd naar enkel: %s"/>
         <text name="warning_objectEmpty" text="De pomp bron of doel is leeg!"/>
         <text name="warning_objectFull" text="De pomp doel is vol!"/>
-        <text name="warning_invalidFillType" text="De pomp filltype is niet ondersteund!"/>
+        <text name="warning_invalidFillType" text="De pomp vultype is niet ondersteund!"/>
         <text name="warning_checkManureFlow" text="Controleer de afluister voor de connector van %s!"/>
 
         <!--Warnings hose-->

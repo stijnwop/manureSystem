@@ -14,10 +14,12 @@ ManureSystemPumpMotor.MOD_DIR = g_CurrentModDirectory
 ManureSystemPumpMotor.PUMP_DIRECTION_IN = 1
 ManureSystemPumpMotor.PUMP_DIRECTION_OUT = -1
 
+ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR = "IN"
+ManureSystemPumpMotor.PUMP_DIRECTION_OUT_STR = "OUT"
+
 ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN = 0.99
 ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT = 0.98
 
-ManureSystemPumpMotor.NO_PUMP_MODE = 0
 ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX = 1
 
 ---Messages
@@ -27,6 +29,11 @@ ManureSystemPumpMotor.WARNING_NONE = 0
 ManureSystemPumpMotor.WARNING_EMPTY = 1
 ManureSystemPumpMotor.WARNING_FULL = 2
 ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE = 3
+
+---Pump modes
+ManureSystemPumpMotor.MODE_NONE = 0
+ManureSystemPumpMotor.MODE_CONNECTOR = 1
+ManureSystemPumpMotor.MODE_FILLARM = 2
 
 function ManureSystemPumpMotor.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PowerConsumer, specializations)
@@ -44,6 +51,9 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "canTurnOnPump", ManureSystemPumpMotor.canTurnOnPump)
     SpecializationUtil.registerFunction(vehicleType, "getTurnOnPumpNotAllowedWarning", ManureSystemPumpMotor.getTurnOnPumpNotAllowedWarning)
     SpecializationUtil.registerFunction(vehicleType, "checkPumpNotAllowedWarning", ManureSystemPumpMotor.checkPumpNotAllowedWarning)
+    SpecializationUtil.registerFunction(vehicleType, "setPumpMode", ManureSystemPumpMotor.setPumpMode)
+    SpecializationUtil.registerFunction(vehicleType, "getPumpMode", ManureSystemPumpMotor.getPumpMode)
+    SpecializationUtil.registerFunction(vehicleType, "canChangePumpDirection", ManureSystemPumpMotor.canChangePumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "setPumpDirection", ManureSystemPumpMotor.setPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "getPumpDirection", ManureSystemPumpMotor.getPumpDirection)
     SpecializationUtil.registerFunction(vehicleType, "isPumpingIn", ManureSystemPumpMotor.isPumpingIn)
@@ -92,7 +102,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpIsRunning = false
     spec.pumpHasLoad = true
     spec.pumpHasContact = true
-    spec.pumpMode = ManureSystemPumpMotor.NO_PUMP_MODE
+    spec.pumpMode = ManureSystemPumpMotor.MODE_NONE
     spec.pumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
 
     spec.isStandalone = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#isStandalone"), false)
@@ -264,8 +274,23 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             self:setIsPumpRunning(false)
         end
 
+        local pumpMode = self:getPumpMode()
         local hasTargetObject = self:isPumpTargetObjectValid()
         local hasLoad = hasTargetObject and spec.pumpHasContact
+
+        --Reset pump when we still have a target object but no pump mode.
+        if hasTargetObject and pumpMode == ManureSystemPumpMotor.MODE_NONE then
+            self:setPumpTargetObject(nil, nil)
+            self:setPumpSourceObject(nil, nil)
+            self:setIsPumpSourceWater(false)
+            self:setPumpMaxTime(self:getOriginalPumpMaxTime())
+            hasTargetObject = false
+        end
+
+        --Reset pump mode when we don't have a target object but a set pump mode.
+        if not hasTargetObject and pumpMode ~= ManureSystemPumpMotor.MODE_NONE then
+            self:setPumpMode(ManureSystemPumpMotor.MODE_NONE)
+        end
 
         if isPumpRunning and hasLoad then
             if spec.pumpEfficiency.currentTime < spec.pumpEfficiency.maxTime then
@@ -421,6 +446,26 @@ function ManureSystemPumpMotor:getPumpLoadPercentage()
     end
 
     return 0
+end
+
+---Sets the current pump mode to use
+function ManureSystemPumpMotor:setPumpMode(mode, noEventSend)
+    local spec = self.spec_manureSystemPumpMotor
+
+    if mode ~= spec.pumpMode then
+        ManureSystemPumpModeEvent.sendEvent(self, mode, noEventSend)
+        spec.pumpMode = mode
+    end
+end
+
+---Returns the current pump mode.
+function ManureSystemPumpMotor:getPumpMode()
+    return self.spec_manureSystemPumpMotor.pumpMode
+end
+
+---Allows for overwriting pump limitations.
+function ManureSystemPumpMotor:canChangePumpDirection()
+    return true
 end
 
 function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
@@ -642,7 +687,9 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
         local attachedImplements
         if object.getAttacherVehicle ~= nil then
             local attacherVehicle = object:getAttacherVehicle()
-            attachedImplements = attacherVehicle:getAttachedImplements()
+            if attacherVehicle ~= nil then
+                attachedImplements = attacherVehicle:getAttachedImplements()
+            end
         else
             attachedImplements = object:getAttachedImplements()
         end
@@ -790,8 +837,13 @@ end
 
 function ManureSystemPumpMotor.actionEventTogglePumpDirection(self, actionName, inputValue, callbackState, isAnalog)
     if not self:isPumpRunning() then
-        local spec = self.spec_manureSystemPumpMotor
-        self:setPumpDirection(-spec.pumpDirection)
+        if self:canChangePumpDirection() then
+            local spec = self.spec_manureSystemPumpMotor
+            self:setPumpDirection(-spec.pumpDirection)
+        else
+            local limitedText = self:isPumpingIn() and g_i18n:getText("info_directionIn") or g_i18n:getText("info_directionOut")
+            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_pumpDirectionLimited"):format(limitedText), 2000)
+        end
     end
 end
 

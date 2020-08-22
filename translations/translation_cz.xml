@@ -24,7 +24,11 @@
         <text name="action_directionLeftRight" text="Změnit směr přečerpávání z levé na pravou"/>
         <text name="action_directionRightLeft" text="Změnit směr přečerpávání z pravé na levou"/>
 
+        <text name="info_directionOut" text="vyprázdnění"/>
+        <text name="info_directionIn" text="plnění"/>
+
         <!--Warnings pump-->
+        <text name="warning_pumpDirectionLimited" text="Směr přečerpávání je limitován pouze na: %s"/>
         <text name="warning_objectEmpty" text="Zdroj přečerpávané tekutiny je prázdný!"/>
         <text name="warning_objectFull" text="Cíl pro přečerpání tekutiny je plný!"/>
         <text name="warning_invalidFillType" text="Tento typ tekutiny není podporován!"/>
@@ -37,7 +41,7 @@
 
         <!--Configuration fill arm-->
         <text name="configuration_manureSystemFillArm" text="Sací rameno"/>
-        
+
         <!--Placeables-->
         <text name="action_enableMixer" text="Zapnout míchadlo"/>
         <text name="action_disableMixer" text="Vypnout míchadlo"/>

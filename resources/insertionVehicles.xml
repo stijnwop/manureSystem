@@ -65,15 +65,51 @@
         <xml>data/vehicles/stara/imperador3/imperador3.xml</xml>
         <replaceTypeName>vanillaImperador3</replaceTypeName>
     </vehicle>
+    <!-- Kverneland DLC -->
+    <vehicle>
+        <xml>vehicles/kverneland/iXtrackT4/iXtrackT4.xml</xml>
+        <replaceTypeName>kvernelandDLCiXtrackT4</replaceTypeName>
+        <copySpecializations>
+            <specialization name="foldableFoliageBendingModifiers"/>
+        </copySpecializations>
+    </vehicle>
+    <vehicle>
+        <xml>vehicles/kverneland/iXterB18/iXterB18.xml</xml>
+        <replaceTypeName>kvernelandDLCiXterB18</replaceTypeName>
+        <copySpecializations>
+            <specialization name="foldableFoliageBendingModifiers"/>
+        </copySpecializations>
+    </vehicle>
+    <vehicle>
+        <xml>vehicles/kverneland/iXterB18/IXterB18FrontTank.xml</xml>
+        <replaceTypeName>kvernelandDLCIXterB18FrontTank</replaceTypeName>
+    </vehicle>
+    <!-- Horsch DLC -->
+    <vehicle>
+        <xml>horsch/leebPT350/leebPT350.xml</xml>
+        <replaceTypeName>modHorschLeebPT350</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>horsch/shuttle8000/shuttle8000.xml</xml>
+        <replaceTypeName>modHorschShuttle8000</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>horsch/slurryTank21000/slurryTank21000.xml</xml>
+        <replaceTypeName>modHorschSlurryTank21000</replaceTypeName>
+    </vehicle>
+    <vehicle>
+        <xml>horsch/slurryTender21000/slurryTender21000.xml</xml>
+        <replaceTypeName>modHorschSlurryTender21000</replaceTypeName>
+    </vehicle>
 
     <!-- Pallets -->
     <vehicle>
         <xml>data/objects/pallets/liquidTank/fertilizerTank.xml</xml>
-        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+        <replaceTypeName>vanillaLiquidTankPallet</replaceTypeName>
     </vehicle>
     <vehicle>
         <xml>data/objects/pallets/liquidTank/herbicideTank.xml</xml>
-        <replaceTypeName>vanillaLiquidTank</replaceTypeName>
+        <replaceTypeName>vanillaLiquidTankPallet</replaceTypeName>
     </vehicle>
 
     <!-- Mods -->

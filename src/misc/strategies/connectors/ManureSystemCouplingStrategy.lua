@@ -159,6 +159,8 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
             if object.spec_manureSystemPumpMotor ~= nil then
                 if desc ~= nil and desc.hasOpenManureFlow and connector.hasOpenManureFlow then
+                    object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
+
                     if desc.vehicle ~= nil then
                         object:setPumpTargetObject(desc.vehicle, desc.fillUnitIndex)
                         object:setPumpSourceObject(object, connector.fillUnitIndex)
@@ -190,7 +192,7 @@ end
 
 ---Find pump objects for standalone pumps.
 function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
-    local connectors = ListUtil.copyTable(object:getConnectorsByType(self.connectorType))
+    local connectors = ListUtil.copyTable(object:getActiveConnectorsByType(self.connectorType))
 
     if #connectors >= ManureSystemCouplingStrategy.MIN_STANDALONE_CONNECTORS then
         table.sort(connectors, sortConnectorsByManureFlowState)
@@ -210,6 +212,7 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
 
                 local impactTime = self:getCalculatedMaxTime(lengthHoses1 + lengthHoses2)
                 object:setPumpMaxTime(impactTime)
+                object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
             else
                 self:resetPumpTargetObject(object)
             end
@@ -232,6 +235,7 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
 
                         local impactTime = self:getCalculatedMaxTime(lengthHoses1)
                         object:setPumpMaxTime(impactTime)
+                        object:setPumpMode(ManureSystemPumpMotor.MODE_CONNECTOR)
                     end
                 end
             else

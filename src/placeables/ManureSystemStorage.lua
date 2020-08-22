@@ -329,16 +329,16 @@ function ManureSystemStorage:update(dt)
     end
 
     local lastThickness = self.thickness
-    if self.isServer then
-        if self.hasMixer and self.isMixerActive then
+    if self.hasMixer and self.isMixerActive then
+        if self.isServer then
             self:decreaseManureThickness(self.mixPerSecond, dt, self.isMixerActive)
 
             if not (self.thickness > 0) then
                 self:setIsMixerActive(false)
             end
-
-            self:raiseActive()
         end
+
+        self:raiseActive()
     end
 
     if self.isClient then
@@ -366,7 +366,9 @@ function ManureSystemStorage:update(dt)
             local text = string.format(g_i18n:getText("info_fillLevel") .. " %s: %s (%d%%)", fillTypeName, g_i18n:formatFluid(fillLevel), math.floor(100 * fillLevel / capacity))
             g_currentMission:addExtraPrintText(text)
 
-            g_currentMission:addExtraPrintText(g_i18n:getText("info_thickness"):format(fillTypeName, self.thickness * 100))
+            if self.hasMixer then
+                g_currentMission:addExtraPrintText(g_i18n:getText("info_thickness"):format(fillTypeName, self.thickness * 100))
+            end
             self:raiseActive()
         end
 
@@ -441,7 +443,7 @@ function ManureSystemStorage:onMovedFillLevel(fillLevel, movedFillLevel)
     -- If we got added fillLevel decrease thickness.
     if movedFillLevel > 0 then
         local movedDt = 60
-        self:decreaseManureThickness(movedFillLevel, movedDt, not self.isMixerActive)
+        self:decreaseManureThickness(movedFillLevel * 2, movedDt, not self.isMixerActive)
     end
 
     self:raiseDirtyFlags(self.lagoonDirtyFlag)
@@ -562,7 +564,7 @@ function ManureSystemStorage:isUnderFillPlane(x, y, z)
 end
 
 function ManureSystemStorage:increaseManureThickness()
-    if not self.isServer then
+    if not self.isServer or not self.hasMixer then
         return
     end
 
@@ -582,7 +584,7 @@ function ManureSystemStorage:increaseManureThickness()
 end
 
 function ManureSystemStorage:decreaseManureThickness(mixPerSecond, dt, updatePlane)
-    if not self.isServer then
+    if not self.isServer or not self.hasMixer then
         return
     end
 
@@ -612,6 +614,7 @@ function ManureSystemStorage:setIsMixerActive(isMixerActive, noEventSend)
         ManureSystemIsMixingEvent.sendEvent(self, isMixerActive, noEventSend)
         self.isMixerActive = isMixerActive
         self:updateActivateText()
+        self:raiseActive() -- raise initially.
 
         if self.isClient then
             if isMixerActive then
