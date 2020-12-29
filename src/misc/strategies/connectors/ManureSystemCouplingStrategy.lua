@@ -363,6 +363,8 @@ function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace, use
         return "#" .. lookupKey
     end
 
+    parkPlace.offsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. getLookupKey("offsetThreshold")), parkPlace.length)
+
     local parkDirection = Utils.getNoNil(getXMLString(xmlFile, key .. getLookupKey("direction")), "right")
     parkPlace.direction = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
     parkPlace.startTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. getLookupKey("startTransOffset")), 3), { 0, 0, 0 })

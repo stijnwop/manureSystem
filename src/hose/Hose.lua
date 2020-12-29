@@ -1044,6 +1044,7 @@ function Hose:parkHose(connector, vehicle)
 end
 
 function Hose:setParkPosition(connector, parkPlace)
+    local spec = self.spec_hose
     local length = math.min(parkPlace.length, self.sizeLength) * parkPlace.direction
     local components = #self.components - 1 -- we start at component 1
 
@@ -1051,10 +1052,18 @@ function Hose:setParkPosition(connector, parkPlace)
     self:removeFromPhysics()
 
     -- Set offset data
-    local xStartOffPos, yStartOffPos, zStartOffPos = unpack(parkPlace.startTransOffset)
-    local xEndOffPos, yEndOffPos, zEndOffPos = unpack(parkPlace.endTransOffset)
-    local xStartOffRot, yStartOffRot, zStartOffRot = unpack(parkPlace.startRotOffset)
-    local xEndOffRot, yEndOffRot, zEndOffRot = unpack(parkPlace.endRotOffset)
+    local xStartOffPos, yStartOffPos, zStartOffPos = 0, 0, 0
+    local xEndOffPos, yEndOffPos, zEndOffPos = 0, 0, 0
+    local xStartOffRot, yStartOffRot, zStartOffRot = 0, 0, 0
+    local xEndOffRot, yEndOffRot, zEndOffRot = 0, 0, 0
+
+    -- Do correction on the end offset with the start offset.
+    if spec.length >= parkPlace.offsetThreshold then
+        xStartOffPos, yStartOffPos, zStartOffPos = unpack(parkPlace.startTransOffset)
+        xEndOffPos, yEndOffPos, zEndOffPos = unpack(parkPlace.endTransOffset)
+        xStartOffRot, yStartOffRot, zStartOffRot = unpack(parkPlace.startRotOffset)
+        xEndOffRot, yEndOffRot, zEndOffRot = unpack(parkPlace.endRotOffset)
+    end
 
     local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
     local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
