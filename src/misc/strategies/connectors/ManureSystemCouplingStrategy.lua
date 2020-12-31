@@ -345,7 +345,15 @@ function ManureSystemCouplingStrategy:delete(connector)
     end
 
     if connector.isParkPlace then
-        delete(connector.parkPlaceLengthNode)
+        if connector.lengthNode ~= nil then
+            delete(connector.lengthNode)
+        end
+
+        for _, parkPlace in pairs(connector.parkPlaces) do
+            if parkPlace.lengthNode ~= nil then
+                delete(parkPlace.lengthNode)
+            end
+        end
     end
 end
 
