@@ -326,7 +326,8 @@ function ManureSystemDockStrategy:dockingArmEnteredTriggerCallback(triggerId, ot
                 if self.dockingArmObjectsDelayedDelete[object] ~= nil then
                     self.dockingArmObjectsDelayedDelete[object] = nil
                 else
-                    table.insert(self.dockingArmObjects, object)
+                    -- Add element to list with util function in order to prevent double insertion.
+                    ListUtil.addElementToList(self.dockingArmObjects, object)
                 end
             else
                 self.dockingArmObjectsDelayedDelete[object] = g_currentMission.time + ManureSystemDockStrategy.DEFORMATION_RESET_TIME
