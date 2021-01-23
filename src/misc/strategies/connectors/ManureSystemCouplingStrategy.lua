@@ -75,6 +75,16 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
             DebugUtil.drawDebugNode(connector.node, "CONNECTOR NODE")
         end
     end
+end
+
+---Called on update tick frame by the object that implements the connector strategy.
+function ManureSystemCouplingStrategy:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local object = self.object
+
+    --Only server sided.
+    if not object.isServer then
+        return
+    end
 
     --We don't have to search for possible source object on placeables.
     if object.getActiveConnectorsByType == nil then

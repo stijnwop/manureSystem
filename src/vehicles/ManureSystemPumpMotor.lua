@@ -318,7 +318,9 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
             else
                 spec.pumpEfficiency.currentLoad = MathUtil.clamp(spec.pumpEfficiency.currentTime / spec.pumpEfficiency.maxTime, 0, 1)
             end
+        end
 
+        if hasLoad ~= spec.pumpHasLoad or hasTargetObject ~= spec.hasTargetObject then
             spec.pumpHasLoad = hasLoad
             spec.hasTargetObject = hasTargetObject
 
@@ -328,10 +330,10 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
                 spec.pumpHasLoadSent = spec.pumpHasLoad
                 self:raiseDirtyFlags(spec.dirtyFlag)
             end
-
-            -- Reset contact
-            spec.pumpHasContact = true
         end
+
+        -- Reset contact
+        spec.pumpHasContact = true
     end
 end
 
