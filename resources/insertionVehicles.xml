@@ -68,17 +68,15 @@
     <!-- Kverneland DLC -->
     <vehicle>
         <xml>vehicles/kverneland/iXtrackT4/iXtrackT4.xml</xml>
+        <originalTypeName>pdlc_kvernelandPack.extendedSprayer</originalTypeName>
         <replaceTypeName>kvernelandDLCiXtrackT4</replaceTypeName>
-        <copySpecializations>
-            <specialization name="foldableFoliageBendingModifiers"/>
-        </copySpecializations>
+        <copySpecializations>true</copySpecializations>
     </vehicle>
     <vehicle>
         <xml>vehicles/kverneland/iXterB18/iXterB18.xml</xml>
+        <originalTypeName>pdlc_kvernelandPack.extendedSprayer</originalTypeName>
         <replaceTypeName>kvernelandDLCiXterB18</replaceTypeName>
-        <copySpecializations>
-            <specialization name="foldableFoliageBendingModifiers"/>
-        </copySpecializations>
+        <copySpecializations>true</copySpecializations>
     </vehicle>
     <vehicle>
         <xml>vehicles/kverneland/iXterB18/IXterB18FrontTank.xml</xml>
@@ -115,14 +113,15 @@
     <!-- Mods -->
     <vehicle>
         <xml>zunhammer/TV585/TV585.xml</xml>
+        <originalTypeName>FS19_holmerPack.terraVariant</originalTypeName>
         <replaceTypeName>dlcTV585</replaceTypeName>
+        <copySpecializations>true</copySpecializations>
     </vehicle>
     <vehicle>
         <xml>holmer/terraVariant435/terraVariant435.xml</xml>
+        <originalTypeName>FS19_holmerPack.terraVariant</originalTypeName>
         <replaceTypeName>dlcTerraVariant435</replaceTypeName>
-        <copySpecializations>
-            <specialization name="crabSteeringAttacher"/>
-        </copySpecializations>
+        <copySpecializations>true</copySpecializations>
     </vehicle>
     <vehicle>
         <xml>vehicles/briri/fieldMaster20/fieldMaster20.xml</xml>
