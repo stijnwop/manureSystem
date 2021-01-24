@@ -113,9 +113,7 @@
     <!-- Mods -->
     <vehicle>
         <xml>zunhammer/TV585/TV585.xml</xml>
-        <originalTypeName>FS19_holmerPack.terraVariant</originalTypeName>
         <replaceTypeName>dlcTV585</replaceTypeName>
-        <copySpecializations>true</copySpecializations>
     </vehicle>
     <vehicle>
         <xml>holmer/terraVariant435/terraVariant435.xml</xml>
