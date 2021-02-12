@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="51">
+<modDesc descVersion="53">
     <author>Wopster</author>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <title>
         <en>Manure System</en>
         <de>Gülle System</de>
@@ -27,12 +27,12 @@ Fertilizer hose:
 - Price: €300
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
@@ -56,12 +56,12 @@ Düngerschlauch:
 - Preis: €300
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
@@ -85,12 +85,12 @@ Tuyau à fertilisant:
 - Prix: €300
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
 ]]>
