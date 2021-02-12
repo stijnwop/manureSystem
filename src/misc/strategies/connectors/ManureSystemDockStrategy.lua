@@ -102,7 +102,9 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     fillArm.isRaycastAllowed = false
                 end
             elseif dockingArmObject:getPumpTargetObject() ~= nil then
-                dockingArmObject:setPumpTargetObject(nil, nil)
+                if dockingArmObject:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM then
+                    dockingArmObject:setPumpTargetObject(nil, nil)
+                end
             end
         end
 

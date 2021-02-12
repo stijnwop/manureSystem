@@ -132,7 +132,9 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                         end
                     end
                 else
-                    self:setPumpTargetObject(nil, nil)
+                    if self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM then
+                        self:setPumpTargetObject(nil, nil)
+                    end
                 end
 
                 local isNearWater = (y <= g_currentMission.waterY + 0.1)

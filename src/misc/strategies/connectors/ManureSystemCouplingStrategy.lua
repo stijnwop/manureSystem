@@ -128,11 +128,13 @@ end
 
 ---Resets the pump settings.
 function ManureSystemCouplingStrategy:resetPumpTargetObject(object)
-    if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
-        object:setPumpTargetObject(nil, nil)
-        object:setPumpSourceObject(nil, nil)
-        object:setIsPumpSourceWater(false)
-        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+    if object:getPumpMode() == ManureSystemPumpMotor.MODE_CONNECTOR then
+        if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
+            object:setPumpTargetObject(nil, nil)
+            object:setPumpSourceObject(nil, nil)
+            object:setIsPumpSourceWater(false)
+            object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+        end
     end
 end
 
