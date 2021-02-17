@@ -34,6 +34,11 @@ function ManureSystemConnectorManager:loadMapData()
     self:loadDefaultConnectorTypes()
     self:loadVisualConnectorsFromXML()
 
+    local orgConnectionHoseManagerDirectory = g_connectionHoseManager.baseDirectory
+    g_connectionHoseManager.baseDirectory = self.modDirectory
+    g_connectionHoseManager:loadConnectionHosesFromXML(Utils.getFilename("resources/assets/connectionHoses/connectionHoses.xml", self.modDirectory))
+    g_connectionHoseManager.baseDirectory = orgConnectionHoseManagerDirectory
+
     local collisionRoot = g_i3DManager:loadSharedI3DFile("resources/collisions/connectorCollision.i3d", self.modDirectory, false, false, false)
     self.collision = getChildAt(collisionRoot, 0)
     setCollisionMask(self.collision, ManureSystemConnectorManager.COLLISION_MASK)

@@ -75,6 +75,16 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
             DebugUtil.drawDebugNode(connector.node, "CONNECTOR NODE")
         end
     end
+end
+
+---Called on update tick frame by the object that implements the connector strategy.
+function ManureSystemCouplingStrategy:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local object = self.object
+
+    --Only server sided.
+    if not object.isServer then
+        return
+    end
 
     --We don't have to search for possible source object on placeables.
     if object.getActiveConnectorsByType == nil then
@@ -118,11 +128,13 @@ end
 
 ---Resets the pump settings.
 function ManureSystemCouplingStrategy:resetPumpTargetObject(object)
-    if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
-        object:setPumpTargetObject(nil, nil)
-        object:setPumpSourceObject(nil, nil)
-        object:setIsPumpSourceWater(false)
-        object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+    if object:getPumpMode() == ManureSystemPumpMotor.MODE_CONNECTOR then
+        if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
+            object:setPumpTargetObject(nil, nil)
+            object:setPumpSourceObject(nil, nil)
+            object:setIsPumpSourceWater(false)
+            object:setPumpMaxTime(object:getOriginalPumpMaxTime())
+        end
     end
 end
 
@@ -297,22 +309,43 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.jointOrigTrans = { getTranslation(connector.node) }
 
     if connector.isParkPlace then
-        connector.parkPlaceLength = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceLength"), 5) -- Default length of 5m
+        connector.parkPlaces = {}
 
-        connector.parkOffsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkOffsetThreshold"), 0)
-        local parkDirection = Utils.getNoNil(getXMLString(xmlFile, key .. "#parkDirection"), "right")
-        connector.parkDirection = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
-        connector.parkStartTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. "#parkStartTransOffset"), 3), { 0, 0, 0 })
-        connector.parkStartRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkStartRotOffset"), 3), { 0, 0, 0 })
-        connector.parkEndTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. "#parkEndTransOffset"), 3), { 0, 0, 0 })
-        connector.parkEndRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. "#parkEndRotOffset"), 3), { 0, 0, 0 })
+        local i = 0
+        while true do
+            local baseKey = ("%s.parkPlaces.parkPlace(%d)"):format(key, i)
+            if not hasXMLProperty(xmlFile, baseKey) then
+                break
+            end
 
-        local lengthNode = createTransformGroup(("connector_length_node_%d"):format(connector.id))
-        local x, y, z = 0, 0, connector.parkPlaceLength * connector.parkDirection
+            local length = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#length"), 5) -- Default length of 5m
+            if connector.parkPlaces[length] == nil then
+                local parkPlace = {}
+                parkPlace.id = i + 1
+                parkPlace.node = connector.node
+                parkPlace.length = length
 
-        link(connector.node, lengthNode)
-        setTranslation(lengthNode, x, y, z)
-        connector.parkPlaceLengthNode = lengthNode
+                if self:loadParkPlace(xmlFile, baseKey, parkPlace) then
+                    connector.parkPlaces[length] = parkPlace
+                end
+            else
+                g_logManager:xmlError(self.object.configFileName, ("Park place already exists for hose length: (%d)m."):format(length))
+            end
+
+            i = i + 1
+        end
+
+        -- Fallback
+        if hasXMLProperty(xmlFile, key .. "#parkPlaceLength")
+            or hasXMLProperty(xmlFile, key .. "#parkOffsetThreshold")
+            or hasXMLProperty(xmlFile, key .. "#parkStartTransOffset")
+            or hasXMLProperty(xmlFile, key .. "#parkStartRotOffset")
+            or hasXMLProperty(xmlFile, key .. "#parkEndTransOffset")
+            or hasXMLProperty(xmlFile, key .. "#parkEndRotOffset")
+        then
+            connector.length = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceLength"), 5)
+            self:loadParkPlace(xmlFile, key, connector, true)
+        end
     end
 
     return true
@@ -324,8 +357,49 @@ function ManureSystemCouplingStrategy:delete(connector)
     end
 
     if connector.isParkPlace then
-        delete(connector.parkPlaceLengthNode)
+        if connector.lengthNode ~= nil then
+            delete(connector.lengthNode)
+        end
+
+        for _, parkPlace in pairs(connector.parkPlaces) do
+            if parkPlace.lengthNode ~= nil then
+                delete(parkPlace.lengthNode)
+            end
+        end
     end
+end
+
+function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace, useFallback)
+    local node = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, ("%s.deformer"):format(key), parkPlace.id)
+    parkPlace.deformerNode = node
+
+    -- Fallback to old system.
+    local function getLookupKey(lookupKey)
+        if useFallback then
+            local upperLookupKey = lookupKey:gsub("^%l", string.upper)
+            return "#park" .. upperLookupKey
+        end
+
+        return "#" .. lookupKey
+    end
+
+    parkPlace.offsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. getLookupKey("offsetThreshold")), parkPlace.length)
+
+    local parkDirection = Utils.getNoNil(getXMLString(xmlFile, key .. getLookupKey("direction")), "right")
+    parkPlace.direction = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
+    parkPlace.startTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. getLookupKey("startTransOffset")), 3), { 0, 0, 0 })
+    parkPlace.startRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. getLookupKey("startRotOffset")), 3), { 0, 0, 0 })
+    parkPlace.endTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. getLookupKey("endTransOffset")), 3), { 0, 0, 0 })
+    parkPlace.endRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. getLookupKey("endRotOffset")), 3), { 0, 0, 0 })
+
+    local lengthNode = createTransformGroup(("connector_parkplace_length_node_%d"):format(parkPlace.id))
+    local x, y, z = 0, 0, parkPlace.length * parkPlace.direction
+
+    link(parkPlace.node, lengthNode)
+    setTranslation(lengthNode, x, y, z)
+    parkPlace.lengthNode = lengthNode
+
+    return true
 end
 
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAttributes(xmlFile, key, connector, connectorNode, sharedConnector)

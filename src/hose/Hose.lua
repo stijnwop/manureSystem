@@ -59,6 +59,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "disconnectGrabNode", Hose.disconnectGrabNode)
     SpecializationUtil.registerFunction(vehicleType, "removeHoseConnections", Hose.removeHoseConnections)
     SpecializationUtil.registerFunction(vehicleType, "parkHose", Hose.parkHose)
+    SpecializationUtil.registerFunction(vehicleType, "setParkPosition", Hose.setParkPosition)
     SpecializationUtil.registerFunction(vehicleType, "unparkHose", Hose.unparkHose)
     SpecializationUtil.registerFunction(vehicleType, "isAttached", Hose.isAttached)
     SpecializationUtil.registerFunction(vehicleType, "isDetached", Hose.isDetached)
@@ -105,6 +106,9 @@ function Hose:onLoad(savegame)
         spec.targetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#targetNode"), self.i3dMappings)
         spec.centerNode1 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode1"), self.i3dMappings)
         spec.centerNode2 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode2"), self.i3dMappings)
+
+        spec.p1 = spec.centerNode1
+        spec.p2 = spec.centerNode2
 
         local startTrans = { getWorldTranslation(spec.mesh) }
         local endTrans = { getWorldTranslation(spec.targetNode) }
@@ -513,7 +517,12 @@ function Hose:findConnector(id)
                             if not (grabNode.isExtension and not connector.isParkPlace) then
                                 local connectorInRange = Hose.isConnectorInRange(connector.node, x, y, z, connector.inRangeDistance)
                                 if not connectorInRange and connector.isParkPlace then
-                                    connectorInRange = Hose.isConnectorInRange(connector.parkPlaceLengthNode, x, y, z, connector.inRangeDistance)
+                                    local parkPlace = connector
+                                    if connector.parkPlaces ~= nil and connector.parkPlaces[spec.length] ~= nil then
+                                        parkPlace = connector.parkPlaces[spec.length]
+                                    end
+
+                                    connectorInRange = Hose.isConnectorInRange(parkPlace.lengthNode, x, y, z, connector.inRangeDistance)
                                 end
 
                                 if connectorInRange then
@@ -708,8 +717,8 @@ function Hose:computeCatmullSpline()
 
     p3x, p3y, p3z = localToLocal(spec.targetNode, spec.mesh, p3x, p3y, p3z)
 
-    local w1x, w1y, w1z = getWorldTranslation(spec.centerNode1)
-    local w2x, w2y, w2z = getWorldTranslation(spec.centerNode2)
+    local w1x, w1y, w1z = getWorldTranslation(spec.p1)
+    local w2x, w2y, w2z = getWorldTranslation(spec.p2)
 
     p1x, p1y, p1z = worldToLocal(spec.mesh, (w1x + w2x) * 0.5, (w1y + w2y) * 0.5, (w1z + w2z) * 0.5)
 
@@ -969,70 +978,31 @@ end
 function Hose:parkHose(connector, vehicle)
     local spec = self.spec_hose
 
-    if connector.parkPlaceLength < spec.length then
+    local parkPlace = connector
+    -- New format.
+    if connector.parkPlaces ~= nil and connector.parkPlaces[spec.length] ~= nil then
+        parkPlace = connector.parkPlaces[spec.length]
+    end
+
+    if parkPlace.length < spec.length then
         if self.isClient then
-            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_parkingPlaceTooSmall"):format(connector.parkPlaceLength, spec.length), 2000)
+            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_parkingPlaceTooSmall"):format(parkPlace.length, spec.length), 2000)
         end
 
         return
     end
 
     self:removeHoseConnections()
+    self:setParkPosition(connector, parkPlace)
 
-    local length = math.min(connector.parkPlaceLength, self.sizeLength) * connector.parkDirection
+    if parkPlace.deformerNode ~= nil then
+        -- Set control points
+        spec.p1 = parkPlace.deformerNode
+        spec.p2 = parkPlace.deformerNode
+    end
+
+    local length = math.min(parkPlace.length, self.sizeLength) * parkPlace.direction
     local grabNodesDivision = #spec.grabNodes - 1
-    local division = #self.components - 1
-
-    -- First we remove the hose from physics
-    self:removeFromPhysics()
-
-    -- Set offset data
-    local xStartOffPos, yStartOffPos, zStartOffPos = 0, 0, 0
-    local xEndOffPos, yEndOffPos, zEndOffPos = 0, 0, 0
-    local xStartOffRot, yStartOffRot, zStartOffRot = 0, 0, 0
-    local xEndOffRot, yEndOffRot, zEndOffRot = 0, 0, 0
-
-    if spec.length >= connector.parkOffsetThreshold then
-        xStartOffPos, yStartOffPos, zStartOffPos = unpack(connector.parkStartTransOffset)
-        xEndOffPos, yEndOffPos, zEndOffPos = unpack(connector.parkEndTransOffset)
-        xStartOffRot, yStartOffRot, zStartOffRot = unpack(connector.parkStartRotOffset)
-        xEndOffRot, yEndOffRot, zEndOffRot = unpack(connector.parkEndRotOffset)
-    end
-
-    local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
-    local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
-
-    -- Do correction on the end offset with the start offset.
-    if spec.length >= connector.parkOffsetThreshold then
-        xEndOffPos = xEndOffPos - xStartOffPos
-        yEndOffPos = yEndOffPos - yStartOffPos
-        zEndOffPos = zEndOffPos - zStartOffPos
-    end
-
-    -- We place the components correctly.
-    for i = 1, #self.components do
-        local parkNode = createTransformGroup("parkNode")
-        setWorldTranslation(parkNode, xPos, yPos, zPos)
-        setWorldRotation(parkNode, xRot, yRot, zRot)
-
-        local alpha = i - 1
-        -- Calculate offset.
-        local tx, ty, tz = MathUtil.vector3Lerp(xStartOffPos, yStartOffPos, zStartOffPos, xEndOffPos, yEndOffPos, zEndOffPos, 1 / division * alpha)
-        local x, y, z = localToWorld(parkNode, tx, ty, tz + (length / division * alpha))
-
-        local ox, oy, oz = MathUtil.vector3Lerp(xStartOffRot, yStartOffRot, zStartOffRot, xEndOffRot, yEndOffRot, zEndOffRot, 1 / division * alpha)
-        if connector.parkDirection == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
-            oy = oy + math.pi
-        end
-
-        local rx, ry, rz = localRotationToWorld(parkNode, ox, oy, oz)
-        self:setWorldPosition(x, y, z, rx, ry, rz, i, true)
-
-        delete(parkNode)
-    end
-
-    -- Add the hose back to physics
-    self:addToPhysics()
 
     local excludedComponentIds = {}
     for id, grabNode in ipairs(self:getGrabNodes()) do
@@ -1073,8 +1043,63 @@ function Hose:parkHose(connector, vehicle)
     end
 end
 
+function Hose:setParkPosition(connector, parkPlace)
+    local spec = self.spec_hose
+    local length = math.min(parkPlace.length, self.sizeLength) * parkPlace.direction
+    local components = #self.components - 1 -- we start at component 1
+
+    -- First we remove the hose from physics
+    self:removeFromPhysics()
+
+    -- Set offset data
+    local xStartOffPos, yStartOffPos, zStartOffPos = 0, 0, 0
+    local xEndOffPos, yEndOffPos, zEndOffPos = 0, 0, 0
+    local xStartOffRot, yStartOffRot, zStartOffRot = 0, 0, 0
+    local xEndOffRot, yEndOffRot, zEndOffRot = 0, 0, 0
+
+    -- Do correction on the end offset with the start offset.
+    if spec.length >= parkPlace.offsetThreshold then
+        xStartOffPos, yStartOffPos, zStartOffPos = unpack(parkPlace.startTransOffset)
+        xEndOffPos, yEndOffPos, zEndOffPos = unpack(parkPlace.endTransOffset)
+        xStartOffRot, yStartOffRot, zStartOffRot = unpack(parkPlace.startRotOffset)
+        xEndOffRot, yEndOffRot, zEndOffRot = unpack(parkPlace.endRotOffset)
+    end
+
+    local xPos, yPos, zPos = localToWorld(connector.node, xStartOffPos, yStartOffPos, zStartOffPos)
+    local xRot, yRot, zRot = localRotationToWorld(connector.node, xStartOffRot, yStartOffRot, zStartOffRot)
+
+    -- We place the components correctly.
+    for i = 1, #self.components do
+        local parkNode = createTransformGroup("parkNode")
+        setWorldTranslation(parkNode, xPos, yPos, zPos)
+        setWorldRotation(parkNode, xRot, yRot, zRot)
+
+        local alpha = i - 1
+        -- Calculate offset.
+        local tx, ty, tz = MathUtil.vector3Lerp(xStartOffPos, yStartOffPos, zStartOffPos, xEndOffPos, yEndOffPos, zEndOffPos, 1 / components * alpha)
+        local x, y, z = localToWorld(parkNode, tx, ty, tz + (length / components * alpha))
+
+        local ox, oy, oz = MathUtil.vector3Lerp(xStartOffRot, yStartOffRot, zStartOffRot, xEndOffRot, yEndOffRot, zEndOffRot, 1 / components * alpha)
+        if parkPlace.direction == ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT then
+            oy = oy + math.pi
+        end
+
+        local rx, ry, rz = localRotationToWorld(parkNode, ox, oy, oz)
+        self:setWorldPosition(x, y, z, rx, ry, rz, i, true)
+
+        delete(parkNode)
+    end
+
+    -- Add the hose back to physics
+    self:addToPhysics()
+end
+
 function Hose:unparkHose(connector, vehicle)
     local spec = self.spec_hose
+
+    -- Reset control points.
+    spec.p1 = spec.centerNode1
+    spec.p2 = spec.centerNode2
 
     local excludedComponentIds = {}
     for id, grabNode in ipairs(self:getGrabNodes()) do

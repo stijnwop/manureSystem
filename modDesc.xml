@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="51">
+<modDesc descVersion="53">
     <author>Wopster</author>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <title>
         <en>Manure System</en>
         <de>Gülle System</de>
@@ -27,43 +27,43 @@ Fertilizer hose:
 - Price: €300
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </en>
         <de>
-            <![CDATA[Das Gülle System verändert das ganze Spielerlebnis in der Handhabung der Gülle.Erfahre was es heisst, als echter Landwirt Gülle zu pumpen.
+            <![CDATA[Das Gülle System verändert das ganze Spielerlebnis in der Handhabung der Gülle. Erfahre was es heisst, als echter Landwirt Gülle zu pumpen.
 Nutze die Befüllarme um aus offenen Behältern wie Feldrandcontainern, Güllebecken und Wasserbecken zu pumpen.
 Benutze einen speziellen Füllarm um von der Andockstation anzusaugen, oder einfach den Saugschlauch.
-Mit dem Saugschlauch kannst Du Flüssigkeiten von einem in das andere Behältnis pumpen, und diese einfach verlängern, um auch weitere Strecken zu überbrücken.
+Mit dem Saugschlauch kannst Du Flüssigkeiten von einem in das andere Behältnis pumpen und diese einfach verlängern, um auch weitere Strecken zu überbrücken.
 Das Pumpen geschieht nicht immer mit der gleichen Geschwindigkeit, da auch dickflüssige Gülle oder die Entfernung die Pumpenleistung beeinflussen.
 
-Alle Standardfahrzeuge sind unterstützt ( und manche haben kleine Veränderungen bekommen ), für die komplette Liste bitte die Anleitung im Link hier drunter lesen.
+Alle Standardfahrzeuge werden unterstützt ( und manche haben kleine Veränderungen bekommen ), für die komplette Liste bitte die Anleitung im Link hier drunter lesen.
 Für weitere Informationen, lese dir die <a href="https://github.com/stijnwop/manureSystem/blob/master/README.md">manual aus dem Github</a> durch.
 
 Besonderen Dank an VertexDezign und BM-Modding für die Bereitstellung der tollen assets!
 
 Gülleschlauch:
-- Preis: €150
+- Preis: 150 €
 
 Düngerschlauch:
-- Preis: €300
+- Preis: 300 €
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </de>
         <fr>
@@ -85,14 +85,14 @@ Tuyau à fertilisant:
 - Prix: €300
 
 Changelog:
-- Fixed several bugs
-- Several improvements/optimisations
-- Added 5M hose
-- Added more object support
-- Added compatibility with Courseplay
-- Added support for Kverneland DLC and Horsch Pack
+- Added new park place deformer
+- Fix MP issue with manure docking
+- Several performance improvements
+- Fix issue with Holmer 435 fillarm
+- Fix deform issue with Kverneland DLC
+- Add support for transfer hoses
 
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.1.0.0">Full changelog here</a>
+<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </fr>
     </description>
@@ -269,9 +269,9 @@ Changelog:
             <specialization name="fillTriggerVehicle"/>
             <specialization name="powerConsumer"/>
             <specialization name="manureSystemTerraVariant435"/>
+            <specialization name="manureSystemPumpMotor"/>
             <specialization name="manureSystemFillArm"/>
             <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
         </type>
         <!-- Briri Mod -->
         <type name="modFieldMaster20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">

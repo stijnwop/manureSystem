@@ -41,6 +41,7 @@ source(Utils.getFilename("src/hose/HosePlayer.lua", directory))
 
 local manureSystem
 local vehicles = {}
+local vehiclesByReplaceType = {}
 
 local function isEnabled()
     return manureSystem ~= nil
@@ -58,27 +59,12 @@ local function loadInsertionVehicles()
 
         local entry = {}
         entry.xml = getXMLString(xmlFile, key .. ".xml")
+        entry.originalTypeName = getXMLString(xmlFile, key .. ".originalTypeName")
         entry.replaceTypeName = modName .. "." .. getXMLString(xmlFile, key .. ".replaceTypeName")
-        entry.copySpecializations = hasXMLProperty(xmlFile, key .. ".copySpecializations")
-
-        entry.specializations = {}
-        if entry.copySpecializations then
-            local s = 0
-            while true do
-                local specKey = ("%s.copySpecializations.specialization(%d)"):format(key, s)
-                if not hasXMLProperty(xmlFile, specKey) then
-                    break
-                end
-
-                local name = getXMLString(xmlFile, specKey .. "#name")
-                table.insert(entry.specializations, name)
-
-                s = s + 1
-            end
-
-        end
+        entry.copySpecializations = Utils.getNoNil(getXMLBool(xmlFile, key .. ".copySpecializations"), false)
 
         vehicles[entry.xml] = entry
+        vehiclesByReplaceType[entry.replaceTypeName] = entry
 
         i = i + 1
     end
@@ -142,7 +128,7 @@ end
 
 local function validateVehicleTypes(vehicleTypeManager)
     ManureSystem.addModTranslations(g_i18n)
-    ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
+    ManureSystem.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName, vehiclesByReplaceType)
 end
 
 ---Unload the mod when the game is closed.
@@ -175,21 +161,6 @@ local function vehicleLoad(self, superFunc, vehicleData, ...)
         if #stringParts ~= 1 then
             local typeModName = unpack(stringParts)
             doReplace = doReplace and not (g_specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemVehicle") ~= nil)
-
-            if doReplace then
-                if data.copySpecializations then
-                    for _, name in pairs(data.specializations) do
-                        local specName = typeModName .. "." .. name
-                        local spec = g_specializationManager:getSpecializationObjectByName(specName)
-
-                        if spec ~= nil then
-                            g_vehicleTypeManager:addSpecialization(replacementType, specName)
-                        end
-                    end
-
-                    data.copySpecializations = false
-                end
-            end
         end
 
         if doReplace then

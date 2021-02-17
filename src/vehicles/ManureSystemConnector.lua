@@ -30,6 +30,7 @@ end
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
 end
 
 function ManureSystemConnector.registerEventListeners(vehicleType)
@@ -39,6 +40,7 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemConnector)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onPumpInvalid", ManureSystemConnector)
 end
 
@@ -166,6 +168,16 @@ function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIg
     for _, strategy in pairs(spec.connectorStrategies) do
         if strategy.onUpdate ~= nil then
             strategy:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+        end
+    end
+end
+
+function ManureSystemConnector:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local spec = self.spec_manureSystemConnector
+
+    for _, strategy in pairs(spec.connectorStrategies) do
+        if strategy.onUpdateTick ~= nil then
+            strategy:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
         end
     end
 end
@@ -446,4 +458,58 @@ function ManureSystemConnector:updateExtraDependentParts(superFunc, part, dt)
             end
         end
     end
+end
+
+---Allow note creation, due to lack of code modularity we have to completely copy the code from the connection hoses spec.
+function ManureSystemConnector:loadHoseTargetNode(superFunc, xmlFile, targetKey, entry)
+    if Utils.getNoNil(getXMLBool(xmlFile, targetKey .. "#createNode"), false) then
+        entry.node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, targetKey)
+
+        if entry.node == nil then
+            g_logManager:xmlWarning(self.configFileName, "Missing node for connection hose target '%s'", targetKey)
+
+            return false
+        end
+
+        local attacherJointIndices = {
+            StringUtil.getVectorFromString(getXMLString(xmlFile, targetKey .. "#attacherJointIndices"))
+        }
+        entry.attacherJointIndices = {}
+
+        for _, v in ipairs(attacherJointIndices) do
+            entry.attacherJointIndices[v] = v
+        end
+
+        entry.type = getXMLString(xmlFile, targetKey .. "#type")
+        entry.straighteningFactor = Utils.getNoNil(getXMLFloat(xmlFile, targetKey .. "#straighteningFactor"), 1)
+        local socketName = getXMLString(xmlFile, targetKey .. "#socket")
+
+        if socketName ~= nil then
+            entry.socket = g_connectionHoseManager:linkSocketToNode(socketName, entry.node)
+        end
+
+        if entry.type ~= nil then
+            entry.adapterName = Utils.getNoNil(getXMLString(xmlFile, targetKey .. "#adapterType"), "DEFAULT")
+
+            if entry.adapter == nil then
+                entry.adapter = {
+                    node = entry.node,
+                    refNode = entry.node
+                }
+            end
+
+            entry.objectChanges = {}
+
+            ObjectChangeUtil.loadObjectChangeFromXML(self.xmlFile, targetKey, entry.objectChanges, self.components, self)
+            ObjectChangeUtil.setObjectChanges(entry.objectChanges, false)
+        else
+            g_logManager:xmlWarning(self.configFileName, "Missing type for '%s'", targetKey)
+
+            return false
+        end
+
+        return true
+    end
+
+    return superFunc(self, xmlFile, targetKey, entry)
 end

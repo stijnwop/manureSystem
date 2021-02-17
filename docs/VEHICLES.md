@@ -4,7 +4,7 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 
 ### What do I need?
 
-To successfully execute the required steps in this tutorial you will need the following programs: 
+To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
 - GIANTS Editor 8.2.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
@@ -19,7 +19,7 @@ How to download the `ManureSystemVehicle.lua` file:
 3. A window will open with the script file.
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
- 
+
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
 ## Adding the ManureSystemVehicle specialization
@@ -130,17 +130,7 @@ An example entry for a normal tanker pump will be:
 
 As simple as that!
 
-## Setting up the FillArm
-> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
-
-For the fill arm we have to following configuration possibilities:
-
-- fillYOffset: `float` e.g. `-0.5` [OPTIONAL - default: `0`] the offset for the fill arm on fillable sources (in order to reach places easier).
-- fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] the fillUnitIndex of which it should fill.
-- needsDockingCollision: `true/false` [OPTIONAL - default: `false`] if the fill arm supports docking and needs to required collision for that.
-
-### Adding fillarm node
-For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
+## Setting up a node
 
 > **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
@@ -153,6 +143,20 @@ This options, for creating nodes, comes with the following settings:
     - rotation: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz rotations of the node to create.
 - When createNode is set to `false`:
     - node: `0>` [REQUIRED] the index of the node it should use for the fill arm.
+
+## Setting up the FillArm
+> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+For the fill arm we have to following configuration possibilities:
+
+- fillYOffset: `float` e.g. `-0.5` [OPTIONAL - default: `0`] the offset for the fill arm on fillable sources (in order to reach places easier).
+- fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] the fillUnitIndex of which it should fill.
+- needsDockingCollision: `true/false` [OPTIONAL - default: `false`] if the fill arm supports docking and needs to required collision for that.
+
+### Adding fillarm node
+For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
+
+Check section [setting up a node](#setting-up-a-node) for more details.
 
 An example entry for creating a node through the XML would be:
 ```xml
@@ -248,7 +252,7 @@ Our step will result into this:
 
 Replace the .. (dots) with a connector entry.
 For our first connector entry we're going to use an existing reference transform group from the i3d file.
-For that we open the i3d file and copy the index of the desired node. 
+For that we open the i3d file and copy the index of the desired node.
 
 ![index of connector](images/placeables/indexOfConnector.png)
 
@@ -269,6 +273,8 @@ For vehicles you can also use the identifier defined in the `i3dMappings` sectio
 We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
 > **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
 
+Check section [setting up a node](#setting-up-a-node) for more details.
+
 This will look something like this:
 ```xml
 <manureSystemConnectors>
@@ -285,8 +291,57 @@ This will create a COUPLING node linked to the node on the index `0>0|3` with th
 ##### Configuring additional connector options
 For every connector type you will the following options available:
 
-- inRangeDistance `int` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
+- inRangeDistance `float` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
 - isParkPlace: `true/false` This flags is used to determine if the connector is used as a parking place (for hoses or just connectors that should behave as a parking place).
+
+
+##### Setting up park places
+As mentioned above with the flag `isParkPlace` the connector will act as a parking place.
+
+- length (in meters) `float` e.g. `3` [OPTIONAL - default: `5`] This determines for which hose the place parameters should take effect upon.
+- direction `string` e.g. `left` [OPTIONAL - default: `right`] This the hose placement direction.
+- startTransOffset `vector 3 string` e.g. `1 0 0` [OPTIONAL - default: `0 0 0`] This determines the start translation of the hose on park position.
+- startRotOffset `vector 3 string` e.g. `0 50 0` [OPTIONAL - default: `0 0 0`] This determines the start rotation (in degrees) of the hose on park position.
+- endTransOffset `vector 3 string` e.g. `0 1 0` [OPTIONAL - default: `0 0 0`] This determines the end translation of the hose on park position.
+- endRotOffset `vector 3 string` e.g. `20 0 0` [OPTIONAL - default: `0 0 0`] This determines the end rotation (in degrees) of the hose on park position.
+
+With the deformer you can offset the hose curve with a tranform node.
+![parkDeformerNode](images/vehicles/parkDeformerNode.png)
+
+The deformer node can be created like any other node with either the `createNode` flag or reference to an existing node with the `node` attribute.
+Check section [setting up a node](#setting-up-a-node) for more details.
+
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+
+Below an example setup with support for an 3 and 5 meter hose.
+```xml
+<connector type="COUPLING" node="0>15|0" isParkPlace="true">
+    <parkPlaces>
+        <parkPlace length="3" startTransOffset="0 0 0" startRotOffset="0 0 0" endTransOffset="0.2 -0.45 0" endRotOffset="-25 0 0">
+            <deformer linkNode="0>15|0" createNode="true" position="0.005 -0.026 1.633"/>
+        </parkPlace>
+        <parkPlace length="5" startTransOffset="0 0 0" startRotOffset="0 0 0" endTransOffset="0.5 -1 0" endRotOffset="-15 0 0">
+            <deformer linkNode="0>15|0" createNode="true" position="0.012 -0.078 1.856"/>
+        </parkPlace>
+    </parkPlaces>
+</connector>
+```
+
+Old park system (DEPRECATED)
+> Please use the new system described above.
+
+- parkOffsetThreshold (in meters) `float` e.g. `3` [OPTIONAL - default: `the length of the park place`] This determines when the deformation should take effect (deprecated)
+- parkPlaceLength (in meters) `float` e.g. `3` [OPTIONAL - default: `5`] This determines for which hose the place parameters should take effect upon.
+- parkDirection `string` e.g. `left` [OPTIONAL - default: `right`] This the hose placement direction.
+- parkStartTransOffset `vector 3 string` e.g. `1 0 0` [OPTIONAL - default: `0 0 0`] This determines the start translation of the hose on park position.
+- parkStartRotOffset `vector 3 string` e.g. `0 50 0` [OPTIONAL - default: `0 0 0`] This determines the start rotation (in degrees) of the hose on park position.
+- parkEndTransOffset `vector 3 string` e.g. `0 1 0` [OPTIONAL - default: `0 0 0`] This determines the end translation of the hose on park position.
+- parkEndRotOffset `vector 3 string` e.g. `20 0 0` [OPTIONAL - default: `0 0 0`] This determines the end rotation (in degrees) of the hose on park position.
+
+Below an example with the old inline park parameters:
+```xml
+<connector type="coupling" node="parkNode" isParkPlace="true" parkPlaceLength="5" parkOffsetThreshold="5" parkEndTransOffset="-0.01 -0.175 0" parkEndRotOffset="-13 0 0" />
+```
 
 ##### Adding the connector animation
 > **NOTE: When using shared sets the animation is already done, so there's no need to add entries for shared set connectors!**
@@ -344,8 +399,37 @@ The `flowCoupling` will be another animation entry like the `lockCoupling`.
 
 > **NOTE: `lockAnimationName` works with and without the `manureFlowAnimationName` but `manureFlowAnimationName` requires the `lockAnimationName`!**
 
-##### Adding the dock connector 
+##### Adding the dock connector
 W.I.P.
 
 ##### Working with shared sets
 W.I.P.
+
+
+## Setting up the transfer hose.
+
+The transfer hose (e.g. with the Zunhammer FANT mod) setup is like any other connectionHose target entry.
+The Manure System introduces two new hose types:
+- TRANSFER_HOSE (the actual hose)
+- TRANSFER_HOSE_CABLE_BUNDLE (bundle of hydraulic lines)
+
+In order to prepare your tanker to receive the transfer hose you will have to add the following entries at the end of the connectionHoses tag.
+```xml
+<connectionHoses>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE"/>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
+</connectionHoses>
+```
+Replace the 'INDEX TO NODE' with an actual node (named) index.
+
+With the ManureSystem it's also possible to create a node on the connectionHose target entries.
+Check section [setting up a node](#setting-up-a-node) for more details.
+
+This will result in something similar to the following:
+
+```xml
+<connectionHoses>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE"/>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
+</connectionHoses>
+```

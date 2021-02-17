@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<connectionHoses>
+    <connectionHoseTypes>
+        <connectionHoseType name="TRANSFER_HOSE">
+            <material name="DEFAULT" filename="$data/shared/connectionHoses/hoseMaterialHolder.i3d" materialNode="1" defaultColor="0 0.18 0.1 5" uvOffset="0 0.5" uvScale="1 1"/>
+        </connectionHoseType>
+        <connectionHoseType name="TRANSFER_HOSE_CABLE_BUNDLE">
+            <adapter name="DEFAULT" filename="resources/assets/connectionHoses/connectors.i3d" node="0|0"/>
+            <material name="DEFAULT" filename="$data/shared/connectionHoses/hoseMaterialHolder.i3d" materialNode="0" defaultColor="0.01 0.01 0.01 0" uvOffset="0 0.5" uvScale="1 2"/>
+        </connectionHoseType>
+    </connectionHoseTypes>
+
+    <sockets>
+        <socket name="TRANSFER_HOSE_CABLE_BUNDLE" filename="resources/assets/connectionHoses/connectors.i3d" node="1|0" referenceNode="0">
+            <cab node="1|0" openedRotation="0 0 0" closedRotation="70 0 0"/>
+            <cab node="1|1" openedRotation="0 0 0" closedRotation="70 0 0"/>
+            <cab node="1|2" openedRotation="0 0 0" closedRotation="70 0 0"/>
+            <cab node="1|3" openedRotation="0 0 0" closedRotation="70 0 0"/>
+            <cab node="1|4" openedRotation="0 0 0" closedRotation="70 0 0"/>
+        </socket>
+        <socket name="TRANSFER_HOSE" filename="resources/assets/connectionHoses/connectors.i3d" node="1|1" />
+        <socket name="TRANSFER_HOSE_CURVE" filename="resources/assets/connectionHoses/connectors.i3d" node="1|2" />
+    </sockets>
+</connectionHoses>

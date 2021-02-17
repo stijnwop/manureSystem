@@ -20,7 +20,7 @@ end
 function ManureSystemTerraVariant435:onPreLoad(savegame)
     -- Insert FillArm.
     setXMLBool(self.xmlFile, "vehicle.manureSystemFillArm#createNode", true)
-    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|15|0|0|0|4|1") -- colPart3
+    setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#linkNode", "0>0|15|0|0|0|4|1") -- colPart04
     setXMLString(self.xmlFile, "vehicle.manureSystemFillArm#rotation", "180 0 0")
     setXMLFloat(self.xmlFile, "vehicle.manureSystemFillArm#fillYOffset", -0.5)
 
