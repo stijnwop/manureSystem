@@ -4,7 +4,7 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 
 ### What do I need?
 
-To successfully execute the required steps in this tutorial you will need the following programs: 
+To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
 - GIANTS Editor 8.2.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
@@ -19,7 +19,7 @@ How to download the `ManureSystemVehicle.lua` file:
 3. A window will open with the script file.
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
- 
+
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
 ## Adding the ManureSystemVehicle specialization
@@ -252,7 +252,7 @@ Our step will result into this:
 
 Replace the .. (dots) with a connector entry.
 For our first connector entry we're going to use an existing reference transform group from the i3d file.
-For that we open the i3d file and copy the index of the desired node. 
+For that we open the i3d file and copy the index of the desired node.
 
 ![index of connector](images/placeables/indexOfConnector.png)
 
@@ -399,8 +399,37 @@ The `flowCoupling` will be another animation entry like the `lockCoupling`.
 
 > **NOTE: `lockAnimationName` works with and without the `manureFlowAnimationName` but `manureFlowAnimationName` requires the `lockAnimationName`!**
 
-##### Adding the dock connector 
+##### Adding the dock connector
 W.I.P.
 
 ##### Working with shared sets
 W.I.P.
+
+
+## Setting up the transfer hose.
+
+The transfer hose (e.g. with the Zunhammer FANT mod) setup is like any other connectionHose target entry.
+The Manure System introduces two new hose types:
+- TRANSFER_HOSE (the actual hose)
+- TRANSFER_HOSE_CABLE_BUNDLE (bundle of hydraulic lines)
+
+In order to prepare your tanker to receive the transfer hose you will have to add the following entries at the end of the connectionHoses tag.
+```xml
+<connectionHoses>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE"/>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
+</connectionHoses>
+```
+Replace the 'INDEX TO NODE' with an actual node (named) index.
+
+With the ManureSystem it's also possible to create a node on the connectionHose target entries.
+Check section [setting up a node](#setting-up-a-node) for more details.
+
+This will result in something similar to the following:
+
+```xml
+<connectionHoses>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE"/>
+    <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
+</connectionHoses>
+```
