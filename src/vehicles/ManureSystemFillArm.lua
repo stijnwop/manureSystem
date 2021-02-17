@@ -107,7 +107,9 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 local x, y, z = getWorldTranslation(fillArm.node)
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
-                raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
+                if self:getIsActiveForInput() then
+                    raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
+                end
 
                 local r, g, b = 1, 0, 0
 
