@@ -11,7 +11,7 @@
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Alternar direção da bomba"/>
 
         <!--Actions-->
-        <text name="action_storeHose" text="Store hose"/><!-- TODO -->
+        <text name="action_storeHose" text="Guardar mangueira"/>
         <text name="action_toggleManureFlow" text="%s fluxo de estrume"/>
         <text name="action_toggleManureFlowStateOpen" text="Abrir"/>
         <text name="action_toggleManureFlowStateClose" text="Fechar"/>
@@ -24,23 +24,23 @@
         <text name="action_directionLeftRight" text="Mudar a direção da bomba de: esquerda para direita"/>
         <text name="action_directionRightLeft" text="Mudar a direção da bomba de: direita para esquerda"/>
 
-        <text name="info_directionOut" text="emptying"/><!--TODO-->
-        <text name="info_directionIn" text="filling"/><!--TODO-->
+        <text name="info_directionOut" text="esvaziando"/>
+        <text name="info_directionIn" text="enchendo"/>
 
         <!--Warnings pump-->
-        <text name="warning_pumpDirectionLimited" text="Pump direction is limited to only: %s"/><!--TODO-->
-        <text name="warning_objectEmpty" text="The pump source or target is empty!"/><!-- TODO -->
-        <text name="warning_objectFull" text="The pump target is full!"/><!-- TODO -->
-        <text name="warning_invalidFillType" text="The pump fill type is not supported!"/><!-- TODO -->
-        <text name="warning_checkManureFlow" text="Please check the manure flow for the connector of %s!"/><!-- TODO -->
+        <text name="warning_pumpDirectionLimited" text="A direcção da bomba está limitada apenas: %s"/>
+        <text name="warning_objectEmpty" text="A origem ou destino da bomba está vazio!"/>
+        <text name="warning_objectFull" text="O destino da bomba está cheio"/>
+        <text name="warning_invalidFillType" text="O tipo de enchimento da bomba não é suportado!"/>
+        <text name="warning_checkManureFlow" text="Por favor, verifique o fluxo de estrume para o conector de %s!"/>
 
         <!--Warnings-->
-        <text name="warning_parkingPlaceTooSmall" text="O local de estacionamento %sm é muito pequeno para a mangueira %sm!"/>
+        <text name="warning_parkingPlaceTooSmall" text="O local de armazenamento %sm é muito pequeno para a mangueira %sm!"/>
         <text name="warning_hoseRangeRestriction" text="A restrição do alcance das mangueiras não permite que vá mais longe!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Você não é super humano!"/>
 
         <!--Configuration fill arm-->
-        <text name="configuration_manureSystemFillArm" text="Fill arm"/><!--TODO-->
+        <text name="configuration_manureSystemFillArm" text="Braço de enchimento"/>
 
         <!--Placeables-->
         <text name="action_enableMixer" text="Ativar misturador"/>
@@ -56,7 +56,7 @@
         <text name="configuration_valueExtend" text="Extensão"/>
 
         <!--Pallets-->
-        <text name="global_configuration_disappearOnEmpty" text="Disappear"/><!--TODO-->
-        <text name="global_configuration_refillable" text="Refillable"/><!--TODO-->
+        <text name="global_configuration_disappearOnEmpty" text="Desaparecer"/>
+        <text name="global_configuration_refillable" text="Recarregável"/>
     </texts>
 </l10n>
