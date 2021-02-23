@@ -667,7 +667,7 @@ function ManureSystemPumpMotor:getIsPumpSourceWater()
     return self.spec_manureSystemPumpMotor.sourceIsWater
 end
 
-function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject, searchedImplements)
+function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject)
     if fillType == nil or object == nil then
         return nil
     end
@@ -685,31 +685,20 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
         end
     end
 
-    if searchedImplements == nil then
-        local attachedImplements
-        if object.getAttacherVehicle ~= nil then
-            local attacherVehicle = object:getAttacherVehicle()
-            if attacherVehicle ~= nil then
-                attachedImplements = attacherVehicle:getAttachedImplements()
-            end
-        else
-            attachedImplements = object:getAttachedImplements()
-        end
+    local attachedImplements = object:getAttachedImplements()
+    if attachedImplements ~= nil then
+        for _, implement in ipairs(attachedImplements) do
+            if implement.object ~= nil and implement.object ~= object then
+                local implementFound, fillUnitIndexFound = ManureSystemPumpMotor.getAttachedPumpSourceObject(implement.object, fillType, rootObject)
 
-        if attachedImplements ~= nil then
-            for _, implement in ipairs(attachedImplements) do
-                if implement.object ~= nil and implement.object ~= object then
-                    local implementFound, fillUnitIndexFound = ManureSystemPumpMotor.getAttachedPumpSourceObject(implement.object, fillType, rootObject, true)
-
-                    if implementFound ~= nil then
-                        return implementFound, fillUnitIndexFound
-                    end
+                if implementFound ~= nil then
+                    return implementFound, fillUnitIndexFound
                 end
             end
         end
     end
 
-    return nil
+    return nil, nil
 end
 
 function ManureSystemPumpMotor:getOriginalPumpMaxTime()

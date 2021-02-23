@@ -239,7 +239,8 @@ function ManureSystemCouplingStrategy:findStandalonePumpObjects(object, dt)
             if desc1 ~= nil and desc1.hasOpenManureFlow then
                 if desc1.vehicle ~= nil then
                     local fillType = desc1.vehicle:getFillUnitFillType(desc1.fillUnitIndex)
-                    local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType)
+                    local rootVehicle = object:getRootVehicle()
+                    local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(rootVehicle, fillType, object)
                     if sourceObject ~= nil then
                         local desc2 = { vehicle = sourceObject, isNearWater = false, fillUnitIndex = sourceFillUnitIndex }
                         object:setPumpSourceObject(sourceObject, sourceFillUnitIndex)

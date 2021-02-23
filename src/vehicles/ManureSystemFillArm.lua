@@ -128,7 +128,8 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
 
                     if self.isStandalonePump ~= nil and self:isStandalonePump() then
                         local fillType = object:getFillUnitFillType(objectFillUnitIndex)
-                        local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(self, fillType)
+                        local rootVehicle = self:getRootVehicle()
+                        local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(rootVehicle, fillType, self)
                         if sourceObject ~= nil then
                             self:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
                         end
