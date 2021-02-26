@@ -123,7 +123,8 @@ function ManureSystemHusbandryModuleLiquidManure.inj_husbandryModule_load(module
 
         local connector = { type = type }
         if module:loadManureSystemConnectorFromXML(connector, module.xmlFile, baseKey, i) then
-            if module.connectorStrategies[type]:load(connector, module.xmlFile, baseKey) then
+            local strategy = module.connectorStrategies[type]
+            if strategy == nil or strategy:load(connector, module.xmlFile, baseKey) then
                 table.insert(module.manureSystemConnectors, connector)
                 table.insert(module.manureSystemConnectorsByType[type], connector)
             end

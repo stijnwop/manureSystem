@@ -141,7 +141,8 @@ function ManureSystemStorage:load(xmlFilename, x, y, z, rx, ry, rz, initRandom)
 
         local connector = { type = type }
         if self:loadManureSystemConnectorFromXML(connector, self.xmlFile, baseKey, i) then
-            if self.connectorStrategies[type]:load(connector, self.xmlFile, baseKey) then
+            local strategy = self.connectorStrategies[type]
+            if strategy == nil or strategy:load(connector, self.xmlFile, baseKey) then
                 table.insert(self.manureSystemConnectors, connector)
                 table.insert(self.manureSystemConnectorsByType[type], connector)
             end
