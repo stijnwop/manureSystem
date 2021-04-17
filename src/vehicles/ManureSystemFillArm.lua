@@ -117,9 +117,15 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 if object ~= nil then
                     r, g = 0, 1
 
+                    if fillArm.limitedFillDirection ~= nil then
+                        --When the limited direction is present, but not set, we force it.
+                        if self:getPumpDirection() ~= fillArm.limitedFillDirection then
+                            self:setPumpDirection(fillArm.limitedFillDirection)
+                        end
+                    end
+
                     if self:isPumpingIn() then
-                        local specPumpMotor = self.spec_manureSystemPumpMotor
-                        specPumpMotor.pumpHasContact = object:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
+                        self.spec_manureSystemPumpMotor.pumpHasContact = object:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
                     end
 
                     local objectFillUnitIndex = object:getFillArmFillUnitIndex()
@@ -177,7 +183,7 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
 
         local limit = getXMLString(xmlFile, baseKey .. "#limitedFillDirection")
         if limit ~= nil then
-            fillArm.limitedFillDirection = limit:upper() == ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR and ManureSystemPumpMotor.PUMP_DIRECTION_IN or HoseSystemPumpMotor.PUMP_DIRECTION_OUT
+            fillArm.limitedFillDirection = limit:upper() == ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR and ManureSystemPumpMotor.PUMP_DIRECTION_IN or ManureSystemPumpMotor.PUMP_DIRECTION_OUT
         end
 
         fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
