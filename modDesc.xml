@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="53">
+<modDesc descVersion="61">
     <author>Wopster</author>
-    <version>1.2.0.0</version>
+    <version>2.0.0.0</version>
     <title>
         <en>Manure System</en>
         <de>Gülle System</de>
@@ -27,12 +27,9 @@ Fertilizer hose:
 - Price: €300
 
 Changelog:
-- Added new park place deformer
-- Fix MP issue with manure docking
-- Several performance improvements
-- Fix issue with Holmer 435 fillarm
-- Fix deform issue with Kverneland DLC
-- Add support for transfer hoses
+- Support for nested pump sources
+- Fix issue with limited fill direction
+- Allow for non strategy connector types
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
@@ -56,12 +53,9 @@ Düngerschlauch:
 - Preis: 300 €
 
 Changelog:
-- Added new park place deformer
-- Fix MP issue with manure docking
-- Several performance improvements
-- Fix issue with Holmer 435 fillarm
-- Fix deform issue with Kverneland DLC
-- Add support for transfer hoses
+- Support for nested pump sources
+- Fix issue with limited fill direction
+- Allow for non strategy connector types
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
@@ -85,12 +79,9 @@ Tuyau à fertilisant:
 - Prix: €300
 
 Changelog:
-- Added new park place deformer
-- Fix MP issue with manure docking
-- Several performance improvements
-- Fix issue with Holmer 435 fillarm
-- Fix deform issue with Kverneland DLC
-- Add support for transfer hoses
+- Support for nested pump sources
+- Fix issue with limited fill direction
+- Allow for non strategy connector types
 
 <a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
@@ -100,46 +91,15 @@ Changelog:
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
-        <sourceFile filename="src/loader.lua"/>
+        <sourceFile filename="src/main.lua"/>
     </extraSourceFiles>
 
     <specializations>
         <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
-        <specialization name="manureSystemPumpMotor" className="ManureSystemPumpMotor" filename="src/vehicles/ManureSystemPumpMotor.lua"/>
-        <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/ManureSystemConnector.lua"/>
-        <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/ManureSystemFillArm.lua"/>
-        <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/ManureSystemFillArmReceiver.lua"/>
-
-        <!-- Vanilla insertion specs -->
-        <specialization name="manureSystemPGII20" className="ManureSystemPGII20" filename="src/vehicles/vanillainserts/ManureSystemPGII20.lua"/>
-        <specialization name="manureSystemPGII25" className="ManureSystemPGII25" filename="src/vehicles/vanillainserts/ManureSystemPGII25.lua"/>
-        <specialization name="manureSystemPGII35" className="ManureSystemPGII35" filename="src/vehicles/vanillainserts/ManureSystemPGII35.lua"/>
-        <specialization name="manureSystemKotteFRC" className="ManureSystemKotteFRC" filename="src/vehicles/vanillainserts/ManureSystemKotteFRC.lua"/>
-        <specialization name="manureSystemKotteTSA" className="ManureSystemKotteTSA" filename="src/vehicles/vanillainserts/ManureSystemKotteTSA.lua"/>
-        <specialization name="manureSystemKotteVE8000" className="ManureSystemKotteVE8000" filename="src/vehicles/vanillainserts/ManureSystemKotteVE8000.lua"/>
-        <specialization name="manureSystemModulo" className="ManureSystemModulo" filename="src/vehicles/vanillainserts/ManureSystemModulo.lua"/>
-        <specialization name="manureSystem18500PE" className="ManureSystem18500PE" filename="src/vehicles/vanillainserts/ManureSystem18500PE.lua"/>
-        <specialization name="manureSystemPremiumIntegral30000" className="ManureSystemPremiumIntegral30000" filename="src/vehicles/vanillainserts/ManureSystemPremiumIntegral30000.lua"/>
-        <specialization name="manureSystemTV585" className="ManureSystemTV585" filename="src/vehicles/vanillainserts/ManureSystemTV585.lua"/>
-        <specialization name="manureSystemTerraVariant435" className="ManureSystemTerraVariant435" filename="src/vehicles/vanillainserts/ManureSystemTerraVariant435.lua"/>
-        <specialization name="manureSystemLiquidTank" className="ManureSystemLiquidTank" filename="src/vehicles/vanillainserts/ManureSystemLiquidTank.lua"/>
-        <specialization name="manureSystemNavigator6000" className="ManureSystemNavigator6000" filename="src/vehicles/vanillainserts/ManureSystemNavigator6000.lua"/>
-        <specialization name="manureSystemMega2200" className="ManureSystemMega2200" filename="src/vehicles/vanillainserts/ManureSystemMega2200.lua"/>
-        <specialization name="manureSystemRubicon9000" className="ManureSystemRubicon9000" filename="src/vehicles/vanillainserts/ManureSystemRubicon9000.lua"/>
-        <specialization name="manureSystemKuhnPF1500" className="ManureSystemKuhnPF1500" filename="src/vehicles/vanillainserts/ManureSystemKuhnPF1500.lua"/>
-        <specialization name="manureSystemKuhnDeltis1302" className="ManureSystemKuhnDeltis1302" filename="src/vehicles/vanillainserts/ManureSystemKuhnDeltis1302.lua"/>
-        <specialization name="manureSystemKuhnMetris4102" className="ManureSystemKuhnMetris4102" filename="src/vehicles/vanillainserts/ManureSystemKuhnMetris4102.lua"/>
-        <specialization name="manureSystemImperador3" className="ManureSystemImperador3" filename="src/vehicles/vanillainserts/ManureSystemImperador3.lua"/>
-        <specialization name="manureSystemFieldMaster20" className="ManureSystemFieldMaster20" filename="src/vehicles/vanillainserts/ManureSystemFieldMaster20.lua"/>
-        <!-- Kverneland DLC -->
-        <specialization name="ManureSystemiXtrackT4" className="ManureSystemiXtrackT4" filename="src/vehicles/vanillainserts/ManureSystemiXtrackT4.lua"/>
-        <specialization name="ManureSystemiXterB18" className="ManureSystemiXterB18" filename="src/vehicles/vanillainserts/ManureSystemiXterB18.lua"/>
-        <specialization name="ManureSystemIXterB18FrontTank" className="ManureSystemIXterB18FrontTank" filename="src/vehicles/vanillainserts/ManureSystemIXterB18FrontTank.lua"/>
-        <!-- Horsch DLC -->
-        <specialization name="ManureSystemLeebPT350" className="ManureSystemLeebPT350" filename="src/vehicles/vanillainserts/ManureSystemLeebPT350.lua"/>
-        <specialization name="ManureSystemShuttle8000" className="ManureSystemShuttle8000" filename="src/vehicles/vanillainserts/ManureSystemShuttle8000.lua"/>
-        <specialization name="ManureSystemSlurryTank21000" className="ManureSystemSlurryTank21000" filename="src/vehicles/vanillainserts/ManureSystemSlurryTank21000.lua"/>
-        <specialization name="ManureSystemSlurryTender21000" className="ManureSystemSlurryTender21000" filename="src/vehicles/vanillainserts/ManureSystemSlurryTender21000.lua"/>
+<!--        <specialization name="manureSystemPumpMotor" className="ManureSystemPumpMotor" filename="src/vehicles/ManureSystemPumpMotor.lua"/>-->
+<!--        <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/ManureSystemConnector.lua"/>-->
+<!--        <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/ManureSystemFillArm.lua"/>-->
+<!--        <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/ManureSystemFillArmReceiver.lua"/>-->
     </specializations>
 
     <vehicleTypes>
@@ -151,131 +111,6 @@ Changelog:
             <specialization name="foliageBending"/>
             <specialization name="tensionBeltObject"/>
             <specialization name="hose"/>
-        </type>
-        <type name="vanillaPGII20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemPGII20"/>
-        </type>
-        <type name="vanillaPGII25" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemPGII25"/>
-        </type>
-        <type name="vanillaPGII35" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemPGII35"/>
-        </type>
-        <type name="vanillaModulo" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemModulo"/>
-        </type>
-        <type name="vanillaVE8000" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKotteVE8000"/>
-        </type>
-        <type name="vanilla18500PE" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystem18500PE"/>
-        </type>
-        <type name="vanillaPremiumIntegral30000" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemPremiumIntegral30000"/>
-        </type>
-        <type name="vanillaFRC" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKotteFRC"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemFillArmReceiver"/>
-        </type>
-        <type name="vanillaTSA" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKotteTSA"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaNavigator6000" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemNavigator6000"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaMega2200" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemMega2200"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaRubicon9000" parent="selfPropelledSprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemRubicon9000"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaKuhnPF1500" parent="fillableImplement" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKuhnPF1500"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaKuhnDeltis1302" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKuhnDeltis1302"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaKuhnMetris4102" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemKuhnMetris4102"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaImperador3" parent="selfPropelledSprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemImperador3"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="vanillaLiquidTankPallet" parent="pallet" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemLiquidTank"/>
-            <specialization name="manureSystemConnector"/>
-        </type>
-        <!-- kverneland DLC -->
-        <type name="kvernelandDLCiXtrackT4" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemiXtrackT4"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="kvernelandDLCiXterB18" parent="sprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemiXterB18"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="kvernelandDLCIXterB18FrontTank" parent="fillableImplement" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemIXterB18FrontTank"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <!-- Horsch DLC -->
-        <type name="modHorschLeebPT350" parent="selfPropelledSprayer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemLeebPT350"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="modHorschShuttle8000" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="smartAttach"/>
-            <specialization name="ManureSystemShuttle8000"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <type name="modHorschSlurryTank21000" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemSlurryTank21000"/>
-        </type>
-        <type name="modHorschSlurryTender21000" parent="manureTrailer" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="ManureSystemSlurryTender21000"/>
-            <specialization name="manureSystemConnector"/>
-            <specialization name="manureSystemPumpMotor"/>
-        </type>
-        <!-- HOLMER DLC -->
-        <type name="dlcTV585" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemTV585"/>
-        </type>
-        <type name="dlcTerraVariant435" parent="tractorCrabSteering" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="fillVolume"/>
-            <specialization name="dischargeable"/>
-            <specialization name="foldable"/>
-            <specialization name="fillTriggerVehicle"/>
-            <specialization name="powerConsumer"/>
-            <specialization name="manureSystemTerraVariant435"/>
-            <specialization name="manureSystemPumpMotor"/>
-            <specialization name="manureSystemFillArm"/>
-            <specialization name="manureSystemConnector"/>
-        </type>
-        <!-- Briri Mod -->
-        <type name="modFieldMaster20" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-            <specialization name="manureSystemFieldMaster20"/>
         </type>
     </vehicleTypes>
 
