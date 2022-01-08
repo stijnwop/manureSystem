@@ -37,7 +37,40 @@ function Hose.prerequisitesPresent(specializations)
 end
 
 function Hose.initSpecialization()
+    local schema = Vehicle.xmlSchema
+
+    schema:setXMLSpecializationType("Hose")
+    schema:register(XMLValueType.INT, "vehicle.hose#type", "Hose type")
+    schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#mesh", "Hose mesh node")
+    schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#targetNode", "Hose targetNode")
+    schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#centerNode1", "Hose centerNode1")
+    schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#centerNode2", "Hose centerNode2")
+    schema:register(XMLValueType.FLOAT, "vehicle.hose#length", "Hose length")
+    schema:register(XMLValueType.FLOAT, "vehicle.hose#playerMaxHoseLength", "The max hose length for the player")
+
+    Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.grabNodes.grabNode(?)")
+    Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?).grabNodes.grabNode(?)")
+    schema:setXMLSpecializationType()
+
     g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?)")
+
+    --local schemaSavegame = Vehicle.xmlSchemaSavegame
+    --schemaSavegame:register(XMLValueType.BOOL, ("vehicles.vehicle(?).%s.globalPositioningSystem#guidanceIsActive"):format(g_guidanceSteeringModName), "The guidance system active state")
+    --schemaSavegame:register(XMLValueType.BOOL, ("vehicles.vehicle(?).%s.globalPositioningSystem#autoInvertOffset"):format(g_guidanceSteeringModName), "The guidance auto invert offset state")
+    --schemaSavegame:register(XMLValueType.FLOAT, ("vehicles.vehicle(?).%s.globalPositioningSystem#lineDistance"):format(g_guidanceSteeringModName), "The guidance line distance")
+end
+
+function Hose.registerGrabNodeXMLPaths(schema, baseName)
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#node", "Grab node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#raycastNode", "Raycast node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. ".visuals#visualNode", "Visual node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. ".visuals#hoseTargetNode", "Visual hose target node")
+    schema:register(XMLValueType.BOOL, baseName .. ".visuals#updateHoseTargetRotation", "Update hose target rotation")
+    schema:register(XMLValueType.BOOL, baseName .. "#isExtension", "Is grab node is extension")
+    schema:register(XMLValueType.STRING, baseName .. "#extensionAnimationName", "Grab node extension animation name")
+    schema:register(XMLValueType.INT, baseName .. "#componentIndex", "Grab node component index")
+    schema:register(XMLValueType.INT, baseName .. "#componentJointIndex", "Grab node component joint index")
 end
 
 function Hose.registerFunctions(vehicleType)
@@ -93,8 +126,8 @@ function Hose:onLoad(savegame)
     self.spec_hose = self[("spec_%s.hose"):format(Hose.MOD_NAME)]
     local spec = self.spec_hose
 
-    local typeString = Utils.getNoNil(getXMLString(self.xmlFile, "vehicle.hose#type"), ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
-    spec.connectorType = g_manureSystem.connectorManager:getConnectorType(typeString)
+    local typeString = self.xmlFile:getValue("vehicle.hose#type", ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+    spec.connectorType = g_currentMission.manureSystem.connectorManager:getConnectorType(typeString)
 
     spec.grabNodes = {}
     spec.grabNodesToObjects = {}
@@ -102,10 +135,10 @@ function Hose:onLoad(savegame)
     Hose.loadGrabNodes(self)
 
     if self.isClient then
-        spec.mesh = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#mesh"), self.i3dMappings)
-        spec.targetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#targetNode"), self.i3dMappings)
-        spec.centerNode1 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode1"), self.i3dMappings)
-        spec.centerNode2 = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, "vehicle.hose#centerNode2"), self.i3dMappings)
+        spec.mesh = self.xmlFile:getValue("vehicle.hose#mesh", nil, self.components, self.i3dMappings)
+        spec.targetNode = self.xmlFile:getValue("vehicle.hose#targetNode", nil, self.components, self.i3dMappings)
+        spec.centerNode1 = self.xmlFile:getValue("vehicle.hose#centerNode1", nil, self.components, self.i3dMappings)
+        spec.centerNode2 = self.xmlFile:getValue("vehicle.hose#centerNode2", nil, self.components, self.i3dMappings)
 
         spec.p1 = spec.centerNode1
         spec.p2 = spec.centerNode2
@@ -114,12 +147,12 @@ function Hose:onLoad(savegame)
         local endTrans = { getWorldTranslation(spec.targetNode) }
         local length = MathUtil.vector3Length(endTrans[1] - startTrans[1], endTrans[2] - startTrans[2], endTrans[3] - startTrans[3])
 
-        spec.length = (Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#length"), length))
+        spec.length = self.xmlFile:getValue("vehicle.hose#length", length)
         setShaderParameter(spec.mesh, "cv0", 0, 0, -spec.length, 0, false)
     end
 
     spec.lastInRangePosition = { 0, 0, 0 }
-    spec.playerMaxHoseLength = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.hose#playerMaxHoseLength"), Hose.RESPAWN_MAX_LENGTH)
+    spec.playerMaxHoseLength = self.xmlFile:getValue("vehicle.hose#playerMaxHoseLength", Hose.RESPAWN_MAX_LENGTH)
 
     spec.foundVehicleId = 0
     spec.foundConnectorId = 0
@@ -139,14 +172,14 @@ function Hose:onLoad(savegame)
 end
 
 function Hose:onPostLoad(savegame)
-    g_manureSystem:addConnectorObject(self)
+    g_currentMission.manureSystem:addConnectorObject(self)
 end
 
 function Hose:onLoadFinished(savegame)
     if self.isServer then
         for _, joint in ipairs(self.componentJoints) do
-            joint.orgRotLimit = ListUtil.copyTable(joint.rotLimit)
-            joint.orgRotMinLimit = ListUtil.copyTable(joint.rotMinLimit)
+            joint.orgRotLimit = table.copy(joint.rotLimit)
+            joint.orgRotMinLimit = table.copy(joint.rotMinLimit)
         end
     end
 
@@ -155,7 +188,7 @@ end
 
 function Hose:onPreDelete()
     self:removeHoseConnections()
-    g_manureSystem:removeConnectorObject(self)
+    g_currentMission.manureSystem:removeConnectorObject(self)
 end
 
 ---Save connected hoses to the savegame server sided only.
@@ -180,7 +213,7 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
 
                 setXMLInt(xmlFile, saveKey .. "#grabNodeId", id)
                 setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
-                local objectId = g_manureSystem:getConnectorObjectId(object)
+                local objectId = g_currentMission.manureSystem:getConnectorObjectId(object)
                 setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
 
                 --Check if the object supports the getName method, somehow there are still objects who don't.
@@ -203,7 +236,7 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
     while true do
         local loadKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i)
 
-        if not hasXMLProperty(xmlFile, loadKey) then
+        if not xmlFile:hasProperty(xmlFile, loadKey) then
             break
         end
 
@@ -212,8 +245,8 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
         local objectId = getXMLInt(xmlFile, loadKey .. "#objectId")
         local objectName = getXMLString(xmlFile, loadKey .. "#objectName")
 
-        if g_manureSystem:connectorObjectExists(objectId) then
-            local object = g_manureSystem:getConnectorObject(objectId)
+        if g_currentMission.manureSystem:connectorObjectExists(objectId) then
+            local object = g_currentMission.manureSystem:getConnectorObject(objectId)
 
             --Do a check on the saved object name to filter out obvious cases.
             local isNotTheSameObject = objectName ~= nil and object:getName() ~= objectName
@@ -364,7 +397,7 @@ function Hose:onUpdateTick(dt)
                             length = length + Hose.RESPAWN_LENGTH_OFFSET
 
                             if distance > length then
-                                if g_manureSystem.debug then
+                                if g_currentMission.manureSystem.debug then
                                     Logger.info("Restriction detach distance: ", distance)
                                 end
 
@@ -486,7 +519,7 @@ function Hose:findConnector(id)
 
     local x, y, z = getWorldTranslation(grabNode.node)
 
-    for _, object in ipairs(g_manureSystem:getConnectorObjects()) do
+    for _, object in ipairs(g_currentMission.manureSystem:getConnectorObjects()) do
         if object ~= self then
             local inRangeNode = object.components[1].node
             if object.getConnectorInRangeNode ~= nil then
@@ -713,18 +746,15 @@ function Hose:computeCatmullSpline()
     local p0x, p0y, p0z = 0, 0, -spec.length -- calculate base offset
     local p1x, p1y, p1z = 0, 0, 0
     local p2x, p2y, p2z = localToLocal(spec.targetNode, spec.mesh, 0, 0, 0)
-    local p3x, p3y, p3z = 0, 0, spec.length -- calculate target offset
-
-    p3x, p3y, p3z = localToLocal(spec.targetNode, spec.mesh, p3x, p3y, p3z)
+    local p3x, p3y, p3z = localToLocal(spec.targetNode, spec.mesh, 0, 0, spec.length)-- calculate target offset
 
     local w1x, w1y, w1z = getWorldTranslation(spec.p1)
     local w2x, w2y, w2z = getWorldTranslation(spec.p2)
-
     p1x, p1y, p1z = worldToLocal(spec.mesh, (w1x + w2x) * 0.5, (w1y + w2y) * 0.5, (w1z + w2z) * 0.5)
 
     -- Fix flickering on the hose mesh.
     local intersectionOffset = 0.003
-    Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
+    --Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv2", p1x + intersectionOffset, p1y, p1z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv3", p2x - intersectionOffset, p2y, p2z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv4", p3x - intersectionOffset, p3y, p3z, 0)
@@ -733,7 +763,7 @@ end
 function Hose:grab(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
-    if g_manureSystem.debug then
+    if g_currentMission.manureSystem.debug then
         Logger.info("Grab hose id", id)
     end
 
@@ -744,15 +774,17 @@ function Hose:grab(id, player, noEventSend)
 
     if self.isServer then
         local componentNode = self.components[grabNode.componentIndex].node
-        local newCollisionFlag = bitXOR(bitAND(grabNode.componentCollisionMask, Player.movementCollisionMask), grabNode.componentCollisionMask)
+        local newCollisionFlag = bitXOR(bitAND(grabNode.componentCollisionMask, CollisionMask.PLAYER_KINEMATIC), grabNode.componentCollisionMask)
         setCollisionMask(componentNode, newCollisionFlag)
 
         local desc = {}
 
-        desc.actor1 = player.pickUpKinematicHelperNode
+        local kinematicHelperNode, kinematicHelperNodeChild = player.model:getKinematicHelpers()
+
+        desc.actor1 = kinematicHelperNode
         desc.actor2 = componentNode
-        desc.transform = player.pickUpKinematicHelperNodeChild
-        desc.anchor1 = player.pickUpKinematicHelperNode
+        desc.transform = kinematicHelperNodeChild
+        desc.anchor1 = kinematicHelperNode
         desc.anchor2 = grabNode.node
 
         grabNode.jointIndex = self:constructPlayerJoint(desc, self:getTotalMass())
@@ -765,7 +797,7 @@ end
 function Hose:drop(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, false, noEventSend)
 
-    if g_manureSystem.debug then
+    if g_currentMission.manureSystem.debug then
         Logger.info("Drop hose id", id)
     end
 
@@ -792,7 +824,7 @@ end
 function Hose:attach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, true, noEventSend)
 
-    if g_manureSystem.debug then
+    if g_currentMission.manureSystem.debug then
         Logger.info("Attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
     end
 
@@ -819,7 +851,7 @@ end
 function Hose:detach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, false, noEventSend)
 
-    if g_manureSystem.debug then
+    if g_currentMission.manureSystem.debug then
         Logger.info("Detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
     end
 
@@ -1173,7 +1205,7 @@ function Hose:constructPlayerJoint(jointDesc, mass)
         constructor:setTranslationLimit(i, true, 0, 0)
     end
 
-    if not g_manureSystem.debug then
+    if not g_currentMission.manureSystem.debug then
         local forceAcceleration = 6
         local forceLimit = forceAcceleration * mass * 40
         constructor:setBreakable(forceLimit, forceLimit)
@@ -1181,7 +1213,7 @@ function Hose:constructPlayerJoint(jointDesc, mass)
 
     local jointIndex = constructor:finalize()
 
-    if not g_manureSystem.debug then
+    if not g_currentMission.manureSystem.debug then
         addJointBreakReport(jointIndex, "onPlayerJointBreak", self)
     end
 
@@ -1281,7 +1313,7 @@ function Hose.loadGrabNodes(self)
     ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.hose.hoseConfigurations.hoseConfiguration", hoseConfigurationId, self.components, self)
 
     -- Fallback key
-    if not hasXMLProperty(self.xmlFile, baseKey) then
+    if not self.xmlFile:hasProperty(baseKey) then
         baseKey = "vehicle.hose"
     end
 
@@ -1289,7 +1321,7 @@ function Hose.loadGrabNodes(self)
     while i <= 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS do
         local key = ("%s.grabNodes.grabNode(%d)"):format(baseKey, i)
 
-        if not hasXMLProperty(self.xmlFile, key) then
+        if not self.xmlFile:hasProperty(key) then
             break
         end
 
@@ -1298,7 +1330,7 @@ function Hose.loadGrabNodes(self)
             break
         end
 
-        local node = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. "#node"), self.i3dMappings)
+        local node = self.xmlFile:getValue(key .. "#node", nil, self.components, self.i3dMappings)
 
         if node ~= nil then
             local grabNode = {}
@@ -1306,24 +1338,26 @@ function Hose.loadGrabNodes(self)
             grabNode.id = i + 1
             grabNode.type = spec.connectorType
             grabNode.node = node
-            grabNode.raycastNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. "#raycastNode"), self.i3dMappings)
+            grabNode.raycastNode = self.xmlFile:getValue(key .. "#raycastNode", nil, self.components, self.i3dMappings)
 
             if self.isClient then
-                grabNode.visualNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. ".visuals#visualNode"), self.i3dMappings)
-                grabNode.hoseTargetNode = I3DUtil.indexToObject(self.components, getXMLString(self.xmlFile, key .. ".visuals#hoseTargetNode"), self.i3dMappings)
+                grabNode.visualNode = self.xmlFile:getValue(key .. ".visuals#visualNode", grabNode.node, self.components, self.i3dMappings)
+                grabNode.hoseTargetNode = self.xmlFile:getValue(key .. ".visuals#hoseTargetNode", grabNode.node, self.components, self.i3dMappings)
+
                 grabNode.visualOrigRot = { getRotation(grabNode.visualNode) }
                 grabNode.hoseTargetNodeOrigRot = { getRotation(grabNode.hoseTargetNode) }
                 grabNode.hoseTargetNodeOrigTrans = { getTranslation(grabNode.hoseTargetNode) }
-                grabNode.updateHoseTargetRotation = Utils.getNoNil(getXMLBool(self.xmlFile, key .. ".visuals#updateHoseTargetRotation"), false)
+                grabNode.updateHoseTargetRotation = self.xmlFile:getValue(key .. ".visuals#updateHoseTargetRotation", false)
             end
 
-            grabNode.isExtension = Utils.getNoNil(getXMLBool(self.xmlFile, key .. "#isExtension"), false)
-            grabNode.extensionAnimationName = getXMLString(self.xmlFile, key .. "#extensionAnimationName")
+            grabNode.isExtension = self.xmlFile:getValue(key .. "#isExtension", false)
+            grabNode.extensionAnimationName = self.xmlFile:getValue(key .. "#extensionAnimationName")
 
             grabNode.jointOrigRot = { getRotation(node) }
             grabNode.jointOrigTrans = { getTranslation(node) }
-            grabNode.componentIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentIndex"), 1)
-            grabNode.componentJointIndex = Utils.getNoNil(getXMLInt(self.xmlFile, key .. "#componentJointIndex"), 1)
+
+            grabNode.componentIndex = self.xmlFile:getValue(key .. "#componentIndex", 1)
+            grabNode.componentJointIndex = self.xmlFile:getValue(key .. "#componentJointIndex", 1)
 
             local componentNode = self.components[grabNode.componentIndex].node
             grabNode.componentCollisionMask = getCollisionMask(componentNode)

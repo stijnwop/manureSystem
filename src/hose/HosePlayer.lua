@@ -144,9 +144,9 @@ function HosePlayer.inj_player_updateActionEvents(player)
 end
 
 function HosePlayer.inj_player_registerActionEvents(player)
-    player.inputInformation.registrationList[InputAction.MS_ATTACH_HOSE] = { eventId = "", callback = player.actionEventOnAttachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_ATTACH_HOSE"), textVisibility = true }
-    player.inputInformation.registrationList[InputAction.MS_DETACH_HOSE] = { eventId = "", callback = player.actionEventOnDetachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_DETACH_HOSE"), textVisibility = true }
-    player.inputInformation.registrationList[InputAction.MS_TOGGLE_FLOW] = { eventId = "", callback = player.actionEventOnToggleFlow, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_TOGGLE_FLOW"), textVisibility = true }
+    player.inputInformation.registrationList[InputAction.MS_ATTACH_HOSE] = { eventId = "", callback = Player.actionEventOnAttachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_ATTACH_HOSE"), textVisibility = true }
+    player.inputInformation.registrationList[InputAction.MS_DETACH_HOSE] = { eventId = "", callback = Player.actionEventOnDetachHose, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_DETACH_HOSE"), textVisibility = true }
+    player.inputInformation.registrationList[InputAction.MS_TOGGLE_FLOW] = { eventId = "", callback = Player.actionEventOnToggleFlow, triggerUp = false, triggerDown = true, triggerAlways = false, activeType = Player.INPUT_ACTIVE_TYPE.STARTS_DISABLED, callbackState = nil, text = g_i18n:getText("input_MS_TOGGLE_FLOW"), textVisibility = true }
 end
 
 function HosePlayer.inj_player_pickUpObject(player, superFunc, grab, noEventSend)
@@ -206,9 +206,13 @@ function HosePlayer.inj_player_checkObjectInRange(player, superFunc)
 end
 
 function HosePlayer.inj_player_pickUpObjectRaycastCallback(player, superFunc, hitObjectId, x, y, z, distance)
-    if hitObjectId ~= g_currentMission.terrainDetailId and Player.PICKED_UP_OBJECTS[hitObjectId] ~= true then
-        if getRigidBodyType(hitObjectId) == "Dynamic" then
+    if hitObjectId ~= g_currentMission.terrainRootNode and Player.PICKED_UP_OBJECTS[hitObjectId] ~= true then
+        local rigidBodyType = getRigidBodyType(hitObjectId)
+        if rigidBodyType == RigidBodyType.DYNAMIC or rigidBodyType == RigidBodyType.KINEMATIC then
+            player.lastFoundAnyObject = hitObjectId
+        end
 
+        if player.isServer and rigidBodyType == RigidBodyType.DYNAMIC then
             local mass = getMass(hitObjectId)
             -- check if mounted:
             local canBePickedUp = true

@@ -8,7 +8,6 @@
 
 ---@class ManureSystemEventBits
 ManureSystemEventBits = {}
-getfenv(0)["ManureSystemEventBits"] = ManureSystemEventBits -- Make accessible by other mods
 
 ---Max number of bits for the Hose.
 ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2

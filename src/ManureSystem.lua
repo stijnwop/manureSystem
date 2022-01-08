@@ -45,7 +45,7 @@ local sortByClassAndId = function(arg1, arg2)
     return arg1.className < arg2.className
 end
 
-function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
+function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
     local self = setmetatable({}, ManureSystem_mt)
 
     self.version = 2
@@ -61,31 +61,31 @@ function ManureSystem:new(mission, input, soundManager, modDirectory, modName)
     self.mission = mission
     self.soundManager = soundManager
     self.connectorManager = ManureSystemConnectorManager:new(self.modDirectory)
-    self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
+    --self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
     self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
-    self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
-    self.bga = ManureSystemBga:new(self.isClient, self.isServer, mission, input)
+    --self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
+    --self.bga = ManureSystemBga:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
     self.samples = {}
 
-    self:loadManureSystemSamples()
+    --self:loadManureSystemSamples()
 
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
     addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
 
-    g_fillTypeManager:addFillTypeToCategory(FillType.WATER, g_fillTypeManager.nameToCategoryIndex["SLURRYTANK"])
+    --g_fillTypeManager:addFillTypeToCategory(FillType.WATER, g_fillTypeManager.nameToCategoryIndex["SLURRYTANK"])
 
     return self
 end
 
 function ManureSystem:delete()
     self.player:delete()
-    self.husbandryModuleLiquidManure:delete()
-    self.bga:delete()
+    --self.husbandryModuleLiquidManure:delete()
+    --self.bga:delete()
 
     self.connectorManager:unloadMapData()
-    self.fillArmManager:unloadMapData()
+    --self.fillArmManager:unloadMapData()
 
     self.soundManager:deleteSamples(self.samples)
     removeConsoleCommand("msToggleDebug")
@@ -94,7 +94,7 @@ end
 
 function ManureSystem:onMissionLoaded(mission)
     self.connectorManager:loadMapData()
-    self.fillArmManager:loadMapData()
+    --self.fillArmManager:loadMapData()
 end
 
 ---Gets the mission item save list.
@@ -205,14 +205,14 @@ end
 
 ---Adds connector object to the list and force it being distinct.
 function ManureSystem:addConnectorObject(object)
-    if not ListUtil.hasListElement(self.manureSystemConnectors, object) then
-        ListUtil.addElementToList(self.manureSystemConnectors, object)
+    if not table.hasElement(self.manureSystemConnectors, object) then
+        table.addElement(self.manureSystemConnectors, object)
     end
 end
 
 ---Removes connector object from the list.
 function ManureSystem:removeConnectorObject(object)
-    ListUtil.removeElementFromList(self.manureSystemConnectors, object)
+    table.removeElement(self.manureSystemConnectors, object)
 end
 
 ---Returns the connector objects list.
@@ -227,7 +227,7 @@ end
 
 ---Return the id for the given object.
 function ManureSystem:getConnectorObjectId(object)
-    return ListUtil.findListElementFirstIndex(self.manureSystemConnectors, object)
+    return table.findListElementFirstIndex(self.manureSystemConnectors, object)
 end
 
 ---Return true when the object exists, false otherwise.
@@ -237,7 +237,7 @@ end
 
 function ManureSystem.installSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName, vehiclesByReplaceType)
     for typeName, typeEntry in pairs(vehicleTypeManager:getVehicleTypes()) do
-        local stringParts = StringUtil.splitString(".", typeName)
+        local stringParts = string.split(".", typeName)
         local hasVehicleSpec = false
         if #stringParts ~= 1 then
             local typeModName, vehicleType = unpack(stringParts)
@@ -284,7 +284,7 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
                 local orgEntry = vehicleTypeManager:getVehicleTypeByName(data.originalTypeName)
 
                 if orgEntry ~= nil then
-                    local orgStringParts = StringUtil.splitString(".", data.originalTypeName)
+                    local orgStringParts = string.split(".", data.originalTypeName)
 
                     if #orgStringParts ~= 1 then
                         local orgTypeModName = unpack(orgStringParts)
@@ -292,7 +292,7 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
 
                         if doReplace then
                             for _, copySpecializationName in ipairs(orgEntry.specializationNames) do
-                                local copySpecializationNameSplit = StringUtil.splitString(".", copySpecializationName)
+                                local copySpecializationNameSplit = string.split(".", copySpecializationName)
                                 if #copySpecializationNameSplit ~= 1 then
                                     local specTypeName = unpack(copySpecializationNameSplit)
 
@@ -326,7 +326,7 @@ end
 function ManureSystem.addModTranslations(i18n)
     local global = getfenv(0).g_i18n.texts
     for key, text in pairs(i18n.texts) do
-        if StringUtil.startsWith(key, "global_") then
+        if string.startsWith(key, "global_") then
             global[key:sub(8)] = text
         end
     end
@@ -336,7 +336,7 @@ end
 function ManureSystem.removeModTranslations(i18n)
     local global = getfenv(0).g_i18n.texts
     for key, _ in pairs(i18n.texts) do
-        if StringUtil.startsWith(key, "global_") then
+        if string.startsWith(key, "global_") then
             global[key:sub(8)] = nil
         end
     end

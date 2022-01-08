@@ -13,7 +13,7 @@ local HoseGrabDropEvent_mt = Class(HoseGrabDropEvent, Event)
 InitEventClass(HoseGrabDropEvent, "HoseGrabDropEvent")
 
 function HoseGrabDropEvent:emptyNew()
-    local event = Event:new(HoseGrabDropEvent_mt)
+    local event = Event.new(HoseGrabDropEvent_mt)
     return event
 end
 

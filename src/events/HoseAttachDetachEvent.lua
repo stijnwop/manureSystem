@@ -13,7 +13,7 @@ local HoseAttachDetachEvent_mt = Class(HoseAttachDetachEvent, Event)
 InitEventClass(HoseAttachDetachEvent, "HoseAttachDetachEvent")
 
 function HoseAttachDetachEvent:emptyNew()
-    local event = Event:new(HoseAttachDetachEvent_mt)
+    local event = Event.new(HoseAttachDetachEvent_mt)
     return event
 end
 
