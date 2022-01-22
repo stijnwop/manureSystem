@@ -20,12 +20,19 @@ local modEnvironment
 local sourceFiles = {
     --Network
     "src/network/ManureSystemEventBits.lua",
-    --Misc
-    "src/misc/ManureSystemConnectorManager.lua",
-    --Hose
     "src/events/HoseAttachDetachEvent.lua",
     "src/events/HoseGrabDropEvent.lua",
+    "src/events/ManureSystemConnectorIsConnectedEvent.lua",
+    "src/events/ManureSystemConnectorManureFlowEvent.lua",
+    --Misc
+    "src/misc/ManureSystemConnectorManager.lua",
+    "src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua",
+    "src/misc/strategies/connectors/ManureSystemDockStrategy.lua",
+    --Hose
     "src/hose/HosePlayer.lua",
+    --Utils
+    "src/utils/ManureSystemUtil.lua",
+    "src/utils/ManureSystemXMLUtil.lua",
     --Main
     "src/ManureSystem.lua",
 }
@@ -63,10 +70,31 @@ local function unload()
     end
 end
 
+local function loadedMission(mission, node)
+    if not isLoaded() then
+        return
+    end
+
+    if mission.cancelLoading then
+        return
+    end
+
+    mission.manureSystem:onMissionLoaded(mission)
+end
+
+local function validateVehicleTypes(typeManager)
+    if typeManager.typeName == "vehicle" then
+        --ManureSystem.addModTranslations(g_i18n)
+        ManureSystem.installSpecializations(typeManager, g_specializationManager, modDirectory, modName)
+    end
+end
+
 --- Init the mod.
 local function init()
     FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
     Mission00.load = Utils.prependedFunction(Mission00.load, load)
+    Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
+    TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, validateVehicleTypes)
 end
 
 init()

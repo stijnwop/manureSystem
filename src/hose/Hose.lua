@@ -1221,7 +1221,7 @@ function Hose:constructPlayerJoint(jointDesc, mass)
 end
 
 function Hose:constructConnectorJoint(jointDesc)
-    if getRigidBodyType(jointDesc.actor2) ~= "Dynamic" then
+    if getRigidBodyType(jointDesc.actor2) ~= RigidBodyType.DYNAMIC then
         return
     end
 

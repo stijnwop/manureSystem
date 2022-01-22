@@ -14,6 +14,39 @@ function ManureSystemConnector.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end
 
+function ManureSystemConnector.initSpecialization()
+    local schema = Vehicle.xmlSchema
+
+    schema:setXMLSpecializationType("ManureSystemConnector")
+    schema:register(XMLValueType.INT, "vehicle.manureSystemConnectors#type", "Connector type")
+    schema:register(XMLValueType.NODE_INDEX, "vehicle.manureSystemConnectors#inRangeNode", "Connector in range node")
+    ManureSystemConnector.registerConnectorNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
+    ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
+    schema:setXMLSpecializationType()
+
+    g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?)")
+end
+
+function ManureSystemConnector.registerConnectorNodeXMLPaths(schema, baseName)
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#node", "Connector node")
+    schema:register(XMLValueType.STRING, baseName .. "#type", "The connector type")
+    schema:register(XMLValueType.BOOL, baseName .. "#createNode", "Create connector node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#linkNode", "Link node for linking the created nodes to")
+    schema:register(XMLValueType.FLOAT, baseName .. "#inRangeDistance", "The distance needed for the hose being in range")
+    schema:register(XMLValueType.BOOL, baseName .. "#isParkPlace", "Determines if the connector is a park place")
+    schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
+    ManureSystemConnector.registerConnectorNodeSharedSetXMLPaths(schema, baseName .. ".sharedSet")
+end
+
+function ManureSystemConnector.registerConnectorNodeSharedSetXMLPaths(schema, baseName)
+    schema:register(XMLValueType.INT, baseName .. "#id", "The shared set id")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#placeholderNode", "Visual placeholder node")
+    schema:register(XMLValueType.STRING, baseName .. ".connector#type", "The connector shared set type key")
+    schema:register(XMLValueType.STRING, baseName .. ".valve#type", "The valve shared set type key")
+    schema:register(XMLValueType.STRING, baseName .. ".handle#type", "The handle shared set type key")
+end
+
 function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "loadManureSystemConnectorFromXML", ManureSystemConnector.loadManureSystemConnectorFromXML)
     SpecializationUtil.registerFunction(vehicleType, "loadSharedSetFromXML", ManureSystemConnector.loadSharedSetFromXML)
@@ -28,9 +61,9 @@ function ManureSystemConnector.registerFunctions(vehicleType)
 end
 
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
 end
 
 function ManureSystemConnector.registerEventListeners(vehicleType)
@@ -55,25 +88,23 @@ function ManureSystemConnector:onLoad(savegame)
     spec.manureSystemActiveConnectorsByType = {}
 
     --Load optional in range node in order to define a different node to use for the hose to check if the vehicle is in a certain radius.
-    local inRangeNodeStr = getXMLString(self.xmlFile, "vehicle.manureSystemConnectors#inRangeNode")
-    if inRangeNodeStr ~= nil then
-        spec.inRangeNode = I3DUtil.indexToObject(self.components, inRangeNodeStr, self.i3dMappings)
-    end
+    spec.inRangeNode = self.xmlFile:getValue("vehicle.manureSystemConnectors#inRangeNode", nil, self.components, self.i3dMappings)
 
     local i = 0
     while true do
         local baseKey = ("vehicle.manureSystemConnectors.connector(%d)"):format(i)
 
-        if not hasXMLProperty(self.xmlFile, baseKey) then
+        if not self.xmlFile:hasProperty(baseKey) then
             break
         end
 
-        local typeString = Utils.getNoNil(getXMLString(self.xmlFile, baseKey .. "#type"), ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
-        local type = g_manureSystem.connectorManager:getConnectorType(typeString)
+        local typeString = self.xmlFile:getValue(baseKey .. "#type", ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+        local type = g_currentMission.manureSystem.connectorManager:getConnectorType(typeString)
 
         if type == nil then
-            g_logManager:xmlWarning(self.configFileName, "Invalid connector type %s", typeString)
-            type = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+            --g_logManager:xmlWarning(self.configFileName, "Invalid connector type %s", typeString)
+            log( ("Invalid connector type %s"):format(typeString))
+            type = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
         end
 
         if spec.manureSystemConnectorsByType[type] == nil then
@@ -82,7 +113,7 @@ function ManureSystemConnector:onLoad(savegame)
         end
 
         if spec.connectorStrategies[type] == nil then
-            spec.connectorStrategies[type] = g_manureSystem.connectorManager:getConnectorStrategy(type, self)
+            spec.connectorStrategies[type] = g_currentMission.manureSystem.connectorManager:getConnectorStrategy(type, self)
         end
 
         local connector = {}
@@ -103,7 +134,7 @@ function ManureSystemConnector:onPostLoad(savegame)
     local spec = self.spec_manureSystemConnector
 
     if #spec.manureSystemConnectors ~= 0 then
-        g_manureSystem:addConnectorObject(self)
+        g_currentMission.manureSystem:addConnectorObject(self)
     end
 end
 
@@ -127,7 +158,7 @@ function ManureSystemConnector:onDelete()
         end
     end
 
-    g_manureSystem:removeConnectorObject(self)
+    g_currentMission.manureSystem:removeConnectorObject(self)
 end
 
 function ManureSystemConnector:onReadStream(streamId, connection)
@@ -202,7 +233,7 @@ function ManureSystemConnector:onPumpInvalid()
 end
 
 function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFile, baseKey, id)
-    connector.hasSharedSet = hasXMLProperty(xmlFile, baseKey .. ".sharedSet")
+    connector.hasSharedSet = xmlFile:hasProperty(baseKey .. ".sharedSet")
 
     if not connector.hasSharedSet then
         local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
@@ -217,14 +248,14 @@ function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFi
     connector.isConnected = false
     connector.connectedObject = nil
     connector.connectedNodeId = nil
-    connector.inRangeDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#inRangeDistance"), 1.3)
-    connector.isParkPlace = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#isParkPlace"), false)
-    connector.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
+    connector.inRangeDistance = xmlFile:getValue(baseKey .. "#inRangeDistance", 1.3)
+    connector.isParkPlace = xmlFile:getValue(baseKey .. "#isParkPlace", false)
+    connector.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
 
     if connector.hasSharedSet then
-        if not self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector) then
-            return false
-        end
+        --if not self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector) then
+        --    return false
+        --end
     end
 
     return true
@@ -233,23 +264,23 @@ end
 function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
     local spec = self.spec_manureSystemConnector
 
-    connector.setId = Utils.getNoNil(getXMLInt(xmlFile, key .. "#id"), 1)
+    connector.setId = xmlFile:getValue(key .. "#id", 1)
 
     local linkNode = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, key)
     connector.setSharedLinkNode = linkNode
 
-    local set = g_manureSystem.connectorManager:getConnectorSet(connector.setId)
+    local set = g_currentMission.manureSystem.connectorManager:getConnectorSet(connector.setId)
     if set ~= nil then
         local strategy = spec.connectorStrategies[connector.type]
 
-        local placeHolderNode = I3DUtil.indexToObject(self.components, getXMLString(xmlFile, key .. "#placeholderNode"), self.i3dMappings)
+        local placeHolderNode = self.xmlFile:getValue(key .. "#placeholderNode", nil, self.components, self.i3dMappings)
         if placeHolderNode ~= nil then
             connector.placeHolderNode = placeHolderNode
             setVisibility(connector.placeHolderNode, false)
         end
 
         local sharedXMLFile = loadXMLFile("sharedXMLFile", set.xmlFilename)
-        local sharedConnectorKey = getXMLString(xmlFile, key .. ".connector#type")
+        local sharedConnectorKey = xmlFile:getValue(key .. ".connector#type")
         if sharedConnectorKey ~= nil then
             local sharedConnector = set.connectors[sharedConnectorKey:upper()]
 
@@ -265,7 +296,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
             end
         end
 
-        local sharedValveKey = getXMLString(xmlFile, key .. ".valve#type")
+        local sharedValveKey = xmlFile:getValue(key .. ".valve#type")
         if sharedValveKey ~= nil then
             local sharedValve = set.valves[sharedValveKey:upper()]
             if sharedValve ~= nil then
@@ -273,7 +304,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
                 link(linkNode, valveNode)
                 ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".valve", valveNode)
 
-                local sharedHandleKey = getXMLString(xmlFile, key .. ".handle#type")
+                local sharedHandleKey = xmlFile:getValue(key .. ".handle#type")
                 if sharedHandleKey ~= nil then
                     local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
                     if sharedHandle ~= nil then
@@ -333,11 +364,11 @@ function ManureSystemConnector:setIsConnectorActive(connector, state)
     local spec = self.spec_manureSystemConnector
     --Add the connector to the active table to reduce processing of non active connectors
     if state then
-        if not ListUtil.hasListElement(spec.manureSystemActiveConnectorsByType[connector.type], connector) then
-            ListUtil.addElementToList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+        if not table.hasElement(spec.manureSystemActiveConnectorsByType[connector.type], connector) then
+            table.addElement(spec.manureSystemActiveConnectorsByType[connector.type], connector)
         end
     else
-        ListUtil.removeElementFromList(spec.manureSystemActiveConnectorsByType[connector.type], connector)
+        table.removeElement(spec.manureSystemActiveConnectorsByType[connector.type], connector)
 
         --Reset pump target when no connectors are active for strategy.
         if #spec.manureSystemActiveConnectorsByType[connector.type] == 0 then

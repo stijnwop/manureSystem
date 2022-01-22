@@ -35,6 +35,30 @@ function ManureSystemCouplingStrategy:new(object, type, customMt)
     return instance
 end
 
+function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)
+    schema:register(XMLValueType.INT, baseName .. "#lockAnimationIndex", "The lock animation index for objects")
+    schema:register(XMLValueType.STRING, baseName .. "#lockAnimationName", "The lock animation name for vehicles")
+    schema:register(XMLValueType.INT, baseName .. "#manureFlowAnimationIndex", "The manure flow animation index for objects")
+    schema:register(XMLValueType.STRING, baseName .. "#manureFlowAnimationName", "The manure flow animation name for vehicles")
+
+    ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName .. "parkPlaces.parkPlace(?)")
+end
+
+function ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName)
+    schema:register(XMLValueType.NODE_INDEX, baseName .. ".deformer#node", "Connector node")
+    schema:register(XMLValueType.BOOL, baseName .. ".deformer#createNode", "Create connector node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. ".deformer#linkNode", "Link node for linking the created nodes to")
+
+    schema:register(XMLValueType.FLOAT, baseName .. "#length", "The park place length")
+    schema:register(XMLValueType.FLOAT, baseName .. "#offsetThreshold", "The park offset threshold")
+    schema:register(XMLValueType.STRING, baseName .. "#direction", "The park direction")
+
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. "#startTransOffset", "The park start translation offset")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. "#startRotOffset", "The park start rotation offset")
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. "#endTransOffset", "The park end translation offset")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. "#endRotOffset", "The park end rotation offset")
+end
+
 function ManureSystemCouplingStrategy:onReadStream(connector, streamId, connection)
     local isConnected = streamReadBool(streamId)
     if streamReadBool(streamId) then
@@ -68,7 +92,7 @@ function ManureSystemCouplingStrategy:onUpdate(dt, isActiveForInput, isActiveFor
         return
     end
 
-    if g_manureSystem.debugShowConnectors then
+    if g_currentMission.manureSystem.debugShowConnectors then
         object:raiseActive()
 
         for _, connector in ipairs(object:getConnectorsByType(self.connectorType)) do
@@ -155,7 +179,7 @@ function ManureSystemCouplingStrategy:findPumpObjects(object, dt)
 
     local didPumpTargetReset = false
     for _, connector in ipairs(connectors) do
-        if g_manureSystem.debug then
+        if g_currentMission.manureSystem.debug then
             DebugUtil.drawDebugNode(connector.node, "ACTIVE CONNECTOR")
         end
 
@@ -300,10 +324,10 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.hasOpenManureFlow = false
 
     if not connector.hasSharedSet then
-        connector.lockAnimationName = getXMLString(xmlFile, key .. "#lockAnimationName")
-        connector.lockAnimationIndex = getXMLInt(xmlFile, key .. "#lockAnimationIndex")
-        connector.manureFlowAnimationName = getXMLString(xmlFile, key .. "#manureFlowAnimationName")
-        connector.manureFlowAnimationIndex = getXMLInt(xmlFile, key .. "#manureFlowAnimationIndex")
+        connector.lockAnimationName = xmlFile:getValue(key .. "#lockAnimationName")
+        connector.lockAnimationIndex = xmlFile:getValue(key .. "#lockAnimationIndex")
+        connector.manureFlowAnimationName = xmlFile:getValue(key .. "#manureFlowAnimationName")
+        connector.manureFlowAnimationIndex = xmlFile:getValue(key .. "#manureFlowAnimationIndex")
     end
 
     connector.jointOrigRot = { getRotation(connector.node) }
@@ -315,11 +339,11 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
         local i = 0
         while true do
             local baseKey = ("%s.parkPlaces.parkPlace(%d)"):format(key, i)
-            if not hasXMLProperty(xmlFile, baseKey) then
+            if not xmlFile:hasProperty(baseKey) then
                 break
             end
 
-            local length = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#length"), 5) -- Default length of 5m
+            local length = xmlFile:getValue(baseKey .. "#length", 5) -- Default length of 5m
             if connector.parkPlaces[length] == nil then
                 local parkPlace = {}
                 parkPlace.id = i + 1
@@ -334,18 +358,6 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
             end
 
             i = i + 1
-        end
-
-        -- Fallback
-        if hasXMLProperty(xmlFile, key .. "#parkPlaceLength")
-            or hasXMLProperty(xmlFile, key .. "#parkOffsetThreshold")
-            or hasXMLProperty(xmlFile, key .. "#parkStartTransOffset")
-            or hasXMLProperty(xmlFile, key .. "#parkStartRotOffset")
-            or hasXMLProperty(xmlFile, key .. "#parkEndTransOffset")
-            or hasXMLProperty(xmlFile, key .. "#parkEndRotOffset")
-        then
-            connector.length = Utils.getNoNil(getXMLFloat(xmlFile, key .. "#parkPlaceLength"), 5)
-            self:loadParkPlace(xmlFile, key, connector, true)
         end
     end
 
@@ -370,28 +382,18 @@ function ManureSystemCouplingStrategy:delete(connector)
     end
 end
 
-function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace, useFallback)
+function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace)
     local node = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, ("%s.deformer"):format(key), parkPlace.id)
     parkPlace.deformerNode = node
 
-    -- Fallback to old system.
-    local function getLookupKey(lookupKey)
-        if useFallback then
-            local upperLookupKey = lookupKey:gsub("^%l", string.upper)
-            return "#park" .. upperLookupKey
-        end
+    parkPlace.offsetThreshold = xmlFile:getValue(key .. "#offsetThreshold", parkPlace.length)
 
-        return "#" .. lookupKey
-    end
-
-    parkPlace.offsetThreshold = Utils.getNoNil(getXMLFloat(xmlFile, key .. getLookupKey("offsetThreshold")), parkPlace.length)
-
-    local parkDirection = Utils.getNoNil(getXMLString(xmlFile, key .. getLookupKey("direction")), "right")
+    local parkDirection = xmlFile:getValue(key .. "#direction", "right")
     parkPlace.direction = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
-    parkPlace.startTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. getLookupKey("startTransOffset")), 3), { 0, 0, 0 })
-    parkPlace.startRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. getLookupKey("startRotOffset")), 3), { 0, 0, 0 })
-    parkPlace.endTransOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, key .. getLookupKey("endTransOffset")), 3), { 0, 0, 0 })
-    parkPlace.endRotOffset = Utils.getNoNil(StringUtil.getRadiansFromString(getXMLString(xmlFile, key .. getLookupKey("endRotOffset")), 3), { 0, 0, 0 })
+    parkPlace.startTransOffset = xmlFile:getValue(key .. "#startTransOffset", { 0, 0, 0 })
+    parkPlace.startRotOffset = xmlFile:getValue(key .. "#startRotOffset", { 0, 0, 0 })
+    parkPlace.endTransOffset = xmlFile:getValue(key .. "#endTransOffset", { 0, 0, 0 })
+    parkPlace.endRotOffset = xmlFile:getValue(key .. "#endRotOffset", { 0, 0, 0 })
 
     local lengthNode = createTransformGroup(("connector_parkplace_length_node_%d"):format(parkPlace.id))
     local x, y, z = 0, 0, parkPlace.length * parkPlace.direction
@@ -438,5 +440,6 @@ function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
 end
 
 function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)
-    setXMLBool(xmlFile, key .. "#hasOpenManureFlow", connector.isConnected and connector.hasOpenManureFlow)
+    --Todo: register
+    xmlFile:setValue(key .. "#hasOpenManureFlow", connector.isConnected and connector.hasOpenManureFlow)
 end

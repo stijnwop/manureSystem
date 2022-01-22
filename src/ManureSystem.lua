@@ -17,13 +17,13 @@ local sortByClassAndId = function(arg1, arg2)
     -- Sort by id when dealing with the same classNames.
     if arg1.className == arg2.className then
         if arg1.className == ManureSystem.VEHICLE_CLASSNAME then
-            local id1 = g_manureSystem.savedVehiclesToId[arg1] or 0
-            local id2 = g_manureSystem.savedVehiclesToId[arg2] or 0
+            local id1 = g_currentMission.manureSystem.savedVehiclesToId[arg1] or 0
+            local id2 = g_currentMission.manureSystem.savedVehiclesToId[arg2] or 0
             return id1 < id2
         else
             -- When placeable we sort on the current position because the load order is not guarantee by the item system.
-            local item1 = g_manureSystem.savedItemsToId[arg1]
-            local item2 = g_manureSystem.savedItemsToId[arg2]
+            local item1 = g_currentMission.manureSystem.savedItemsToId[arg1]
+            local item2 = g_currentMission.manureSystem.savedItemsToId[arg2]
             if item1 and item2 ~= nil then
                 local x1, y1, z1 = unpack(item1.pos)
                 local x2, y2, z2 = unpack(item2.pos)
@@ -235,7 +235,25 @@ function ManureSystem:connectorObjectExists(id)
     return self.manureSystemConnectors[id] ~= nil
 end
 
-function ManureSystem.installSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName, vehiclesByReplaceType)
+function ManureSystem.installSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName)
+    for typeName, typeEntry in pairs(vehicleTypeManager:getTypes()) do
+        if SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations) then
+            --if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
+            --    vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
+            --end
+
+            if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations) then
+                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
+            end
+
+            --if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations) then
+            --    vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
+            --end
+        end
+    end
+end
+
+function ManureSystem.installSpecializationsOld(vehicleTypeManager, specializationManager, modDirectory, modName, vehiclesByReplaceType)
     for typeName, typeEntry in pairs(vehicleTypeManager:getVehicleTypes()) do
         local stringParts = string.split(".", typeName)
         local hasVehicleSpec = false
@@ -318,7 +336,6 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
             end
         end
-
     end
 end
 
