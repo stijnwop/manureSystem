@@ -12,7 +12,7 @@ local ManureSystemPumpDirectionEvent_mt = Class(ManureSystemPumpDirectionEvent, 
 InitEventClass(ManureSystemPumpDirectionEvent, "ManureSystemPumpDirectionEvent")
 
 function ManureSystemPumpDirectionEvent:emptyNew()
-    local self = Event:new(ManureSystemPumpDirectionEvent_mt)
+    local self = Event.new(ManureSystemPumpDirectionEvent_mt)
 
     return self
 end

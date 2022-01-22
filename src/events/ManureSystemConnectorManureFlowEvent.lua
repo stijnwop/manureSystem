@@ -15,7 +15,7 @@ local ManureSystemConnectorManureFlowEvent_mt = Class(ManureSystemConnectorManur
 InitEventClass(ManureSystemConnectorManureFlowEvent, "ManureSystemConnectorManureFlowEvent")
 
 function ManureSystemConnectorManureFlowEvent:emptyNew()
-    local self = Event:new(ManureSystemConnectorManureFlowEvent_mt)
+    local self = Event.new(ManureSystemConnectorManureFlowEvent_mt)
 
     return self
 end

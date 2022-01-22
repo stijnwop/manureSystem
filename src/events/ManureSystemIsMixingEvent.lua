@@ -12,7 +12,7 @@ local ManureSystemIsMixingEvent_mt = Class(ManureSystemIsMixingEvent, Event)
 InitEventClass(ManureSystemIsMixingEvent, "ManureSystemIsMixingEvent")
 
 function ManureSystemIsMixingEvent:emptyNew()
-    local self = Event:new(ManureSystemIsMixingEvent_mt)
+    local self = Event.new(ManureSystemIsMixingEvent_mt)
 
     return self
 end

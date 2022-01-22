@@ -13,7 +13,7 @@ local ManureSystemPumpIsRunningEvent_mt = Class(ManureSystemPumpIsRunningEvent, 
 InitEventClass(ManureSystemPumpIsRunningEvent, "ManureSystemPumpIsRunningEvent")
 
 function ManureSystemPumpIsRunningEvent:emptyNew()
-    local self = Event:new(ManureSystemPumpIsRunningEvent_mt)
+    local self = Event.new(ManureSystemPumpIsRunningEvent_mt)
 
     return self
 end
