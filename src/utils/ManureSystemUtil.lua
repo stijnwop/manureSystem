@@ -9,8 +9,6 @@
 ---@class ManureSystemUtil
 ManureSystemUtil = {}
 
-ManureSystemUtil.NO_RIGID_BODY = "norigidbody"
-
 ---Does a sanitized replacement with the given `what` value in the given `input` with the `with` value.
 function ManureSystemUtil.replaceSanitized(input, what, with)
     what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
@@ -20,7 +18,7 @@ end
 
 ---Gets the first found physics node when the root node isn't a rigid body.
 function ManureSystemUtil.getFirstPhysicsNode(nodeId)
-    if getRigidBodyType(nodeId):lower() ~= ManureSystemUtil.NO_RIGID_BODY then
+    if getRigidBodyType(nodeId) ~= RigidBodyType.NONE then
         return nodeId
     end
 
