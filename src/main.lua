@@ -26,6 +26,7 @@ local sourceFiles = {
     "src/events/ManureSystemConnectorManureFlowEvent.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
+    "src/misc/ManureSystemFillArmManager.lua",
     "src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua",
     "src/misc/strategies/connectors/ManureSystemDockStrategy.lua",
     --Hose
@@ -49,7 +50,7 @@ end
 ---Load the mod.
 local function load(mission)
     assert(modEnvironment == nil)
-    modEnvironment = ManureSystem.new(mission, g_inputBinding, g_soundManager, modName, modDirectory)
+    modEnvironment = ManureSystem.new(mission, g_inputBinding, g_soundManager, modDirectory, modName)
     mission.manureSystem = modEnvironment
     addModEventListener(modEnvironment)
 end

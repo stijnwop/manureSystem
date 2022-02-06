@@ -18,7 +18,26 @@ function ManureSystemFillArm.prerequisitesPresent(specializations)
 end
 
 function ManureSystemFillArm.initSpecialization()
+    local schema = Vehicle.xmlSchema
+    schema:setXMLSpecializationType("ManureSystemFillArm")
+    ManureSystemFillArm.registerFillArmXMLPaths(schema, "vehicle.manureSystemFillArm")
+    ManureSystemFillArm.registerFillArmXMLPaths(schema, "vehicle.manureSystemFillArms.fillArm(?)")
+    schema:setXMLSpecializationType()
+
     g_configurationManager:addConfigurationType("manureSystemFillArm", g_i18n:getText("configuration_manureSystemFillArm"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(?)")
+end
+
+function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
+    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
+    schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Connector type")
+    schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Connector type")
+    schema:register(XMLValueType.FLOAT, baseName .. "#rayCastDistance", "Connector type")
+    schema:register(XMLValueType.INT, baseName .. "#controlGroupIndex", "Connector type")
+    schema:register(XMLValueType.STRING, baseName .. "#limitedFillDirection", "Connector type")
+    schema:register(XMLValueType.BOOL, baseName .. "#needsDockingCollision", "Connector type")
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".collision#position", "The position of the collision")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. ".collision#rotation", "The rotation of the collision")
 end
 
 function ManureSystemFillArm.registerFunctions(vehicleType)
@@ -42,12 +61,12 @@ function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
 
-    local configurationId = Utils.getNoNil(self.configurations["manureSystemFillArm"], 1)
+    local configurationId = self.configurations["manureSystemFillArm"] or 1
     local baseKey = ("vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(%d)"):format(configurationId - 1)
     ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration", configurationId, self.components, self)
 
     --Fallback
-    if not hasXMLProperty(self.xmlFile, baseKey) then
+    if not self.xmlFile:hasProperty(baseKey) then
         baseKey = "vehicle"
     end
 
@@ -57,7 +76,7 @@ function ManureSystemFillArm:onLoad(savegame)
     spec.lastRaycastObject = nil
 
     local singleEntryKey = ("%s.manureSystemFillArm"):format(baseKey)
-    if hasXMLProperty(self.xmlFile, singleEntryKey) then
+    if self.xmlFile:hasProperty(singleEntryKey) then
         local entry = {}
         if self:loadManureSystemFillArmFromXML(entry, self.xmlFile, singleEntryKey, 0) then
             table.insert(spec.fillArms, entry)
@@ -67,7 +86,7 @@ function ManureSystemFillArm:onLoad(savegame)
         while true do
             local key = ("%s.manureSystemFillArms.fillArm(%d)"):format(baseKey, i)
 
-            if not hasXMLProperty(self.xmlFile, key) then
+            if not self.xmlFile:hasProperty(key) then
                 break
             end
 
@@ -149,7 +168,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 local isNearWater = (y <= g_currentMission.waterY + 0.1)
                 self:setIsPumpSourceWater(isNearWater)
 
-                if g_manureSystem.debug then
+                if g_currentMission.manureSystem.debug then
                     local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
                     lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
                     lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
@@ -175,36 +194,26 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
     if node ~= nil then
         fillArm.id = id + 1
         fillArm.node = node
-        fillArm.type = g_manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
-        fillArm.fillYOffset = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#fillYOffset"), 0)
-        fillArm.fillUnitIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#fillUnitIndex"), 1)
-        fillArm.rayCastDistance = Utils.getNoNil(getXMLFloat(xmlFile, baseKey .. "#rayCastDistance"), 2)
-        fillArm.controlGroupIndex = Utils.getNoNil(getXMLInt(xmlFile, baseKey .. "#controlGroupIndex"), 0)
+        fillArm.type = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
+        fillArm.fillYOffset = xmlFile:getValue(baseKey .. "#fillYOffset", 0)
+        fillArm.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
+        fillArm.rayCastDistance = xmlFile:getValue(baseKey .. "#rayCastDistance", 2)
+        fillArm.controlGroupIndex = xmlFile:getValue(baseKey .. "#controlGroupIndex", 0)
 
-        local limit = getXMLString(xmlFile, baseKey .. "#limitedFillDirection")
+        local limit = xmlFile:getValue(baseKey .. "#limitedFillDirection")
         if limit ~= nil then
             fillArm.limitedFillDirection = limit:upper() == ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR and ManureSystemPumpMotor.PUMP_DIRECTION_IN or ManureSystemPumpMotor.PUMP_DIRECTION_OUT
         end
 
-        fillArm.needsDockingCollision = Utils.getNoNil(getXMLBool(xmlFile, baseKey .. "#needsDockingCollision"), false)
+        fillArm.needsDockingCollision = xmlFile:getValue(baseKey .. "#needsDockingCollision", false)
         if fillArm.needsDockingCollision then
-            local collision = clone(g_manureSystem.fillArmManager.collision, false, false, false)
+            local collision = clone(g_currentMission.manureSystem.fillArmManager.collision, false, false, false)
 
             if collision ~= 0 then
                 setIsCompoundChild(collision, true)
                 addToPhysics(collision)
+                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, baseKey .. ".collision", collision)
                 fillArm.collision = collision
-
-                local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#position")) }
-                if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
-                    setTranslation(fillArm.collision, unpack(translation))
-                end
-
-                local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, baseKey .. ".collision#rotation")) }
-                if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
-                    setRotation(fillArm.collision, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
-                end
-
                 link(node, fillArm.collision)
             end
         end
@@ -212,7 +221,7 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         return true
     end
 
-    g_logManager:xmlWarning(self.configFileName, "Could not load fillArm from XML, missing node entry!")
+    Logging.xmlWarning(self.configFileName, "Could not load fillArm from XML, missing node entry!")
 
     return false
 end
