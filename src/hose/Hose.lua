@@ -754,7 +754,7 @@ function Hose:computeCatmullSpline()
 
     -- Fix flickering on the hose mesh.
     local intersectionOffset = 0.003
-    --Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
+    Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv2", p1x + intersectionOffset, p1y, p1z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv3", p2x - intersectionOffset, p2y, p2z, 0)
     Hose.setCatmullPoint(spec.mesh, "cv4", p3x - intersectionOffset, p3y, p3z, 0)
@@ -1033,7 +1033,7 @@ function Hose:parkHose(connector, vehicle)
         spec.p2 = parkPlace.deformerNode
     end
 
-    local length = math.min(parkPlace.length, self.sizeLength) * parkPlace.direction
+    local length = math.min(parkPlace.length, self.size.length) * parkPlace.direction
     local grabNodesDivision = #spec.grabNodes - 1
 
     local excludedComponentIds = {}
@@ -1077,7 +1077,7 @@ end
 
 function Hose:setParkPosition(connector, parkPlace)
     local spec = self.spec_hose
-    local length = math.min(parkPlace.length, self.sizeLength) * parkPlace.direction
+    local length = math.min(parkPlace.length, self.size.length) * parkPlace.direction
     local components = #self.components - 1 -- we start at component 1
 
     -- First we remove the hose from physics
