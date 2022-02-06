@@ -41,7 +41,7 @@ function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, base
     schema:register(XMLValueType.INT, baseName .. "#manureFlowAnimationIndex", "The manure flow animation index for objects")
     schema:register(XMLValueType.STRING, baseName .. "#manureFlowAnimationName", "The manure flow animation name for vehicles")
 
-    ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName .. "parkPlaces.parkPlace(?)")
+    ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName .. ".parkPlaces.parkPlace(?)")
 end
 
 function ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName)
@@ -354,7 +354,7 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
                     connector.parkPlaces[length] = parkPlace
                 end
             else
-                g_logManager:xmlError(self.object.configFileName, ("Park place already exists for hose length: (%d)m."):format(length))
+                Logging.xmlError(self.object.configFileName, ("Park place already exists for hose length: (%d)m."):format(length))
             end
 
             i = i + 1
@@ -383,17 +383,19 @@ function ManureSystemCouplingStrategy:delete(connector)
 end
 
 function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace)
-    local node = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, ("%s.deformer"):format(key), parkPlace.id)
-    parkPlace.deformerNode = node
+    if xmlFile:hasProperty(key .. ".deformer") then
+        local node = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".deformer", parkPlace.id)
+        parkPlace.deformerNode = node
+    end
 
     parkPlace.offsetThreshold = xmlFile:getValue(key .. "#offsetThreshold", parkPlace.length)
 
     local parkDirection = xmlFile:getValue(key .. "#direction", "right")
     parkPlace.direction = parkDirection:lower() ~= "right" and ManureSystemCouplingStrategy.PARK_DIRECTION_LEFT or ManureSystemCouplingStrategy.PARK_DIRECTION_RIGHT
-    parkPlace.startTransOffset = xmlFile:getValue(key .. "#startTransOffset", { 0, 0, 0 })
-    parkPlace.startRotOffset = xmlFile:getValue(key .. "#startRotOffset", { 0, 0, 0 })
-    parkPlace.endTransOffset = xmlFile:getValue(key .. "#endTransOffset", { 0, 0, 0 })
-    parkPlace.endRotOffset = xmlFile:getValue(key .. "#endRotOffset", { 0, 0, 0 })
+    parkPlace.startTransOffset = xmlFile:getValue(key .. "#startTransOffset", { 0, 0, 0 }, true)
+    parkPlace.startRotOffset = xmlFile:getValue(key .. "#startRotOffset", { 0, 0, 0 }, true)
+    parkPlace.endTransOffset = xmlFile:getValue(key .. "#endTransOffset", { 0, 0, 0 }, true)
+    parkPlace.endRotOffset = xmlFile:getValue(key .. "#endRotOffset", { 0, 0, 0 }, true)
 
     local lengthNode = createTransformGroup(("connector_parkplace_length_node_%d"):format(parkPlace.id))
     local x, y, z = 0, 0, parkPlace.length * parkPlace.direction
@@ -421,14 +423,14 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, k
         local spec_animatedVehicle = self.object.spec_animatedVehicle
         if spec_animatedVehicle ~= nil then
             local animation = {}
-            if ManureSystemUtil.loadSharedAnimation(self.object, xmlFile, key, animation, connectorNode) then
-                animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
-                spec_animatedVehicle.animations[animation.name] = animation
-                -- Set the loaded animation as given connector animation name.
-                connector[connectorAnimationName] = animation.name
-            end
+            --if ManureSystemUtil.loadSharedAnimation(self.object, xmlFile, key, animation, connectorNode) then
+            --    animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
+            --    spec_animatedVehicle.animations[animation.name] = animation
+            --    -- Set the loaded animation as given connector animation name.
+            --    connector[connectorAnimationName] = animation.name
+            --end
         else
-            g_logManager:xmlError(self.object.configFileName, ("Shared %s animation can't be added as the vehicle does not have the AnimatedVehicle spec."):format(connectorAnimationName))
+            Logging.xmlError(self.object.configFileName, ("Shared %s animation can't be added as the vehicle does not have the AnimatedVehicle spec."):format(connectorAnimationName))
         end
     end
 end

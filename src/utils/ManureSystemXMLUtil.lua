@@ -27,6 +27,14 @@ function ManureSystemXMLUtil.isValidNode(node, checkPhysics)
     return true
 end
 
+function ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#node", "The node")
+    schema:register(XMLValueType.BOOL, baseName .. "#createNode", "Create the node")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#linkNode", "Link node for linking the created nodes to")
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. "#position", "The position")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. "#rotation", "The rotation")
+end
+
 ---Gets a node or creates a node when set.
 function ManureSystemXMLUtil.getOrCreateNode(vehicle, xmlFile, key, index)
     if xmlFile:getValue(key .. "#createNode", false) then

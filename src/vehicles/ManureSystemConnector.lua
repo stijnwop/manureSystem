@@ -22,6 +22,7 @@ function ManureSystemConnector.initSpecialization()
     schema:register(XMLValueType.NODE_INDEX, "vehicle.manureSystemConnectors#inRangeNode", "Connector in range node")
     ManureSystemConnector.registerConnectorNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
     ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
+    ManureSystemDockStrategy.registerDockNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
     schema:setXMLSpecializationType()
 
     g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
@@ -29,10 +30,8 @@ function ManureSystemConnector.initSpecialization()
 end
 
 function ManureSystemConnector.registerConnectorNodeXMLPaths(schema, baseName)
-    schema:register(XMLValueType.NODE_INDEX, baseName .. "#node", "Connector node")
+    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
     schema:register(XMLValueType.STRING, baseName .. "#type", "The connector type")
-    schema:register(XMLValueType.BOOL, baseName .. "#createNode", "Create connector node")
-    schema:register(XMLValueType.NODE_INDEX, baseName .. "#linkNode", "Link node for linking the created nodes to")
     schema:register(XMLValueType.FLOAT, baseName .. "#inRangeDistance", "The distance needed for the hose being in range")
     schema:register(XMLValueType.BOOL, baseName .. "#isParkPlace", "Determines if the connector is a park place")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
@@ -40,10 +39,23 @@ function ManureSystemConnector.registerConnectorNodeXMLPaths(schema, baseName)
 end
 
 function ManureSystemConnector.registerConnectorNodeSharedSetXMLPaths(schema, baseName)
+    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
     schema:register(XMLValueType.INT, baseName .. "#id", "The shared set id")
     schema:register(XMLValueType.NODE_INDEX, baseName .. "#placeholderNode", "Visual placeholder node")
+
     schema:register(XMLValueType.STRING, baseName .. ".connector#type", "The connector shared set type key")
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".connector#position", "The connector position")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. ".connector#rotation", "The connector rotation")
+    schema:register(XMLValueType.COLOR, baseName .. ".connector#color", "The connector color")
+
+    schema:register(XMLValueType.BOOL, baseName .. ".connector.pipe", "Set the visibility of pipe")
+    schema:register(XMLValueType.BOOL, baseName .. ".connector.flangeRound", "Set the visibility of the round flange")
+    schema:register(XMLValueType.BOOL, baseName .. ".connector.flangeQuad", "Set the visibility of the quad flange")
+
     schema:register(XMLValueType.STRING, baseName .. ".valve#type", "The valve shared set type key")
+    schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".valve#position", "The valve position")
+    schema:register(XMLValueType.VECTOR_ROT, baseName .. ".valve#rotation", "The valve rotation")
+
     schema:register(XMLValueType.STRING, baseName .. ".handle#type", "The handle shared set type key")
 end
 
@@ -102,8 +114,7 @@ function ManureSystemConnector:onLoad(savegame)
         local type = g_currentMission.manureSystem.connectorManager:getConnectorType(typeString)
 
         if type == nil then
-            --g_logManager:xmlWarning(self.configFileName, "Invalid connector type %s", typeString)
-            log( ("Invalid connector type %s"):format(typeString))
+            Logging.xmlWarning(self.configFileName, "Invalid connector type %s", typeString)
             type = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
         end
 
@@ -253,9 +264,9 @@ function ManureSystemConnector:loadManureSystemConnectorFromXML(connector, xmlFi
     connector.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
 
     if connector.hasSharedSet then
-        --if not self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector) then
-        --    return false
-        --end
+        if not self:loadSharedSetFromXML(xmlFile, baseKey .. ".sharedSet", connector) then
+            return false
+        end
     end
 
     return true
@@ -322,7 +333,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
 
         delete(sharedXMLFile)
     else
-        g_logManager:xmlError(self.configFileName, "Shared connector set " .. connector.setId .. " not found!")
+        Logging.xmlError(self.configFileName, ("Shared connector set %s not found!"):format(connector.setId))
         return false
     end
 
@@ -474,7 +485,7 @@ function ManureSystemConnector:updateExtraDependentParts(superFunc, part, dt)
 
             if connector == nil then
                 part.manureSystemConnectors[i] = nil
-                g_logManager:xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(part.node))
+                Logging.xmlWarning(self.configFileName, "Unable to find manureSystemConnectors index '%d' for movingPart/movingTool '%s'", id, getName(part.node))
             else
                 if connector.isConnected then
                     local object = connector.connectedObject
@@ -497,7 +508,7 @@ function ManureSystemConnector:loadHoseTargetNode(superFunc, xmlFile, targetKey,
         entry.node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, targetKey)
 
         if entry.node == nil then
-            g_logManager:xmlWarning(self.configFileName, "Missing node for connection hose target '%s'", targetKey)
+            Logging.xmlWarning(self.configFileName, "Missing node for connection hose target '%s'", targetKey)
 
             return false
         end
@@ -534,7 +545,7 @@ function ManureSystemConnector:loadHoseTargetNode(superFunc, xmlFile, targetKey,
             ObjectChangeUtil.loadObjectChangeFromXML(self.xmlFile, targetKey, entry.objectChanges, self.components, self)
             ObjectChangeUtil.setObjectChanges(entry.objectChanges, false)
         else
-            g_logManager:xmlWarning(self.configFileName, "Missing type for '%s'", targetKey)
+            Logging.xmlWarning(self.configFileName, "Missing type for '%s'", targetKey)
 
             return false
         end

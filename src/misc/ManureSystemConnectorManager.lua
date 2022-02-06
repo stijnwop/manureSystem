@@ -39,10 +39,11 @@ function ManureSystemConnectorManager:loadMapData()
     --g_connectionHoseManager:loadConnectionHosesFromXML(Utils.getFilename("resources/assets/connectionHoses/connectionHoses.xml", self.modDirectory))
     --g_connectionHoseManager.baseDirectory = orgConnectionHoseManagerDirectory
 
-    local collisionRoot = g_i3DManager:loadSharedI3DFile("resources/collisions/connectorCollision.i3d", self.modDirectory, false, false, false)
+    local collisionFilename = Utils.getFilename("resources/collisions/connectorCollision.i3d", self.modDirectory)
+    local collisionRoot = g_i3DManager:loadSharedI3DFile(collisionFilename, false, false)
     self.collision = getChildAt(collisionRoot, 0)
     setCollisionMask(self.collision, ManureSystemConnectorManager.COLLISION_MASK)
-    setRigidBodyType(self.collision, "Kinematic")
+    setRigidBodyType(self.collision, RigidBodyType.KINEMATIC)
 end
 
 function ManureSystemConnectorManager:unloadMapData()
@@ -59,19 +60,19 @@ end
 
 function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
     local xmlFilename = Utils.getFilename("resources/assets/connectorsSets.xml", self.modDirectory)
-    local xmlFile = loadXMLFile("ManureSystemConnectorSets", xmlFilename)
+    local xmlFile = XMLFile.load("connectorsSetsXML", xmlFilename)
 
     local i = 0
     while true do
         local key = ("assets.set(%d)"):format(i)
-        if not hasXMLProperty(xmlFile, key) then break end
+        if not xmlFile:hasProperty(key) then break end
 
-        local filename = getXMLString(xmlFile, key .. "#filename")
+        local filename = xmlFile:getString(key .. "#filename")
         if filename ~= nil then
             local desc = {}
             desc.xmlFilename = xmlFilename
             desc.filename = Utils.getFilename(filename, self.modDirectory)
-            desc.sharedRoot = g_i3DManager:loadSharedI3DFile(desc.filename, nil, false, false)
+            desc.sharedRoot = g_i3DManager:loadSharedI3DFile(desc.filename, false, false)
             local nodeId = getChildAt(desc.sharedRoot, 0)
 
             -- Connectors
@@ -79,16 +80,16 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
             local c = 0
             while true do
                 local connectorKey = ("%s.connectors.connector(%d)"):format(key, c)
-                if not hasXMLProperty(xmlFile, connectorKey) then break end
+                if not xmlFile:hasProperty(connectorKey) then break end
 
-                local connectorTypeString = getXMLString(xmlFile, connectorKey .. "#type")
-                local connectorNode = I3DUtil.indexToObject(nodeId, getXMLString(xmlFile, connectorKey .. "#node"))
+                local connectorTypeString = xmlFile:getString(connectorKey .. "#type")
+                local connectorNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(connectorKey .. "#node"))
                 if connectorTypeString ~= nil and connectorNode ~= nil then
                     local connectorTypeKey = self:formatConnectorKey(connectorTypeString)
                     local connector = {}
                     connector.node = connectorNode
                     connector.animationKey = connectorKey .. ".animation"
-                    connector.hasAnimation = hasXMLProperty(xmlFile, connector.animationKey)
+                    connector.hasAnimation = xmlFile:hasProperty(connector.animationKey)
 
                     desc.connectors[connectorTypeKey] = connector
                 end
@@ -101,10 +102,10 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
             local v = 0
             while true do
                 local valveKey = ("%s.valves.valve(%d)"):format(key, v)
-                if not hasXMLProperty(xmlFile, valveKey) then break end
+                if not xmlFile:hasProperty(valveKey) then break end
 
-                local valveTypeString = getXMLString(xmlFile, valveKey .. "#type")
-                local valveNode = I3DUtil.indexToObject(nodeId, getXMLString(xmlFile, valveKey .. "#node"))
+                local valveTypeString = xmlFile:getString(valveKey .. "#type")
+                local valveNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(valveKey .. "#node"))
                 if valveTypeString ~= nil and valveNode ~= nil then
                     local valveTypeKey = self:formatConnectorKey(valveTypeString)
                     local valve = {}
@@ -114,17 +115,17 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
                     local h = 0
                     while true do
                         local handleKey = ("%s.handle(%d)"):format(valveKey, h)
-                        if not hasXMLProperty(xmlFile, handleKey) then break end
+                        if not xmlFile:hasProperty(handleKey) then break end
 
-                        local handleTypeString = getXMLString(xmlFile, handleKey .. "#type")
-                        local handleNode = I3DUtil.indexToObject(nodeId, getXMLString(xmlFile, handleKey .. "#node"))
+                        local handleTypeString = xmlFile:getString(handleKey .. "#type")
+                        local handleNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(handleKey .. "#node"))
                         if handleTypeString ~= nil and handleNode ~= nil then
                             local handleTypeKey = self:formatConnectorKey(handleTypeString)
                             local handle = {}
                             handle.node = handleNode
                             handle.animationKey = handleKey .. ".animation"
-                            handle.hasAnimation = hasXMLProperty(xmlFile, handle.animationKey)
-                            handle.linkOffset = Utils.getNoNil(StringUtil.getVectorNFromString(getXMLString(xmlFile, handleKey .. "#linkOffset"), 3), { 0, 0, 0 })
+                            handle.hasAnimation = xmlFile:hasProperty(handle.animationKey)
+                            handle.linkOffset = Utils.getNoNil(string.getVectorN(xmlFile:getString(handleKey .. "#linkOffset"), 3), { 0, 0, 0 })
 
                             valve.handles[handleTypeKey] = handle
                         end
@@ -143,6 +144,8 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
 
         i = i + 1
     end
+
+    xmlFile:delete()
 end
 
 function ManureSystemConnectorManager:formatConnectorKey(name)

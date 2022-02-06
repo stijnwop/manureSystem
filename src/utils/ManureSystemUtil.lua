@@ -35,14 +35,14 @@ end
 
 ---Loads the optional rotation and position for the given node and applies it.
 function ManureSystemUtil.loadNodePositionAndRotation(xmlFile, xmlKey, node)
-    local translation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#position")) }
-    if translation[1] ~= nil and translation[2] ~= nil and translation[3] ~= nil then
-        setTranslation(node, unpack(translation))
+    local x, y, z = xmlFile:getValue(xmlKey .. "#position", nil, false)
+    if x ~= nil and y ~= nil and z ~= nil then
+        setTranslation(node, x, y, z)
     end
 
-    local rotation = { StringUtil.getVectorFromString(getXMLString(xmlFile, xmlKey .. "#rotation")) }
-    if rotation[1] ~= nil and rotation[2] ~= nil and rotation[3] ~= nil then
-        setRotation(node, MathUtil.degToRad(rotation[1]), MathUtil.degToRad(rotation[2]), MathUtil.degToRad(rotation[3]))
+    local xRot, yRot, zRot = xmlFile:getValue(xmlKey .. "#rotation", nil, false)
+    if xRot ~= nil and yRot ~= nil and zRot ~= nil then
+        setRotation(node, xRot, yRot, zRot)
     end
 end
 
@@ -54,21 +54,18 @@ function ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, xmlKey, node, n
         return
     end
 
-    local colorStr = getXMLString(xmlFile, xmlKey .. "#color")
-    if colorStr ~= nil then
-        local colorVector = g_brandColorManager:getBrandColorByName(colorStr) or { StringUtil.getVectorFromString(colorStr) }
-        if colorVector ~= nil then
-            local _, _, _, materialId = getShaderParameter(visualNode, materialName)
-            local r, g, b = unpack(colorVector)
-            setShaderParameter(visualNode, materialName, r, g, b, materialId, false)
-        end
+    local color = xmlFile:getValue(xmlKey .. "#color", nil, true)
+    if color ~= nil then
+        local _, _, _, materialId = getShaderParameter(visualNode, materialName)
+        local r, g, b = unpack(color)
+        setShaderParameter(visualNode, materialName, r, g, b, materialId, false)
     end
 end
 
 function ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, xmlKey, node, nodeAttribute)
     local visualNode = I3DUtil.indexToObject(node, getUserAttribute(node, nodeAttribute))
     if visualNode ~= nil then
-        setVisibility(visualNode, Utils.getNoNil(getXMLBool(xmlFile, xmlKey), false))
+        setVisibility(visualNode, xmlFile:getValue(xmlKey, false))
     end
 end
 
@@ -124,16 +121,16 @@ function ManureSystemUtil.loadSharedAnimationPart(object, xmlFile, partKey, part
     local duration = getXMLFloat(xmlFile, partKey .. "#duration")
     local endTime = getXMLFloat(xmlFile, partKey .. "#endTime")
     local direction = MathUtil.sign(Utils.getNoNil(getXMLInt(xmlFile, partKey .. "#direction"), 0))
-    local startRot = StringUtil.getRadiansFromString(getXMLString(xmlFile, partKey .. "#startRot"), 3)
-    local endRot = StringUtil.getRadiansFromString(getXMLString(xmlFile, partKey .. "#endRot"), 3)
-    local startTrans = StringUtil.getVectorNFromString(getXMLString(xmlFile, partKey .. "#startTrans"), 3)
-    local endTrans = StringUtil.getVectorNFromString(getXMLString(xmlFile, partKey .. "#endTrans"), 3)
-    local startScale = StringUtil.getVectorNFromString(getXMLString(xmlFile, partKey .. "#startScale"), 3)
-    local endScale = StringUtil.getVectorNFromString(getXMLString(xmlFile, partKey .. "#endScale"), 3)
+    local startRot = string.getRadians(getXMLString(xmlFile, partKey .. "#startRot"), 3)
+    local endRot = string.getRadians(getXMLString(xmlFile, partKey .. "#endRot"), 3)
+    local startTrans = string.getVectorN(getXMLString(xmlFile, partKey .. "#startTrans"), 3)
+    local endTrans = string.getVectorN(getXMLString(xmlFile, partKey .. "#endTrans"), 3)
+    local startScale = string.getVectorN(getXMLString(xmlFile, partKey .. "#startScale"), 3)
+    local endScale = string.getVectorN(getXMLString(xmlFile, partKey .. "#endScale"), 3)
     local visibility = getXMLBool(xmlFile, partKey .. "#visibility")
 
     local requiredAnimation = getXMLString(xmlFile, partKey .. "#requiredAnimation")
-    local requiredAnimationRange = StringUtil.getVectorNFromString(getXMLString(xmlFile, partKey .. "#requiredAnimationRange"), 2)
+    local requiredAnimationRange = string.getVectorN(getXMLString(xmlFile, partKey .. "#requiredAnimationRange"), 2)
 
     local hasTiming = startTime ~= nil and (duration ~= nil or endTime ~= nil)
     if hasTiming then
