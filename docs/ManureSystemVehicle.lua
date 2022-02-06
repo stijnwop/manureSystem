@@ -14,36 +14,31 @@ ManureSystemVehicle.VEHICLES = {}
 ManureSystemVehicle.HAS_MANURESYSTEM_INFORMATION = false
 if not ManureSystemVehicle.HAS_MANURESYSTEM_INFORMATION then
     local storeItems = {}
-    local modDesc = loadXMLFile("modDesc", ManureSystemVehicle.MOD_DIR .. "modDesc.xml")
 
-    local i = 0
-    while true do
-        local storeItemKey = ("modDesc.storeItems.storeItem(%d)"):format(i)
-        if not hasXMLProperty(modDesc, storeItemKey) then break end
-        local xmlFilename = getXMLString(modDesc, storeItemKey .. "#xmlFilename")
-        table.insert(storeItems, xmlFilename)
-        i = i + 1
-    end
-
-    delete(modDesc)
+    local modDesc = XMLFile.load("animals", ManureSystemVehicle.MOD_DIR .. "modDesc.xml")
+    modDesc:iterate("modDesc.storeItems.storeItem", function (_, key)
+        local storeItemXMLFilename = modDesc:getString(key .. "#xmlFilename")
+        table.insert(storeItems, storeItemXMLFilename)
+    end)
+    modDesc:delete()
 
     for _, xmlFilename in ipairs(storeItems) do
-        local vehicleXML = loadXMLFile("vehicleXML", ManureSystemVehicle.MOD_DIR .. xmlFilename)
+        local vehicleXML = XMLFile.load("vehicleXML", ManureSystemVehicle.MOD_DIR .. xmlFilename)
 
-        if hasXMLProperty(vehicleXML, "vehicle.manureSystem") then
-            local vehicleType = getXMLString(vehicleXML, "vehicle#type")
+        if vehicleXML:hasProperty("vehicle.manureSystem") then
+            local vehicleType = vehicleXML:getString("vehicle#type")
             -- Enable the pump motor functionality: true/false (yes/no)
-            local hasPumpMotor = Utils.getNoNil(getXMLBool(vehicleXML, "vehicle.manureSystem#hasPumpMotor"), false)
+            local hasPumpMotor = vehicleXML:getBool("vehicle.manureSystem#hasPumpMotor") or false
             -- Enable the connector functionality: true/false (yes/no)
-            local hasConnectors = Utils.getNoNil(getXMLBool(vehicleXML, "vehicle.manureSystem#hasConnectors"), false)
+            local hasConnectors = vehicleXML:getBool("vehicle.manureSystem#hasConnectors") or false
             -- Enable the fill arm functionality: true/false (yes/no)
-            local hasFillArm = Utils.getNoNil(getXMLBool(vehicleXML, "vehicle.manureSystem#hasFillArm"), false)
+            local hasFillArm = vehicleXML:getBool("vehicle.manureSystem#hasFillArm") or false
             -- Enable the fill arm receiver functionality: true/false (yes/no)
-            local hasFillArmReceiver = Utils.getNoNil(getXMLBool(vehicleXML, "vehicle.manureSystem#hasFillArmReceiver"), false)
+            local hasFillArmReceiver = vehicleXML:getBool("vehicle.manureSystem#hasFillArmReceiver") or false
             ManureSystemVehicle.VEHICLES[vehicleType] = { hasPumpMotor = hasPumpMotor, hasConnectors = hasConnectors, hasFillArm = hasFillArm, hasFillArmReceiver = hasFillArmReceiver }
         end
 
-        delete(vehicleXML)
+        vehicleXML:delete()
     end
 
     storeItems = nil
@@ -54,7 +49,7 @@ function ManureSystemVehicle.prerequisitesPresent(specializations)
     return true
 end
 
-function ManureSystemVehicle.getManureSystemVehicleHasFeatureEnabled(vehicleType, feature)
+function ManureSystemVehicle.hasFeatureEnabled(vehicleType, feature)
     local vehicle = ManureSystemVehicle.VEHICLES[vehicleType]
     return vehicle ~= nil and vehicle[feature] or false
 end
