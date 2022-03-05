@@ -10,6 +10,15 @@
 ManureSystemFillArmReceiver = {}
 ManureSystemFillArmReceiver.MOD_NAME = g_currentModName
 
+function ManureSystemFillArmReceiver.initSpecialization()
+    local schema = Vehicle.xmlSchema
+    schema:setXMLSpecializationType("ManureSystemFillArmReceiver")
+    schema:register(XMLValueType.INT, "vehicle.manureSystemFillArmReceiver#fillVolumeIndex", "Fill volume index to interact with")
+    schema:register(XMLValueType.INT, "vehicle.manureSystemFillArmReceiver#fillUnitIndex", "Fill unit index to pump from")
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemFillArmReceiver#fillArmOffset", "Offset for the fillarm interaction")
+    schema:setXMLSpecializationType()
+end
+
 function ManureSystemFillArmReceiver.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillVolume, specializations)
 end
@@ -30,17 +39,18 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         return
     end
 
-    local fillVolumeIndex = Utils.getNoNil(getXMLInt(self.xmlFile, "vehicle.manureSystemFillArmReceiver#fillVolumeIndex"), 1)
+    local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
     if self.spec_fillVolume.volumes[fillVolumeIndex] == nil then
-        g_logManager:xmlWarning(self.configFileName, "Invalid fillVolumeIndex '%d'!", fillVolumeIndex)
+        Logging.xmlWarning(self.configFileName, "Invalid fillVolumeIndex '%d'!", fillVolumeIndex)
 
         return
     end
 
     local spec = self.spec_manureSystemFillArmReceiver
     spec.fillVolumeIndex = fillVolumeIndex
-    spec.fillArmOffset = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemFillArmReceiver#fillArmOffset"), 0)
-    spec.fillArmFillUnitIndex = Utils.getNoNil(getXMLInt(self.xmlFile, "vehicle.manureSystemFillArmReceiver#fillUnitIndex"), 1)
+
+    spec.fillArmOffset  = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillArmOffset", 0)
+    spec.fillArmFillUnitIndex  = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillUnitIndex", 1)
 
     spec = self.spec_fillTriggerVehicle
 
