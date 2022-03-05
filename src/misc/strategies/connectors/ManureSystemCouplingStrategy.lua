@@ -359,6 +359,9 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
 
             i = i + 1
         end
+
+        --Discard park place when nothing is loaded.
+        connector.isParkPlace = #connector.parkPlaces > 0
     end
 
     return true
