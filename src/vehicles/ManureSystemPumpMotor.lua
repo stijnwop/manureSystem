@@ -35,6 +35,20 @@ ManureSystemPumpMotor.MODE_NONE = 0
 ManureSystemPumpMotor.MODE_CONNECTOR = 1
 ManureSystemPumpMotor.MODE_FILLARM = 2
 
+function ManureSystemPumpMotor.initSpecialization()
+    local schema = Vehicle.xmlSchema
+    schema:setXMLSpecializationType("ManureSystemPumpMotor")
+    schema:register(XMLValueType.BOOL, "vehicle.manureSystemPumpMotor#isStandalone", "Fill volume index to interact with")
+    schema:register(XMLValueType.BOOL, "vehicle.manureSystemPumpMotor#useStandalonePumpText", "Fill unit index to pump from")
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", "Offset for the fillarm interaction")
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#litersPerSecond", "Offset for the fillarm interaction")
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#autoStopPercentageIn", "Offset for the fillarm interaction")
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#autoStopPercentageOut", "Offset for the fillarm interaction")
+
+    schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#warningTime", "Offset for the fillarm interaction")
+    schema:setXMLSpecializationType()
+end
+
 function ManureSystemPumpMotor.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PowerConsumer, specializations)
 end
@@ -76,11 +90,14 @@ end
 
 function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsTurnedOn", ManureSystemPumpMotor.getIsTurnedOn)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
+
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsWorkAreaActive", ManureSystemPumpMotor.getIsWorkAreaActive)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsFillUnitActive", ManureSystemPumpMotor.getIsFillUnitActive)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getConsumingLoad", ManureSystemPumpMotor.getConsumingLoad)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getDoConsumePtoPower", ManureSystemPumpMotor.getDoConsumePtoPower)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsOperating", ManureSystemPumpMotor.getIsOperating)
 end
 
 function ManureSystemPumpMotor.registerEventListeners(vehicleType)
@@ -105,27 +122,27 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.pumpMode = ManureSystemPumpMotor.MODE_NONE
     spec.pumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
 
-    spec.isStandalone = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#isStandalone"), false)
-    spec.useStandalonePumpText = Utils.getNoNil(getXMLBool(self.xmlFile, "vehicle.manureSystemPumpMotor#useStandalonePumpText"), spec.isStandalone)
+    spec.isStandalone = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#isStandalone", false)
+    spec.useStandalonePumpText = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#useStandalonePumpText", spec.isStandalone)
 
-    local maxTime = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime"), 1500)
+    local maxTime = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1500)
     spec.pumpEfficiency = {
         currentLoad = 0,
         currentTime = 0,
         orgMaxTime = maxTime,
         maxTime = maxTime,
-        litersPerSecond = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#litersPerSecond"), 100)
+        litersPerSecond = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#litersPerSecond", 100)
     }
 
     spec.autoStopPercentage = {
-        inDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#autoStopPercentageIn"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN),
-        outDirection = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#autoStopPercentageOut"), ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT)
+        inDirection = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#autoStopPercentageIn", ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_IN),
+        outDirection = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#autoStopPercentageOut", ManureSystemPumpMotor.AUTO_STOP_MULTIPLIER_OUT)
     }
 
     if self.isClient then
         local samplePump = g_soundManager:loadSampleFromXML(self.xmlFile, "vehicle.manureSystemPumpMotor.sounds", "pump", self.baseDirectory, self.components, 1, AudioGroup.VEHICLE, self.i3dMappings, self)
         if samplePump == nil then
-            local globalSamples = g_manureSystem:getManureSystemSamples()
+            local globalSamples = g_currentMission.manureSystem:getManureSystemSamples()
             samplePump = g_soundManager:cloneSample(globalSamples.pump, self.components[1].node, self)
         end
 
@@ -135,7 +152,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
 
     spec.warningMessage = {
         currentId = ManureSystemPumpMotor.WARNING_NONE,
-        howLongToShow = Utils.getNoNil(getXMLFloat(self.xmlFile, "vehicle.manureSystemPumpMotor#warningTime"), ManureSystemPumpMotor.WARNING_TIME),
+        howLongToShow = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#warningTime", ManureSystemPumpMotor.WARNING_TIME),
         messages = {}
     }
 
@@ -713,6 +730,15 @@ function ManureSystemPumpMotor:getPumpMaxTime()
     return self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime
 end
 
+function ManureSystemPumpMotor:getDoConsumePtoPower(superFunc)
+    return self:isPumpRunning() or superFunc(self)
+end
+
+function ManureSystemPumpMotor:getIsOperating(superFunc)
+    return self:isPumpRunning() or superFunc(self)
+end
+
+--Todo: check for remove
 function ManureSystemPumpMotor:getIsTurnedOn(superFunc)
     if self:isPumpRunning() then
         return true
@@ -721,6 +747,7 @@ function ManureSystemPumpMotor:getIsTurnedOn(superFunc)
     return superFunc(self)
 end
 
+--Todo: check for remove
 function ManureSystemPumpMotor:getCanBeTurnedOn(superFunc)
     if self:isPumpRunning() then
         return false
@@ -729,6 +756,7 @@ function ManureSystemPumpMotor:getCanBeTurnedOn(superFunc)
     return superFunc(self)
 end
 
+--Todo: check for remove
 function ManureSystemPumpMotor:getCanToggleTurnedOn(superFunc)
     if self:isPumpRunning() then
         return false

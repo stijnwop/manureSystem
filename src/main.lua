@@ -24,6 +24,10 @@ local sourceFiles = {
     "src/events/HoseGrabDropEvent.lua",
     "src/events/ManureSystemConnectorIsConnectedEvent.lua",
     "src/events/ManureSystemConnectorManureFlowEvent.lua",
+    "src/events/ManureSystemPumpModeEvent.lua",
+    "src/events/ManureSystemPumpDirectionEvent.lua",
+    "src/events/ManureSystemPumpIsRunningEvent.lua",
+    "src/events/ManureSystemPumpIsAllowedEvent.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",
@@ -62,6 +66,7 @@ local function unload()
     end
 
     if modEnvironment ~= nil then
+        removeModEventListener(modEnvironment)
         modEnvironment:delete()
         modEnvironment = nil -- GC
 
