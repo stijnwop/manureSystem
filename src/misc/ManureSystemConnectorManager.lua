@@ -18,6 +18,66 @@ ManureSystemConnectorManager.CONNECTOR_TYPE_OPTICAL = "optical" -- non functiona
 
 local ManureSystemConnectorManager_mt = Class(ManureSystemConnectorManager)
 
+g_xmlManager:addCreateSchemaFunction(function()
+    ManureSystemConnectorManager.xmlSchema = XMLSchema.new("manureSystemConnector")
+end)
+
+g_xmlManager:addInitSchemaFunction(function()
+    local schema = ManureSystemConnectorManager.xmlSchema
+    schema:register(XMLValueType.STRING, "assets.set(?).connectors.connector(?)#type", "The connector type")
+    schema:register(XMLValueType.NODE_INDEX, "assets.set(?).connectors.connector(?)#node", "The connector node")
+
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation(?)")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation(?)")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).animation")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).animation(?)")
+
+    schema:addDelayedRegistrationFunc("AnimatedVehicle:part", function(cSchema, cKey)
+        cSchema:register(XMLValueType.INT, cKey .. "#wheelIndex", "Wheel index [1..n]")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#startSteeringAngle", "Start steering angle")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#endSteeringAngle", "End steering angle")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#startBrakeFactor", "Start brake force factor")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#endBrakeFactor", "End brake force factor")
+    end)
+
+    schema:addDelayedRegistrationFunc("AnimatedVehicle:part", function(cSchema, cKey)
+        cSchema:register(XMLValueType.INT, cKey .. "#inputAttacherJointIndex", "Input Attacher Joint Index [1..n]")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#lowerRotLimitScaleStart", "Lower rotaton limit start")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#lowerRotLimitScaleEnd", "Lower rotaton limit end")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#upperRotLimitScaleStart", "Upper rotaton limit start")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#upperRotLimitScaleEnd", "Upper rotaton limit end")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#lowerTransLimitScaleStart", "Lower translation limit start")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#lowerTransLimitScaleEnd", "Lower translation limit end")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#upperTransLimitScaleStart", "Upper translation limit start")
+        cSchema:register(XMLValueType.VECTOR_3, cKey .. "#upperTransLimitScaleEnd", "Upper translation limit end")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#lowerRotationOffsetStart", "Lower rotation offset start")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#lowerRotationOffsetEnd", "Lower rotation offset end")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#upperRotationOffsetStart", "Upper rotation offset start")
+        cSchema:register(XMLValueType.ANGLE, cKey .. "#upperRotationOffsetEnd", "Upper rotation offset end")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#lowerDistanceToGroundStart", "Lower distance to ground start")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#lowerDistanceToGroundEnd", "Lower distance to ground end")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#upperDistanceToGroundStart", "Upper distance to ground start")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#upperDistanceToGroundEnd", "Upper distance to ground end")
+    end)
+
+    schema:addDelayedRegistrationFunc("AnimatedVehicle:part", function(cSchema, cKey)
+        cSchema:register(XMLValueType.BOOL, cKey .. "#baleLoaderAnimationNodes", "Bale Loader animation nodes turn on/off")
+    end)
+
+    schema:addDelayedRegistrationFunc("AnimatedVehicle:part", function(cSchema, cKey)
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#startTipSideEmptyFactor", "Start tip side empty factor")
+        cSchema:register(XMLValueType.FLOAT, cKey .. "#endTipSideEmptyFactor", "End tip side empty factor")
+    end)
+
+    schema:register(XMLValueType.STRING, "assets.set(?).valves.valve(?)#type", "The valve type")
+    schema:register(XMLValueType.NODE_INDEX, "assets.set(?).valves.valve(?)#node", "The valve node")
+    schema:register(XMLValueType.STRING, "assets.set(?).valves.valve(?).handle(?)#type", "The handle type")
+    schema:register(XMLValueType.NODE_INDEX, "assets.set(?).valves.valve(?).handle(?)#node", "The handle node")
+    schema:register(XMLValueType.VECTOR_TRANS, "assets.set(?).valves.valve(?).handle(?)#linkOffset", "The link offset")
+end)
+
 function ManureSystemConnectorManager:new(modDirectory, customMt)
     local self = setmetatable({}, customMt or ManureSystemConnectorManager_mt)
 
@@ -60,7 +120,7 @@ end
 
 function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
     local xmlFilename = Utils.getFilename("resources/assets/connectorsSets.xml", self.modDirectory)
-    local xmlFile = XMLFile.load("connectorsSetsXML", xmlFilename)
+    local xmlFile = XMLFile.load("connectorsSetsXML", xmlFilename, ManureSystemConnectorManager.xmlSchema)
 
     local i = 0
     while true do
