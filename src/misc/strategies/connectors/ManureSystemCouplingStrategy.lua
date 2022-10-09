@@ -361,7 +361,7 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
         end
 
         --Discard park place when nothing is loaded.
-        connector.isParkPlace = #connector.parkPlaces > 0
+        connector.isParkPlace = table.size(connector.parkPlaces) > 0
     end
 
     return true
@@ -426,12 +426,13 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, k
         local spec_animatedVehicle = self.object.spec_animatedVehicle
         if spec_animatedVehicle ~= nil then
             local animation = {}
-            --if ManureSystemUtil.loadSharedAnimation(self.object, xmlFile, key, animation, connectorNode) then
-            --    animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
-            --    spec_animatedVehicle.animations[animation.name] = animation
-            --    -- Set the loaded animation as given connector animation name.
-            --    connector[connectorAnimationName] = animation.name
-            --end
+
+            if self.object:loadAnimation(xmlFile, key, animation, connectorNode) then
+                animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
+                spec_animatedVehicle.animations[animation.name] = animation
+                -- Set the loaded animation as given connector animation name.
+                connector[connectorAnimationName] = animation.name
+            end
         else
             Logging.xmlError(self.object.configFileName, ("Shared %s animation can't be added as the vehicle does not have the AnimatedVehicle spec."):format(connectorAnimationName))
         end
