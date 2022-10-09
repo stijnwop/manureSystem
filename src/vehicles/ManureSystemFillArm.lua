@@ -100,6 +100,10 @@ function ManureSystemFillArm:onLoad(savegame)
     end
 
     spec.hasFillArm = #spec.fillArms ~= 0
+
+    if not spec.hasFillArm then
+        SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemFillArm)
+    end
 end
 
 ---Called on delete.

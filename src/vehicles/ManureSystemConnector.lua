@@ -139,6 +139,15 @@ function ManureSystemConnector:onLoad(savegame)
 
         i = i + 1
     end
+
+    if #spec.manureSystemConnectors == 0 then
+        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onPumpInvalid", ManureSystemFillArm)
+    end
 end
 
 function ManureSystemConnector:onPostLoad(savegame)
@@ -290,7 +299,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
             setVisibility(connector.placeHolderNode, false)
         end
 
-        local sharedXMLFile = loadXMLFile("sharedXMLFile", set.xmlFilename)
+        local sharedXMLFile = XMLFile.load("sharedXMLFile", set.xmlFilename, ManureSystemConnectorManager.xmlSchema)
         local sharedConnectorKey = xmlFile:getValue(key .. ".connector#type")
         if sharedConnectorKey ~= nil then
             local sharedConnector = set.connectors[sharedConnectorKey:upper()]
@@ -331,7 +340,7 @@ function ManureSystemConnector:loadSharedSetFromXML(xmlFile, key, connector)
             end
         end
 
-        delete(sharedXMLFile)
+        sharedXMLFile:delete()
     else
         Logging.xmlError(self.configFileName, ("Shared connector set %s not found!"):format(connector.setId))
         return false

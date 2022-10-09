@@ -39,7 +39,11 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         return
     end
 
-    local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
+    if not self.xmlFile:hasProperty("vehicle.manureSystemFillArmReceiver") then
+        return
+    end
+
+        local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
     if self.spec_fillVolume.volumes[fillVolumeIndex] == nil then
         Logging.xmlWarning(self.configFileName, "Invalid fillVolumeIndex '%d'!", fillVolumeIndex)
 
