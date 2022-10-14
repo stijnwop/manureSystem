@@ -13,14 +13,14 @@ ManureSystemXMLUtil = {}
 function ManureSystemXMLUtil.isValidNode(node, checkPhysics)
     if checkPhysics then
         if not (getRigidBodyType(node) ~= RigidBodyType.NONE) then
-            Logger.warning(("Node with wrong rigid body type found for manure system node '%s'. Please link to a rigid body node!"):format(getName(node)))
+            Logging.warning(("Node with wrong rigid body type found for manure system node '%s'. Please link to a rigid body node!"):format(getName(node)))
             return false
         end
     end
 
     local x, y, z = getScale(node)
     if x ~= 1 or y ~= 1 or z ~= 1 then
-        Logger.warning(("Node with bad scale found for manure system node '%s'. Reset/freeze scale to 1"):format(getName(node)))
+        Logging.warning(("Node with bad scale found for manure system node '%s'. Reset/freeze scale to 1"):format(getName(node)))
         return false
     end
 

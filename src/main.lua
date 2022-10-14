@@ -12,12 +12,13 @@
 local modDirectory = g_currentModDirectory or ""
 ---@type string name of the mod.
 local modName = g_currentModName or "unknown"
----@type Manure the current loaded mod env.
+---@type ManureSystem the current loaded mod env.
 local modEnvironment
 
 ---Loading order should be based on dependency order
 ---@type table<string> files to source.
 local sourceFiles = {
+    "src/insertion.lua",
     --Network
     "src/network/ManureSystemEventBits.lua",
     "src/events/HoseAttachDetachEvent.lua",
