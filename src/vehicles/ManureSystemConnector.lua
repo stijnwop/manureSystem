@@ -24,9 +24,6 @@ function ManureSystemConnector.initSpecialization()
     ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
     ManureSystemDockStrategy.registerDockNodeXMLPaths(schema, "vehicle.manureSystemConnectors.connector(?)")
     schema:setXMLSpecializationType()
-
-    g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
-    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?)")
 end
 
 function ManureSystemConnector.registerConnectorNodeXMLPaths(schema, baseName)

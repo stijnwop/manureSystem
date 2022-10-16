@@ -43,7 +43,7 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         return
     end
 
-        local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
+    local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
     if self.spec_fillVolume.volumes[fillVolumeIndex] == nil then
         Logging.xmlWarning(self.configFileName, "Invalid fillVolumeIndex '%d'!", fillVolumeIndex)
 
@@ -53,8 +53,8 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
     local spec = self.spec_manureSystemFillArmReceiver
     spec.fillVolumeIndex = fillVolumeIndex
 
-    spec.fillArmOffset  = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillArmOffset", 0)
-    spec.fillArmFillUnitIndex  = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillUnitIndex", 1)
+    spec.fillArmOffset = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillArmOffset", 0)
+    spec.fillArmFillUnitIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillUnitIndex", 1)
 
     spec = self.spec_fillTriggerVehicle
 
