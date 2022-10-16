@@ -49,11 +49,11 @@ function Hose.initSpecialization()
     schema:register(XMLValueType.FLOAT, "vehicle.hose#playerMaxHoseLength", "The max hose length for the player")
 
     Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.grabNodes.grabNode(?)")
-    Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?).grabNodes.grabNode(?)")
+    Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(?).grabNodes.grabNode(?)")
     schema:setXMLSpecializationType()
 
-    g_configurationManager:addConfigurationType("hose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
-    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.hoseConfigurations.hoseConfiguration(?)")
+    g_configurationManager:addConfigurationType("manureSystemHose", g_i18n:getText("configuration_hose"), "manureSystemHose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(?)")
 
     --local schemaSavegame = Vehicle.xmlSchemaSavegame
     --schemaSavegame:register(XMLValueType.BOOL, ("vehicles.vehicle(?).%s.globalPositioningSystem#guidanceIsActive"):format(g_guidanceSteeringModName), "The guidance system active state")
@@ -254,7 +254,7 @@ function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
                 self:attach(grabNodeId, connectorId, object)
             else
                 if isNotTheSameObject then
-                    Logger.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
+                    Logging.warning(("Aborting loading of saved hose connecting due to swapped objects! Expected: %s Actual: %s"):format(objectName, object:getName()))
                 end
 
                 if object.isaHose ~= nil and object:isaHose() then
@@ -398,7 +398,7 @@ function Hose:onUpdateTick(dt)
 
                             if distance > length then
                                 if g_currentMission.manureSystem.debug then
-                                    Logger.info("Restriction detach distance: ", distance)
+                                    Logging.info("Restriction detach distance: ", distance)
                                 end
 
                                 if grabNode.isExtension then
@@ -550,12 +550,10 @@ function Hose:findConnector(id)
                             if not (grabNode.isExtension and not connector.isParkPlace) then
                                 local connectorInRange = Hose.isConnectorInRange(connector.node, x, y, z, connector.inRangeDistance)
                                 if not connectorInRange and connector.isParkPlace then
-                                    local parkPlace = connector
                                     if connector.parkPlaces ~= nil and connector.parkPlaces[spec.length] ~= nil then
-                                        parkPlace = connector.parkPlaces[spec.length]
+                                        local parkPlace = connector.parkPlaces[spec.length]
+                                        connectorInRange = Hose.isConnectorInRange(parkPlace.lengthNode, x, y, z, connector.inRangeDistance)
                                     end
-
-                                    connectorInRange = Hose.isConnectorInRange(parkPlace.lengthNode, x, y, z, connector.inRangeDistance)
                                 end
 
                                 if connectorInRange then
@@ -764,7 +762,7 @@ function Hose:grab(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logger.info("Grab hose id", id)
+        Logging.info("Grab hose id", id)
     end
 
     local grabNode = self:getGrabNodeById(id)
@@ -798,7 +796,7 @@ function Hose:drop(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, false, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logger.info("Drop hose id", id)
+        Logging.info("Drop hose id", id)
     end
 
     local grabNode = self:getGrabNodeById(id)
@@ -825,7 +823,7 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, true, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logger.info("Attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+        Logging.info("Attaching to " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
     end
 
     local grabNode = self:getGrabNodeById(id)
@@ -837,7 +835,7 @@ function Hose:attach(id, connectorId, vehicle, noEventSend)
     local connector = vehicle:getConnectorById(connectorId)
 
     if connector.type ~= self.spec_hose.connectorType then
-        Logger.error("Corrupted savegame, the loaded connector type does not match the hose connector type!", connector.type)
+        Logging.error("Corrupted savegame, the loaded connector type does not match the hose connector type!", connector.type)
         return
     end
 
@@ -852,7 +850,7 @@ function Hose:detach(id, connectorId, vehicle, noEventSend)
     HoseAttachDetachEvent.sendEvent(self, id, connectorId, vehicle, false, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logger.info("Detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
+        Logging.info("Detaching from " .. vehicle:getName() .. " gp: " .. id .. " connector: " .. connectorId)
     end
 
     local grabNode = self:getGrabNodeById(id)
@@ -1309,8 +1307,8 @@ function Hose.loadGrabNodes(self)
     local spec = self.spec_hose
 
     local hoseConfigurationId = Utils.getNoNil(self.configurations["hose"], 1)
-    local baseKey = ("vehicle.hose.hoseConfigurations.hoseConfiguration(%d)"):format(hoseConfigurationId - 1)
-    ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.hose.hoseConfigurations.hoseConfiguration", hoseConfigurationId, self.components, self)
+    local baseKey = ("vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(%d)"):format(hoseConfigurationId - 1)
+    ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration", hoseConfigurationId, self.components, self)
 
     -- Fallback key
     if not self.xmlFile:hasProperty(baseKey) then
@@ -1326,7 +1324,7 @@ function Hose.loadGrabNodes(self)
         end
 
         if #spec.grabNodes == 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS then
-            Logger.error("Max amount of grabNodes reached!")
+            Logging.error("Max amount of grabNodes reached!")
             break
         end
 

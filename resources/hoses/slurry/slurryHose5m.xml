@@ -15,11 +15,13 @@
         <price>250</price>
         <lifetime>600</lifetime>
         <rotation>0</rotation>
+        <shopTranslationOffset>0 0.25 0</shopTranslationOffset>
         <brand>LIZARD</brand>
         <category>slurryTanks</category>
     </storeData>
 
     <base>
+        <supportsPickUp>true</supportsPickUp>
         <typeDesc>$l10n_typeDesc_hose</typeDesc>
         <filename>resources/hoses/slurry/slurryHose5m.i3d</filename>
         <size width="0.2" length="5"/>
@@ -39,20 +41,15 @@
                    rotMinLimit="-22 -22 -22"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
-        <schemaOverlay attacherJointPosition="0 0">
-            <default name="DEFAULT_IMPLEMENT"/>
-            <turnedOn name="DEFAULT_IMPLEMENT_ON"/>
-            <selected name="DEFAULT_IMPLEMENT_SELECTED"/>
-            <turnedOnSelected name="DEFAULT_IMPLEMENT_SELECTED_ON"/>
-        </schemaOverlay>
+        <schemaOverlay attacherJointPosition="0 0" name="IMPLEMENT"/>
     </base>
 
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
     <hose length="5" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>">
-        <hoseConfigurations>
-            <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
+        <manureSystemHoseConfigurations>
+            <manureSystemHoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
                     <grabNode node="grabNode1" raycastNode="raycastNode1" componentIndex="1" componentJointIndex="1">
                         <visuals visualNode="coupling_normal_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
@@ -64,8 +61,8 @@
 
                 <objectChange node="coupling_normal_start" visibilityActive="true"/>
                 <objectChange node="coupling_extend_start" visibilityActive="false"/>
-            </hoseConfiguration>
-            <hoseConfiguration name="$l10n_configuration_valueExtend" price="40">
+            </manureSystemHoseConfiguration>
+            <manureSystemHoseConfiguration name="$l10n_configuration_valueExtend" price="40">
                 <grabNodes>
                     <grabNode isExtension="true" extensionAnimationName="extend" node="grabNode1" raycastNode="raycastNode1" componentIndex="1" componentJointIndex="1">
                         <visuals visualNode="coupling_extend_start" hoseTargetNode="hose" updateHoseTargetRotation="true"/>
@@ -77,8 +74,8 @@
 
                 <objectChange node="coupling_extend_start" visibilityActive="true"/>
                 <objectChange node="coupling_normal_start" visibilityActive="false"/>
-            </hoseConfiguration>
-        </hoseConfigurations>
+            </manureSystemHoseConfiguration>
+        </manureSystemHoseConfigurations>
     </hose>
 
     <animations>

@@ -51,8 +51,8 @@
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
     <hose type="couplingFertilizer" length="5" mesh="fertilizer_hose" targetNode="targetNode" centerNode1="1>" centerNode2="2>" playerMaxHoseLength="15">
-        <hoseConfigurations>
-            <hoseConfiguration name="$l10n_configuration_valueDefault" price="10">
+        <manureSystemHoseConfigurations>
+            <manureSystemHoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
                     <grabNode node="grabNode1" raycastNode="grabNode1" componentIndex="1" componentJointIndex="1">
                         <visuals visualNode="fertilizer_coupling_camplock_1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
@@ -61,8 +61,8 @@
                         <visuals visualNode="fertilizer_coupling_camplock_2" hoseTargetNode="targetNode"/>
                     </grabNode>
                 </grabNodes>
-            </hoseConfiguration>
-        </hoseConfigurations>
+            </manureSystemHoseConfiguration>
+        </manureSystemHoseConfigurations>
     </hose>
 
     <foliageBending>
