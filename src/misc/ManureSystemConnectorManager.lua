@@ -78,7 +78,7 @@ g_xmlManager:addInitSchemaFunction(function()
     schema:register(XMLValueType.VECTOR_TRANS, "assets.set(?).valves.valve(?).handle(?)#linkOffset", "The link offset")
 end)
 
-function ManureSystemConnectorManager:new(modDirectory, customMt)
+function ManureSystemConnectorManager.new(modDirectory, customMt)
     local self = setmetatable({}, customMt or ManureSystemConnectorManager_mt)
 
     self.modDirectory = modDirectory
@@ -253,9 +253,9 @@ end
 function ManureSystemConnectorManager:getConnectorStrategy(type, object)
     if type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
         or type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING) then
-        return ManureSystemCouplingStrategy:new(object, type)
+        return ManureSystemCouplingStrategy.new(object, type)
     elseif type == self:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) then
-        return ManureSystemDockStrategy:new(object)
+        return ManureSystemDockStrategy.new(object)
     end
 
     return nil

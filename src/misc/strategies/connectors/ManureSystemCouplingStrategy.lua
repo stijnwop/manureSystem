@@ -25,7 +25,7 @@ end
 
 ---Creates a new instance of ManureSystemCouplingStrategy.
 ---@return ManureSystemCouplingStrategy
-function ManureSystemCouplingStrategy:new(object, type, customMt)
+function ManureSystemCouplingStrategy.new(object, type, customMt)
     local instance = {}
     setmetatable(instance, customMt or ManureSystemCouplingStrategy_mt)
 

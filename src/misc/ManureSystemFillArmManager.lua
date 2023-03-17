@@ -12,7 +12,7 @@ ManureSystemFillArmManager.COLLISION_MASK = 8194
 
 local ManureSystemFillArmManager_mt = Class(ManureSystemFillArmManager)
 
-function ManureSystemFillArmManager:new(modDirectory, customMt)
+function ManureSystemFillArmManager.new(modDirectory, customMt)
     local self = setmetatable({}, customMt or ManureSystemFillArmManager_mt)
 
     self.modDirectory = modDirectory

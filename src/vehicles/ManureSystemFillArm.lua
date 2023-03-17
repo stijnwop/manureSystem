@@ -131,6 +131,10 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
                 if self:getIsActiveForInput() then
+                    if g_currentMission.manureSystem.debug then
+                        DebugUtil.drawDebugNode(fillArm.node, "ACTIVE FILLARM")
+                    end
+
                     raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
                 end
 

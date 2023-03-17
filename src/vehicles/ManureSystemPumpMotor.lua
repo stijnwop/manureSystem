@@ -89,7 +89,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
 end
 
 function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
-    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsTurnedOn", ManureSystemPumpMotor.getIsTurnedOn)
+    --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsTurnedOn", ManureSystemPumpMotor.getIsTurnedOn)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanToggleTurnedOn", ManureSystemPumpMotor.getCanToggleTurnedOn)
 
@@ -189,6 +189,7 @@ function ManureSystemPumpMotor.disableDischargeable(self)
         spec.fillTrigger = nil
     end
 end
+
 function ManureSystemPumpMotor:onDelete()
     if self.isClient then
         local spec = self.spec_manureSystemPumpMotor

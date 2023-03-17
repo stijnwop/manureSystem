@@ -11,7 +11,7 @@ HosePlayer = {}
 
 local HosePlayer_mt = Class(HosePlayer)
 
-function HosePlayer:new(isClient, isServer, mission, input)
+function HosePlayer.new(isClient, isServer, mission, input)
     local self = setmetatable({}, HosePlayer_mt)
 
     self.isClient = isClient

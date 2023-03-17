@@ -20,7 +20,7 @@ ManureSystemDockStrategy.MIN_REFERENCES = 1
 
 local ManureSystemDockStrategy_mt = Class(ManureSystemDockStrategy)
 
-function ManureSystemDockStrategy:new(object, customMt)
+function ManureSystemDockStrategy.new(object, customMt)
     local instance = {}
 
     instance.object = object

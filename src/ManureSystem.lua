@@ -60,9 +60,9 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
 
     self.mission = mission
     self.soundManager = soundManager
-    self.connectorManager = ManureSystemConnectorManager:new(self.modDirectory)
-    self.fillArmManager = ManureSystemFillArmManager:new(self.modDirectory)
-    self.player = HosePlayer:new(self.isClient, self.isServer, mission, input)
+    self.connectorManager = ManureSystemConnectorManager.new(self.modDirectory)
+    self.fillArmManager = ManureSystemFillArmManager.new(self.modDirectory)
+    self.player = HosePlayer.new(self.isClient, self.isServer, mission, input)
     --self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
     --self.bga = ManureSystemBga:new(self.isClient, self.isServer, mission, input)
 
@@ -132,7 +132,7 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     local valid = not (version ~= nil and version < self.version)
 
     if not valid then
-        Logger.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
+        Logging.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
     end
 
     self.savedVehiclesToId = self:getSavedVehiclesList()
