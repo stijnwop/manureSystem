@@ -140,12 +140,12 @@ function ManureSystemConnector:onLoad(savegame)
     end
 
     if #spec.manureSystemConnectors == 0 then
-        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemFillArm)
-        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemFillArm)
-        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemFillArm)
-        SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemFillArm)
-        SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemFillArm)
-        SpecializationUtil.removeEventListener(self, "onPumpInvalid", ManureSystemFillArm)
+        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemConnector)
+        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemConnector)
+        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemConnector)
+        SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemConnector)
+        SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemConnector)
+        SpecializationUtil.removeEventListener(self, "onPumpInvalid", ManureSystemConnector)
     end
 end
 
