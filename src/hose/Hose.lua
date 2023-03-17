@@ -40,7 +40,7 @@ function Hose.initSpecialization()
     local schema = Vehicle.xmlSchema
 
     schema:setXMLSpecializationType("Hose")
-    schema:register(XMLValueType.INT, "vehicle.hose#type", "Hose type")
+    schema:register(XMLValueType.STRING, "vehicle.hose#type", "Hose type")
     schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#mesh", "Hose mesh node")
     schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#targetNode", "Hose targetNode")
     schema:register(XMLValueType.NODE_INDEX, "vehicle.hose#centerNode1", "Hose centerNode1")
