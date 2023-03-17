@@ -89,6 +89,22 @@ local function loadedMission(mission, node)
     mission.manureSystem:onMissionLoaded(mission)
 end
 
+local function loadFromXMLFile(mission)
+    if isLoaded() and mission:getIsServer() then
+        local missionInfo = mission.missionInfo
+        local xmlFilename = missionInfo.savegameDirectory .. "/manureSystem.xml"
+        if missionInfo.savegameDirectory ~= nil and fileExists(xmlFilename) then
+            modEnvironment:load(xmlFilename)
+        end
+    end
+end
+
+local function saveToXMLFile(missionInfo)
+    if isLoaded() and missionInfo.isValid then
+        modEnvironment:save(missionInfo.savegameDirectory .. "/manureSystem.xml")
+    end
+end
+
 local function validateVehicleTypes(typeManager)
     if typeManager.typeName == "vehicle" then
         --ManureSystem.addModTranslations(g_i18n)
@@ -101,6 +117,9 @@ local function init()
     FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
     Mission00.load = Utils.prependedFunction(Mission00.load, load)
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
+    Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadFromXMLFile)
+    FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
+
     TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, validateVehicleTypes)
 end
 

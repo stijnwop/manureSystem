@@ -100,11 +100,8 @@ function ManureSystem:getSavedItemsList()
     local savedItemsToId = {}
 
     local id = 1
-    for item, _ in pairs(self.mission.itemsToSave) do
-        --Only get placeables.
-        if item:isa(Placeable) then
-            savedItemsToId[item] = { id = id, pos = { getWorldTranslation(item.nodeId) } }
-        end
+    for _, placeable in pairs(self.mission.placeableSystem.placeables) do
+        savedItemsToId[placeable] = { id = id, pos = { getWorldTranslation(placeable.rootNode) } }
         id = id + 1
     end
 
@@ -127,11 +124,19 @@ function ManureSystem:getSavedVehiclesList()
 end
 
 ---Called when mission is loaded.
-function ManureSystem:onMissionLoadFromSavegame(xmlFile)
-    local version = getXMLInt(xmlFile, "manureSystem#version")
-    local valid = not (version ~= nil and version < self.version)
+function ManureSystem:load(xmlFilename)
+    local xmlFile = XMLFile.load("ManureSystemXML", xmlFilename)
+    if xmlFile ~= nil then
+        self:loadFromXML(xmlFile)
+        xmlFile:delete()
+    end
+end
+---Called when mission is loaded.
+function ManureSystem:loadFromXML(xmlFile)
+    local version = xmlFile:getInt("manureSystem#version")
+    local validVersion = not (version ~= nil and version < self.version)
 
-    if not valid then
+    if not validVersion then
         Logging.warning("Skipping loading of saved hose connections due to loading from an older ManureSystem savegame!")
     end
 
@@ -142,15 +147,15 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     local i = 0
     while true do
         local key = ("manureSystem.hoses.hose(%d)"):format(i)
-        if not hasXMLProperty(xmlFile, key) then
+        if not xmlFile:hasProperty(key) then
             break
         end
 
-        local hoseId = getXMLInt(xmlFile, key .. "#objectId")
+        local hoseId = xmlFile:getInt(key .. "#objectId")
         if self:connectorObjectExists(hoseId) then
             local object = self:getConnectorObject(hoseId)
             if object.isaHose ~= nil and object:isaHose() then
-                object:onMissionLoadFromSavegame(key, xmlFile, valid)
+                object:loadFromXML(key, xmlFile, validVersion)
             end
         end
 
@@ -158,9 +163,17 @@ function ManureSystem:onMissionLoadFromSavegame(xmlFile)
     end
 end
 
+function ManureSystem:save(xmlFilename)
+    local xmlFile = XMLFile.create("ManureSystemXML", xmlFilename, "manureSystem")
+    if xmlFile ~= nil then
+        self:saveToXML(xmlFile)
+        xmlFile:delete()
+    end
+end
+
 ---Called when mission is being saved with our own xml file.
-function ManureSystem:onMissionSaveToSavegame(xmlFile)
-    setXMLInt(xmlFile, "manureSystem#version", self.version)
+function ManureSystem:saveToXML(xmlFile)
+    xmlFile:setInt("manureSystem#version", self.version)
 
     self.savedVehiclesToId = self:getSavedVehiclesList()
     self.savedItemsToId = self:getSavedItemsList()
@@ -179,9 +192,11 @@ function ManureSystem:onMissionSaveToSavegame(xmlFile)
     for i, object in ipairs(hoses) do
         local id = objectToId[object]
         local key = ("manureSystem.hoses.hose(%d)"):format(i - 1)
-        setXMLInt(xmlFile, key .. "#objectId", id)
-        object:onMissionSaveToSavegame(key, xmlFile)
+        xmlFile:setInt(key .. "#objectId", id)
+        object:saveToXML(key, xmlFile)
     end
+
+    xmlFile:save()
 end
 
 ---Loads the shared sample files for the manure system.

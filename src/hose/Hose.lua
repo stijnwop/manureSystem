@@ -54,11 +54,6 @@ function Hose.initSpecialization()
 
     g_configurationManager:addConfigurationType("manureSystemHose", g_i18n:getText("configuration_hose"), "manureSystemHose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
     ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(?)")
-
-    --local schemaSavegame = Vehicle.xmlSchemaSavegame
-    --schemaSavegame:register(XMLValueType.BOOL, ("vehicles.vehicle(?).%s.globalPositioningSystem#guidanceIsActive"):format(g_guidanceSteeringModName), "The guidance system active state")
-    --schemaSavegame:register(XMLValueType.BOOL, ("vehicles.vehicle(?).%s.globalPositioningSystem#autoInvertOffset"):format(g_guidanceSteeringModName), "The guidance auto invert offset state")
-    --schemaSavegame:register(XMLValueType.FLOAT, ("vehicles.vehicle(?).%s.globalPositioningSystem#lineDistance"):format(g_guidanceSteeringModName), "The guidance line distance")
 end
 
 function Hose.registerGrabNodeXMLPaths(schema, baseName)
@@ -74,8 +69,8 @@ function Hose.registerGrabNodeXMLPaths(schema, baseName)
 end
 
 function Hose.registerFunctions(vehicleType)
-    SpecializationUtil.registerFunction(vehicleType, "onMissionSaveToSavegame", Hose.onMissionSaveToSavegame)
-    SpecializationUtil.registerFunction(vehicleType, "onMissionLoadFromSavegame", Hose.onMissionLoadFromSavegame)
+    SpecializationUtil.registerFunction(vehicleType, "saveToXML", Hose.saveToXML)
+    SpecializationUtil.registerFunction(vehicleType, "loadFromXML", Hose.loadFromXML)
     SpecializationUtil.registerFunction(vehicleType, "computeCatmullSpline", Hose.computeCatmullSpline)
     SpecializationUtil.registerFunction(vehicleType, "isaHose", Hose.isaHose)
     SpecializationUtil.registerFunction(vehicleType, "getLength", Hose.getLength)
@@ -192,7 +187,7 @@ function Hose:onPreDelete()
 end
 
 ---Save connected hoses to the savegame server sided only.
-function Hose:onMissionSaveToSavegame(key, xmlFile)
+function Hose:saveToXML(key, xmlFile)
     local spec = self.spec_hose
 
     -- Remap for saving.
@@ -211,14 +206,14 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
                 local object = desc.vehicle
                 local connector = object:getConnectorById(desc.connectorId)
 
-                setXMLInt(xmlFile, saveKey .. "#grabNodeId", id)
-                setXMLInt(xmlFile, saveKey .. "#connectorId", connector.id)
+                xmlFile:setInt(saveKey .. "#grabNodeId", id)
+                xmlFile:setInt(saveKey .. "#connectorId", connector.id)
                 local objectId = g_currentMission.manureSystem:getConnectorObjectId(object)
-                setXMLInt(xmlFile, saveKey .. "#objectId", objectId)
+                xmlFile:setInt(saveKey .. "#objectId", objectId)
 
                 --Check if the object supports the getName method, somehow there are still objects who don't.
                 if object.getName ~= nil then
-                    setXMLString(xmlFile, saveKey .. "#objectName", object:getName())
+                    xmlFile:setString(saveKey .. "#objectName", object:getName())
                 end
 
                 -- No need to store anything else.
@@ -231,19 +226,19 @@ function Hose:onMissionSaveToSavegame(key, xmlFile)
 end
 
 ---Load connected hoses from the savegame server sided only.
-function Hose:onMissionLoadFromSavegame(key, xmlFile, valid)
+function Hose:loadFromXML(key, xmlFile, valid)
     local i = 0
     while true do
-        local loadKey = key .. (".grabNodesToObjects.grabNode(%d)"):format(i)
+        local loadKey = ("%s.grabNodesToObjects.grabNode(%d)"):format(key, i)
 
-        if not xmlFile:hasProperty(xmlFile, loadKey) then
+        if not xmlFile:hasProperty(loadKey) then
             break
         end
 
-        local grabNodeId = getXMLInt(xmlFile, loadKey .. "#grabNodeId")
-        local connectorId = getXMLInt(xmlFile, loadKey .. "#connectorId")
-        local objectId = getXMLInt(xmlFile, loadKey .. "#objectId")
-        local objectName = getXMLString(xmlFile, loadKey .. "#objectName")
+        local grabNodeId = xmlFile:getInt(loadKey .. "#grabNodeId")
+        local connectorId = xmlFile:getInt(loadKey .. "#connectorId")
+        local objectId = xmlFile:getInt(loadKey .. "#objectId")
+        local objectName = xmlFile:getString(loadKey .. "#objectName")
 
         if g_currentMission.manureSystem:connectorObjectExists(objectId) then
             local object = g_currentMission.manureSystem:getConnectorObject(objectId)
