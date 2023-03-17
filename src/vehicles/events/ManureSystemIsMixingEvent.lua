@@ -11,14 +11,12 @@ local ManureSystemIsMixingEvent_mt = Class(ManureSystemIsMixingEvent, Event)
 
 InitEventClass(ManureSystemIsMixingEvent, "ManureSystemIsMixingEvent")
 
-function ManureSystemIsMixingEvent:emptyNew()
-    local self = Event.new(ManureSystemIsMixingEvent_mt)
-
-    return self
+function ManureSystemIsMixingEvent.emptyNew()
+    return Event.new(ManureSystemIsMixingEvent_mt)
 end
 
-function ManureSystemIsMixingEvent:new(object, isActive)
-    local self = ManureSystemIsMixingEvent:emptyNew()
+function ManureSystemIsMixingEvent.new(object, isActive)
+    local self = ManureSystemIsMixingEvent.emptyNew()
 
     self.object = object
     self.isActive = isActive
@@ -50,9 +48,9 @@ end
 function ManureSystemIsMixingEvent.sendEvent(object, isActive, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(ManureSystemIsMixingEvent:new(object, isActive), nil, nil, object)
+            g_server:broadcastEvent(ManureSystemIsMixingEvent.new(object, isActive), nil, nil, object)
         else
-            g_client:getServerConnection():sendEvent(ManureSystemIsMixingEvent:new(object, isActive))
+            g_client:getServerConnection():sendEvent(ManureSystemIsMixingEvent.new(object, isActive))
         end
     end
 end

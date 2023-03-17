@@ -12,13 +12,12 @@ local HoseAttachDetachEvent_mt = Class(HoseAttachDetachEvent, Event)
 
 InitEventClass(HoseAttachDetachEvent, "HoseAttachDetachEvent")
 
-function HoseAttachDetachEvent:emptyNew()
-    local event = Event.new(HoseAttachDetachEvent_mt)
-    return event
+function HoseAttachDetachEvent.emptyNew()
+    return Event.new(HoseAttachDetachEvent_mt)
 end
 
-function HoseAttachDetachEvent:new(object, id, connectorId, vehicle, state)
-    local event = HoseAttachDetachEvent:emptyNew()
+function HoseAttachDetachEvent.new(object, id, connectorId, vehicle, state)
+    local event = HoseAttachDetachEvent.emptyNew()
 
     event.object = object
     event.id = id
@@ -31,8 +30,8 @@ end
 
 function HoseAttachDetachEvent:readStream(streamId, connection)
     self.object = NetworkUtil.readNodeObject(streamId)
-    self.id = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
-    self.connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
+    self.id = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
+    self.connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
     self.vehicle = NetworkUtil.readNodeObject(streamId)
     self.state = streamReadBool(streamId)
 
@@ -41,8 +40,8 @@ end
 
 function HoseAttachDetachEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObject(streamId, self.object)
-    streamWriteUIntN(streamId, self.id - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
-    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.id - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
     NetworkUtil.writeNodeObject(streamId, self.vehicle)
     streamWriteBool(streamId, self.state)
 end
@@ -62,9 +61,9 @@ end
 function HoseAttachDetachEvent.sendEvent(object, id, connectorId, vehicle, state, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(HoseAttachDetachEvent:new(object, id, connectorId, vehicle, state), nil, nil, object)
+            g_server:broadcastEvent(HoseAttachDetachEvent.new(object, id, connectorId, vehicle, state), nil, nil, object)
         else
-            g_client:getServerConnection():sendEvent(HoseAttachDetachEvent:new(object, id, connectorId, vehicle, state))
+            g_client:getServerConnection():sendEvent(HoseAttachDetachEvent.new(object, id, connectorId, vehicle, state))
         end
     end
 end

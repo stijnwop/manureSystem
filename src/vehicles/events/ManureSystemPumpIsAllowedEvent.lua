@@ -12,14 +12,12 @@ local ManureSystemPumpIsAllowedEvent_mt = Class(ManureSystemPumpIsAllowedEvent, 
 
 InitEventClass(ManureSystemPumpIsAllowedEvent, "ManureSystemPumpIsAllowedEvent")
 
-function ManureSystemPumpIsAllowedEvent:emptyNew()
-    local self = Event.new(ManureSystemPumpIsAllowedEvent_mt)
-
-    return self
+function ManureSystemPumpIsAllowedEvent.emptyNew()
+    return Event.new(ManureSystemPumpIsAllowedEvent_mt)
 end
 
-function ManureSystemPumpIsAllowedEvent:new(vehicle, warning)
-    local self = ManureSystemPumpIsAllowedEvent:emptyNew()
+function ManureSystemPumpIsAllowedEvent.new(vehicle, warning)
+    local self = ManureSystemPumpIsAllowedEvent.emptyNew()
 
     self.vehicle = vehicle
     self.warning = warning

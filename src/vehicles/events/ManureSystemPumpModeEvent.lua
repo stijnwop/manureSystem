@@ -11,14 +11,12 @@ local ManureSystemPumpModeEvent_mt = Class(ManureSystemPumpModeEvent, Event)
 
 InitEventClass(ManureSystemPumpModeEvent, "ManureSystemPumpModeEvent")
 
-function ManureSystemPumpModeEvent:emptyNew()
-    local self = Event.new(ManureSystemPumpModeEvent_mt)
-
-    return self
+function ManureSystemPumpModeEvent.emptyNew()
+    return Event.new(ManureSystemPumpModeEvent_mt)
 end
 
-function ManureSystemPumpModeEvent:new(vehicle, mode)
-    local self = ManureSystemPumpModeEvent:emptyNew()
+function ManureSystemPumpModeEvent.new(vehicle, mode)
+    local self = ManureSystemPumpModeEvent.emptyNew()
 
     self.vehicle = vehicle
     self.mode = mode
@@ -49,9 +47,9 @@ end
 function ManureSystemPumpModeEvent.sendEvent(vehicle, mode, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(ManureSystemPumpModeEvent:new(vehicle, mode), nil, nil, vehicle)
+            g_server:broadcastEvent(ManureSystemPumpModeEvent.new(vehicle, mode), nil, nil, vehicle)
         else
-            g_client:getServerConnection():sendEvent(ManureSystemPumpModeEvent:new(vehicle, mode))
+            g_client:getServerConnection():sendEvent(ManureSystemPumpModeEvent.new(vehicle, mode))
         end
     end
 end

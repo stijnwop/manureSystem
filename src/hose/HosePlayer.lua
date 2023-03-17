@@ -47,7 +47,7 @@ function HosePlayer.inj_player_readUpdateStream(player, streamId, timestamp, con
 
         if player.lastFoundObjectIsHose then
             player.lastFoundHose = NetworkUtil.readNodeObjectId(streamId)
-            player.lastFoundGradNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
+            player.lastFoundGradNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
         end
     end
 
@@ -59,7 +59,7 @@ function HosePlayer.inj_player_writeUpdateStream(player, streamId, connection, d
 
         if player.lastFoundObjectIsHose then
             NetworkUtil.writeNodeObjectId(streamId, player.lastFoundHose)
-            streamWriteUIntN(streamId, player.lastFoundGradNodeId - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
+            streamWriteUIntN(streamId, player.lastFoundGradNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
         end
     end
 end

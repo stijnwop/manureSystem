@@ -8,20 +8,16 @@
 
 ---@class ManureSystemConnectorIsConnectedEvent
 ManureSystemConnectorIsConnectedEvent = {}
-getfenv(0)["ManureSystemConnectorIsConnectedEvent"] = ManureSystemConnectorIsConnectedEvent -- Make accessible by other mods
-
 local ManureSystemConnectorIsConnectedEvent_mt = Class(ManureSystemConnectorIsConnectedEvent, Event)
 
 InitEventClass(ManureSystemConnectorIsConnectedEvent, "ManureSystemConnectorIsConnectedEvent")
 
-function ManureSystemConnectorIsConnectedEvent:emptyNew()
-    local self = Event.new(ManureSystemConnectorIsConnectedEvent_mt)
-
-    return self
+function ManureSystemConnectorIsConnectedEvent.emptyNew()
+    return Event.new(ManureSystemConnectorIsConnectedEvent_mt)
 end
 
-function ManureSystemConnectorIsConnectedEvent:new(vehicle, connectorId, isConnected, grabNodeId, hose)
-    local self = ManureSystemConnectorIsConnectedEvent:emptyNew()
+function ManureSystemConnectorIsConnectedEvent.new(vehicle, connectorId, isConnected, grabNodeId, hose)
+    local self = ManureSystemConnectorIsConnectedEvent.emptyNew()
 
     self.vehicle = vehicle
     self.isConnected = isConnected
@@ -35,10 +31,10 @@ end
 function ManureSystemConnectorIsConnectedEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObject(streamId, self.vehicle)
     streamWriteBool(streamId, self.isConnected)
-    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
 
     if self.isConnected then
-        streamWriteUIntN(streamId, self.grabNodeId - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
+        streamWriteUIntN(streamId, self.grabNodeId - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
         NetworkUtil.writeNodeObject(streamId, self.hose)
     end
 end
@@ -46,10 +42,10 @@ end
 function ManureSystemConnectorIsConnectedEvent:readStream(streamId, connection)
     self.vehicle = NetworkUtil.readNodeObject(streamId)
     self.isConnected = streamReadBool(streamId)
-    self.connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
+    self.connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
 
     if self.isConnected then
-        self.grabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
+        self.grabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
         self.hose = NetworkUtil.readNodeObject(streamId)
     end
 
@@ -68,9 +64,9 @@ end
 function ManureSystemConnectorIsConnectedEvent.sendEvent(vehicle, connectorId, isConnected, grabNodeId, hose, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(ManureSystemConnectorIsConnectedEvent:new(vehicle, connectorId, isConnected, grabNodeId, hose), nil, nil, vehicle)
+            g_server:broadcastEvent(ManureSystemConnectorIsConnectedEvent.new(vehicle, connectorId, isConnected, grabNodeId, hose), nil, nil, vehicle)
         else
-            g_client:getServerConnection():sendEvent(ManureSystemConnectorIsConnectedEvent:new(vehicle, connectorId, isConnected, grabNodeId, hose))
+            g_client:getServerConnection():sendEvent(ManureSystemConnectorIsConnectedEvent.new(vehicle, connectorId, isConnected, grabNodeId, hose))
         end
     end
 end

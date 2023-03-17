@@ -12,14 +12,12 @@ local ManureSystemPumpIsRunningEvent_mt = Class(ManureSystemPumpIsRunningEvent, 
 
 InitEventClass(ManureSystemPumpIsRunningEvent, "ManureSystemPumpIsRunningEvent")
 
-function ManureSystemPumpIsRunningEvent:emptyNew()
-    local self = Event.new(ManureSystemPumpIsRunningEvent_mt)
-
-    return self
+function ManureSystemPumpIsRunningEvent.emptyNew()
+    return Event.new(ManureSystemPumpIsRunningEvent_mt)
 end
 
-function ManureSystemPumpIsRunningEvent:new(vehicle, pumpIsRunning)
-    local self = ManureSystemPumpIsRunningEvent:emptyNew()
+function ManureSystemPumpIsRunningEvent.new(vehicle, pumpIsRunning)
+    local self = ManureSystemPumpIsRunningEvent.emptyNew()
 
     self.vehicle = vehicle
     self.pumpIsRunning = pumpIsRunning
@@ -51,9 +49,9 @@ end
 function ManureSystemPumpIsRunningEvent.sendEvent(vehicle, pumpIsRunning, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(ManureSystemPumpIsRunningEvent:new(vehicle, pumpIsRunning), nil, nil, vehicle)
+            g_server:broadcastEvent(ManureSystemPumpIsRunningEvent.new(vehicle, pumpIsRunning), nil, nil, vehicle)
         else
-            g_client:getServerConnection():sendEvent(ManureSystemPumpIsRunningEvent:new(vehicle, pumpIsRunning))
+            g_client:getServerConnection():sendEvent(ManureSystemPumpIsRunningEvent.new(vehicle, pumpIsRunning))
         end
     end
 end

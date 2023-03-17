@@ -11,6 +11,8 @@ Hose = {}
 
 Hose.MOD_NAME = g_currentModName
 
+Hose.GRAB_NODES_SEND_NUM_BITS = 2 -- 2 ^ 2
+
 Hose.STATE_ATTACHED = 0
 Hose.STATE_DETACHED = 1
 Hose.STATE_CONNECTED = 2
@@ -288,7 +290,7 @@ function Hose:onReadStream(streamId, connection)
             elseif self:isConnected(grabNode) then
                 if streamReadBool(streamId) then
                     local vehicleId = NetworkUtil.readNodeObjectId(streamId)
-                    local connectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) + 1
+                    local connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
                     table.insert(spec.hosesToLoad, { vehicleId = vehicleId, connectorId = connectorId, grabNodeId = id })
                 end
             end
@@ -313,7 +315,7 @@ function Hose:onWriteStream(streamId, connection)
                 streamWriteBool(streamId, desc ~= nil)
                 if desc ~= nil then
                     NetworkUtil.writeNodeObjectId(streamId, NetworkUtil.getObjectId(desc.vehicle))
-                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
+                    streamWriteUIntN(streamId, desc.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
                 end
             end
         end
@@ -325,10 +327,10 @@ function Hose:onReadUpdateStream(streamId, timestamp, connection)
         if streamReadBool(streamId) then
             local spec = self.spec_hose
             spec.foundVehicleId = NetworkUtil.readNodeObjectId(streamId)
-            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS)
+            spec.foundConnectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
             spec.foundConnectorIsConnected = streamReadBool(streamId)
             spec.foundConnectorIsParkPlace = streamReadBool(streamId)
-            spec.foundGrabNodeId = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
+            spec.foundGrabNodeId = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS)
         end
     end
 end
@@ -338,10 +340,10 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
         local spec = self.spec_hose
         if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
             NetworkUtil.writeNodeObjectId(streamId, spec.foundVehicleId)
-            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemEventBits.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundConnectorId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) -- allow sync number 0
             streamWriteBool(streamId, spec.foundConnectorIsConnected)
             streamWriteBool(streamId, spec.foundConnectorIsParkPlace)
-            streamWriteUIntN(streamId, spec.foundGrabNodeId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
+            streamWriteUIntN(streamId, spec.foundGrabNodeId, Hose.GRAB_NODES_SEND_NUM_BITS) -- allow sync number 0
         end
     end
 end
@@ -1311,14 +1313,14 @@ function Hose.loadGrabNodes(self)
     end
 
     local i = 0
-    while i <= 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS do
+    while i <= 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS do
         local key = ("%s.grabNodes.grabNode(%d)"):format(baseKey, i)
 
         if not self.xmlFile:hasProperty(key) then
             break
         end
 
-        if #spec.grabNodes == 2 ^ ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS then
+        if #spec.grabNodes == 2 ^ Hose.GRAB_NODES_SEND_NUM_BITS then
             Logging.error("Max amount of grabNodes reached!")
             break
         end

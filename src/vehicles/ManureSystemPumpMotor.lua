@@ -405,7 +405,7 @@ function ManureSystemPumpMotor:checkPumpNotAllowedWarning(warningId)
         local warning = self:getTurnOnPumpNotAllowedWarning()
         if warning ~= nil then
             --Broadcast warning to other clients
-            g_server:broadcastEvent(ManureSystemPumpIsAllowedEvent:new(self, warning), nil, nil, self)
+            g_server:broadcastEvent(ManureSystemPumpIsAllowedEvent.new(self, warning), nil, nil, self)
         end
     else
         if warningId ~= nil then
@@ -843,7 +843,7 @@ function ManureSystemPumpMotor.actionEventTogglePump(self, actionName, inputValu
                 g_currentMission:showBlinkingWarning(spec.warningMessage.messages[warning])
             end
         else
-            g_client:getServerConnection():sendEvent(ManureSystemPumpIsAllowedEvent:new(self))
+            g_client:getServerConnection():sendEvent(ManureSystemPumpIsAllowedEvent.new(self))
         end
 
         self:setIsPumpRunning(not spec.pumpIsRunning)

@@ -12,13 +12,12 @@ local HoseGrabDropEvent_mt = Class(HoseGrabDropEvent, Event)
 
 InitEventClass(HoseGrabDropEvent, "HoseGrabDropEvent")
 
-function HoseGrabDropEvent:emptyNew()
-    local event = Event.new(HoseGrabDropEvent_mt)
-    return event
+function HoseGrabDropEvent.emptyNew()
+    return Event.new(HoseGrabDropEvent_mt)
 end
 
-function HoseGrabDropEvent:new(object, id, player, state)
-    local event = HoseGrabDropEvent:emptyNew()
+function HoseGrabDropEvent.new(object, id, player, state)
+    local event = HoseGrabDropEvent.emptyNew()
 
     event.object = object
     event.id = id
@@ -30,7 +29,7 @@ end
 
 function HoseGrabDropEvent:readStream(streamId, connection)
     self.object = NetworkUtil.readNodeObject(streamId)
-    self.id = streamReadUIntN(streamId, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS) + 1
+    self.id = streamReadUIntN(streamId, Hose.GRAB_NODES_SEND_NUM_BITS) + 1
     self.player = NetworkUtil.readNodeObject(streamId)
     self.state = streamReadBool(streamId)
 
@@ -39,7 +38,7 @@ end
 
 function HoseGrabDropEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObject(streamId, self.object)
-    streamWriteUIntN(streamId, self.id - 1, ManureSystemEventBits.GRAB_NODES_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.id - 1, Hose.GRAB_NODES_SEND_NUM_BITS)
     NetworkUtil.writeNodeObject(streamId, self.player)
     streamWriteBool(streamId, self.state)
 end
@@ -59,9 +58,9 @@ end
 function HoseGrabDropEvent.sendEvent(object, id, player, state, noEventSend)
     if noEventSend == nil or noEventSend == false then
         if g_server ~= nil then
-            g_server:broadcastEvent(HoseGrabDropEvent:new(object, id, player, state), nil, nil, object)
+            g_server:broadcastEvent(HoseGrabDropEvent.new(object, id, player, state), nil, nil, object)
         else
-            g_client:getServerConnection():sendEvent(HoseGrabDropEvent:new(object, id, player, state))
+            g_client:getServerConnection():sendEvent(HoseGrabDropEvent.new(object, id, player, state))
         end
     end
 end

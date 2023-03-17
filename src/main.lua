@@ -20,21 +20,20 @@ local modEnvironment
 local sourceFiles = {
     "src/insertion.lua",
     --Network
-    "src/network/ManureSystemEventBits.lua",
-    "src/events/HoseAttachDetachEvent.lua",
-    "src/events/HoseGrabDropEvent.lua",
-    "src/events/ManureSystemConnectorIsConnectedEvent.lua",
-    "src/events/ManureSystemConnectorManureFlowEvent.lua",
-    "src/events/ManureSystemPumpModeEvent.lua",
-    "src/events/ManureSystemPumpDirectionEvent.lua",
-    "src/events/ManureSystemPumpIsRunningEvent.lua",
-    "src/events/ManureSystemPumpIsAllowedEvent.lua",
+    "src/vehicles/events/ManureSystemConnectorIsConnectedEvent.lua",
+    "src/vehicles/events/ManureSystemConnectorManureFlowEvent.lua",
+    "src/vehicles/events/ManureSystemPumpModeEvent.lua",
+    "src/vehicles/events/ManureSystemPumpDirectionEvent.lua",
+    "src/vehicles/events/ManureSystemPumpIsRunningEvent.lua",
+    "src/vehicles/events/ManureSystemPumpIsAllowedEvent.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",
     "src/misc/strategies/connectors/ManureSystemCouplingStrategy.lua",
     "src/misc/strategies/connectors/ManureSystemDockStrategy.lua",
     --Hose
+    "src/hose/events/HoseAttachDetachEvent.lua",
+    "src/hose/events/HoseGrabDropEvent.lua",
     "src/hose/HosePlayer.lua",
     --Utils
     "src/utils/ManureSystemUtil.lua",
