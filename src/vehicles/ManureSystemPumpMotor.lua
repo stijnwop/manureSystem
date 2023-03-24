@@ -98,6 +98,9 @@ function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getConsumingLoad", ManureSystemPumpMotor.getConsumingLoad)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getDoConsumePtoPower", ManureSystemPumpMotor.getDoConsumePtoPower)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsOperating", ManureSystemPumpMotor.getIsOperating)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getRequiresPower", ManureSystemPumpMotor.getRequiresPower)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsPowerTakeOffActive", ManureSystemPumpMotor.getIsPowerTakeOffActive)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getUseTurnedOnSchema", ManureSystemPumpMotor.getUseTurnedOnSchema)
 end
 
 function ManureSystemPumpMotor.registerEventListeners(vehicleType)
@@ -735,17 +738,20 @@ function ManureSystemPumpMotor:getDoConsumePtoPower(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
+function ManureSystemPumpMotor:getRequiresPower(superFunc)
+    return self:isPumpRunning() or superFunc(self)
+end
+
+function ManureSystemPumpMotor:getIsPowerTakeOffActive(superFunc)
+    return self:isPumpRunning() or superFunc(self)
+end
+
 function ManureSystemPumpMotor:getIsOperating(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
---Todo: check for remove
-function ManureSystemPumpMotor:getIsTurnedOn(superFunc)
-    if self:isPumpRunning() then
-        return true
-    end
-
-    return superFunc(self)
+function ManureSystemPumpMotor:getUseTurnedOnSchema(superFunc)
+    return self:isPumpRunning() or superFunc(self)
 end
 
 --Todo: check for remove
