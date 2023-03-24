@@ -201,13 +201,11 @@ end
 
 ---Loads the shared sample files for the manure system.
 function ManureSystem:loadManureSystemSamples()
-    local xmlFile = loadXMLFile("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
+    local xmlFile = XMLFile.load("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
     if xmlFile ~= nil then
         local soundsNode = getRootNode()
-
-        self.samples.pump = self.soundManager:loadSampleFromXML(xmlFile, "vehicle.sounds", "pump", self.modDirectory, soundsNode, 1, AudioGroup.VEHICLE, nil, nil)
-
-        delete(xmlFile)
+        self.samples.pump = self.soundManager:loadSampleFromXML(xmlFile.handle, "vehicle.sounds", "pump", self.modDirectory, soundsNode, 1, AudioGroup.VEHICLE, nil, nil)
+        xmlFile:delete()
     end
 end
 
@@ -319,6 +317,21 @@ function ManureSystem.installSpecializations(vehicleTypeManager, specializationM
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
                 Logging.info("Adding ManureSystemFillArm to: '" .. typeName)
             end
+
+            if not SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, typeEntry.specializations)
+                and SpecializationUtil.hasSpecialization(FillVolume, typeEntry.specializations) then
+                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
+                Logging.info("Adding ManureSystemFillArmReceiver to: '" .. typeName)
+            end
+        end
+    end
+end
+
+function ManureSystem.installPlaceableSpecializations(typeManager, specializationManager, modDirectory, modName)
+    for typeName, typeEntry in pairs(typeManager:getTypes()) do
+        if SpecializationUtil.hasSpecialization(PlaceableSilo, typeEntry.specializations) then
+            typeManager:addSpecialization(typeName, modName .. ".manureSystemPlaceableSilo")
+            Logging.info("Adding ManureSystemPlaceableSilo to: '" .. typeName)
         end
     end
 end

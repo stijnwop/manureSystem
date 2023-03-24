@@ -110,9 +110,14 @@ local function saveToXMLFile(missionInfo)
 end
 
 local function validateVehicleTypes(typeManager)
-    if typeManager.typeName == "vehicle" then
-        --ManureSystem.addModTranslations(g_i18n)
-        ManureSystem.installSpecializations(typeManager, g_specializationManager, modDirectory, modName)
+    if g_modIsLoaded[modName] then
+        if typeManager.typeName == "vehicle" then
+            ManureSystem.installVehicleSpecializations(typeManager, typeManager.specializationManager, modDirectory, modName)
+        end
+
+        if typeManager.typeName == "placeable" then
+            ManureSystem.installPlaceableSpecializations(typeManager, typeManager.specializationManager, modDirectory, modName)
+        end
     end
 end
 

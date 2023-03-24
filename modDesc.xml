@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="61">
+<modDesc descVersion="72">
     <author>Wopster</author>
     <version>2.0.0.0</version>
     <title>
@@ -91,6 +91,10 @@ Changelog:
     <extraSourceFiles>
         <sourceFile filename="src/main.lua"/>
     </extraSourceFiles>
+
+    <placeableSpecializations>
+        <specialization name="manureSystemPlaceableSilo" className="ManureSystemPlaceableSilo" filename="src/placeables/specializations/ManureSystemPlaceableSilo.lua"/>
+    </placeableSpecializations>
 
     <specializations>
         <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
