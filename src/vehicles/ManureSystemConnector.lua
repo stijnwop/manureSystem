@@ -9,8 +9,6 @@
 ManureSystemConnector = {}
 ManureSystemConnector.MOD_NAME = g_currentModName
 
-ManureSystemConnector.CONNECTORS_SEND_NUM_BITS = 4 -- 2 ^ 4
-
 function ManureSystemConnector.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end

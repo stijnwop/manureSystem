@@ -29,14 +29,14 @@ end
 
 function ManureSystemConnectorManureFlowEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObject(streamId, self.vehicle)
-    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS)
+    streamWriteUIntN(streamId, self.connectorId - 1, ManureSystemConnectors.SEND_NUM_BITS)
     streamWriteBool(streamId, self.hasOpenManureFlow)
     streamWriteBool(streamId, self.isForced)
 end
 
 function ManureSystemConnectorManureFlowEvent:readStream(streamId, connection)
     self.vehicle = NetworkUtil.readNodeObject(streamId)
-    self.connectorId = streamReadUIntN(streamId, ManureSystemConnector.CONNECTORS_SEND_NUM_BITS) + 1
+    self.connectorId = streamReadUIntN(streamId, ManureSystemConnectors.SEND_NUM_BITS) + 1
     self.hasOpenManureFlow = streamReadBool(streamId)
     self.isForced = streamReadBool(streamId)
 
