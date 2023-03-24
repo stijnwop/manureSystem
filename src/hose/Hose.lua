@@ -103,6 +103,7 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "onPlayerJointBreak", Hose.onPlayerJointBreak)
     SpecializationUtil.registerFunction(vehicleType, "onConnectorJointBreak", Hose.onConnectorJointBreak)
     SpecializationUtil.registerFunction(vehicleType, "fillRaycastCallback", Hose.fillRaycastCallback)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectorInRangeNode", Hose.getConnectorInRangeNode)
 end
 
 function Hose.registerEventListeners(vehicleType)
@@ -713,6 +714,10 @@ function Hose:getClosestGrabNode(x, y, z)
     end
 
     return closestGrabNode
+end
+
+function Hose:getConnectorInRangeNode()
+    return self.components[1].node
 end
 
 ---Sets the shader catmull point
