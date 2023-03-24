@@ -37,7 +37,7 @@ function ManureSystemDockStrategy.new(object, customMt)
 end
 
 function ManureSystemDockStrategy.registerDockNodeXMLPaths(schema, baseName)
-    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName .. ".funnel")
+    XMLExtensions.registerXMLPaths(schema, baseName .. ".funnel")
     schema:register(XMLValueType.FLOAT, baseName .. ".funnel#deformationYOffset", "The funnel deformation offset")
     schema:register(XMLValueType.FLOAT, baseName .. ".funnel#deformationYMaxPush", "The funnel deformation max push")
 

@@ -1,3 +1,13 @@
+--
+-- NodeExtensions
+--
+-- Author: Stijn Wopereis
+-- Description: Node extensions
+-- Name: NodeExtensions
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
+
 ---@class NodeExtensions
 NodeExtensions = {}
 

@@ -29,7 +29,7 @@ function ManureSystemFillArm.initSpecialization()
 end
 
 function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
-    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
+    XMLExtensions.registerXMLPaths(schema, baseName)
     schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Connector type")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Connector type")
     schema:register(XMLValueType.FLOAT, baseName .. "#rayCastDistance", "Connector type")
@@ -197,7 +197,7 @@ end
 
 ---Load the current fill arm from the xml.
 function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, id)
-    local node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, baseKey, id)
+    local node = XMLExtensions.ensureExistingNode(self, xmlFile, baseKey)
 
     if node ~= nil then
         fillArm.id = id + 1

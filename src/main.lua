@@ -44,7 +44,6 @@ local sourceFiles = {
     "src/utilities/XMLExtensions.lua",
     --Utils
     "src/utils/ManureSystemUtil.lua",
-    "src/utils/ManureSystemXMLUtil.lua",
     --Main
     "src/ManureSystem.lua",
     "src/overwrites.lua",

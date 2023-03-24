@@ -187,7 +187,7 @@ end
 ---Allow note creation, due to lack of code modularity we have to completely copy the code from the connection hoses spec.
 function ManureSystemConnector:loadHoseTargetNode(superFunc, xmlFile, targetKey, entry)
     if Utils.getNoNil(getXMLBool(xmlFile, targetKey .. "#createNode"), false) then
-        entry.node = ManureSystemXMLUtil.getOrCreateNode(self, xmlFile, targetKey)
+        entry.node = XMLExtensions.ensureExistingNode(self, xmlFile, targetKey)
 
         if entry.node == nil then
             Logging.xmlWarning(self.configFileName, "Missing node for connection hose target '%s'", targetKey)

@@ -398,7 +398,7 @@ function ManureSystemConnectors.registerXMLPaths(schema, baseName)
 end
 
 function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
-    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
+    XMLExtensions.registerXMLPaths(schema, baseName)
 
     ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)
     ManureSystemDockStrategy.registerDockNodeXMLPaths(schema, baseName)
@@ -411,7 +411,7 @@ function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
 end
 
 function ManureSystemConnectors.registerConnectorNodeSharedSetXMLPaths(schema, baseName)
-    ManureSystemXMLUtil.registerNodeCreationXMLPaths(schema, baseName)
+    XMLExtensions.registerXMLPaths(schema, baseName)
 
     schema:register(XMLValueType.INT, baseName .. "#id", "The shared set id")
     schema:register(XMLValueType.NODE_INDEX, baseName .. "#placeholderNode", "Visual placeholder node")

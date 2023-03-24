@@ -384,7 +384,7 @@ end
 
 function ManureSystemCouplingStrategy:loadParkPlace(xmlFile, key, parkPlace)
     if xmlFile:hasProperty(key .. ".deformer") then
-        local node = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".deformer", parkPlace.id)
+        local node = XMLExtensions.ensureExistingNode(self.object, xmlFile, key .. ".deformer")
         parkPlace.deformerNode = node
     end
 
