@@ -34,12 +34,14 @@ end
 
 function ManureSystemFillArmReceiver:onLoad(savegame)
     self.spec_manureSystemFillArmReceiver = self[("spec_%s.manureSystemFillArmReceiver"):format(ManureSystemFillArmReceiver.MOD_NAME)]
+    local spec = self.spec_manureSystemFillArmReceiver
 
     if #self.spec_fillVolume.volumes == 0 then
         return
     end
 
-    if not self.xmlFile:hasProperty("vehicle.manureSystemFillArmReceiver") then
+    spec.isActive = self.xmlFile:hasProperty("vehicle.manureSystemFillArmReceiver")
+    if not spec.isActive then
         return
     end
 
@@ -50,7 +52,6 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         return
     end
 
-    local spec = self.spec_manureSystemFillArmReceiver
     spec.fillVolumeIndex = fillVolumeIndex
 
     spec.fillArmOffset = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillArmOffset", 0)
@@ -69,18 +70,18 @@ function ManureSystemFillArmReceiver:getFillArmFillUnitIndex()
 end
 
 function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
-    local spec = self.spec_fillVolume
-    if #spec.volumes == 0 then
+    local spec = self.spec_manureSystemFillArmReceiver
+    if not spec.isActive or #self.spec_fillVolume.volumes == 0 then
         return false
     end
 
-    local fillVolumeIndex = self.spec_manureSystemFillArmReceiver.fillVolumeIndex
-    if spec.volumes[fillVolumeIndex].volume == nil then
+    local fillVolumeIndex = spec.fillVolumeIndex
+    if self.spec_fillVolume.volumes[fillVolumeIndex].volume == nil then
         return false
     end
 
-    local fillArmOffset = self.spec_manureSystemFillArmReceiver.fillArmOffset
-    local volume = spec.volumes[fillVolumeIndex].volume
+    local fillArmOffset = spec.fillArmOffset
+    local volume = self.spec_fillVolume.volumes[fillVolumeIndex].volume
     local xl, _, zl = worldToLocal(volume, x, y, z)
     local height = getFillPlaneHeightAtLocalPos(volume, xl, zl)
     local _, volumeWorldY, _ = localToWorld(volume, xl, height, zl)
