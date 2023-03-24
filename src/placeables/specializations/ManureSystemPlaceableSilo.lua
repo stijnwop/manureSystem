@@ -10,9 +10,19 @@ function ManureSystemPlaceableSilo.registerOverwrittenFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "setIsConnected", ManureSystemPlaceableSilo.setIsConnected)
     SpecializationUtil.registerFunction(placeableType, "setIsManureFlowOpen", ManureSystemPlaceableSilo.setIsManureFlowOpen)
     SpecializationUtil.registerFunction(placeableType, "getConnectorById", ManureSystemPlaceableSilo.getConnectorById)
+    SpecializationUtil.registerFunction(placeableType, "hasConnectors", ManureSystemPlaceableSilo.hasConnectors)
     SpecializationUtil.registerFunction(placeableType, "getConnectorsByType", ManureSystemPlaceableSilo.getConnectorsByType)
     SpecializationUtil.registerFunction(placeableType, "getActiveConnectorsByType", ManureSystemPlaceableSilo.getActiveConnectorsByType)
     SpecializationUtil.registerFunction(placeableType, "getConnectorInRangeNode", ManureSystemPlaceableSilo.getConnectorInRangeNode)
+
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableSilo.getFillUnitFillType)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitAllowsFillType", ManureSystemPlaceableSilo.getFillUnitAllowsFillType)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitFillLevel", ManureSystemPlaceableSilo.getFillUnitFillLevel)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitFillLevelPercentage", ManureSystemPlaceableSilo.getFillUnitFillLevelPercentage)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitCapacity", ManureSystemPlaceableSilo.getFillUnitCapacity)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitFreeCapacity", ManureSystemPlaceableSilo.getFillUnitFreeCapacity)
+    SpecializationUtil.registerFunction(placeableType, "getFillArmFillUnitIndex", ManureSystemPlaceableSilo.getFillArmFillUnitIndex)
+    SpecializationUtil.registerFunction(placeableType, "addFillUnitFillLevel", ManureSystemPlaceableSilo.addFillUnitFillLevel)
 end
 
 function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
@@ -85,6 +95,10 @@ function ManureSystemPlaceableSilo:setIsManureFlowOpen(id, state, force, noEvent
     self.spec_manureSystemPlaceableSilo.connectors:setIsManureFlowOpen(id, state, force, noEventSend)
 end
 
+function ManureSystemPlaceableSilo:hasConnectors()
+    return self.spec_manureSystemPlaceableSilo.connectors:hasConnectors()
+end
+
 function ManureSystemPlaceableSilo:getConnectorById(type)
     return self.spec_manureSystemPlaceableSilo.connectors:getConnectorById(type)
 end
@@ -99,4 +113,90 @@ end
 
 function ManureSystemPlaceableSilo:getConnectorInRangeNode()
     return self.spec_manureSystemPlaceableSilo.connectors:getConnectorInRangeNode()
+end
+
+local function getStorage(self)
+    local spec = self.spec_silo
+
+    --Todo: support multi storage?
+    for _, storage in ipairs(spec.storages) do
+        return storage
+    end
+
+    return nil
+end
+
+function ManureSystemPlaceableSilo:getFillUnitFillType(unitIndex)
+    local storage = getStorage(self)
+
+    for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
+        if fillLevel > 0 then
+            return fillTypeIndex -- only support first
+        end
+    end
+
+    return FillType.UNKNOWN
+end
+
+function ManureSystemPlaceableSilo:getFillUnitAllowsFillType(_, fillType)
+    local storage = getStorage(self)
+
+    for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
+        if fillType ~= fillTypeIndex and fillLevel > 0 then
+            return false
+        end
+    end
+
+    return storage:getIsFillTypeSupported(fillType)
+end
+
+function ManureSystemPlaceableSilo:getFillUnitFillLevel(unitIndex)
+    local storage = getStorage(self)
+    local fillType = self:getFillUnitFillType()
+    return storage:getFillLevel(fillType)
+end
+
+function ManureSystemPlaceableSilo:getFillUnitFillLevelPercentage(unitIndex)
+    local fillLevel = self:getFillUnitFillLevel()
+    local capacity = self:getFillUnitCapacity()
+    return fillLevel / capacity
+end
+
+function ManureSystemPlaceableSilo:getFillUnitCapacity(unitIndex)
+    local fillType = self:getFillUnitFillType()
+    local storage = getStorage(self)
+    return storage:getCapacity(fillType)
+end
+
+function ManureSystemPlaceableSilo:getFillUnitFreeCapacity(unitIndex)
+    local fillType = self:getFillUnitFillType()
+    local storage = getStorage(self)
+    return storage:getFreeCapacity(fillType)
+end
+
+function ManureSystemPlaceableSilo:getFillArmFillUnitIndex()
+    -- Always 1 since we don't support multi unit storage.
+    return 1
+end
+
+function ManureSystemPlaceableSilo:addFillUnitFillLevel(farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
+    local movedFillLevel = 0
+
+    local spec = self.spec_silo
+    local storage = getStorage(self)
+    if storage:getIsFillTypeSupported(fillTypeIndex) then
+        if spec.loadingStation:hasFarmAccessToStorage(farmId, storage) then
+            local oldFillLevel = storage:getFillLevel(fillTypeIndex)
+            storage:setFillLevel(oldFillLevel + fillLevelDelta, fillTypeIndex)
+            local newFillLevel = storage:getFillLevel(fillTypeIndex)
+
+            movedFillLevel = movedFillLevel + (newFillLevel - oldFillLevel)
+
+            if movedFillLevel >= fillLevelDelta - 0.001 then
+                movedFillLevel = fillLevelDelta
+            end
+        end
+    end
+
+    return movedFillLevel
 end

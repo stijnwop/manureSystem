@@ -47,6 +47,7 @@ local sourceFiles = {
     "src/utils/ManureSystemXMLUtil.lua",
     --Main
     "src/ManureSystem.lua",
+    "src/overwrites.lua",
 }
 
 for _, file in ipairs(sourceFiles) do
@@ -71,6 +72,8 @@ local function unload()
     if not isLoaded() then
         return
     end
+
+    manureSystem_overwrite.resetOriginalFunctions()
 
     if modEnvironment ~= nil then
         removeModEventListener(modEnvironment)
@@ -130,8 +133,9 @@ local function init()
     Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
     Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadFromXMLFile)
     FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
-
     TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, validateVehicleTypes)
+
+    manureSystem_overwrite.init()
 end
 
 init()
