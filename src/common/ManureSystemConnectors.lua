@@ -28,14 +28,13 @@ function ManureSystemConnectors:delete()
                 strategy:delete(connector)
             end
 
-            if connector.setSharedLinkNode ~= nil then
-                -- Todo: move shared set to object?
+            if connector.sharedSetLinkNode ~= nil then
                 -- Set place holder visibility.
                 if connector.placeHolderNode ~= nil then
                     setVisibility(connector.placeHolderNode, true)
                 end
 
-                delete(connector.setSharedLinkNode)
+                delete(connector.sharedSetLinkNode)
             end
         end
     end
@@ -292,17 +291,74 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
     return true
 end
 
---Todo: refactor..
+function ManureSystemConnectors:loadSharedConnectorFromSet(connector, set, xmlFile, baseKey, xmlFileShared)
+    local sharedConnectorKey = xmlFile:getValue(baseKey .. "#type")
+    if sharedConnectorKey == nil then
+        return
+    end
+
+    local sharedConnector = set.connectors[sharedConnectorKey:upper()]
+    if sharedConnector == nil then
+        return
+    end
+
+    local strategy = self.connectorStrategies[connector.type]
+    local connectorNode = clone(sharedConnector.node, false, false, false)
+    if strategy ~= nil then
+        strategy:loadSharedSetConnectorAttributes(xmlFile, baseKey, connector, connectorNode, sharedConnector)
+        strategy:loadSharedSetConnectorAnimation(xmlFileShared, sharedConnector.connectorXMLKey, connector, connectorNode, "lockAnimationName", sharedConnector)
+    end
+
+    link(connector.sharedSetLinkNode, connectorNode)
+
+    NodeExtensions.setVectorByXML(connectorNode, xmlFile, baseKey .. "#position", NodeExtensions.setPosition)
+    NodeExtensions.setVectorByXML(connectorNode, xmlFile, baseKey .. "#rotation", NodeExtensions.setRotation)
+end
+
+function ManureSystemConnectors:loadSharedValveFromSet(connector, set, xmlFile, baseKey, xmlFileShared)
+    local sharedValveKey = xmlFile:getValue(baseKey .. ".valve#type")
+    if sharedValveKey == nil then
+        return
+    end
+
+    local sharedValve = set.valves[sharedValveKey:upper()]
+    if sharedValve == nil then
+        return
+    end
+
+    local strategy = self.connectorStrategies[connector.type]
+    local valveNode = clone(sharedValve.node, false, false, false)
+    link(connector.sharedSetLinkNode, valveNode)
+
+    NodeExtensions.setVectorByXML(valveNode, xmlFile, baseKey .. ".valve#position", NodeExtensions.setPosition)
+    NodeExtensions.setVectorByXML(valveNode, xmlFile, baseKey .. ".valve#rotation", NodeExtensions.setRotation)
+
+    local sharedHandleKey = xmlFile:getValue(baseKey .. ".handle#type")
+    if sharedHandleKey == nil then
+        return
+    end
+
+    local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
+    if sharedHandle == nil then
+        return
+    end
+
+    local handleNode = clone(sharedHandle.node, false, false, false)
+    if strategy ~= nil then
+        strategy:loadSharedSetConnectorAnimation(xmlFileShared, sharedHandle.handleXMLKey, connector, handleNode, "manureFlowAnimationName", sharedHandle)
+    end
+
+    link(valveNode, handleNode)
+    setTranslation(handleNode, unpack(sharedHandle.linkOffset))
+end
+
 function ManureSystemConnectors:loadSharedSetFromXML(xmlFile, baseKey, connector)
     connector.setId = xmlFile:getValue(baseKey .. "#id", 1)
-
     local linkNode = XMLExtensions.ensureExistingNode(self.object, xmlFile, baseKey)
-    connector.setSharedLinkNode = linkNode
+    connector.sharedSetLinkNode = linkNode
 
     local set = self.manureSystem.connectorManager:getConnectorSet(connector.setId)
     if set ~= nil then
-        local strategy = self.connectorStrategies[connector.type]
-
         local placeHolderNode = xmlFile:getValue(baseKey .. "#placeholderNode", nil, self.object.components, self.object.i3dMappings)
         if placeHolderNode ~= nil then
             connector.placeHolderNode = placeHolderNode
@@ -310,47 +366,11 @@ function ManureSystemConnectors:loadSharedSetFromXML(xmlFile, baseKey, connector
         end
 
         local sharedXMLFile = XMLFile.load("sharedXMLFile", set.xmlFilename, ManureSystemConnectorManager.xmlSchema)
-        local sharedConnectorKey = xmlFile:getValue(baseKey .. ".connector#type")
-        if sharedConnectorKey ~= nil then
-            local sharedConnector = set.connectors[sharedConnectorKey:upper()]
-
-            if sharedConnector ~= nil then
-                local connectorNode = clone(sharedConnector.node, false, false, false)
-                if strategy ~= nil then
-                    strategy:loadSharedSetConnectorAttributes(xmlFile, baseKey .. ".connector", connector, connectorNode, sharedConnector)
-                    strategy:loadSharedSetConnectorAnimation(sharedXMLFile, sharedConnector.animationKey, connector, connectorNode, "lockAnimationName", sharedConnector)
-                end
-
-                link(linkNode, connectorNode)
-                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, baseKey .. ".connector", connectorNode)
-            end
+        if sharedXMLFile ~= nil then
+            self:loadSharedConnectorFromSet(connector, set, xmlFile, baseKey .. ".connector", sharedXMLFile)
+            self:loadSharedValveFromSet(connector, set, xmlFile, baseKey, sharedXMLFile)
+            sharedXMLFile:delete()
         end
-
-        local sharedValveKey = xmlFile:getValue(baseKey .. ".valve#type")
-        if sharedValveKey ~= nil then
-            local sharedValve = set.valves[sharedValveKey:upper()]
-            if sharedValve ~= nil then
-                local valveNode = clone(sharedValve.node, false, false, false)
-                link(linkNode, valveNode)
-                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, baseKey .. ".valve", valveNode)
-
-                local sharedHandleKey = xmlFile:getValue(baseKey .. ".handle#type")
-                if sharedHandleKey ~= nil then
-                    local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
-                    if sharedHandle ~= nil then
-                        local handleNode = clone(sharedHandle.node, false, false, false)
-                        if strategy ~= nil then
-                            strategy:loadSharedSetConnectorAnimation(sharedXMLFile, sharedHandle.animationKey, connector, handleNode, "manureFlowAnimationName", sharedHandle)
-                        end
-
-                        link(valveNode, handleNode)
-                        setTranslation(handleNode, unpack(sharedHandle.linkOffset))
-                    end
-                end
-            end
-        end
-
-        sharedXMLFile:delete()
     else
         Logging.xmlError(self.object.configFileName, ("Shared connector set %s not found!"):format(connector.setId))
         return false

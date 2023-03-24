@@ -36,9 +36,7 @@ function ManureSystemCouplingStrategy.new(object, type, customMt)
 end
 
 function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)
-    schema:register(XMLValueType.INT, baseName .. "#lockAnimationIndex", "The lock animation index for objects")
     schema:register(XMLValueType.STRING, baseName .. "#lockAnimationName", "The lock animation name for vehicles")
-    schema:register(XMLValueType.INT, baseName .. "#manureFlowAnimationIndex", "The manure flow animation index for objects")
     schema:register(XMLValueType.STRING, baseName .. "#manureFlowAnimationName", "The manure flow animation name for vehicles")
 
     ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName .. ".parkPlaces.parkPlace(?)")
@@ -325,9 +323,7 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
 
     if not connector.hasSharedSet then
         connector.lockAnimationName = xmlFile:getValue(key .. "#lockAnimationName")
-        connector.lockAnimationIndex = xmlFile:getValue(key .. "#lockAnimationIndex")
         connector.manureFlowAnimationName = xmlFile:getValue(key .. "#manureFlowAnimationName")
-        connector.manureFlowAnimationIndex = xmlFile:getValue(key .. "#manureFlowAnimationIndex")
     end
 
     connector.jointOrigRot = { getRotation(connector.node) }
@@ -423,15 +419,29 @@ end
 
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, key, connector, connectorNode, connectorAnimationName, sharedConnector)
     if sharedConnector.hasAnimation then
+        log("HAS ANIMATION")
         local spec_animatedVehicle = self.object.spec_animatedVehicle
         if spec_animatedVehicle ~= nil then
             local animation = {}
 
-            if self.object:loadAnimation(xmlFile, key, animation, connectorNode) then
+            if self.object:loadAnimation(xmlFile, key .. ".vehicle.animation", animation, connectorNode) then
                 animation.name = connector.id .. animation.name -- make animation unique for the vehicle.
                 spec_animatedVehicle.animations[animation.name] = animation
                 -- Set the loaded animation as given connector animation name.
                 connector[connectorAnimationName] = animation.name
+            end
+        elseif self.object.spec_animatedObjects ~= nil then
+            if xmlFile:hasProperty(key .. ".placeable.animatedObject") then
+                local animatedObject = AnimatedObject.new(self.object.isServer, self.object.isClient)
+                animatedObject.dependencies = {}
+
+                if animatedObject:load(connectorNode, xmlFile, key .. ".placeable.animatedObject", self.object.configFileName, self.object.i3dMappings) then
+                    table.insert(self.object.spec_animatedObjects.animatedObjects, animatedObject)
+                    connector[connectorAnimationName] = #self.object.spec_animatedObjects.animatedObjects
+                else
+                    animatedObject:delete()
+                    Logging.xmlError(xmlFile, "Failed to load animated object")
+                end
             end
         else
             Logging.xmlError(self.object.configFileName, ("Shared %s animation can't be added as the vehicle does not have the AnimatedVehicle spec."):format(connectorAnimationName))

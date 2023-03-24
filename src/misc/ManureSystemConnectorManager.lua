@@ -19,7 +19,7 @@ ManureSystemConnectorManager.CONNECTOR_TYPE_OPTICAL = "optical" -- non functiona
 local ManureSystemConnectorManager_mt = Class(ManureSystemConnectorManager)
 
 g_xmlManager:addCreateSchemaFunction(function()
-    ManureSystemConnectorManager.xmlSchema = XMLSchema.new("manureSystemConnector")
+    ManureSystemConnectorManager.xmlSchema = XMLSchema.new("ManureSystemConnectorManager")
 end)
 
 g_xmlManager:addInitSchemaFunction(function()
@@ -27,12 +27,10 @@ g_xmlManager:addInitSchemaFunction(function()
     schema:register(XMLValueType.STRING, "assets.set(?).connectors.connector(?)#type", "The connector type")
     schema:register(XMLValueType.NODE_INDEX, "assets.set(?).connectors.connector(?)#node", "The connector node")
 
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation")
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation(?)")
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation")
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).animation(?)")
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).animation")
-    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).animation(?)")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).vehicle.animation")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).connectors.connector(?).vehicle.animation(?)")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).vehicle.animation")
+    AnimatedVehicle.registerAnimationXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).vehicle.animation(?)")
 
     schema:addDelayedRegistrationFunc("AnimatedVehicle:part", function(cSchema, cKey)
         cSchema:register(XMLValueType.INT, cKey .. "#wheelIndex", "Wheel index [1..n]")
@@ -76,7 +74,42 @@ g_xmlManager:addInitSchemaFunction(function()
     schema:register(XMLValueType.STRING, "assets.set(?).valves.valve(?).handle(?)#type", "The handle type")
     schema:register(XMLValueType.NODE_INDEX, "assets.set(?).valves.valve(?).handle(?)#node", "The handle node")
     schema:register(XMLValueType.VECTOR_TRANS, "assets.set(?).valves.valve(?).handle(?)#linkOffset", "The link offset")
+
+    ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, "assets.set(?).connectors.connector(?).placeable.animatedObject")
+    ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).placeable.animatedObject")
 end)
+
+--Todo: why is this needed?
+function ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, basePath)
+    schema:register(XMLValueType.STRING, basePath .. "#saveId", "Save identifier", "AnimatedObject_[nodeName]")
+    schema:register(XMLValueType.FLOAT, basePath .. ".animation#duration", "Animation duration (sec.)", 3)
+    schema:register(XMLValueType.NODE_INDEX, basePath .. ".animation.part(?)#node", "Part node")
+    schema:register(XMLValueType.FLOAT, basePath .. ".animation.part(?).keyFrame(?)#time", "Key time")
+    schema:register(XMLValueType.VECTOR_ROT, basePath .. ".animation.part(?).keyFrame(?)#rotation", "Key rotation", "values read from i3d node")
+    schema:register(XMLValueType.VECTOR_TRANS, basePath .. ".animation.part(?).keyFrame(?)#translation", "Key translation", "values read from i3d node")
+    schema:register(XMLValueType.VECTOR_SCALE, basePath .. ".animation.part(?).keyFrame(?)#scale", "Key scale", "values read from i3d node")
+    schema:register(XMLValueType.BOOL, basePath .. ".animation.part(?).keyFrame(?)#visibility", "Key visibility", true)
+    schema:register(XMLValueType.NODE_INDEX, basePath .. ".animation.shader(?)#node", "Shader node")
+    schema:register(XMLValueType.STRING, basePath .. ".animation.shader(?)#parameterName", "Shader parameter name")
+    schema:register(XMLValueType.FLOAT, basePath .. ".animation.shader(?).keyFrame(?)#time", "Key time")
+    schema:register(XMLValueType.STRING, basePath .. ".animation.shader(?).keyFrame(?)#values", "Key shader parameter values. Use '-' to force using existing shader parameter value")
+    schema:register(XMLValueType.NODE_INDEX, basePath .. ".animation.clip#rootNode", "I3d animation rootnode")
+    schema:register(XMLValueType.STRING, basePath .. ".animation.clip#name", "I3d animation clipName")
+    schema:register(XMLValueType.STRING, basePath .. ".animation.clip#filename", "I3d animation external animation")
+    schema:register(XMLValueType.FLOAT, basePath .. ".animation#initialTime", "Animation time after loading", 0)
+    schema:register(XMLValueType.FLOAT, basePath .. ".openingHours#startTime", "Start day time")
+    schema:register(XMLValueType.FLOAT, basePath .. ".openingHours#endTime", "End day time")
+    schema:register(XMLValueType.BOOL, basePath .. ".openingHours#disableIfClosed", "Disabled if closed")
+    schema:register(XMLValueType.L10N_STRING, basePath .. ".openingHours#closedText", "Closed text")
+    schema:register(XMLValueType.NODE_INDEX, basePath .. ".controls#triggerNode", "Player trigger node")
+    schema:register(XMLValueType.STRING, basePath .. ".controls#posAction", "Positive direction action event name")
+    schema:register(XMLValueType.STRING, basePath .. ".controls#posText", "Positive direction text")
+    schema:register(XMLValueType.STRING, basePath .. ".controls#negText", "Negative direction text")
+    schema:register(XMLValueType.STRING, basePath .. ".controls#negAction", "Negative direction action event name")
+    SoundManager.registerSampleXMLPaths(schema, basePath .. ".sounds", "moving(?)")
+    SoundManager.registerSampleXMLPaths(schema, basePath .. ".sounds", "posEnd")
+    SoundManager.registerSampleXMLPaths(schema, basePath .. ".sounds", "negEnd")
+end
 
 function ManureSystemConnectorManager.new(modDirectory, customMt)
     local self = setmetatable({}, customMt or ManureSystemConnectorManager_mt)
@@ -148,8 +181,8 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
                     local connectorTypeKey = self:formatConnectorKey(connectorTypeString)
                     local connector = {}
                     connector.node = connectorNode
-                    connector.animationKey = connectorKey .. ".animation"
-                    connector.hasAnimation = xmlFile:hasProperty(connector.animationKey)
+                    connector.connectorXMLKey = connectorKey
+                    connector.hasAnimation = xmlFile:hasProperty(connectorKey .. ".vehicle.animation")
 
                     desc.connectors[connectorTypeKey] = connector
                 end
@@ -183,8 +216,8 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
                             local handleTypeKey = self:formatConnectorKey(handleTypeString)
                             local handle = {}
                             handle.node = handleNode
-                            handle.animationKey = handleKey .. ".animation"
-                            handle.hasAnimation = xmlFile:hasProperty(handle.animationKey)
+                            handle.handleXMLKey = handleKey
+                            handle.hasAnimation = xmlFile:hasProperty(handleKey .. ".vehicle.animation")
                             handle.linkOffset = Utils.getNoNil(string.getVectorN(xmlFile:getString(handleKey .. "#linkOffset"), 3), { 0, 0, 0 })
 
                             valve.handles[handleTypeKey] = handle

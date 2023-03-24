@@ -28,6 +28,8 @@ local sourceFiles = {
     "src/vehicles/events/ManureSystemPumpIsAllowedEvent.lua",
     --Common
     "src/common/ManureSystemConnectors.lua",
+    --Placeables
+    "src/placeables/ManureSystemAnimatedObjectExtension.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",

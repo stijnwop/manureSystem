@@ -1,13 +1,11 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemAnimatedObjectExtension
-----------------------------------------------------------------------------------------------------
--- Purpose: Animated object function extension on the placeables in order to play animations by function.
---
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
-
+---@return boolean
 function Placeable:getIsAnimationPlaying(id)
-    local animatedObject = self.animatedObjects[id]
+    local spec = self.spec_animatedObjects
+    if spec == nil then
+        return false
+    end
+
+    local animatedObject = spec.animatedObjects[id]
     if animatedObject ~= nil then
         return animatedObject.isMoving
     end
@@ -15,8 +13,14 @@ function Placeable:getIsAnimationPlaying(id)
     return false
 end
 
+---@return number the animation time
 function Placeable:getAnimationTime(id)
-    local animatedObject = self.animatedObjects[id]
+    local spec = self.spec_animatedObjects
+    if spec == nil then
+        return 0
+    end
+
+    local animatedObject = spec.animatedObjects[id]
     if animatedObject ~= nil then
         return animatedObject.animation.time
     end
@@ -24,10 +28,16 @@ function Placeable:getAnimationTime(id)
     return 0
 end
 
+---@return void
 function Placeable:playAnimation(id, dir)
-    local animatedObject = self.animatedObjects[id]
+    local spec = self.spec_animatedObjects
+
+    if spec == nil then
+        return
+    end
+
+    local animatedObject = spec.animatedObjects[id]
     if animatedObject ~= nil then
-        animatedObject.animation.direction = dir
-        animatedObject:raiseActive()
+        animatedObject:setDirection(dir)
     end
 end

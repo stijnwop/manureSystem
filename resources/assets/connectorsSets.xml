@@ -2,14 +2,36 @@
     <set filename="resources/assets/set_1.i3d">
         <connectors>
             <connector type="connector_1" node="0">
-                <animation name="connector_1_lock">
-                    <!-- Nodes below are child nodes of the connector node -->
-                    <part node="0" startTime="0" endTime="0.5" startRot="0 0 -150" endRot="0 0 -15"/>
-                    <part node="1" startTime="0" endTime="0.3" startRot="0 0 -20" endRot="0 0 -20"/>
-                    <part node="1" startTime="0.3" endTime="0.5" startRot="0 0 -20" endRot="0 0 0"/>
-                    <part node="1|0" startTime="0" endTime="0.3" startRot="0 0 60" endRot="0 0 18"/>
-                    <part node="1|0" startTime="0.3" endTime="0.5" startRot="0 0 18" endRot="0 0 0"/>
-                </animation>
+                <vehicle>
+                    <animation name="connector_1_lock">
+                        <!-- Nodes below are child nodes of the connector node -->
+                        <part node="0" startTime="0" endTime="0.5" startRot="0 0 -150" endRot="0 0 -15"/>
+                        <part node="1" startTime="0" endTime="0.3" startRot="0 0 -20" endRot="0 0 -20"/>
+                        <part node="1" startTime="0.3" endTime="0.5" startRot="0 0 -20" endRot="0 0 0"/>
+                        <part node="1|0" startTime="0" endTime="0.3" startRot="0 0 60" endRot="0 0 18"/>
+                        <part node="1|0" startTime="0.3" endTime="0.5" startRot="0 0 18" endRot="0 0 0"/>
+                    </animation>
+                </vehicle>
+                <placeable>
+                    <animatedObject>
+                        <animation duration="0.5">
+                            <part node="0">
+                                <keyFrame time="0" rotation="0 0 -150"/>
+                                <keyFrame time="0.5" rotation="0 0 -15"/>
+                            </part>
+                            <part node="1">
+                                <keyFrame time="0" rotation="0 0 -20"/>
+                                <keyFrame time="0.3" rotation="0 0 -20"/>
+                                <keyFrame time="0.5" rotation="0 0 0"/>
+                            </part>
+                            <part node="1|0">
+                                <keyFrame time="0" rotation="0 0 60"/>
+                                <keyFrame time="0.3" rotation="0 0 18"/>
+                                <keyFrame time="0.5" rotation="0 0 0"/>
+                            </part>
+                        </animation>
+                    </animatedObject>
+                </placeable>
             </connector>
         </connectors>
 
@@ -17,21 +39,25 @@
             <valve type="8inch_brass" node="1">
                 <handle type="handle_new" node="3">
                     <!-- Nodes below are child nodes of the handle node -->
-                    <animation name="8inch_brass_handle_new">
-                        <part node="0" startTime="0" endTime="0.25" startTrans="0 0 0" endTrans="0 0.10 0"/>
-                        <part node="0" startTime="0.25" endTime="0.5" startTrans="0 0.10 0" endTrans="0 0.14 0"/>
-                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -85"/>
-                        <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
-                        <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
-                    </animation>
+                    <vehicle>
+                        <animation name="8inch_brass_handle_new">
+                            <part node="0" startTime="0" endTime="0.25" startTrans="0 0 0" endTrans="0 0.10 0"/>
+                            <part node="0" startTime="0.25" endTime="0.5" startTrans="0 0.10 0" endTrans="0 0.14 0"/>
+                            <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -85"/>
+                            <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
+                            <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
+                        </animation>
+                    </vehicle>
                 </handle>
                 <handle type="handle_old" node="4">
                     <!-- Nodes below are child nodes of the handle node -->
-                    <animation name="8inch_brass_handle_old">
-                        <part node="0" startTime="0" endTime="0.5" startTrans="0 0.240 0" endTrans="0 0.395 0"/>
-                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="-25 0 0"/>
-                        <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 0" endRot="72.5 0 0"/>
-                    </animation>
+                    <vehicle>
+                        <animation name="8inch_brass_handle_old">
+                            <part node="0" startTime="0" endTime="0.5" startTrans="0 0.240 0" endTrans="0 0.395 0"/>
+                            <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="-25 0 0"/>
+                            <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 0" endRot="72.5 0 0"/>
+                        </animation>
+                    </vehicle>
                 </handle>
                 <handle type="hydraulic" node="5"/><!-- Hydraulic -->
                 <handle type="pneumatic" node="6"/><!-- Pneumatic -->
@@ -39,21 +65,25 @@
             <valve type="8inch_castIron" node="2">
                 <handle type="handle_new" node="3" linkOffset="0.015 0.155 0">
                     <!-- Nodes below are child nodes of the handle node -->
-                    <animation name="8inch_castIron_handle_new">
-                        <part node="0" startTime="0" endTime="0.25" startTrans="0 0 0" endTrans="0 0.10 0"/>
-                        <part node="0" startTime="0.25" endTime="0.5" startTrans="0 0.10 0" endTrans="0 0.14 0"/>
-                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -85"/>
-                        <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
-                        <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
-                    </animation>
+                    <vehicle>
+                        <animation name="8inch_castIron_handle_new">
+                            <part node="0" startTime="0" endTime="0.25" startTrans="0 0 0" endTrans="0 0.10 0"/>
+                            <part node="0" startTime="0.25" endTime="0.5" startTrans="0 0.10 0" endTrans="0 0.14 0"/>
+                            <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -85"/>
+                            <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
+                            <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
+                        </animation>
+                    </vehicle>
                 </handle>
                 <handle type="handle_old" node="4" linkOffset="0.015 0.145 0">
                     <!-- Nodes below are child nodes of the handle node -->
-                    <animation name="8inch_castIron_handle_old">
-                        <part node="0" startTime="0" endTime="0.5" startTrans="-0.070 0.240 0" endTrans="-0.070 0.395 0"/>
-                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="-25 0 0"/>
-                        <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 0" endRot="72.5 0 0"/>
-                    </animation>
+                    <vehicle>
+                        <animation name="8inch_castIron_handle_old">
+                            <part node="0" startTime="0" endTime="0.5" startTrans="-0.070 0.240 0" endTrans="-0.070 0.395 0"/>
+                            <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="-25 0 0"/>
+                            <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 0" endRot="72.5 0 0"/>
+                        </animation>
+                    </vehicle>
                 </handle>
                 <handle type="hydraulic" node="5" linkOffset="0.015 0.105 0"/>
                 <handle type="pneumatic" node="6" linkOffset="0.015 0.105 0"/>
@@ -72,25 +102,29 @@
     <set filename="resources/assets/set_2.i3d">
         <connectors>
             <connector type="connector_1" node="0">
-                <animation name="connector_1_lock">
-                    <!-- Nodes below are child nodes of the connector node -->
-                    <part node="0" startTime="0" endTime="0.5" startRot="0 0 -140" endRot="0 0 -25"/>
-                    <part node="1" startTime="0" endTime="0.5" startRot="0 0 -15" endRot="0 0 0"/>
-                    <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 -20" endRot="0 0 0"/>
-                </animation>
+                <vehicle>
+                    <animation name="connector_1_lock">
+                        <!-- Nodes below are child nodes of the connector node -->
+                        <part node="0" startTime="0" endTime="0.5" startRot="0 0 -140" endRot="0 0 -25"/>
+                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 -15" endRot="0 0 0"/>
+                        <part node="1|0" startTime="0" endTime="0.5" startRot="0 0 -20" endRot="0 0 0"/>
+                    </animation>
+                </vehicle>
             </connector>
         </connectors>
         <valves>
             <valve type="8inch_brass" node="1">
                 <handle type="handle_new" node="2">
                     <!-- Nodes below are child nodes of the handle node -->
-                    <animation name="8inch_brass_handle_new">
-                        <part node="0" startTime="0" endTime="0.25" startTrans="-0.047 0.251 0" endTrans="-0.047 0.3 0"/>
-                        <part node="0" startTime="0.25" endTime="0.5" startTrans="-0.047 0.3 0" endTrans="-0.047 0.365 0"/>
-                        <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -75"/>
-                        <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
-                        <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
-                    </animation>
+                    <vehicle>
+                        <animation name="8inch_brass_handle_new">
+                            <part node="0" startTime="0" endTime="0.25" startTrans="-0.047 0.251 0" endTrans="-0.047 0.3 0"/>
+                            <part node="0" startTime="0.25" endTime="0.5" startTrans="-0.047 0.3 0" endTrans="-0.047 0.365 0"/>
+                            <part node="1" startTime="0" endTime="0.5" startRot="0 0 0" endRot="0 0 -75"/>
+                            <part node="1|0" startTime="0" endTime="0.25" startRot="0 0 0" endRot="0 0 50"/>
+                            <part node="1|0" startTime="0.25" endTime="0.5" startRot="0 0 50" endRot="0 0 124"/>
+                        </animation>
+                    </vehicle>
                 </handle>
             </valve>
         </valves>
