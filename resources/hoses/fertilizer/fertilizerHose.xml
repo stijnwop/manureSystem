@@ -15,11 +15,13 @@
         <price>300</price>
         <lifetime>600</lifetime>
         <rotation>0</rotation>
+        <shopTranslationOffset>0 0.25 0</shopTranslationOffset>
         <brand>LIZARD</brand>
         <category>sprayers</category>
     </storeData>
 
     <base>
+        <supportsPickUp>true</supportsPickUp>
         <typeDesc>$l10n_typeDesc_hose</typeDesc>
         <filename>resources/hoses/fertilizer/fertilizerHose.i3d</filename>
         <size width="0.2" length="5"/>
@@ -39,12 +41,7 @@
                    rotMinLimit="-44 -44 -44"
                    transLimit="0 0 0" rotDriveVelocity="0 0 0"/>
         </components>
-        <schemaOverlay attacherJointPosition="0 0">
-            <default name="DEFAULT_IMPLEMENT"/>
-            <turnedOn name="DEFAULT_IMPLEMENT_ON"/>
-            <selected name="DEFAULT_IMPLEMENT_SELECTED"/>
-            <turnedOnSelected name="DEFAULT_IMPLEMENT_SELECTED_ON"/>
-        </schemaOverlay>
+        <schemaOverlay attacherJointPosition="0 0" name="IMPLEMENT"/>
     </base>
 
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>

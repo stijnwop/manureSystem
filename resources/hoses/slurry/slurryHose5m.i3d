@@ -3,17 +3,17 @@
 <i3D name="suctionHose5m_ingame" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
 
   <Files>
-    <File fileId="1" filename="../hose_normal.png" />
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+    <File fileId="5" filename="../coupling_gloss.png" />
     <File fileId="4" filename="../coupling_normal.png" />
     <File fileId="2" filename="../hose_gloss.png" />
-    <File fileId="5" filename="../coupling_gloss.png" />
-    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+    <File fileId="1" filename="../hose_normal.png" />
   </Files>
 
   <Materials>
-    <Material name="lambert1" materialId="1" diffuseColor="0.5 0.5 0.5 1" specularColor="0 0 0" ambientColor="1 1 1">
+    <Material name="lambert1" materialId="1" diffuseColor="0.5 0.5 0.5 1">
     </Material>
-    <Material name="hose_mat" materialId="2" diffuseColor="0.5 0.5 0.5 1" cosPower="20" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="LOCAL_CATMULL_ROM_colorMask_uvScale">
+    <Material name="hose_mat" materialId="2" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="localCatmullRom_colorMask_uvScale">
       <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
       <CustomParameter name="colorMat0" value="0.80 0.55 0.05 1.0"/>
       <CustomParameter name="dirtColor" value="0.20 0.14 0.08 0.0"/>
@@ -22,7 +22,7 @@
       <Normalmap fileId="1"/>
       <Glossmap fileId="2"/>
     </Material>
-    <Material name="coupling_mat" materialId="3" diffuseColor="0.5 0.5 0.5 1" cosPower="20" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+    <Material name="coupling_mat" materialId="3" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
       <CustomParameter name="colorMat3" value="0.10 0.10 1.00 1.0"/>
       <CustomParameter name="colorMat2" value="0.10 1.00 0.10 1.0"/>
       <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
@@ -43,29 +43,29 @@
   </Shapes>
 
   <Scene>
-    <Shape name="hose_main_component1" shapeId="1" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="1">
+    <Shape name="hose_main_component1" shapeId="1" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="1">
       <Shape name="hose" translation="0 0 -0.07" rotation="0 180 0" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="2"/>
-      <Shape name="coupling_normal_start" translation="2.98023e-08 0 3.64973e-24" rotation="0 180 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="3"/>
-      <Shape name="coupling_extend_start" translation="-2.98023e-08 0.0167934 -0.0777317" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="3" skinBindNodeIds="4 5 6 7" clipDistance="300" nodeId="4">
-        <TransformGroup name="top_hook" translation="2.98023e-08 0.0970822 0.0469957" collision="false" clipDistance="300" nodeId="5"/>
-        <TransformGroup name="bottom_lever" translation="2.98023e-08 -0.133183 0.0444317" collision="false" clipDistance="300" nodeId="6">
+      <Shape name="coupling_normal_start" translation="0 0 0" rotation="0 180 0" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="3"/>
+      <Shape name="coupling_extend_start" translation="-0 0.016793 -0.077732" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="3" skinBindNodeIds="4 5 6 7" clipDistance="300" nodeId="4">
+        <TransformGroup name="top_hook" translation="0 0.097082 0.046996" collision="false" clipDistance="300" nodeId="5"/>
+        <TransformGroup name="bottom_lever" translation="0 -0.133183 0.044432" collision="false" clipDistance="300" nodeId="6">
           <TransformGroup name="bottom_hook" collision="false" clipDistance="300" nodeId="7"/>
         </TransformGroup>
       </Shape>
       <TransformGroup name="grabNode1" collision="false" clipDistance="300" nodeId="8"/>
-      <TransformGroup name="componentJoint1" translation="1.83697e-16 0 -1.125" collision="false" clipDistance="300" nodeId="9"/>
+      <TransformGroup name="componentJoint1" translation="0 0 -1.125" collision="false" clipDistance="300" nodeId="9"/>
       <TransformGroup name="raycastNode1" collision="false" clipDistance="300" nodeId="10"/>
     </Shape>
-    <Shape name="hose_main_component2" translation="7.45058e-09 -3.72529e-09 -1.85" shapeId="5" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="11">
-      <TransformGroup name="componentJoint2" translation="-7.45058e-09 2.98023e-08 -1.40625" collision="false" clipDistance="300" nodeId="12"/>
+    <Shape name="hose_main_component2" translation="0 -0 -1.85" shapeId="5" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="11">
+      <TransformGroup name="componentJoint2" translation="-0 0 -1.40625" collision="false" clipDistance="300" nodeId="12"/>
     </Shape>
-    <Shape name="hose_main_component3" translation="7.45058e-09 -3.72529e-09 -3.25" shapeId="6" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="13"/>
-    <Shape name="hose_main_component4" translation="0 0 -5.1" shapeId="7" dynamic="true" compound="true" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="14">
-      <TransformGroup name="grabNode2" translation="3.67394e-16 2.6077e-08 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="15"/>
-      <TransformGroup name="target" translation="3.67394e-16 2.6077e-08 0.03" rotation="0 180 0" collision="false" clipDistance="300" nodeId="16"/>
-      <Shape name="coupling_normal_end" translation="2.98023e-08 0 0" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="17"/>
-      <TransformGroup name="componentJoint3" translation="3.67394e-16 2.6077e-08 1.225" collision="false" clipDistance="300" nodeId="18"/>
-      <TransformGroup name="raycastNode2" translation="3.67394e-16 2.6077e-08 0" collision="false" clipDistance="300" nodeId="19"/>
+    <Shape name="hose_main_component3" translation="0 -0 -3.25" shapeId="6" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="13"/>
+    <Shape name="hose_main_component4" translation="0 0 -5.1" shapeId="7" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="14">
+      <TransformGroup name="grabNode2" translation="0 0 0" rotation="0 180 0" collision="false" clipDistance="300" nodeId="15"/>
+      <TransformGroup name="target" translation="0 0 0.03" rotation="0 180 0" collision="false" clipDistance="300" nodeId="16"/>
+      <Shape name="coupling_normal_end" translation="0 0 0" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="17"/>
+      <TransformGroup name="componentJoint3" translation="0 0 1.225" collision="false" clipDistance="300" nodeId="18"/>
+      <TransformGroup name="raycastNode2" translation="0 0 0" collision="false" clipDistance="300" nodeId="19"/>
     </Shape>
   </Scene>
 
