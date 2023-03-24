@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
+--
 -- ManureSystemCouplingStrategy
-----------------------------------------------------------------------------------------------------
--- Purpose: Normal connector strategy, to allow pumping with a hose.
+--
+-- Author: Stijn Wopereis
+-- Description: Normal connector strategy, to allow pumping with a hose.
+-- Name: ManureSystemCouplingStrategy
+-- Hide: yes
 --
 -- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystemCouplingStrategy
 ManureSystemCouplingStrategy = {}
@@ -26,13 +28,12 @@ end
 ---Creates a new instance of ManureSystemCouplingStrategy.
 ---@return ManureSystemCouplingStrategy
 function ManureSystemCouplingStrategy.new(object, type, customMt)
-    local instance = {}
-    setmetatable(instance, customMt or ManureSystemCouplingStrategy_mt)
+    local self = setmetatable({}, customMt or ManureSystemCouplingStrategy_mt)
 
-    instance.object = object
-    instance.connectorType = type
+    self.object = object
+    self.connectorType = type
 
-    return instance
+    return self
 end
 
 function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)

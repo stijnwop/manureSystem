@@ -1,3 +1,13 @@
+--
+-- ManureSystemConnectors
+--
+-- Author: Stijn Wopereis
+-- Description: Connects different strategies together in order to allow pumping.
+-- Name: ManureSystemConnectors
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
+
 ---@class ManureSystemConnectors
 ManureSystemConnectors = {}
 

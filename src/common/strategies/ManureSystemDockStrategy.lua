@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
+--
 -- ManureSystemDockStrategy
-----------------------------------------------------------------------------------------------------
--- Purpose: Dock connector strategy, to allow pumping with a docking arm.
+--
+-- Author: Stijn Wopereis
+-- Description: Dock connector strategy, to allow pumping with a docking arm.
+-- Name: ManureSystemDockStrategy
+-- Hide: yes
 --
 -- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystemDockStrategy
 ManureSystemDockStrategy = {}
@@ -21,19 +23,17 @@ ManureSystemDockStrategy.MIN_REFERENCES = 1
 local ManureSystemDockStrategy_mt = Class(ManureSystemDockStrategy)
 
 function ManureSystemDockStrategy.new(object, customMt)
-    local instance = {}
+    local self = setmetatable({}, customMt or ManureSystemDockStrategy_mt)
 
-    instance.object = object
-    instance.dockingArmObjects = {}
-    instance.dockingArmObjectsDelayedDelete = {}
+    self.object = object
+    self.dockingArmObjects = {}
+    self.dockingArmObjectsDelayedDelete = {}
 
     if object.isClient then
-        instance.lastInRangeConnectorIds = {}
+        self.lastInRangeConnectorIds = {}
     end
 
-    setmetatable(instance, customMt or ManureSystemDockStrategy_mt)
-
-    return instance
+    return self
 end
 
 function ManureSystemDockStrategy.registerDockNodeXMLPaths(schema, baseName)
@@ -257,7 +257,8 @@ end
 
 function ManureSystemDockStrategy:load(connector, xmlFile, key)
     if not connector.hasSharedSet then
-        local deformationNode = ManureSystemXMLUtil.getOrCreateNode(self.object, xmlFile, key .. ".funnel")
+        local deformationNode = XMLExtensions.ensureExistingNode(self.object, xmlFile, key .. ".funnel")
+
         if deformationNode ~= nil then
             connector.deformationNode = deformationNode
             connector.deformationYOffset = xmlFile:getValue(key .. ".funnel#deformationYOffset", ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)
@@ -280,7 +281,8 @@ function ManureSystemDockStrategy:load(connector, xmlFile, key)
         local funnelLinkNode = xmlFile:getValue(key .. ".trigger#linkNode", "0>", self.object.components, self.object.i3dMappings)
 
         if funnelLinkNode ~= nil then
-            ManureSystemUtil.loadNodePositionAndRotation(xmlFile, key .. ".trigger", funnelTrigger)
+            NodeExtensions.setVectorByXML(funnelTrigger, xmlFile, key .. ".trigger#position", NodeExtensions.setPosition)
+            NodeExtensions.setVectorByXML(funnelTrigger, xmlFile, key .. ".trigger#rotation", NodeExtensions.setRotation)
 
             link(funnelLinkNode, funnelTrigger)
             connector.trigger = funnelTrigger
