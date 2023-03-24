@@ -23,6 +23,7 @@ function ManureSystemPlaceableSilo.registerOverwrittenFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFreeCapacity", ManureSystemPlaceableSilo.getFillUnitFreeCapacity)
     SpecializationUtil.registerFunction(placeableType, "getFillArmFillUnitIndex", ManureSystemPlaceableSilo.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(placeableType, "addFillUnitFillLevel", ManureSystemPlaceableSilo.addFillUnitFillLevel)
+    SpecializationUtil.registerFunction(placeableType, "isUnderFillPlane", ManureSystemPlaceableSilo.isUnderFillPlane)
 end
 
 function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
@@ -38,6 +39,7 @@ end
 function ManureSystemPlaceableSilo.registerXMLPaths(schema, basePath)
     schema:setXMLSpecializationType("ManureSystemPlaceableSilo")
     ManureSystemConnectors.registerXMLPaths(schema, "placeable")
+    schema:register(XMLValueType.FLOAT, "placeable.manureSystemFillArmReceiver#fillArmOffset", "Offset for the fillarm interaction")
     schema:setXMLSpecializationType()
 end
 
@@ -54,6 +56,7 @@ function ManureSystemPlaceableSilo:onLoad(savegame)
         spec.connectors:delete()
     end
 
+    spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
     if not spec.connectors:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onFinalizePlacement", ManureSystemPlaceableSilo)
         SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPlaceableSilo)
@@ -199,4 +202,29 @@ function ManureSystemPlaceableSilo:addFillUnitFillLevel(farmId, fillUnitIndex, f
     end
 
     return movedFillLevel
+end
+
+function ManureSystemPlaceableSilo:isUnderFillPlane(x, y, z)
+    local storage = getStorage(self)
+
+    local node
+    if storage.dynamicFillPlane ~= nil then
+        node = storage.dynamicFillPlane.node
+    else
+        local fillType = self:getFillUnitFillType()
+        local fillPlane = storage.fillPlanes[fillType]
+        if fillPlane ~= nil then
+            node = fillPlane.node
+        end
+    end
+
+    if node == nil then
+        return true
+    end
+
+    local spec = self.spec_manureSystemPlaceableSilo
+    local _, py, _ = getWorldTranslation(node)
+    py = py + spec.fillArmOffset
+
+    return py >= y
 end

@@ -220,7 +220,10 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
             if collision ~= 0 then
                 setIsCompoundChild(collision, true)
                 addToPhysics(collision)
-                ManureSystemUtil.loadNodePositionAndRotation(xmlFile, baseKey .. ".collision", collision)
+
+                NodeExtensions.setVectorByXML(collision, xmlFile, baseKey .. ".collision#position", NodeExtensions.setPosition)
+                NodeExtensions.setVectorByXML(collision, xmlFile, baseKey .. ".collision#rotation", NodeExtensions.setRotation)
+
                 fillArm.collision = collision
                 link(node, fillArm.collision)
             end
