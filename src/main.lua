@@ -26,6 +26,8 @@ local sourceFiles = {
     "src/vehicles/events/ManureSystemPumpDirectionEvent.lua",
     "src/vehicles/events/ManureSystemPumpIsRunningEvent.lua",
     "src/vehicles/events/ManureSystemPumpIsAllowedEvent.lua",
+    --Common
+    "src/common/ManureSystemConnectors.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",
@@ -35,6 +37,9 @@ local sourceFiles = {
     "src/hose/events/HoseAttachDetachEvent.lua",
     "src/hose/events/HoseGrabDropEvent.lua",
     "src/hose/HosePlayer.lua",
+    --Utilities
+    "src/utilities/NodeExtensions.lua",
+    "src/utilities/XMLExtensions.lua",
     --Utils
     "src/utils/ManureSystemUtil.lua",
     "src/utils/ManureSystemXMLUtil.lua",
@@ -48,7 +53,7 @@ end
 
 ---Returns true when the current mod env is loaded, false otherwise.
 local function isLoaded()
-    return modEnvironment ~= nil
+    return modEnvironment ~= nil and g_modIsLoaded[modName]
 end
 
 ---Load the mod.

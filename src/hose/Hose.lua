@@ -518,13 +518,10 @@ function Hose:findConnector(id)
 
     for _, object in ipairs(g_currentMission.manureSystem:getConnectorObjects()) do
         if object ~= self then
-            local inRangeNode = object.components[1].node
-            if object.getConnectorInRangeNode ~= nil then
-                inRangeNode = object:getConnectorInRangeNode()
-            end
-
+            local inRangeNode = object:getConnectorInRangeNode()
             local vx, _, vz = getWorldTranslation(inRangeNode)
             local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
+
             if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
                 or object:isa(Placeable) or object:isa(Bga) then
 
@@ -895,7 +892,7 @@ function Hose:connectGrabNode(grabNode, connector, vehicle)
         setRotation(jointTransform, 0, 0, 0)
 
         local desc = {}
-        desc.actor1 = vehicle.rootNode
+        desc.actor1 = connector.componentNode
         desc.actor2 = componentNode
         desc.transform = jointTransform
 
@@ -1042,7 +1039,7 @@ function Hose:parkHose(connector, vehicle)
             setTranslation(jointTransform, 0, 0, length / grabNodesDivision * (id - 1))
 
             local desc = {}
-            desc.actor1 = vehicle.rootNode
+            desc.actor1 = connector.componentNode
             desc.actor2 = component.node
             desc.transform = jointTransform
             grabNode.jointTransform = jointTransform
@@ -1064,7 +1061,7 @@ function Hose:parkHose(connector, vehicle)
 
         for i, component in ipairs(self.components) do
             if not excludedComponentIds[i] then
-                setPairCollision(component.node, vehicle.rootNode, false)
+                setPairCollision(component.node, connector.componentNode, false)
             end
         end
     end
@@ -1156,14 +1153,14 @@ function Hose:unparkHose(connector, vehicle)
 
         for i, component in ipairs(self.components) do
             if not excludedComponentIds[i] then
-                setPairCollision(component.node, vehicle.rootNode, true)
+                setPairCollision(component.node, connector.componentNode, true)
             end
         end
     end
 end
 
 function Hose:constructPlayerJoint(jointDesc, mass)
-    local constructor = JointConstructor:new()
+    local constructor = JointConstructor.new()
     constructor:setActors(jointDesc.actor1, jointDesc.actor2)
     constructor:setEnableCollision(false)
 
@@ -1220,7 +1217,7 @@ function Hose:constructConnectorJoint(jointDesc)
         return
     end
 
-    local constructor = JointConstructor:new()
+    local constructor = JointConstructor.new()
 
     constructor:setActors(jointDesc.actor1, jointDesc.actor2)
     constructor:setJointTransforms(jointDesc.transform, jointDesc.transform)
