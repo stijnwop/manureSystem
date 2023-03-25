@@ -1,55 +1,57 @@
-<vehicle xml="data/vehicles/vervaet/hydroTrikeXL/hydroTrikeXL.xml">
-    <manureSystemFillArm>
-        <entry type="bool" key="#createNode" value="true"/>
-        <entry type="string" key="#linkNode" value="manureArmPart"/>
-        <entry type="float" key="#fillYOffset" value="-0.5"/>
-        <entry type="string" key="#position" value="-0.5 -3.612 0.193"/>
-        <entry type="string" key="#rotation" value="-90 0 0"/>
-    </manureSystemFillArm>
-
-    <manureSystemPumpMotor>
-        <entry type="float" key="#litersPerSecond" value="197"/>
-    </manureSystemPumpMotor>
-
-    <manureSystemConnectors>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
+<data>
+    <vehicle xml="data/vehicles/vervaet/hydroTrikeXL/hydroTrikeXL.xml">
+        <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
-            <entry type="int" key="#fillUnitIndex" value="3"/>
-            <entry type="string" key="#position" value="-0.777 0.836 3.003"/>
-            <entry type="string" key="#rotation" value="0 -50 -5"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="int" key="#fillUnitIndex" value="3"/>
-            <entry type="string" key="#position" value="0.777 0.836 3.003"/>
-            <entry type="string" key="#rotation" value="0 50 -5"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#isParkPlace" value="true"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="-1.45 2.2 -3.53"/>
-            <entry type="string" key="#rotation" value="0 0 0"/>
+            <entry type="string" key="#linkNode" value="manureArmPart"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="-0.5 -3.612 0.193"/>
+            <entry type="string" key="#rotation" value="-90 0 0"/>
+        </manureSystemFillArm>
 
-            <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
-            <entry type="string" key=".parkPlaces.parkPlace(0)#endTransOffset" value="0 -0.295 0"/>
-            <entry type="string" key=".parkPlaces.parkPlace(0)#endRotOffset" value="-20 0 0"/>
-            <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
-        </connector>
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="197"/>
+        </manureSystemPumpMotor>
 
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#isParkPlace" value="true"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="1.45 2.2 -3.53"/>
-            <entry type="string" key="#rotation" value="0 0 0"/>
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="int" key="#fillUnitIndex" value="3"/>
+                <entry type="string" key="#position" value="-0.777 0.836 3.003"/>
+                <entry type="string" key="#rotation" value="0 -50 -5"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="int" key="#fillUnitIndex" value="3"/>
+                <entry type="string" key="#position" value="0.777 0.836 3.003"/>
+                <entry type="string" key="#rotation" value="0 50 -5"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.45 2.2 -3.53"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
 
-            <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
-            <entry type="string" key=".parkPlaces.parkPlace(0)#endTransOffset" value="0 -0.295 0"/>
-            <entry type="string" key=".parkPlaces.parkPlace(0)#endRotOffset" value="-20 0 0"/>
-            <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
-        </connector>
-    </manureSystemConnectors>
-</vehicle>
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+                <entry type="string" key=".parkPlaces.parkPlace(0)#endTransOffset" value="0 -0.295 0"/>
+                <entry type="string" key=".parkPlaces.parkPlace(0)#endRotOffset" value="-20 0 0"/>
+                <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.45 2.2 -3.53"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+                <entry type="string" key=".parkPlaces.parkPlace(0)#endTransOffset" value="0 -0.295 0"/>
+                <entry type="string" key=".parkPlaces.parkPlace(0)#endRotOffset" value="-20 0 0"/>
+                <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

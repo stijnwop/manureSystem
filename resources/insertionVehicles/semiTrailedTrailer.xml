@@ -1,21 +1,23 @@
-<vehicle xml="vehicles/kaweco/semiTrailedTrailer/semiTrailedTrailer.xml">
-    <manureSystemPumpMotor>
-        <entry type="float" key="#litersPerSecond" value="200"/>
-        <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
-    </manureSystemPumpMotor>
+<data>
+    <vehicle xml="vehicles/kaweco/semiTrailedTrailer/semiTrailedTrailer.xml">
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="200"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
+        </manureSystemPumpMotor>
 
-    <manureSystemConnectors>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="1.15 0.35 0.2"/>
-            <entry type="string" key="#rotation" value="0 90 0"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="-1.15 0.35 0.2"/>
-            <entry type="string" key="#rotation" value="0 -90 0"/>
-        </connector>
-    </manureSystemConnectors>
-</vehicle>
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.15 0.35 0.2"/>
+                <entry type="string" key="#rotation" value="0 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.15 0.35 0.2"/>
+                <entry type="string" key="#rotation" value="0 -90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

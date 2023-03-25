@@ -1,25 +1,27 @@
-<vehicle xml="vehicles/kaweco/saddleTracTanker/saddleTracTankerFront.xml">
-    <manureSystemFillArm>
-        <entry type="bool" key="#createNode" value="true"/>
-        <entry type="string" key="#linkNode" value="arm03"/>
-        <entry type="float" key="#fillYOffset" value="-0.5"/>
-        <entry type="string" key="#position" value="0.25 -2.848 -0.188"/>
-        <entry type="string" key="#rotation" value="0 -90 0"/>
-    </manureSystemFillArm>
-
-    <manureSystemPumpMotor>
-        <entry type="bool" key="#isStandalone" value="true"/>
-        <entry type="bool" key="#useStandalonePumpText" value="false"/>
-        <entry type="float" key="#litersPerSecond" value="197"/>
-        <entry type="float" key="#toReachMaxEfficiencyTime" value="1150"/>
-    </manureSystemPumpMotor>
-
-    <manureSystemConnectors>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
+<data>
+    <vehicle xml="vehicles/kaweco/saddleTracTanker/saddleTracTankerFront.xml">
+        <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="0.4725 0.25 0.6"/>
-            <entry type="string" key="#rotation" value="30 0 0"/>
-        </connector>
-    </manureSystemConnectors>
-</vehicle>
+            <entry type="string" key="#linkNode" value="arm03"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="0.25 -2.848 -0.188"/>
+            <entry type="string" key="#rotation" value="0 -90 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemPumpMotor>
+            <entry type="bool" key="#isStandalone" value="true"/>
+            <entry type="bool" key="#useStandalonePumpText" value="false"/>
+            <entry type="float" key="#litersPerSecond" value="197"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1150"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.4725 0.25 0.6"/>
+                <entry type="string" key="#rotation" value="30 0 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

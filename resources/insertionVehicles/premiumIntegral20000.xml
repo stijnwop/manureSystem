@@ -1,24 +1,26 @@
-<vehicle xml="data/vehicles/veenhuis/premiumIntegral20000/premiumIntegral20000.xml">
-    <manureSystemPumpMotor>
-        <entry type="float" key="#litersPerSecond" value="250"/>
-        <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
-    </manureSystemPumpMotor>
+<data>
+    <vehicle xml="data/vehicles/veenhuis/premiumIntegral20000/premiumIntegral20000.xml">
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="250"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
+        </manureSystemPumpMotor>
 
-    <manureSystemFillArm>
-        <entry type="bool" key="#createNode" value="true"/>
-        <entry type="string" key="#linkNode" value="0>0|4|0|0|0|0|0|3"/>
-        <entry type="float" key="#fillYOffset" value="-0.2"/>
-        <entry type="string" key="#position" value="0 0 -3.2"/>
-        <entry type="string" key="#rotation" value="0 0 0"/>
-    </manureSystemFillArm>
-
-
-    <manureSystemConnectors>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
+        <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="1.15 0.35 0.2"/>
-            <entry type="string" key="#rotation" value="0 90 0"/>
-        </connector>
-    </manureSystemConnectors>
-</vehicle>
+            <entry type="string" key="#linkNode" value="0>0|4|0|0|0|0|0|3"/>
+            <entry type="float" key="#fillYOffset" value="-0.2"/>
+            <entry type="string" key="#position" value="0 0 -3.2"/>
+            <entry type="string" key="#rotation" value="0 0 0"/>
+        </manureSystemFillArm>
+
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.15 0.35 0.2"/>
+                <entry type="string" key="#rotation" value="0 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

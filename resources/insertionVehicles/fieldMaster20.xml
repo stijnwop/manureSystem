@@ -1,43 +1,45 @@
-﻿<vehicle xml="data/vehicles/briri/fieldMaster20/fieldMaster20.xml">
+﻿<data>
+    <vehicle xml="data/vehicles/briri/fieldMaster20/fieldMaster20.xml">
 
-    <manureSystemPumpMotor>
-        <entry type="float" key="#litersPerSecond" value="250"/>
-        <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
-    </manureSystemPumpMotor>
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="250"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
+        </manureSystemPumpMotor>
 
-    <manureSystemFillArm>
-        <entry type="bool" key="#createNode" value="true"/>
-        <entry type="bool" key="#needsDockingCollision" value="true"/>
-        <entry type="string" key="#linkNode" value="0>0|4|1|0|5|0"/>
-        <entry type="float" key="#fillYOffset" value="-0.4"/>
-        <entry type="string" key="#position" value="-0.888 0.7 3.065"/>
-        <entry type="string" key="#rotation" value="0 -90 0"/>
-    </manureSystemFillArm>
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="bool" key="#needsDockingCollision" value="true"/>
+            <entry type="string" key="#linkNode" value="0>0|4|1|0|5|0"/>
+            <entry type="float" key="#fillYOffset" value="-0.4"/>
+            <entry type="string" key="#position" value="-0.888 0.7 3.065"/>
+            <entry type="string" key="#rotation" value="0 -90 0"/>
+        </manureSystemFillArm>
 
-    <manureSystemConnectors>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="1.125 0.922 2.345"/>
-            <entry type="string" key="#rotation" value="15 90 0"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="1.125 0.922 1.845"/>
-            <entry type="string" key="#rotation" value="15 90 0"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="-1.085 0.89 2.49"/>
-            <entry type="string" key="#rotation" value="17.5 -90 0"/>
-        </connector>
-        <connector>
-            <entry type="string" key="#type" value="COUPLING"/>
-            <entry type="bool" key="#createNode" value="true"/>
-            <entry type="string" key="#position" value="-1.085 0.89 2.49"/>
-            <entry type="string" key="#rotation" value="-1.316 0.875 1.42"/>
-        </connector>
-    </manureSystemConnectors>
-</vehicle>
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.125 0.922 2.345"/>
+                <entry type="string" key="#rotation" value="15 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.125 0.922 1.845"/>
+                <entry type="string" key="#rotation" value="15 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.085 0.89 2.49"/>
+                <entry type="string" key="#rotation" value="17.5 -90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.085 0.89 2.49"/>
+                <entry type="string" key="#rotation" value="-1.316 0.875 1.42"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>
