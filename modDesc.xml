@@ -122,7 +122,7 @@ Changelog:
         <storeItem xmlFilename="resources/hoses/fertilizer/fertilizerHose.xml"/>
     </storeItems>
 
-    <l10n filenamePrefix="translations/translation"/>
+    <l10n filenamePrefix="i18n/locale"/>
 
     <actions>
         <action name="MS_ATTACH_HOSE" axisType="HALF"/>
