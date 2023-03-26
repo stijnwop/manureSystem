@@ -22,10 +22,10 @@ How to download the `ManureSystemRegistry.lua` file:
 
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
-## Adding the ManureSystemVehicle specialization
+## Adding the ManureSystemRegistry specialization
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#what-do-i-need).
 
-> **TIP: when you don't plan to add extra specializations besides the ManureSystemRegistry and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
+> **TIP: when you don't plan to add extra specializations besides the ManureSystemRegistry and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemRegistry.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
 
 ### Step 1
 Open the `modDesc.xml` file located in your mod directory.
@@ -37,11 +37,11 @@ In order to load the specialization you will need to add the specializations ent
 </specializations>
 ```
 
-The filename must be the exact location of the `ManureSystemVehicle.lua` file you downloaded earlier. In this case it's loaded from the root directory of the mod.
+The filename must be the exact location of the `ManureSystemRegistry.lua` file you downloaded earlier. In this case it's loaded from the root directory of the mod.
 
 If a similar entry already exists you can just add the specialization entry to that.
 ```xml
-<specialization name="manureSystemVehicle" className="ManureSystemVehicle" filename="ManureSystemVehicle.lua"/>
+<specialization name="manureSystemRegistry" className="ManureSystemRegistry" filename="ManureSystemRegistry.lua"/>
 ```
 ### Step 2
 Now we need to add the newly loaded spec to a vehicle type.
