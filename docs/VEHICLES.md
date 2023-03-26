@@ -7,15 +7,15 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
-- GIANTS Editor 8.2.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
+- GIANTS Editor 9.3.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
 - Internet connection for downloading sources from GitHub
 
 For vehicles you also need an extra script in order to let the `ManureSystem` detect your mod.
-You will need to get a copy of the latest `ManureSystemVehicle.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemVehicle.lua).
+You will need to get a copy of the latest `ManureSystemRegistry.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemRegistry.lua).
 
-How to download the `ManureSystemVehicle.lua` file:
+How to download the `ManureSystemRegistry.lua` file:
 1. Go to the `docs` folder located in the root directory.
-2. Click on the `ManureSystemVehicle.lua` file.
+2. Click on the `ManureSystemRegistry.lua` file.
 3. A window will open with the script file.
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
@@ -25,7 +25,7 @@ How to download the `ManureSystemVehicle.lua` file:
 ## Adding the ManureSystemVehicle specialization
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#what-do-i-need).
 
-> **TIP: when you don't plan to add extra specializations besides the ManureSystemVehicle and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
+> **TIP: when you don't plan to add extra specializations besides the ManureSystemRegistry and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemVehicle.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
 
 ### Step 1
 Open the `modDesc.xml` file located in your mod directory.
@@ -33,7 +33,7 @@ Open the `modDesc.xml` file located in your mod directory.
 In order to load the specialization you will need to add the specializations entry to the modDesc.
 ```xml
 <specializations>
-    <specialization name="manureSystemVehicle" className="ManureSystemVehicle" filename="ManureSystemVehicle.lua"/>
+    <specialization name="manureSystemRegistry" className="ManureSystemRegistry" filename="ManureSystemRegistry.lua"/>
 </specializations>
 ```
 
@@ -53,7 +53,7 @@ Here we add the newly registered spec name `manureSystemVehicle`.
 ```xml
 <vehicleTypes>
     <type name="myNewBarrel" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
-        <specialization name="manureSystemVehicle"/>
+        <specialization name="manureSystemRegistry"/>
     </type>
 </vehicleTypes>
 ```
@@ -76,7 +76,7 @@ We're going to rename the type `manureBarrel` to our newly added vehicle type na
 > **Note: if your vehicle uses vehicleTypeConfigurations you also need to change the types there!**
 
 #### Step 4
-Awesome, we added the `ManureSystemVehicle` specialization to your mod!
+Awesome, we added the `ManureSystemRegistry` specialization to your mod!
 
 ## Determine what to add
 
