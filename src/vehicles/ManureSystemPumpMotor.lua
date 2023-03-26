@@ -34,6 +34,7 @@ ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE = 3
 ManureSystemPumpMotor.MODE_NONE = 0
 ManureSystemPumpMotor.MODE_CONNECTOR = 1
 ManureSystemPumpMotor.MODE_FILLARM = 2
+ManureSystemPumpMotor.MODE_FILLARM_DOCK = 3
 
 function ManureSystemPumpMotor.initSpecialization()
     local schema = Vehicle.xmlSchema

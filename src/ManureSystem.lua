@@ -58,7 +58,7 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
     self.modName = modName
 
     --Debug flags
-    self.debug = false
+    self.debug = true
     self.debugShowConnectors = false
 
     self.mission = mission
@@ -266,23 +266,23 @@ function ManureSystem.installVehicleSpecializations(vehicleTypeManager, speciali
             or ManureSystem.hasManureSystemRegistry(typeName, specializationManager) then
             if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
-                Logging.info("Adding ManureSystemPumpMotor to: '" .. typeName)
+                Logging.info(("Adding ManureSystemPumpMotor to: '%s'"):format(typeName))
             end
 
             if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations) then
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
-                Logging.info("Adding ManureSystemConnector to: '" .. typeName)
+                Logging.info(("Adding ManureSystemConnector to: '%s'"):format(typeName))
             end
 
             if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations) then
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
-                Logging.info("Adding ManureSystemFillArm to: '" .. typeName)
+                Logging.info(("Adding ManureSystemFillArm to: '%s'"):format(typeName))
             end
 
             if not SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, typeEntry.specializations)
                 and SpecializationUtil.hasSpecialization(FillVolume, typeEntry.specializations) then
                 vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
-                Logging.info("Adding ManureSystemFillArmReceiver to: '" .. typeName)
+                Logging.info(("Adding ManureSystemFillArmReceiver to: '%s'"):format(typeName))
             end
         end
     end
@@ -292,7 +292,7 @@ function ManureSystem.installPlaceableSpecializations(typeManager, specializatio
     for typeName, typeEntry in pairs(typeManager:getTypes()) do
         if SpecializationUtil.hasSpecialization(PlaceableSilo, typeEntry.specializations) then
             typeManager:addSpecialization(typeName, modName .. ".manureSystemPlaceableSilo")
-            Logging.info("Adding ManureSystemPlaceableSilo to: '" .. typeName)
+            Logging.info(("Adding ManureSystemPlaceableSilo to: '%s'"):format(typeName))
         end
     end
 end

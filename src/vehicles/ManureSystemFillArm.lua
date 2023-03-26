@@ -38,6 +38,7 @@ function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
     schema:register(XMLValueType.BOOL, baseName .. "#needsDockingCollision", "Connector type")
     schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".collision#position", "The position of the collision")
     schema:register(XMLValueType.VECTOR_ROT, baseName .. ".collision#rotation", "The rotation of the collision")
+    EffectManager.registerEffectXMLPaths(schema, baseName .. ".effects")
 end
 
 function ManureSystemFillArm.registerFunctions(vehicleType)
@@ -113,6 +114,7 @@ function ManureSystemFillArm:onDelete()
     local spec = self.spec_manureSystemFillArm
 
     for _, fillArm in ipairs(spec.fillArms) do
+        g_effectManager:deleteEffects(fillArm.effects)
         if fillArm.collision ~= nil then
             delete(fillArm.collision)
         end
@@ -141,6 +143,13 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 end
 
                 local object = spec.lastRaycastObject
+                local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
+                local pumpIsRunning = self:isPumpRunning()
+
+                if object == nil or not pumpIsRunning then
+                    g_effectManager:stopEffects(fillArm.effects)
+                end
+
                 if object ~= nil then
                     if fillArm.limitedFillDirection ~= nil then
                         --When the limited direction is present, but not set, we force it.
@@ -150,7 +159,13 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     end
 
                     if self:isPumpingIn() then
+                        g_effectManager:stopEffects(fillArm.effects)
                         self.spec_manureSystemPumpMotor.pumpHasContact = object:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
+                    else
+                        if pumpIsRunning and isFillArmPumpMode then
+                            g_effectManager:setFillType(fillArm.effects, FillType.LIQUIDMANURE)
+                            g_effectManager:startEffects(fillArm.effects)
+                        end
                     end
 
                     local objectFillUnitIndex = object:getFillArmFillUnitIndex()
@@ -166,7 +181,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                         end
                     end
                 else
-                    if self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM then
+                    if isFillArmPumpMode then
                         self:setPumpTargetObject(nil, nil)
                     end
                 end
@@ -227,6 +242,10 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
                 fillArm.collision = collision
                 link(node, fillArm.collision)
             end
+        end
+
+        if self.isClient then
+            fillArm.effects = g_effectManager:loadEffect(self.xmlFile, baseKey .. ".effects", self.components, self, self.i3dMappings)
         end
 
         return true

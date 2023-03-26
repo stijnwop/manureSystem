@@ -99,7 +99,7 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     end
 
                     dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
-                    dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM)
+                    dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM_DOCK)
                     if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
                         local fillType = fillObject:getFillUnitFillType(fillUnitIndex)
                         local rootVehicle = dockingArmObject:getRootVehicle()
@@ -116,7 +116,7 @@ function ManureSystemDockStrategy:onUpdate(dt)
                     fillArm.isRaycastAllowed = false
                 end
             elseif dockingArmObject:getPumpTargetObject() ~= nil then
-                if dockingArmObject:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM then
+                if dockingArmObject:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM_DOCK then
                     dockingArmObject:setPumpTargetObject(nil, nil)
                 end
             end
