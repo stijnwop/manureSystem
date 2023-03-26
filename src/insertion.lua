@@ -159,6 +159,7 @@ local function loadInsertion(directory, xmlRoot)
                 entry.xml = xmlFile:getString(xmlRootKey .. "#xml")
 
                 entry.mapping = {}
+                loadMapping(xmlFile, xmlRootKey .. ".manureSystem", entry.mapping)
                 loadMapping(xmlFile, xmlRootKey .. ".manureSystemFillArm", entry.mapping)
                 loadMapping(xmlFile, xmlRootKey .. ".manureSystemFillArmReceiver", entry.mapping)
                 loadMapping(xmlFile, xmlRootKey .. ".manureSystemPumpMotor", entry.mapping)

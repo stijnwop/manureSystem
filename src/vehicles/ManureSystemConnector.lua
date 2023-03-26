@@ -50,12 +50,17 @@ function ManureSystemConnector:onLoad(savegame)
     self.spec_manureSystemConnector = self[("spec_%s.manureSystemConnector"):format(ManureSystemConnector.MOD_NAME)]
 
     local spec = self.spec_manureSystemConnector
-    spec.connectors = ManureSystemConnectors.new(self, g_currentMission.manureSystem)
-    if not spec.connectors:loadFromVehicleXML(self.xmlFile) then
-        spec.connectors:delete()
+
+    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasConnectors") or false
+
+    if spec.isActive then
+        spec.connectors = ManureSystemConnectors.new(self, g_currentMission.manureSystem)
+        if not spec.connectors:loadFromVehicleXML(self.xmlFile) then
+            spec.connectors:delete()
+        end
     end
 
-    if not spec.connectors:hasConnectors() then
+    if not spec.isActive or not spec.connectors:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemConnector)
         SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemConnector)
         SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemConnector)

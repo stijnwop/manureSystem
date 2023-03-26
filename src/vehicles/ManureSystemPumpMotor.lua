@@ -119,6 +119,8 @@ function ManureSystemPumpMotor:onLoad(savegame)
     self.spec_manureSystemPumpMotor = self[("spec_%s.manureSystemPumpMotor"):format(ManureSystemPumpMotor.MOD_NAME)]
     local spec = self.spec_manureSystemPumpMotor
 
+    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasPumpMotor") or false
+
     spec.pumpIsRunning = false
     spec.pumpHasLoad = true
     spec.pumpHasContact = true
@@ -172,8 +174,18 @@ function ManureSystemPumpMotor:onLoad(savegame)
     spec.sourceFillUnitIndex = nil
     spec.sourceIsWater = false
 
-    if SpecializationUtil.hasSpecialization(Dischargeable, self.specializations) then
-        ManureSystemPumpMotor.disableDischargeable(self)
+    if not spec.isActive then
+        SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onReadUpdateStream", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onWriteUpdateStream", ManureSystemPumpMotor)
+        SpecializationUtil.removeEventListener(self, "onRegisterActionEvents", ManureSystemPumpMotor)
+    else
+        if SpecializationUtil.hasSpecialization(Dischargeable, self.specializations) then
+            ManureSystemPumpMotor.disableDischargeable(self)
+        end
     end
 end
 

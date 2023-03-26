@@ -1,5 +1,11 @@
 <data>
     <vehicle xml="vehicles/kaweco/saddleTracTanker/saddleTracTankerFront.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
         <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
             <entry type="string" key="#linkNode" value="arm03"/>

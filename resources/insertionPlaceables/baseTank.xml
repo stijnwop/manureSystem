@@ -1,5 +1,9 @@
 <data>
     <placeable xml="data/placeables/lizard/liquidManureTank/baseTank/baseTank.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
         <manureSystemConnectors>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>

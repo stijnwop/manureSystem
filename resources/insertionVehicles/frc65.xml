@@ -1,5 +1,10 @@
 <data>
     <vehicle xml="data/vehicles/kotte/frc65/frc65.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
         <manureSystemFillArmReceiver>
             <entry type="int" key="#fillVolumeIndex" value="1"/>
         </manureSystemFillArmReceiver>

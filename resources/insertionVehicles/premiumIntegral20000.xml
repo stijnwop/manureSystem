@@ -1,5 +1,11 @@
 <data>
     <vehicle xml="data/vehicles/veenhuis/premiumIntegral20000/premiumIntegral20000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
         <manureSystemPumpMotor>
             <entry type="float" key="#litersPerSecond" value="250"/>
             <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>

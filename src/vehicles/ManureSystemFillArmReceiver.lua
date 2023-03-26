@@ -40,7 +40,8 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         return
     end
 
-    spec.isActive = self.xmlFile:hasProperty("vehicle.manureSystemFillArmReceiver")
+
+    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasFillArmReceiver") or false
     if not spec.isActive then
         return
     end

@@ -51,13 +51,22 @@ end
 function ManureSystemPlaceableSilo:onLoad(savegame)
     self.spec_manureSystemPlaceableSilo = self[("spec_%s.manureSystemPlaceableSilo"):format(ManureSystemPlaceableSilo.MOD_NAME)]
     local spec = self.spec_manureSystemPlaceableSilo
-    spec.connectors = ManureSystemConnectors.new(self, g_currentMission.manureSystem)
-    if not spec.connectors:loadFromPlaceableXML(self.xmlFile) then
-        spec.connectors:delete()
+
+    spec.hasConnectors = self.xmlFile:getBool("placeable.manureSystem#hasConnectors") or false
+    spec.hasFillArmReceiver = self.xmlFile:getBool("placeable.manureSystem#hasFillArmReceiver") or false
+    if spec.hasConnectors then
+        spec.connectors = ManureSystemConnectors.new(self, g_currentMission.manureSystem)
+        if not spec.connectors:loadFromPlaceableXML(self.xmlFile) then
+            spec.connectors:delete()
+        end
+
     end
 
-    spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
-    if not spec.connectors:hasConnectors() then
+    if spec.hasFillArmReceiver then
+        spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
+    end
+
+    if not spec.hasConnectors or not spec.connectors:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onFinalizePlacement", ManureSystemPlaceableSilo)
         SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPlaceableSilo)
         SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemPlaceableSilo)
@@ -121,7 +130,7 @@ end
 local function getStorage(self)
     local spec = self.spec_silo
 
-    --Todo: support multi storage?
+    --Todo: support multi storage? Seems to be not used for silos..
     for _, storage in ipairs(spec.storages) do
         return storage
     end

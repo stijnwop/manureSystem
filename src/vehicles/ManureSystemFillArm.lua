@@ -61,6 +61,8 @@ function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
 
+    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasFillArm") or false
+
     local configurationId = self.configurations["manureSystemFillArm"] or 1
     local baseKey = ("vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(%d)"):format(configurationId - 1)
     ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration", configurationId, self.components, self)
@@ -101,7 +103,7 @@ function ManureSystemFillArm:onLoad(savegame)
 
     spec.hasFillArm = #spec.fillArms ~= 0
 
-    if not spec.hasFillArm then
+    if not spec.isActive or not spec.hasFillArm then
         SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemFillArm)
     end
 end
@@ -138,12 +140,8 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
                 end
 
-                local r, g, b = 1, 0, 0
-
                 local object = spec.lastRaycastObject
                 if object ~= nil then
-                    r, g = 0, 1
-
                     if fillArm.limitedFillDirection ~= nil then
                         --When the limited direction is present, but not set, we force it.
                         if self:getPumpDirection() ~= fillArm.limitedFillDirection then
@@ -177,6 +175,8 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 self:setIsPumpSourceWater(isNearWater)
 
                 if g_currentMission.manureSystem.debug then
+                    local hasObject = object ~= nil
+                    local r, g, b = hasObject and 0 or 1, hasObject and 1 or 0, 0
                     local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
                     lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
                     lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)

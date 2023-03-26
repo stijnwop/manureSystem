@@ -1,5 +1,10 @@
 ﻿<data>
     <vehicle xml="data/vehicles/briri/fieldMaster20/fieldMaster20.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
 
         <manureSystemPumpMotor>
             <entry type="float" key="#litersPerSecond" value="250"/>

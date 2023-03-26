@@ -8,7 +8,7 @@
 --
 -- Copyright (c) Wopster, 2023
 
----@class pnh_overwrite
+---@class manureSystem_overwrite
 manureSystem_overwrite = {}
 
 ---@type table
