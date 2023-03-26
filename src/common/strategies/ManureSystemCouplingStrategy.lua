@@ -415,12 +415,11 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAttributes(xmlFile, 
         connector.node = connectorNode
     end
 
-    ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode)
+    SharedSet.setNodeMaterialColor(xmlFile, key, connectorNode)
 end
 
 function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, key, connector, connectorNode, connectorAnimationName, sharedConnector)
     if sharedConnector.hasAnimation then
-        log("HAS ANIMATION")
         local spec_animatedVehicle = self.object.spec_animatedVehicle
         if spec_animatedVehicle ~= nil then
             local animation = {}
@@ -457,6 +456,6 @@ function ManureSystemCouplingStrategy:loadFromSavegame(connector, xmlFile, key)
 end
 
 function ManureSystemCouplingStrategy:saveToSavegame(connector, xmlFile, key)
-    --Todo: register
+    --Todo: register in XML schema
     xmlFile:setValue(key .. "#hasOpenManureFlow", connector.isConnected and connector.hasOpenManureFlow)
 end

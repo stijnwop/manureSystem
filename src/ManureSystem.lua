@@ -7,6 +7,9 @@
 ----------------------------------------------------------------------------------------------------
 
 ---@class ManureSystem
+---@field connectorManager ManureSystemConnectorManager
+---@field fillArmManager ManureSystemFillArmManager
+---@field player HosePlayer
 ManureSystem = {}
 ManureSystem.VEHICLE_CLASSNAME = "Vehicle"
 

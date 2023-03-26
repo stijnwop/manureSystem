@@ -30,6 +30,7 @@ local sourceFiles = {
     "src/common/strategies/ManureSystemCouplingStrategy.lua",
     "src/common/strategies/ManureSystemDockStrategy.lua",
     "src/common/ManureSystemConnectors.lua",
+    "src/common/SharedSet.lua",
     --Placeables
     "src/placeables/ManureSystemAnimatedObjectExtension.lua",
     --Misc
@@ -42,8 +43,6 @@ local sourceFiles = {
     --Utilities
     "src/utilities/NodeExtensions.lua",
     "src/utilities/XMLExtensions.lua",
-    --Utils
-    "src/utils/ManureSystemUtil.lua",
     --Main
     "src/ManureSystem.lua",
     "src/overwrites.lua",

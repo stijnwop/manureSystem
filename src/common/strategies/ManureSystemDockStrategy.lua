@@ -311,11 +311,11 @@ function ManureSystemDockStrategy:loadSharedSetConnectorAttributes(xmlFile, key,
 
     local deformationNodeIndex = getUserAttribute(connectorNode, "deformationNode")
     if deformationNodeIndex ~= nil then
-        ManureSystemUtil.setSharedSetNodeMaterialColor(xmlFile, key, connectorNode, "funnelNode")
+        SharedSet.setNodeMaterialColor(xmlFile, key, connectorNode, "funnelNode")
 
-        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".pipe", connectorNode, "pipeNode")
-        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".flangeRound", connectorNode, "flangeRoundNode")
-        ManureSystemUtil.setSharedSetNodeVisibility(xmlFile, key .. ".flangeQuad", connectorNode, "flangeQuadNode")
+        SharedSet.setNodeVisibility(xmlFile, key .. ".pipe", connectorNode, "pipeNode")
+        SharedSet.setNodeVisibility(xmlFile, key .. ".flangeRound", connectorNode, "flangeRoundNode")
+        SharedSet.setNodeVisibility(xmlFile, key .. ".flangeQuad", connectorNode, "flangeQuadNode")
 
         connector.deformationNode = I3DUtil.indexToObject(connectorNode, deformationNodeIndex)
         connector.deformationYOffset = Utils.getNoNil(getUserAttribute(connectorNode, "deformationYOffset"), ManureSystemDockStrategy.DOCK_IN_RANGE_Y_OFFSET)

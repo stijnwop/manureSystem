@@ -9,6 +9,7 @@
 -- Copyright (c) Wopster, 2023
 
 ---@class ManureSystemConnectors
+---@field manureSystem ManureSystem
 ManureSystemConnectors = {}
 
 ---@type number
@@ -39,11 +40,8 @@ function ManureSystemConnectors:delete()
             end
 
             if connector.sharedSetLinkNode ~= nil then
-                -- Set place holder visibility.
-                if connector.placeHolderNode ~= nil then
-                    setVisibility(connector.placeHolderNode, true)
-                end
-
+                local set = self.manureSystem.connectorManager:getSharedSet(connector.setId)
+                set:undoSharedSet(self, connector)
                 delete(connector.sharedSetLinkNode)
             end
         end
@@ -235,7 +233,6 @@ function ManureSystemConnectors:loadFromXML(typeKey, xmlFile)
         local typeString = xmlFile:getValue(baseKey .. "#type", ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
         local type = self.manureSystem.connectorManager:getConnectorType(typeString)
 
-        log("Loading connector", typeString)
         if type == nil then
             Logging.xmlWarning(self.object.configFileName, "Invalid connector type %s", typeString)
             type = self.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
@@ -301,86 +298,15 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
     return true
 end
 
-function ManureSystemConnectors:loadSharedConnectorFromSet(connector, set, xmlFile, baseKey, xmlFileShared)
-    local sharedConnectorKey = xmlFile:getValue(baseKey .. "#type")
-    if sharedConnectorKey == nil then
-        return
-    end
-
-    local sharedConnector = set.connectors[sharedConnectorKey:upper()]
-    if sharedConnector == nil then
-        return
-    end
-
-    local strategy = self.connectorStrategies[connector.type]
-    local connectorNode = clone(sharedConnector.node, false, false, false)
-    if strategy ~= nil then
-        strategy:loadSharedSetConnectorAttributes(xmlFile, baseKey, connector, connectorNode, sharedConnector)
-        strategy:loadSharedSetConnectorAnimation(xmlFileShared, sharedConnector.connectorXMLKey, connector, connectorNode, "lockAnimationName", sharedConnector)
-    end
-
-    link(connector.sharedSetLinkNode, connectorNode)
-
-    NodeExtensions.setVectorByXML(connectorNode, xmlFile, baseKey .. "#position", NodeExtensions.setPosition)
-    NodeExtensions.setVectorByXML(connectorNode, xmlFile, baseKey .. "#rotation", NodeExtensions.setRotation)
-end
-
-function ManureSystemConnectors:loadSharedValveFromSet(connector, set, xmlFile, baseKey, xmlFileShared)
-    local sharedValveKey = xmlFile:getValue(baseKey .. ".valve#type")
-    if sharedValveKey == nil then
-        return
-    end
-
-    local sharedValve = set.valves[sharedValveKey:upper()]
-    if sharedValve == nil then
-        return
-    end
-
-    local strategy = self.connectorStrategies[connector.type]
-    local valveNode = clone(sharedValve.node, false, false, false)
-    link(connector.sharedSetLinkNode, valveNode)
-
-    NodeExtensions.setVectorByXML(valveNode, xmlFile, baseKey .. ".valve#position", NodeExtensions.setPosition)
-    NodeExtensions.setVectorByXML(valveNode, xmlFile, baseKey .. ".valve#rotation", NodeExtensions.setRotation)
-
-    local sharedHandleKey = xmlFile:getValue(baseKey .. ".handle#type")
-    if sharedHandleKey == nil then
-        return
-    end
-
-    local sharedHandle = sharedValve.handles[sharedHandleKey:upper()]
-    if sharedHandle == nil then
-        return
-    end
-
-    local handleNode = clone(sharedHandle.node, false, false, false)
-    if strategy ~= nil then
-        strategy:loadSharedSetConnectorAnimation(xmlFileShared, sharedHandle.handleXMLKey, connector, handleNode, "manureFlowAnimationName", sharedHandle)
-    end
-
-    link(valveNode, handleNode)
-    setTranslation(handleNode, unpack(sharedHandle.linkOffset))
-end
-
 function ManureSystemConnectors:loadSharedSetFromXML(xmlFile, baseKey, connector)
     connector.setId = xmlFile:getValue(baseKey .. "#id", 1)
     local linkNode = XMLExtensions.ensureExistingNode(self.object, xmlFile, baseKey)
     connector.sharedSetLinkNode = linkNode
 
-    local set = self.manureSystem.connectorManager:getConnectorSet(connector.setId)
+    local set = self.manureSystem.connectorManager:getSharedSet(connector.setId)
     if set ~= nil then
-        local placeHolderNode = xmlFile:getValue(baseKey .. "#placeholderNode", nil, self.object.components, self.object.i3dMappings)
-        if placeHolderNode ~= nil then
-            connector.placeHolderNode = placeHolderNode
-            setVisibility(connector.placeHolderNode, false)
-        end
-
-        local sharedXMLFile = XMLFile.load("sharedXMLFile", set.xmlFilename, ManureSystemConnectorManager.xmlSchema)
-        if sharedXMLFile ~= nil then
-            self:loadSharedConnectorFromSet(connector, set, xmlFile, baseKey .. ".connector", sharedXMLFile)
-            self:loadSharedValveFromSet(connector, set, xmlFile, baseKey, sharedXMLFile)
-            sharedXMLFile:delete()
-        end
+        local strategy = self.connectorStrategies[connector.type]
+        set:applySharedSet(self.object, connector, strategy, xmlFile, baseKey)
     else
         Logging.xmlError(self.object.configFileName, ("Shared connector set %s not found!"):format(connector.setId))
         return false
@@ -407,28 +333,6 @@ function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
     schema:register(XMLValueType.FLOAT, baseName .. "#inRangeDistance", "The distance needed for the hose being in range")
     schema:register(XMLValueType.BOOL, baseName .. "#isParkPlace", "Determines if the connector is a park place")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
-    ManureSystemConnectors.registerConnectorNodeSharedSetXMLPaths(schema, baseName .. ".sharedSet")
-end
-
-function ManureSystemConnectors.registerConnectorNodeSharedSetXMLPaths(schema, baseName)
-    XMLExtensions.registerXMLPaths(schema, baseName)
-
-    schema:register(XMLValueType.INT, baseName .. "#id", "The shared set id")
-    schema:register(XMLValueType.NODE_INDEX, baseName .. "#placeholderNode", "Visual placeholder node")
-
-    schema:register(XMLValueType.STRING, baseName .. ".connector#type", "The connector shared set type key")
-    schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".connector#position", "The connector position")
-    schema:register(XMLValueType.VECTOR_ROT, baseName .. ".connector#rotation", "The connector rotation")
-    schema:register(XMLValueType.COLOR, baseName .. ".connector#color", "The connector color")
-
-    schema:register(XMLValueType.BOOL, baseName .. ".connector.pipe", "Set the visibility of pipe")
-    schema:register(XMLValueType.BOOL, baseName .. ".connector.flangeRound", "Set the visibility of the round flange")
-    schema:register(XMLValueType.BOOL, baseName .. ".connector.flangeQuad", "Set the visibility of the quad flange")
-
-    schema:register(XMLValueType.STRING, baseName .. ".valve#type", "The valve shared set type key")
-    schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".valve#position", "The valve position")
-    schema:register(XMLValueType.VECTOR_ROT, baseName .. ".valve#rotation", "The valve rotation")
-
-    schema:register(XMLValueType.STRING, baseName .. ".handle#type", "The handle shared set type key")
+    SharedSet.registerXMLPaths(schema, baseName .. ".sharedSet")
 end
 --endregion

@@ -117,7 +117,6 @@ function ManureSystemConnectorManager.new(modDirectory, customMt)
     self.modDirectory = modDirectory
     self.typeByName = {}
     self.numTypes = 0
-
     self.sets = {}
 
     return self
@@ -125,7 +124,7 @@ end
 
 function ManureSystemConnectorManager:loadMapData()
     self:loadDefaultConnectorTypes()
-    self:loadVisualConnectorsFromXML()
+    self:loadSharedSets()
 
     --local orgConnectionHoseManagerDirectory = g_connectionHoseManager.baseDirectory
     --g_connectionHoseManager.baseDirectory = self.modDirectory
@@ -143,96 +142,24 @@ function ManureSystemConnectorManager:unloadMapData()
     delete(self.collision)
 
     for _, set in ipairs(self.sets) do
-        if set.sharedRoot ~= nil then
-            g_i3DManager:releaseSharedI3DFile(set.filename, nil, true)
-            delete(set.sharedRoot)
-            set.sharedRoot = nil
-        end
+        set:delete()
     end
 end
 
-function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
+function ManureSystemConnectorManager:loadSharedSets()
     local xmlFilename = Utils.getFilename("resources/assets/connectorsSets.xml", self.modDirectory)
     local xmlFile = XMLFile.load("connectorsSetsXML", xmlFilename, ManureSystemConnectorManager.xmlSchema)
 
     local i = 0
     while true do
         local key = ("assets.set(%d)"):format(i)
-        if not xmlFile:hasProperty(key) then break end
+        if not xmlFile:hasProperty(key) then
+            break
+        end
 
-        local filename = xmlFile:getString(key .. "#filename")
-        if filename ~= nil then
-            local desc = {}
-            desc.xmlFilename = xmlFilename
-            desc.filename = Utils.getFilename(filename, self.modDirectory)
-            desc.sharedRoot = g_i3DManager:loadSharedI3DFile(desc.filename, false, false)
-            local nodeId = getChildAt(desc.sharedRoot, 0)
-
-            -- Connectors
-            desc.connectors = {}
-            local c = 0
-            while true do
-                local connectorKey = ("%s.connectors.connector(%d)"):format(key, c)
-                if not xmlFile:hasProperty(connectorKey) then break end
-
-                local connectorTypeString = xmlFile:getString(connectorKey .. "#type")
-                local connectorNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(connectorKey .. "#node"))
-                if connectorTypeString ~= nil and connectorNode ~= nil then
-                    local connectorTypeKey = self:formatConnectorKey(connectorTypeString)
-                    local connector = {}
-                    connector.node = connectorNode
-                    connector.connectorXMLKey = connectorKey
-                    connector.hasAnimation = xmlFile:hasProperty(connectorKey .. ".vehicle.animation")
-
-                    desc.connectors[connectorTypeKey] = connector
-                end
-
-                c = c + 1
-            end
-
-            -- Valves
-            desc.valves = {}
-            local v = 0
-            while true do
-                local valveKey = ("%s.valves.valve(%d)"):format(key, v)
-                if not xmlFile:hasProperty(valveKey) then break end
-
-                local valveTypeString = xmlFile:getString(valveKey .. "#type")
-                local valveNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(valveKey .. "#node"))
-                if valveTypeString ~= nil and valveNode ~= nil then
-                    local valveTypeKey = self:formatConnectorKey(valveTypeString)
-                    local valve = {}
-                    valve.node = valveNode
-                    valve.handles = {}
-
-                    local h = 0
-                    while true do
-                        local handleKey = ("%s.handle(%d)"):format(valveKey, h)
-                        if not xmlFile:hasProperty(handleKey) then break end
-
-                        local handleTypeString = xmlFile:getString(handleKey .. "#type")
-                        local handleNode = I3DUtil.indexToObject(nodeId, xmlFile:getString(handleKey .. "#node"))
-                        if handleTypeString ~= nil and handleNode ~= nil then
-                            local handleTypeKey = self:formatConnectorKey(handleTypeString)
-                            local handle = {}
-                            handle.node = handleNode
-                            handle.handleXMLKey = handleKey
-                            handle.hasAnimation = xmlFile:hasProperty(handleKey .. ".vehicle.animation")
-                            handle.linkOffset = Utils.getNoNil(string.getVectorN(xmlFile:getString(handleKey .. "#linkOffset"), 3), { 0, 0, 0 })
-
-                            valve.handles[handleTypeKey] = handle
-                        end
-
-                        h = h + 1
-                    end
-
-                    desc.valves[valveTypeKey] = valve
-                end
-
-                v = v + 1
-            end
-
-            table.insert(self.sets, desc)
+        local sharedSet = SharedSet.new(self.modDirectory)
+        if sharedSet:loadFromXML(xmlFile, key, xmlFilename) then
+            table.insert(self.sets, sharedSet)
         end
 
         i = i + 1
@@ -241,13 +168,9 @@ function ManureSystemConnectorManager:loadVisualConnectorsFromXML()
     xmlFile:delete()
 end
 
-function ManureSystemConnectorManager:formatConnectorKey(name)
-    return name:upper()
-end
-
-function ManureSystemConnectorManager:getConnectorSet(index)
-    index = index or 1
-    return self.sets[index]
+---@return SharedSet
+function ManureSystemConnectorManager:getSharedSet(index)
+    return self.sets[index or 1]
 end
 
 function ManureSystemConnectorManager:loadDefaultConnectorTypes()
