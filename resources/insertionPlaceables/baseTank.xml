@@ -1,0 +1,18 @@
+<data>
+    <placeable xml="data/placeables/lizard/liquidManureTank/baseTank/baseTank.xml">
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#position" value="3.068 0.45 8.9"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -72.5 0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="1>6"/>
+                <entry type="int" key=".sharedSet#id" value="1"/>
+
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>
