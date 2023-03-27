@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="effect" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Files>
+    <File fileId="2" filename="$data/shared/default_normal.png"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="default_mat" materialId="4" diffuseColor="0.494118 0.494118 0.494118 1">
+      <Normalmap fileId="2"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="effect.i3d.shapes">
+  </Shapes>
+
+
+  <Dynamics>
+  </Dynamics>
+
+  <Scene>
+      <TransformGroup name="effects" nodeId="8">
+        <Shape shapeId="1" name="pipeEffect1" rotation="0 180 180" clipDistance="100" nodeId="9" materialIds="4" castsShadows="true" receiveShadows="true"/>
+      </TransformGroup>
+  </Scene>
+
+  <UserAttributes>
+    <UserAttribute nodeId="9">
+      <Attribute name="dynamicFillType" type="boolean" value="true"/>
+      <Attribute name="effectClass" type="string" value="PipeEffect"/>
+      <Attribute name="extraDistance" type="float" value="0.2"/>
+      <Attribute name="fadeInTime" type="float" value="1"/>
+      <Attribute name="fadeOutTime" type="float" value="1"/>
+      <Attribute name="fadeXMaxDistance" type="float" value="4.18"/>
+      <Attribute name="fadeXMinDistance" type="float" value="-1.58"/>
+      <Attribute name="materialType" type="string" value="pipe"/>
+      <Attribute name="materialTypeId" type="integer" value="1"/>
+      <Attribute name="maxBending" type="float" value="0.8"/>
+      <Attribute name="startDelay" type="float" value="0"/>
+      <Attribute name="stopDelay" type="float" value="0.5"/>
+      <Attribute name="updateDistance" type="boolean" value="true"/>
+      <Attribute name="useDistance" type="boolean" value="true"/>
+      <Attribute name="useFillTypeTextureArrays" type="boolean" value="true"/>
+      <Attribute name="useSelfAsEffectNode" type="boolean" value="true"/>
+    </UserAttribute>
+  </UserAttributes>
+
+</i3D>

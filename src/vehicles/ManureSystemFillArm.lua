@@ -30,14 +30,15 @@ end
 
 function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
     XMLExtensions.registerXMLPaths(schema, baseName)
-    schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Connector type")
-    schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Connector type")
-    schema:register(XMLValueType.FLOAT, baseName .. "#rayCastDistance", "Connector type")
-    schema:register(XMLValueType.INT, baseName .. "#controlGroupIndex", "Connector type")
-    schema:register(XMLValueType.STRING, baseName .. "#limitedFillDirection", "Connector type")
-    schema:register(XMLValueType.BOOL, baseName .. "#needsDockingCollision", "Connector type")
+    schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Fill Y offset to the plane")
+    schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index")
+    schema:register(XMLValueType.FLOAT, baseName .. "#rayCastDistance", "Distance to raycast for objects")
+    schema:register(XMLValueType.INT, baseName .. "#controlGroupIndex", "The index of the mouse control group")
+    schema:register(XMLValueType.STRING, baseName .. "#limitedFillDirection", "Limit the fill direction of a fillarm to e.g. only out")
+    schema:register(XMLValueType.BOOL, baseName .. "#needsDockingCollision", "Fillarm needs docking collision")
     schema:register(XMLValueType.VECTOR_TRANS, baseName .. ".collision#position", "The position of the collision")
     schema:register(XMLValueType.VECTOR_ROT, baseName .. ".collision#rotation", "The rotation of the collision")
+    schema:register(XMLValueType.BOOL, baseName .. "#showEffects", "Show effects on the fillarm")
     EffectManager.registerEffectXMLPaths(schema, baseName .. ".effects")
 end
 
@@ -244,8 +245,12 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
             end
         end
 
-        if self.isClient then
-            fillArm.effects = g_effectManager:loadEffect(self.xmlFile, baseKey .. ".effects", self.components, self, self.i3dMappings)
+        if self.isClient and xmlFile:getValue(baseKey .. "#showEffects", true) then
+            if xmlFile:hasProperty(baseKey .. ".effects") then
+                fillArm.effects = g_effectManager:loadEffect(self.xmlFile, baseKey .. ".effects", self.components, self, self.i3dMappings)
+            else
+                fillArm.effects = g_currentMission.manureSystem.fillArmManager:loadEffectsAtNode(node)
+            end
         end
 
         return true

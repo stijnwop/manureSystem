@@ -36,6 +36,7 @@ function XMLExtensions.ensureExistingNode(object, xmlFile, baseKey)
         NodeExtensions.setVectorByXML(node, xmlFile, baseKey .. "#position", NodeExtensions.setPosition)
         NodeExtensions.setVectorByXML(node, xmlFile, baseKey .. "#rotation", NodeExtensions.setRotation)
 
+        setVisibility(linkNode, true)
         link(linkNode, node)
 
         return node
