@@ -41,7 +41,7 @@ function ManureSystemFillArmManager:getEffectNode()
 end
 
 function ManureSystemFillArmManager:loadEffectsAtNode(node)
-    local effectNode = self:getFillArmEffectNode()
+    local effectNode = self:getEffectNode()
     local effects = g_effectManager:loadFromNode(effectNode, self)
 
     --Fix values that are not correctly handled by the load from node option.. note for Giants :)

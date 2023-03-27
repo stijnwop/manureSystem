@@ -55,6 +55,7 @@ end
 function ManureSystemFillArm.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemFillArm)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdate", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemFillArm)
 end
 
@@ -106,6 +107,7 @@ function ManureSystemFillArm:onLoad(savegame)
     spec.hasFillArm = #spec.fillArms ~= 0
 
     if not spec.isActive or not spec.hasFillArm then
+        SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemFillArm)
         SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemFillArm)
     end
 end
@@ -122,6 +124,33 @@ function ManureSystemFillArm:onDelete()
     end
 end
 
+function ManureSystemFillArm:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local spec = self.spec_manureSystemFillArm
+    if self.isClient and spec.hasFillArm and self.canTurnOnPump ~= nil then
+        local pumpHasLoad = self.spec_manureSystemPumpMotor.pumpHasLoad
+        local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
+        local pumpIsRunning = self:isPumpRunning()
+        local isPumpingIn = self:isPumpingIn()
+
+        for _, fillArm in ipairs(spec.fillArms) do
+            if not pumpIsRunning then
+                g_effectManager:stopEffects(fillArm.effects)
+            end
+
+            if pumpHasLoad then
+                if isPumpingIn then
+                    g_effectManager:stopEffects(fillArm.effects)
+                else
+                    if pumpIsRunning and isFillArmPumpMode then
+                        g_effectManager:setFillType(fillArm.effects, FillType.LIQUIDMANURE)
+                        g_effectManager:startEffects(fillArm.effects)
+                    end
+                end
+            end
+        end
+    end
+end
+
 ---Called on update tick.
 function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
@@ -131,6 +160,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
             spec.lastRaycastDistance = 0
             spec.lastRaycastObject = nil
 
+            local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
             for _, fillArm in ipairs(spec.fillArms) do
                 local x, y, z = getWorldTranslation(fillArm.node)
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
@@ -144,12 +174,6 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 end
 
                 local object = spec.lastRaycastObject
-                local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
-                local pumpIsRunning = self:isPumpRunning()
-
-                if object == nil or not pumpIsRunning then
-                    g_effectManager:stopEffects(fillArm.effects)
-                end
 
                 if object ~= nil then
                     if fillArm.limitedFillDirection ~= nil then
@@ -160,13 +184,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     end
 
                     if self:isPumpingIn() then
-                        g_effectManager:stopEffects(fillArm.effects)
                         self.spec_manureSystemPumpMotor.pumpHasContact = object:isUnderFillPlane(x, y + fillArm.fillYOffset, z)
-                    else
-                        if pumpIsRunning and isFillArmPumpMode then
-                            g_effectManager:setFillType(fillArm.effects, FillType.LIQUIDMANURE)
-                            g_effectManager:startEffects(fillArm.effects)
-                        end
                     end
 
                     local objectFillUnitIndex = object:getFillArmFillUnitIndex()
