@@ -76,7 +76,6 @@ function ManureSystemFillArm:onLoad(savegame)
     end
 
     spec.fillArms = {}
-    spec.isRaycastAllowed = true
     spec.lastRaycastDistance = 0
     spec.lastRaycastObject = nil
 
@@ -156,12 +155,12 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
 
-        if spec.isRaycastAllowed then
-            spec.lastRaycastDistance = 0
-            spec.lastRaycastObject = nil
+        spec.lastRaycastDistance = 0
+        spec.lastRaycastObject = nil
 
-            local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
-            for _, fillArm in ipairs(spec.fillArms) do
+        local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
+        for _, fillArm in ipairs(spec.fillArms) do
+            if fillArm.isRaycastAllowed then
                 local x, y, z = getWorldTranslation(fillArm.node)
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
@@ -217,10 +216,10 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
                 end
             end
-        end
 
-        -- Reset
-        spec.isRaycastAllowed = true
+            -- Reset
+            fillArm.isRaycastAllowed = true
+        end
     end
 end
 
@@ -240,6 +239,7 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         fillArm.fillYOffset = xmlFile:getValue(baseKey .. "#fillYOffset", 0)
         fillArm.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
         fillArm.rayCastDistance = xmlFile:getValue(baseKey .. "#rayCastDistance", 2)
+        fillArm.isRaycastAllowed = true
         fillArm.controlGroupIndex = xmlFile:getValue(baseKey .. "#controlGroupIndex", 0)
 
         local limit = xmlFile:getValue(baseKey .. "#limitedFillDirection")
