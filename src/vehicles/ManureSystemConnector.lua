@@ -75,7 +75,10 @@ function ManureSystemConnector:onPostLoad(savegame)
 end
 
 function ManureSystemConnector:onDelete()
-    self.spec_manureSystemConnector.connectors:delete()
+    local spec = self.spec_manureSystemConnector
+    if spec.isActive then
+        spec.connectors:delete()
+    end
 end
 
 function ManureSystemConnector:onReadStream(streamId, connection)

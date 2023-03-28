@@ -76,7 +76,10 @@ function ManureSystemPlaceableSilo:onLoad(savegame)
 end
 
 function ManureSystemPlaceableSilo:onDelete()
-    self.spec_manureSystemPlaceableSilo.connectors:delete()
+    local spec = self.spec_manureSystemPlaceableSilo
+    if spec.isActive then
+        spec.connectors:delete()
+    end
 end
 
 function ManureSystemPlaceableSilo:onReadStream(streamId, connection)
