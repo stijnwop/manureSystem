@@ -99,9 +99,11 @@ end
 local function loadFromXMLFile(mission)
     if isLoaded() and mission:getIsServer() then
         local missionInfo = mission.missionInfo
-        local xmlFilename = missionInfo.savegameDirectory .. "/manureSystem.xml"
-        if missionInfo.savegameDirectory ~= nil and fileExists(xmlFilename) then
-            modEnvironment:load(xmlFilename)
+        if missionInfo.isValid then
+            local xmlFilename = missionInfo.savegameDirectory .. "/manureSystem.xml"
+            if missionInfo.savegameDirectory ~= nil and fileExists(xmlFilename) then
+                modEnvironment:load(xmlFilename)
+            end
         end
     end
 end
