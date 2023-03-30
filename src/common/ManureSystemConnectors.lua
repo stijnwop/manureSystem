@@ -279,7 +279,12 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
 
     connector.componentNode = self.object.components[1].node
     if not NodeExtensions.isRigidBody(connector.componentNode) then
-        connector.componentNode = NodeExtensions.getFirstRigidBodyNode(connector.componentNode)
+        for _, component in ipairs(self.object.components) do
+            connector.componentNode = NodeExtensions.getFirstRigidBodyNode(component.node)
+            if connector.componentNode ~= nil then
+                break
+            end
+        end
     end
 
     if connector.hasSharedSet then
