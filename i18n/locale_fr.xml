@@ -1,62 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <l10n>
     <translationContributors>Farmer1602</translationContributors>
-
+    <locale>fr</locale>
     <texts>
-        <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Raccorder le tuyau"/>
         <text name="input_MS_DETACH_HOSE" text="Débrancher le tuyau"/>
         <text name="input_MS_TOGGLE_FLOW" text="Inverser le flux de lisier"/>
         <text name="input_MS_ACTIVATE_PUMP" text="Activer/désactiver la pompe"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Changer le sens de la pompe"/>
-
-        <!--Actions-->
         <text name="action_storeHose" text="Tuyau de réserve"/>
         <text name="action_toggleManureFlow" text="%s flux de lisier"/>
         <text name="action_toggleManureFlowStateOpen" text="Ouvert"/>
         <text name="action_toggleManureFlowStateClose" text="Fermé"/>
-
         <text name="action_activatePump" text="Activer la pompe de %s"/>
         <text name="action_deactivatePump" text="Désactiver la pompe de %s"/>
-
         <text name="action_directionOut" text="Changer le sens de la pompe en : vidange"/>
         <text name="action_directionIn" text="Changer le sens de la pompe en : remplissage"/>
         <text name="action_directionLeftRight" text="Changement de sens de la pompe de : gauche à droite"/>
         <text name="action_directionRightLeft" text="Changer le sens de la pompe de : droite à gauche"/>
-
         <text name="info_directionOut" text="vidage"/>
         <text name="info_directionIn" text="remplissage"/>
-
-        <!--Warnings pump-->
         <text name="warning_pumpDirectionLimited" text="La direction de la pompe est limitée à seulement: %s"/>
         <text name="warning_objectEmpty" text="La source ou la cible de la pompe est vide!"/>
         <text name="warning_objectFull" text="La cible de la pompe est pleine!"/>
-        <text name="warning_invalidFillType" text="Le type de remplissage de la pompe n'est pas pris en charge!"/>
-        <text name="warning_checkManureFlow" text="Veuillez vérifier l'écoulement du lisier pour le raccord de %s!"/>
-
-        <!--Warnings-->
-        <text name="warning_parkingPlaceTooSmall" text="L'emplacement de %sm est trop petit pour le tuyau de %sm!"/>
-        <text name="warning_hoseRangeRestriction" text="La limite de portée des tuyaux ne vous permettra pas d'aller plus loin!"/>
-        <text name="warning_hoseRangeRestrictionLength" text="Vous n'êtes pas un surhomme!"/>
-
-        <!--Configuration fill arm-->
+        <text name="warning_invalidFillType" text="Le type de remplissage de la pompe n&#39;est pas pris en charge!"/>
+        <text name="warning_checkManureFlow" text="Veuillez vérifier l&#39;écoulement du lisier pour le raccord de %s!"/>
+        <text name="warning_parkingPlaceTooSmall" text="L&#39;emplacement de %sm est trop petit pour le tuyau de %sm!"/>
+        <text name="warning_hoseRangeRestriction" text="La limite de portée des tuyaux ne vous permettra pas d&#39;aller plus loin!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Vous n&#39;êtes pas un surhomme!"/>
         <text name="configuration_manureSystemFillArm" text="Bras de remplissage"/>
-
-        <!--Placeables-->
         <text name="action_enableMixer" text="Activer le mélangeur"/>
         <text name="action_disableMixer" text="Désactiver le mélangeur"/>
         <text name="info_thickness" text="%s épaisseur: %d%%"/>
-
-        <!--Hose Configuration-->
         <text name="typeDesc_hose" text="tuyau"/>
         <text name="shopItem_slurryHose" text="Tuyau à lisier"/>
         <text name="shopItem_fertilizerHose" text="Tuyau à fertilisant"/>
         <text name="function_hose" text="Avec un tuyau, vous pouvez pomper un type de liquide de la source à la cible. Le cas échéant, vous pouvez allonger le tuyau pour atteindre de plus grandes distances."/>
         <text name="configuration_hose" text="Changer de type de tuyau."/>
         <text name="configuration_valueExtend" text="Extension"/>
-
-        <!--Pallets-->
         <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Rechargeable"/>
     </texts>
+
 </l10n>

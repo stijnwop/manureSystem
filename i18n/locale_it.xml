@@ -1,62 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <l10n>
     <translationContributors>Wopster, Prom, Vanquish081, *TurboStar*</translationContributors>
-
+    <locale>it</locale>
     <texts>
-        <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Collega il tubo"/>
         <text name="input_MS_DETACH_HOSE" text="Scollega il tubo"/>
         <text name="input_MS_TOGGLE_FLOW" text="Apri/chiudi valvola"/>
         <text name="input_MS_ACTIVATE_PUMP" text="Accendi/spegni pompa"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Cambia direzione pompa"/>
-
-        <!--Actions-->
         <text name="action_storeHose" text="Riponi il tubo"/>
         <text name="action_toggleManureFlow" text="%s la valvola"/>
         <text name="action_toggleManureFlowStateOpen" text="Apri"/>
         <text name="action_toggleManureFlowStateClose" text="Chiudi"/>
-
         <text name="action_activatePump" text="Accendi la pompa di %s"/>
         <text name="action_deactivatePump" text="Spegni la pompa di %s"/>
-
         <text name="action_directionOut" text="Cambia direzione della pompa su: svuotamento"/>
         <text name="action_directionIn" text="Cambia direzione della pompa su: riempimento"/>
         <text name="action_directionLeftRight" text="Cambia direzione della pompa da: sinistra verso destra"/>
         <text name="action_directionRightLeft" text="Cambia direzione della pompa da: destra verso sinistra"/>
-
         <text name="info_directionOut" text="svuotamento"/>
         <text name="info_directionIn" text="riempimento"/>
-
-        <!--Warnings pump-->
         <text name="warning_pumpDirectionLimited" text="La direzione della pompa è limitata al solo: %s"/>
         <text name="warning_objectEmpty" text="La sorgente o la destinazione sono vuoti!"/>
         <text name="warning_objectFull" text="La destinazione è piena!"/>
         <text name="warning_invalidFillType" text="Il tipo di liquido non è supportato!"/>
         <text name="warning_checkManureFlow" text="Controlla la valvola sul connettore di %s!"/>
-
-        <!--Configuration fill arm-->
         <text name="configuration_manureSystemFillArm" text="Braccio di riempimento"/>
-
-        <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="Il luogo per riporre %sm di tubo è troppo piccolo per il tubo da %sm!"/>
         <text name="warning_hoseRangeRestriction" text="Il limite di lunghezza del tubo non ti consente di andare oltre!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Non hai i superpoteri!"/>
-
-        <!--Placeables-->
         <text name="action_enableMixer" text="Accendi miscelatore"/>
         <text name="action_disableMixer" text="Spegni miscelatore"/>
         <text name="info_thickness" text="Densità %s: %d%%"/>
-
-        <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Tubo"/>
         <text name="shopItem_slurryHose" text="Tubo per liquame"/>
         <text name="shopItem_fertilizerHose" text="Tubo per fertilizzante"/>
         <text name="function_hose" text="Con un tubo sei in grado di pompare un tipo di liquido da una sorgente ad una destinazione. È possibile estendere il tubo per raggiungere distanze maggiori."/>
         <text name="configuration_hose" text="Cambia tipo di tubo"/>
         <text name="configuration_valueExtend" text="Estensione"/>
-
-        <!--Pallets-->
         <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Ricaricabile"/>
     </texts>
+
 </l10n>

@@ -1,62 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <l10n>
     <translationContributors>Gonimy_Vetrom, ALVLSH</translationContributors>
-
+    <locale>ru</locale>
     <texts>
-        <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Присоединить рукав"/>
         <text name="input_MS_DETACH_HOSE" text="Отсоединить рукав"/>
         <text name="input_MS_TOGGLE_FLOW" text="Переключить поток"/>
         <text name="input_MS_ACTIVATE_PUMP" text="Вкл/Выкл насос"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Изменить направление перекачивания"/>
-
-        <!--Actions-->
         <text name="action_storeHose" text="Уложить рукав"/>
         <text name="action_toggleManureFlow" text="%s задвижку/кран"/>
         <text name="action_toggleManureFlowStateOpen" text="Открыть"/>
         <text name="action_toggleManureFlowStateClose" text="Закрыть"/>
-
         <text name="action_activatePump" text="ВКЛ насос на %s"/>
         <text name="action_deactivatePump" text="ВЫКЛ насос на %s"/>
-
         <text name="action_directionOut" text="Текущее направление перекачивания: заполнение"/>
         <text name="action_directionIn" text="Текущее направление перекачивания: опорожнение"/>
         <text name="action_directionLeftRight" text="Направление перекачивания: слева направо"/>
         <text name="action_directionRightLeft" text="Направление перекачивания: справа налево"/>
-
         <text name="info_directionOut" text="заполнение"/>
         <text name="info_directionIn" text="опорожнение"/>
-
-        <!--Warnings pump-->
         <text name="warning_pumpDirectionLimited" text="Направление насоса ограничено только на: %s"/>
         <text name="warning_objectEmpty" text="Цель или источник для перекачивания пуст!"/>
         <text name="warning_objectFull" text="Цель перекачивания полная!"/>
         <text name="warning_invalidFillType" text="Данный тип жидкости не поддерживается!"/>
         <text name="warning_checkManureFlow" text="Пожалуйста, проверьте задвижку/кран на %s!"/>
-
-        <!--Configuration fill arm-->
         <text name="configuration_manureSystemFillArm" text="Штанга-наполнитель"/>
-
-        <!--Warnings hose-->
         <text name="warning_parkingPlaceTooSmall" text="Место для укладки в %sм слишком маленькое для %sм-го рукава!"/>
         <text name="warning_hoseRangeRestriction" text="Ограничение длинны рукава не позволит Вам идти дальше!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Вы не супермен!"/>
-
-        <!--Placeables-->
         <text name="action_enableMixer" text="Включить миксер"/>
         <text name="action_disableMixer" text="Выключить миксер"/>
         <text name="info_thickness" text="%s толщина: %d%%"/>
-
-        <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Рукав"/>
         <text name="shopItem_slurryHose" text="Рукав для навоза"/>
         <text name="shopItem_fertilizerHose" text="Рукав для удобрений"/>
         <text name="function_hose" text="Со помощью рукава Вы можете перекачивать жидкости. Если необходимо, Вы можете удлинить рукав, присоединив необходимое количество."/>
         <text name="configuration_hose" text="Тип рукава"/>
         <text name="configuration_valueExtend" text="Расширение"/>
-
-        <!--Pallets-->
         <text name="global_configuration_disappearOnEmpty" text="Обычный"/>
         <text name="global_configuration_refillable" text="Заправляемый"/>
     </texts>
+
 </l10n>

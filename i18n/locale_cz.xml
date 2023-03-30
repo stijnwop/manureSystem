@@ -1,62 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <l10n>
     <translationContributors>kiki</translationContributors>
-
+    <locale>cz</locale>
     <texts>
-        <!--Inputs-->
         <text name="input_MS_ATTACH_HOSE" text="Připojit hadici"/>
         <text name="input_MS_DETACH_HOSE" text="Odpojit hadici"/>
         <text name="input_MS_TOGGLE_FLOW" text="Přepnout průtok"/>
         <text name="input_MS_ACTIVATE_PUMP" text="Zapnout/Vypnout přečerpávání"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Přepnout směr přečerpávání"/>
-
-        <!--Actions-->
         <text name="action_storeHose" text="Uložit hadici"/>
         <text name="action_toggleManureFlow" text="%s průtoku"/>
         <text name="action_toggleManureFlowStateOpen" text="Otevření"/>
         <text name="action_toggleManureFlowStateClose" text="Zavření"/>
-
         <text name="action_activatePump" text="Aktivovat přečerpávání %s"/>
         <text name="action_deactivatePump" text="Deaktivovat přečerpávání %s"/>
-
         <text name="action_directionOut" text="Změnit směr přečerpávání na vyprázdění"/>
         <text name="action_directionIn" text="Změnit směr přečerpávání na plnění"/>
         <text name="action_directionLeftRight" text="Změnit směr přečerpávání z levé na pravou"/>
         <text name="action_directionRightLeft" text="Změnit směr přečerpávání z pravé na levou"/>
-
         <text name="info_directionOut" text="vyprázdnění"/>
         <text name="info_directionIn" text="plnění"/>
-
-        <!--Warnings pump-->
         <text name="warning_pumpDirectionLimited" text="Směr přečerpávání je limitován pouze na: %s"/>
         <text name="warning_objectEmpty" text="Zdroj přečerpávané tekutiny je prázdný!"/>
         <text name="warning_objectFull" text="Cíl pro přečerpání tekutiny je plný!"/>
         <text name="warning_invalidFillType" text="Tento typ tekutiny není podporován!"/>
         <text name="warning_checkManureFlow" text="Zkontrolujte uzávěr průtoku na zařízení %s!"/>
-
-        <!--Warnings-->
         <text name="warning_parkingPlaceTooSmall" text="Toto místo je jen pro uložení %sm hadice!"/>
         <text name="warning_hoseRangeRestriction" text="Délka hadice ti nedovolí jít dále!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Opravdu nejsi Superman!"/>
-
-        <!--Configuration fill arm-->
         <text name="configuration_manureSystemFillArm" text="Sací rameno"/>
-
-        <!--Placeables-->
         <text name="action_enableMixer" text="Zapnout míchadlo"/>
         <text name="action_disableMixer" text="Vypnout míchadlo"/>
         <text name="info_thickness" text="%s hustota: %d%%"/>
-
-        <!--Hose Configuration-->
         <text name="typeDesc_hose" text="Hadice"/>
         <text name="shopItem_slurryHose" text="Hadice na močůvku"/>
         <text name="shopItem_fertilizerHose" text="Hadice na Hnojivo"/>
         <text name="function_hose" text="S hadicí je možné přečerpávat tekutiny. Hadice lze prodloužit, pro dosažení větší vzdálenosti."/>
         <text name="configuration_hose" text="Změnit typ hadice"/>
         <text name="configuration_valueExtend" text="Prodloužení"/>
-
-        <!--Pallets-->
         <text name="global_configuration_disappearOnEmpty" text="Po vyprázdnění zmizí"/>
         <text name="global_configuration_refillable" text="Plnitelná"/>
     </texts>
+
 </l10n>
