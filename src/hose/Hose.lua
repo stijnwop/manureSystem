@@ -368,7 +368,7 @@ end
 function Hose:onUpdateTick(dt)
     local spec = self.spec_hose
 
-    if self.isServer and self.firstTimeRun then
+    if self.isServer and self.finishedFirstUpdate then
         local grabNodeId = next(spec.grabNodesToObjects)
         if grabNodeId ~= nil then
             local grabNode = self:getGrabNodeById(grabNodeId)
@@ -1228,7 +1228,7 @@ end
 function Hose:onConnectorJointBreak(jointIndex, breakingImpulse)
     local spec = self.spec_hose
 
-    if self.firstTimeRun then
+    if self.finishedFirstUpdate then
         for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
             local grabNode = self:getGrabNodeById(grabNodeId)
             if jointIndex == grabNode.jointIndex then
