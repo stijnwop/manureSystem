@@ -31,6 +31,7 @@ local sourceFiles = {
     "src/common/strategies/ManureSystemDockStrategy.lua",
     "src/common/ManureSystemConnectors.lua",
     "src/common/SharedSet.lua",
+    "src/common/physics/FillPlaneRayCast.lua",
     --Placeables
     "src/placeables/ManureSystemAnimatedObjectExtension.lua",
     --Misc

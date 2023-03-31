@@ -26,9 +26,6 @@ Hose.RESPAWN_OFFSET = 0.00001
 Hose.RESPAWN_LENGTH_OFFSET = 0.5
 Hose.RESPAWN_MAX_LENGTH = 10 -- m
 
-Hose.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
-Hose.RAYCAST_DISTANCE = 2
-
 Hose.JOINT_BREAK_FORCE = 20
 Hose.JOINT_BREAK_TORQUE = 20
 
@@ -102,7 +99,6 @@ function Hose.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "constructPlayerJoint", Hose.constructPlayerJoint)
     SpecializationUtil.registerFunction(vehicleType, "onPlayerJointBreak", Hose.onPlayerJointBreak)
     SpecializationUtil.registerFunction(vehicleType, "onConnectorJointBreak", Hose.onConnectorJointBreak)
-    SpecializationUtil.registerFunction(vehicleType, "fillRaycastCallback", Hose.fillRaycastCallback)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorInRangeNode", Hose.getConnectorInRangeNode)
 end
 
@@ -166,6 +162,7 @@ function Hose:onLoad(savegame)
         spec.foundGrabNodeIdSend = 0
     end
 
+    spec.rayCast = FillPlaneRayCast.new(-0.25)
     spec.dirtyFlag = self:getNextDirtyFlag()
 end
 
@@ -581,15 +578,12 @@ function Hose:findConnector(id)
 end
 
 ---Find connector object based on the attached hoses recursively.
-function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
+function Hose:getConnectorObjectDesc(id, totalHoseLength, doRayCast, startHose)
     local spec = self.spec_hose
 
-    doRaycast = doRaycast or false
+    doRayCast = doRayCast or false
     startHose = startHose or self
     totalHoseLength = totalHoseLength or self:getLength()
-
-    spec.lastRaycastDistance = 0
-    spec.lastRaycastObject = nil
 
     for grabNodeId, desc in pairs(spec.grabNodesToObjects) do
         if grabNodeId ~= id then
@@ -598,7 +592,7 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
             -- Recursively get the connector object.
             if vehicle.isaHose ~= nil and vehicle:isaHose() and vehicle ~= startHose then
                 totalHoseLength = totalHoseLength + vehicle:getLength()
-                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRaycast, startHose)
+                return vehicle:getConnectorObjectDesc(desc.connectorId, totalHoseLength, doRayCast, startHose)
             end
 
             local connector = vehicle:getConnectorById(desc.connectorId)
@@ -609,19 +603,27 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
     end
 
     -- Do raycast on the other node.
-    if doRaycast then
+    spec.rayCast:clear()
+
+    if doRayCast then
         for grabNodeId, _ in ipairs(spec.grabNodes) do
             if grabNodeId ~= id then
                 local grabNode = self:getGrabNodeById(grabNodeId)
                 local x, y, z = getWorldTranslation(grabNode.raycastNode)
                 local dx, dy, dz = localDirectionToWorld(grabNode.raycastNode, 0, 0, -1)
-                raycastAll(x, y, z, dx, dy, dz, "fillRaycastCallback", Hose.RAYCAST_DISTANCE, self, Hose.RAYCAST_MASK, true)
 
-                if spec.lastRaycastObject ~= nil then
-                    if spec.lastRaycastObject:isUnderFillPlane(x, y + 0.1, z) then
+                spec.rayCast:castRay(x, y, z, dx, dy, dz)
+
+                if g_currentMission.manureSystem.debug then
+                    spec.rayCast:draw(grabNode.node)
+                end
+
+                local object = spec.rayCast.hitObject
+                if object ~= nil then
+                    if object:isUnderFillPlane(x, y + 0.1, z) then
                         -- Add forced dirt increment.
                         self:addDirtAmount(0.05, true)
-                        return { vehicle = spec.lastRaycastObject }, totalHoseLength
+                        return { vehicle = object }, totalHoseLength
                     end
                 else
                     local isNearWater = (y <= g_currentMission.waterY + 0.1)
@@ -634,48 +636,6 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRaycast, startHose)
     end
 
     return nil, totalHoseLength
-end
-
-function Hose.debugRenderRaycastNode(raycastNode, x, y, z, hasContact)
-    local lx, ly, lz = worldToLocal(raycastNode, x, y, z)
-    local r, g, b = 1, 0, 0
-
-    if hasContact then
-        r, g = 0, 1
-    end
-
-    lz = lz + Hose.RAYCAST_DISTANCE
-    lx, ly, lz = localToWorld(raycastNode, lx, ly, lz)
-
-    drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
-end
-
-function Hose:fillRaycastCallback(hitObjectId, x, y, z, distance)
-    if hitObjectId ~= 0 then
-        if hitObjectId == g_currentMission.terrainRootNode then
-            return true
-        end
-
-        local object = g_currentMission:getNodeObject(hitObjectId)
-        if object ~= nil and object.isa ~= nil then
-            local spec = self.spec_hose
-
-            if object:isa(Vehicle) then
-                if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
-                    spec.lastRaycastDistance = distance
-                    spec.lastRaycastObject = object
-
-                    return false
-                end
-            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
-                spec.lastRaycastDistance = distance
-                spec.lastRaycastObject = object
-                return false
-            end
-        end
-    end
-
-    return true
 end
 
 --- Allows easy check on raycast

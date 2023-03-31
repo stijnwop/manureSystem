@@ -10,9 +10,6 @@
 ManureSystemFillArm = {}
 ManureSystemFillArm.MOD_NAME = g_currentModName
 
-ManureSystemFillArm.RAYCAST_MASK = 32 + 64 + 128 + 256 + 4096 + 8194
-ManureSystemFillArm.RAYCAST_DISTANCE = 5
-
 function ManureSystemFillArm.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillUnit, specializations)
 end
@@ -45,7 +42,6 @@ end
 function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "loadManureSystemFillArmFromXML", ManureSystemFillArm.loadManureSystemFillArmFromXML)
     SpecializationUtil.registerFunction(vehicleType, "getFillArms", ManureSystemFillArm.getFillArms)
-    SpecializationUtil.registerFunction(vehicleType, "fillArmRaycastCallback", ManureSystemFillArm.fillArmRaycastCallback)
 end
 
 function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
@@ -76,8 +72,7 @@ function ManureSystemFillArm:onLoad(savegame)
     end
 
     spec.fillArms = {}
-    spec.lastRaycastDistance = 0
-    spec.lastRaycastObject = nil
+    spec.rayCast = FillPlaneRayCast.new()
 
     local singleEntryKey = ("%s.manureSystemFillArm"):format(baseKey)
     if self.xmlFile:hasProperty(singleEntryKey) then
@@ -155,8 +150,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
 
-        spec.lastRaycastDistance = 0
-        spec.lastRaycastObject = nil
+        spec.rayCast:clear()
 
         local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
         for _, fillArm in ipairs(spec.fillArms) do
@@ -169,11 +163,10 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                         DebugUtil.drawDebugNode(fillArm.node, "ACTIVE FILLARM")
                     end
 
-                    raycastAll(x, y, z, dx, dy, dz, "fillArmRaycastCallback", fillArm.rayCastDistance, self, ManureSystemFillArm.RAYCAST_MASK, true)
+                    spec.rayCast:castRay(x, y, z, dx, dy, dz, fillArm.rayCastDistance)
                 end
 
-                local object = spec.lastRaycastObject
-
+                local object = spec.rayCast.hitObject
                 if object ~= nil then
                     if fillArm.limitedFillDirection ~= nil then
                         --When the limited direction is present, but not set, we force it.
@@ -208,12 +201,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 self:setIsPumpSourceWater(isNearWater)
 
                 if g_currentMission.manureSystem.debug then
-                    local hasObject = object ~= nil
-                    local r, g, b = hasObject and 0 or 1, hasObject and 1 or 0, 0
-                    local lx, ly, lz = worldToLocal(fillArm.node, x, y, z)
-                    lz = lz - ManureSystemFillArm.RAYCAST_DISTANCE
-                    lx, ly, lz = localToWorld(fillArm.node, lx, ly, lz)
-                    drawDebugLine(x, y, z, r, g, b, lx, ly, lz, r, g, b)
+                    spec.rayCast:draw(fillArm.node, fillArm.rayCastDistance)
                 end
             end
 
@@ -239,8 +227,8 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
         fillArm.fillYOffset = xmlFile:getValue(baseKey .. "#fillYOffset", 0)
         fillArm.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
         fillArm.rayCastDistance = xmlFile:getValue(baseKey .. "#rayCastDistance", 2)
-        fillArm.isRaycastAllowed = true
         fillArm.controlGroupIndex = xmlFile:getValue(baseKey .. "#controlGroupIndex", 0)
+        fillArm.isRaycastAllowed = true
 
         local limit = xmlFile:getValue(baseKey .. "#limitedFillDirection")
         if limit ~= nil then
@@ -277,36 +265,6 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
     Logging.xmlWarning(self.configFileName, "Could not load fillArm from XML, missing node entry!")
 
     return false
-end
-
----Raycast callback for detecting fill arm object.
-function ManureSystemFillArm:fillArmRaycastCallback(hitObjectId, x, y, z, distance)
-    if hitObjectId ~= 0 then
-        if hitObjectId == g_currentMission.terrainRootNode then
-            return true
-        end
-
-        local object = g_currentMission:getNodeObject(hitObjectId)
-        if object ~= nil and object.isa ~= nil then
-            local spec = self.spec_manureSystemFillArm
-
-            if object:isa(Vehicle) then
-                if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
-                    spec.lastRaycastDistance = distance
-                    spec.lastRaycastObject = object
-
-                    return false
-                end
-            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
-                spec.lastRaycastDistance = distance
-                spec.lastRaycastObject = object
-
-                return false
-            end
-        end
-    end
-
-    return true
 end
 
 ----------------
