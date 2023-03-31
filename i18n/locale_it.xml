@@ -31,7 +31,6 @@
         <text name="warning_hoseRangeRestrictionLength" text="Non hai i superpoteri!"/>
         <text name="action_enableMixer" text="Accendi miscelatore"/>
         <text name="action_disableMixer" text="Spegni miscelatore"/>
-        <text name="info_thickness" text="Densità %s: %d%%"/>
         <text name="typeDesc_hose" text="Tubo"/>
         <text name="shopItem_slurryHose" text="Tubo per liquame"/>
         <text name="shopItem_fertilizerHose" text="Tubo per fertilizzante"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Ricaricabile"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

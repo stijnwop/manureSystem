@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Ramię napełniające"/>
         <text name="action_enableMixer" text="Włącz mieszadło"/>
         <text name="action_disableMixer" text="Wyłącz mieszadło"/>
-        <text name="info_thickness" text="%s sedymentacja: %d%%"/>
         <text name="typeDesc_hose" text="Wąż"/>
         <text name="shopItem_slurryHose" text="Wąż do gnojówki"/>
         <text name="shopItem_fertilizerHose" text="Wąż do nawozów płynnych"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Zwrotne"/>
         <text name="global_configuration_refillable" text="Wielokrotnego użytku"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

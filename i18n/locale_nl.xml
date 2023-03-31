@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Zuig arm"/>
         <text name="action_enableMixer" text="Mixer inschakelen"/>
         <text name="action_disableMixer" text="Mixer uitschakelen"/>
-        <text name="info_thickness" text="%s dikte: %d%%"/>
         <text name="typeDesc_hose" text="Slang"/>
         <text name="shopItem_slurryHose" text="Mestslang"/>
         <text name="shopItem_fertilizerHose" text="Meststofslang"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Standaard"/>
         <text name="global_configuration_refillable" text="Navulbaar"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

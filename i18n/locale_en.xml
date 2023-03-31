@@ -31,7 +31,7 @@
         <text name="warning_hoseRangeRestrictionLength" text="You are not super human!"/>
         <text name="action_enableMixer" text="Enable mixer"/>
         <text name="action_disableMixer" text="Disable mixer"/>
-        <text name="info_thickness" text="%s thickness: %d%%"/>
+        <text name="info_title_thickness" text="Thickness"/>
         <text name="typeDesc_hose" text="Hose"/>
         <text name="shopItem_slurryHose" text="Slurry hose"/>
         <text name="shopItem_fertilizerHose" text="Fertilizer hose"/>

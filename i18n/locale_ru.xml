@@ -31,7 +31,6 @@
         <text name="warning_hoseRangeRestrictionLength" text="Вы не супермен!"/>
         <text name="action_enableMixer" text="Включить миксер"/>
         <text name="action_disableMixer" text="Выключить миксер"/>
-        <text name="info_thickness" text="%s толщина: %d%%"/>
         <text name="typeDesc_hose" text="Рукав"/>
         <text name="shopItem_slurryHose" text="Рукав для навоза"/>
         <text name="shopItem_fertilizerHose" text="Рукав для удобрений"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Обычный"/>
         <text name="global_configuration_refillable" text="Заправляемый"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

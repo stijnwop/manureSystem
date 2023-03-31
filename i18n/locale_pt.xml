@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Braço de enchimento"/>
         <text name="action_enableMixer" text="Ativar misturador"/>
         <text name="action_disableMixer" text="Desativar misturador"/>
-        <text name="info_thickness" text="%s espessura: %d%%"/>
         <text name="typeDesc_hose" text="Mangueira"/>
         <text name="shopItem_slurryHose" text="Mangueira de estrume liquido"/>
         <text name="shopItem_fertilizerHose" text="Mangueira de fertilizante"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Desaparecer"/>
         <text name="global_configuration_refillable" text="Recarregável"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

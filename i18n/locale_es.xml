@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Brazo de Llenado"/>
         <text name="action_enableMixer" text="Encender mezclador"/>
         <text name="action_disableMixer" text="Apagar mezclador"/>
-        <text name="info_thickness" text="%s grosor: %d%%"/>
         <text name="typeDesc_hose" text="Mangueras"/>
         <text name="shopItem_slurryHose" text="Manguera de Purín"/>
         <text name="shopItem_fertilizerHose" text="Manguera de fertilizante"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Desaparece al 0%"/>
         <text name="global_configuration_refillable" text="Reutilizable"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

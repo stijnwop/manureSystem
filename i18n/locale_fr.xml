@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Bras de remplissage"/>
         <text name="action_enableMixer" text="Activer le mélangeur"/>
         <text name="action_disableMixer" text="Désactiver le mélangeur"/>
-        <text name="info_thickness" text="%s épaisseur: %d%%"/>
         <text name="typeDesc_hose" text="tuyau"/>
         <text name="shopItem_slurryHose" text="Tuyau à lisier"/>
         <text name="shopItem_fertilizerHose" text="Tuyau à fertilisant"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Rechargeable"/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

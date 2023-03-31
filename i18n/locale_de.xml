@@ -31,7 +31,6 @@
         <text name="configuration_manureSystemFillArm" text="Saugarm"/>
         <text name="action_enableMixer" text="Mixer aktivieren"/>
         <text name="action_disableMixer" text="Mixer deaktivieren"/>
-        <text name="info_thickness" text="%s Dickflüssigkeit: %d%%"/>
         <text name="typeDesc_hose" text="Schlauch"/>
         <text name="shopItem_slurryHose" text="Gülleschlauch"/>
         <text name="shopItem_fertilizerHose" text="Düngerschlauch"/>
@@ -41,5 +40,8 @@
         <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Nachfüllbar "/>
     </texts>
-
+    <elements>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+    </elements>
 </l10n>

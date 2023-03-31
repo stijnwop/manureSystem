@@ -24,6 +24,10 @@ function ManureSystemPlaceableSilo.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "getFillArmFillUnitIndex", ManureSystemPlaceableSilo.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(placeableType, "addFillUnitFillLevel", ManureSystemPlaceableSilo.addFillUnitFillLevel)
     SpecializationUtil.registerFunction(placeableType, "isUnderFillPlane", ManureSystemPlaceableSilo.isUnderFillPlane)
+
+    SpecializationUtil.registerFunction(placeableType, "increaseThickness", ManureSystemPlaceableSilo.increaseThickness)
+    SpecializationUtil.registerFunction(placeableType, "decreaseThickness", ManureSystemPlaceableSilo.decreaseThickness)
+    SpecializationUtil.registerFunction(placeableType, "getThickness", ManureSystemPlaceableSilo.getThickness)
 end
 
 function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
@@ -34,6 +38,11 @@ function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onFinalizePlacement", ManureSystemPlaceableSilo)
     SpecializationUtil.registerEventListener(placeableType, "onUpdate", ManureSystemPlaceableSilo)
     SpecializationUtil.registerEventListener(placeableType, "onUpdateTick", ManureSystemPlaceableSilo)
+    SpecializationUtil.registerEventListener(placeableType, "onHourChanged", ManureSystemPlaceableSilo)
+end
+
+function ManureSystemPlaceableSilo.registerOverwrittenFunctions(placeableType)
+    SpecializationUtil.registerOverwrittenFunction(placeableType, "updateInfo", ManureSystemPlaceableSilo.updateInfo)
 end
 
 function ManureSystemPlaceableSilo.registerXMLPaths(schema, basePath)
@@ -59,12 +68,15 @@ function ManureSystemPlaceableSilo:onLoad(savegame)
         if not spec.connectors:loadFromPlaceableXML(self.xmlFile) then
             spec.connectors:delete()
         end
-
     end
 
     if spec.hasFillArmReceiver then
         spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
+    else
+        spec.fillArmOffset = 0
     end
+
+    spec.thickness = 0 -- 0-1 range
 
     if not spec.hasConnectors or not spec.connectors:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onFinalizePlacement", ManureSystemPlaceableSilo)
@@ -206,9 +218,14 @@ function ManureSystemPlaceableSilo:addFillUnitFillLevel(farmId, fillUnitIndex, f
             local newFillLevel = storage:getFillLevel(fillTypeIndex)
 
             movedFillLevel = movedFillLevel + (newFillLevel - oldFillLevel)
-
             if movedFillLevel >= fillLevelDelta - 0.001 then
                 movedFillLevel = fillLevelDelta
+            end
+
+            if self.isServer then
+                if movedFillLevel > 0 then
+                    self:decreaseThickness(movedFillLevel)
+                end
             end
         end
     end
@@ -240,3 +257,56 @@ function ManureSystemPlaceableSilo:isUnderFillPlane(x, y, z)
 
     return py >= y
 end
+
+--region Thickness and mixing characteristics
+function ManureSystemPlaceableSilo:onHourChanged()
+    if self.isServer then
+        self:increaseThickness()
+    end
+end
+
+function ManureSystemPlaceableSilo:increaseThickness()
+    if not self.isServer then
+        return
+    end
+
+    local spec = self.spec_manureSystemPlaceableSilo
+    -- Manure with up to 4% solids content can be handled as a liquid with irrigation equipment
+    -- Manure with 4 to 10% solids content can be handled as a slurry
+    local percentage = self:getFillUnitFillLevelPercentage()
+    -- The more it's filled the slower thickening is.
+    local mq = (1.1 - percentage) * 0.001
+    spec.thickness = MathUtil.clamp(spec.thickness + mq * 2, 0, 1)
+end
+
+function ManureSystemPlaceableSilo:decreaseThickness(mixPerSecond)
+    if not self.isServer then
+        return
+    end
+
+    local spec = self.spec_manureSystemPlaceableSilo
+    local fillLevel = self:getFillUnitFillLevel()
+    if fillLevel <= 0 or mixPerSecond <= 0 then
+        return
+    end
+
+    -- Mixed amount depends on the fill level because low fill level is mixed faster.
+    local mixedAmount = (mixPerSecond / 100) / fillLevel
+    spec.thickness = math.max(spec.thickness - mixedAmount, 0)
+end
+
+function ManureSystemPlaceableSilo:getThickness()
+    return self.spec_manureSystemPlaceableSilo.thickness
+end
+
+function ManureSystemPlaceableSilo:updateInfo(superFunc, infoTable)
+    superFunc(self, infoTable)
+
+    local spec = self.spec_manureSystemPlaceableSilo
+
+    table.insert(infoTable, {
+        text = ("%d%%"):format(spec.thickness * 100),
+        title = g_i18n:getText("info_title_thickness")
+    })
+end
+--endregion
