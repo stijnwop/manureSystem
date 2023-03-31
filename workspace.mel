@@ -1,4 +1,4 @@
-//Maya 2017 Project Definition
+//Maya 2023 Project Definition
 
 workspace -fr "fluidCache" "cache/nCache/fluid";
 workspace -fr "images" "images";
@@ -41,3 +41,4 @@ workspace -fr "mayaBinary" "scenes";
 workspace -fr "templates" "assets";
 workspace -fr "furAttrMap" "renderData/fur/furAttrMap";
 workspace -fr "timeEditor" "Time Editor";
+workspace -v "GIANTS_SHADER_DIR" "C:/Program Files (x86)/Farming Simulator 2022/data/shaders";
