@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<l10n>
+    <locale>tr</locale>
+
+    <elements>
+        <e k="action_activatePump" v="Activate pump of %s" tag="todo">
+            <!--Todo: add missing translation for action_activatePump--></e>
+        <e k="action_deactivatePump" v="Deactivate pump of %s" tag="todo">
+            <!--Todo: add missing translation for action_deactivatePump--></e>
+        <e k="action_directionIn" v="Change pump direction to: filling" tag="todo">
+            <!--Todo: add missing translation for action_directionIn--></e>
+        <e k="action_directionLeftRight" v="Change pump direction from: left to right" tag="todo">
+            <!--Todo: add missing translation for action_directionLeftRight--></e>
+        <e k="action_directionOut" v="Change pump direction to: emptying" tag="todo">
+            <!--Todo: add missing translation for action_directionOut--></e>
+        <e k="action_directionRightLeft" v="Change pump direction from: right to left" tag="todo">
+            <!--Todo: add missing translation for action_directionRightLeft--></e>
+        <e k="action_disableMixer" v="Disable mixer" tag="todo">
+            <!--Todo: add missing translation for action_disableMixer--></e>
+        <e k="action_enableMixer" v="Enable mixer" tag="todo">
+            <!--Todo: add missing translation for action_enableMixer--></e>
+        <e k="action_storeHose" v="Store hose" tag="todo">
+            <!--Todo: add missing translation for action_storeHose--></e>
+        <e k="action_toggleManureFlow" v="%s manure flow" tag="todo">
+            <!--Todo: add missing translation for action_toggleManureFlow--></e>
+        <e k="action_toggleManureFlowStateClose" v="Close" tag="todo">
+            <!--Todo: add missing translation for action_toggleManureFlowStateClose--></e>
+        <e k="action_toggleManureFlowStateOpen" v="Open" tag="todo">
+            <!--Todo: add missing translation for action_toggleManureFlowStateOpen--></e>
+        <e k="configuration_hose" v="Change hose type." tag="todo">
+            <!--Todo: add missing translation for configuration_hose--></e>
+        <e k="configuration_manureSystemFillArm" v="Fill arm" tag="todo">
+            <!--Todo: add missing translation for configuration_manureSystemFillArm--></e>
+        <e k="configuration_valueExtend" v="Extension" tag="todo">
+            <!--Todo: add missing translation for configuration_valueExtend--></e>
+        <e k="function_hose" v="With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the hose to reach larger ranges." tag="todo">
+            <!--Todo: add missing translation for function_hose--></e>
+        <e k="global_configuration_disappearOnEmpty" v="Standard" tag="todo">
+            <!--Todo: add missing translation for global_configuration_disappearOnEmpty--></e>
+        <e k="global_configuration_refillable" v="Refillable" tag="todo">
+            <!--Todo: add missing translation for global_configuration_refillable--></e>
+        <e k="info_directionIn" v="filling" tag="todo">
+            <!--Todo: add missing translation for info_directionIn--></e>
+        <e k="info_directionOut" v="emptying" tag="todo">
+            <!--Todo: add missing translation for info_directionOut--></e>
+        <e k="info_title_thickness" v="Thickness" tag="todo">
+            <!--Todo: add missing translation for info_title_thickness--></e>
+        <e k="input_MS_ACTIVATE_PUMP" v="Activate/deactivate pump" tag="todo">
+            <!--Todo: add missing translation for input_MS_ACTIVATE_PUMP--></e>
+        <e k="input_MS_ATTACH_HOSE" v="Attach hose" tag="todo">
+            <!--Todo: add missing translation for input_MS_ATTACH_HOSE--></e>
+        <e k="input_MS_DETACH_HOSE" v="Detach hose" tag="todo">
+            <!--Todo: add missing translation for input_MS_DETACH_HOSE--></e>
+        <e k="input_MS_TOGGLE_FLOW" v="Toggle manure flow" tag="todo">
+            <!--Todo: add missing translation for input_MS_TOGGLE_FLOW--></e>
+        <e k="input_MS_TOGGLE_PUMP_DIRECTION" v="Toggle pump direction" tag="todo">
+            <!--Todo: add missing translation for input_MS_TOGGLE_PUMP_DIRECTION--></e>
+        <e k="shopItem_fertilizerHose" v="Fertilizer hose" tag="todo">
+            <!--Todo: add missing translation for shopItem_fertilizerHose--></e>
+        <e k="shopItem_slurryHose" v="Slurry hose" tag="todo">
+            <!--Todo: add missing translation for shopItem_slurryHose--></e>
+        <e k="typeDesc_hose" v="Hose" tag="todo">
+            <!--Todo: add missing translation for typeDesc_hose--></e>
+        <e k="warning_checkManureFlow" v="Please check the manure flow for the connector of %s!" tag="todo">
+            <!--Todo: add missing translation for warning_checkManureFlow--></e>
+        <e k="warning_hoseRangeRestriction" v="The hose range restriction won&#39;t allow you to go any further!" tag="todo">
+            <!--Todo: add missing translation for warning_hoseRangeRestriction--></e>
+        <e k="warning_hoseRangeRestrictionLength" v="You are not super human!" tag="todo">
+            <!--Todo: add missing translation for warning_hoseRangeRestrictionLength--></e>
+        <e k="warning_invalidFillType" v="The pump fill type is not supported!" tag="todo">
+            <!--Todo: add missing translation for warning_invalidFillType--></e>
+        <e k="warning_objectEmpty" v="The pump source or target is empty!" tag="todo">
+            <!--Todo: add missing translation for warning_objectEmpty--></e>
+        <e k="warning_objectFull" v="The pump target is full!" tag="todo">
+            <!--Todo: add missing translation for warning_objectFull--></e>
+        <e k="warning_parkingPlaceTooSmall" v="The %sm parking place is too small for the %sm hose!" tag="todo">
+            <!--Todo: add missing translation for warning_parkingPlaceTooSmall--></e>
+        <e k="warning_pumpDirectionLimited" v="Pump direction is limited to only: %s" tag="todo">
+            <!--Todo: add missing translation for warning_pumpDirectionLimited--></e>
+    </elements>
+</l10n>
