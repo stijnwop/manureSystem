@@ -34,6 +34,11 @@ end
 function ManureSystemConnectors:delete()
     for type, connectors in pairs(self.connectorsByType) do
         for _, connector in ipairs(connectors) do
+            if connector.connectedObject ~= nil then
+                local grabNode = connector.connectedObject:getGrabNodeById(connector.connectedNodeId)
+                connector.connectedObject:disconnectGrabNode(grabNode, connector, self)
+            end
+
             local strategy = self.connectorStrategies[type]
             if strategy ~= nil then
                 strategy:delete(connector)

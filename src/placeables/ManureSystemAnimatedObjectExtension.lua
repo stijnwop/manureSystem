@@ -1,7 +1,7 @@
 ---@return boolean
 function Placeable:getIsAnimationPlaying(id)
     local spec = self.spec_animatedObjects
-    if spec == nil then
+    if spec == nil or spec.animatedObjects == nil then
         return false
     end
 
@@ -16,7 +16,7 @@ end
 ---@return number the animation time
 function Placeable:getAnimationTime(id)
     local spec = self.spec_animatedObjects
-    if spec == nil then
+    if spec == nil or spec.animatedObjects == nil then
         return 0
     end
 
@@ -32,7 +32,7 @@ end
 function Placeable:playAnimation(id, dir)
     local spec = self.spec_animatedObjects
 
-    if spec == nil then
+    if spec == nil or spec.animatedObjects == nil then
         return
     end
 

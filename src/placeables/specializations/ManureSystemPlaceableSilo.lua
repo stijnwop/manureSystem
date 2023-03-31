@@ -6,7 +6,7 @@ function ManureSystemPlaceableSilo.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PlaceableSilo, specializations)
 end
 
-function ManureSystemPlaceableSilo.registerOverwrittenFunctions(placeableType)
+function ManureSystemPlaceableSilo.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "setIsConnected", ManureSystemPlaceableSilo.setIsConnected)
     SpecializationUtil.registerFunction(placeableType, "setIsManureFlowOpen", ManureSystemPlaceableSilo.setIsManureFlowOpen)
     SpecializationUtil.registerFunction(placeableType, "getConnectorById", ManureSystemPlaceableSilo.getConnectorById)
@@ -77,7 +77,7 @@ end
 
 function ManureSystemPlaceableSilo:onDelete()
     local spec = self.spec_manureSystemPlaceableSilo
-    if spec.isActive then
+    if spec.hasConnectors then
         spec.connectors:delete()
     end
 end

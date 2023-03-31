@@ -26,12 +26,19 @@ end
 
 ---@return void
 function SharedSet:delete()
-    if self.sharedRoot ~= nil then
-        g_i3DManager:releaseSharedI3DFile(self.filename, nil, true)
-        delete(self.sharedRoot)
+    if self.sharedNode ~= nil then
         delete(self.sharedNode)
-        self.sharedRoot = nil
         self.sharedNode = nil
+    end
+
+    if self.sharedRoot ~= nil then
+        delete(self.sharedRoot)
+        self.sharedRoot = nil
+    end
+
+    if self.sharedLoadRequestId ~= nil then
+        g_i3DManager:releaseSharedI3DFile(self.sharedLoadRequestId)
+        self.sharedLoadRequestId = nil
     end
 end
 
@@ -44,7 +51,7 @@ function SharedSet:loadFromXML(xmlFile, baseKey, xmlFilename)
 
     self.xmlFilename = xmlFilename
     self.filename = Utils.getFilename(filename, self.modDirectory)
-    self.sharedRoot = g_i3DManager:loadSharedI3DFile(self.filename, false, false)
+    self.sharedRoot, self.sharedLoadRequestId = g_i3DManager:loadSharedI3DFile(self.filename, false, false)
     self.sharedNode = getChildAt(self.sharedRoot, 0)
 
     self:loadConnectorsFromXML(xmlFile, baseKey)
