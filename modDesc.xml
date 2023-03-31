@@ -102,6 +102,7 @@ Changelog:
         <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/ManureSystemConnector.lua"/>
         <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/ManureSystemFillArm.lua"/>
         <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/ManureSystemFillArmReceiver.lua"/>
+        <specialization name="manureSystemMixer" className="ManureSystemMixer" filename="src/vehicles/ManureSystemMixer.lua"/>
     </specializations>
 
     <vehicleTypes>
