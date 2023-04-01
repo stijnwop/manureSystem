@@ -52,11 +52,6 @@ local function inj_loadTrigger_getIsFillableObjectAvailable(trigger, superFunc, 
     return superFunc(trigger, ...)
 end
 
-
-function SleepManager:getCanSleep()
-    return false
-end
-
 ---Early hook to overwrite
 function manureSystem_overwrite.init()
     manureSystem_overwrite.overwrittenFunction(FillTrigger, "getIsActivatable", inj_fillTrigger_getIsActivatable)
