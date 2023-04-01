@@ -1,0 +1,89 @@
+<data>
+    <vehicle xml="data/vehicles/farmtech/supercis800/supercis800.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="120"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1150"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.98 0.98 2.53"/>
+                <entry type="string" key="#rotation" value="30 90 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-0.9 1.55 -1.3"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+                <entry type="string" key=".parkPlaces.parkPlace(0)#startTransOffset" value="0 0 0.2"/>
+                <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#startTransOffset" value="0 0 -0.1"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endTransOffset" value="0 -0.3 -0.1"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endRotOffset" value="-80 0 0"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1).deformer#createNode" value="true"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1).deformer#position" value="-0.9 1.55 1"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/farmtech/polycis1550/polycis1550.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="180"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="string" key="#linkNode" value="fillArm"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="0.936 1.77 0.1475"/>
+            <entry type="string" key="#rotation" value="-15 -90 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.01 0.96 1.44"/>
+                <entry type="string" key="#rotation" value="10 90 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.1 1.9 -3.4"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.1 1.9 -3.4"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

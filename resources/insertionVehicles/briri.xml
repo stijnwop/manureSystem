@@ -45,6 +45,32 @@
                 <entry type="string" key="#position" value="-1.085 0.89 2.49"/>
                 <entry type="string" key="#rotation" value="-1.316 0.875 1.42"/>
             </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.161 2.09 -3.3"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+                <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endTransOffset" value="-0.01 -0.175 0"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endRotOffset" value="-13 0 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#isParkPlace" value="true"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.161 2.09 -3.3"/>
+                <entry type="string" key="#rotation" value="0 0 0"/>
+
+                <entry type="int" key=".parkPlaces.parkPlace(0)#length" value="3"/>
+                <entry type="int" key=".parkPlaces.parkPlace(1)#length" value="5"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endTransOffset" value="-0.01 -0.175 0"/>
+                <entry type="string" key=".parkPlaces.parkPlace(1)#endRotOffset" value="-13 0 0"/>
+            </connector>
         </manureSystemConnectors>
     </vehicle>
 </data>

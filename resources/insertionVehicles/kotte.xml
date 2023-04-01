@@ -1,0 +1,153 @@
+<data>
+    <vehicle xml="data/vehicles/kotte/frc55/frc55.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemFillArmReceiver>
+            <entry type="int" key="#fillVolumeIndex" value="1"/>
+        </manureSystemFillArmReceiver>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.627 0.664 3.669"/>
+                <entry type="string" key="#rotation" value="5 45 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-0.627 0.664 3.669"/>
+                <entry type="string" key="#rotation" value="5 -45 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.767 0.516 -4.972"/>
+                <entry type="string" key="#rotation" value="0 180 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="0 3.571 -5.025"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="0 3.571 -5.025"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/kotte/frc65/frc65.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemFillArmReceiver>
+            <entry type="int" key="#fillVolumeIndex" value="1"/>
+        </manureSystemFillArmReceiver>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.627 1.039 4.669"/>
+                <entry type="string" key="#rotation" value="5 45 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-0.627 1.039 4.669"/>
+                <entry type="string" key="#rotation" value="5 -45 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.767 0.936 -5.972"/>
+                <entry type="string" key="#rotation" value="0 180 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="0 3.854 -5.9"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="0 3.854 -5.9"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/kotte/tsa/tsa.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="170"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1050"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-0.55 1.039 -3.3"/>
+                <entry type="string" key="#rotation" value="15 -90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="0 3.5 -3.2"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="0 3.5 -3.2"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/kotte/pq32000/pq32000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="370"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1250"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="string" key="#linkNode" value="armMainPart03Extension"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="-0.15 -0.05 -1.4"/>
+            <entry type="string" key="#rotation" value="-90 0 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.041 0.48 3.185"/>
+                <entry type="string" key="#rotation" value="30 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.29 0.769 4.616"/>
+                <entry type="string" key="#rotation" value="5 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.29 0.769 4.616"/>
+                <entry type="string" key="#rotation" value="-5 -90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

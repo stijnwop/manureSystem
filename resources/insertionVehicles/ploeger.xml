@@ -1,0 +1,22 @@
+<data>
+    <vehicle xml="data/vehicles/ploeger/at5104LNMS/at5104LNMS.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="string" key="#linkNode" value="arm03"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="-0.375 -1.7 -1.00"/>
+            <entry type="string" key="#rotation" value="-135 0 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="197"/>
+            <entry type="int" key="#fillUnitIndex" value="3"/>
+        </manureSystemPumpMotor>
+    </vehicle>
+
+</data>

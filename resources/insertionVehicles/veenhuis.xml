@@ -15,7 +15,7 @@
             <entry type="bool" key="#createNode" value="true"/>
             <entry type="string" key="#linkNode" value="0>0|4|0|0|0|0|0|3"/>
             <entry type="float" key="#fillYOffset" value="-0.2"/>
-            <entry type="string" key="#position" value="0 0 -3.2"/>
+            <entry type="string" key="#position" value="-0.01 -0.05 -3.2"/>
             <entry type="string" key="#rotation" value="0 0 0"/>
         </manureSystemFillArm>
 
@@ -24,8 +24,28 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="bool" key="#createNode" value="true"/>
-                <entry type="string" key="#position" value="1.15 0.35 0.2"/>
-                <entry type="string" key="#rotation" value="0 90 0"/>
+                <entry type="string" key="#position" value="1.175 0.57 1.775"/>
+                <entry type="string" key="#rotation" value="10 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+    <vehicle xml="data/vehicles/veenhuis/premiumIntegral30000/premiumIntegral30000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="320"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1150"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.175 0.57 3.05"/>
+                <entry type="string" key="#rotation" value="10 90 0"/>
             </connector>
         </manureSystemConnectors>
     </vehicle>

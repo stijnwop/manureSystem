@@ -1,0 +1,33 @@
+<data>
+    <vehicle xml="data/vehicles/samsonAgro/pgII35m/pgII35m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="300"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1250"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="string" key="#linkNode" value="0>0|6|0|0|0|0|0|1"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="0 0 0"/>
+            <entry type="string" key="#rotation" value="0 0 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="-0.714 3.8 -5"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="-0.714 3.8 -5"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

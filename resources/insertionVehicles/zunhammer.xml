@@ -1,0 +1,61 @@
+<data>
+    <vehicle xml="data/vehicles/zunhammer/ult18/ult18.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="120"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1250"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0 0.877 -3.86"/>
+                <entry type="string" key="#rotation" value="5 180 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="0 3.6 -2.6"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="0 3.6 -2.6"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/zunhammer/ult24/ult24.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="120"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1250"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0 0.7 -4.75"/>
+                <entry type="string" key="#rotation" value="0 180 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="DOCK"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>"/>
+                <entry type="bool" key=".funnel#createNode" value="true"/>
+                <entry type="string" key=".funnel#position" value="0 3.571 -3.82"/>
+                <entry type="string" key=".trigger#linkNode" value="0>"/>
+                <entry type="string" key=".trigger#position" value="0 3.571 -3.82"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>
