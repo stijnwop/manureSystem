@@ -164,7 +164,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 local x, y, z = getWorldTranslation(fillArm.node)
                 local dx, dy, dz = localDirectionToWorld(fillArm.node, 0, 0, -1)
 
-                if self:getIsActiveForInput() then
+                if self:getIsOperating() then
                     if g_currentMission.manureSystem.debug then
                         DebugUtil.drawDebugNode(fillArm.node, "ACTIVE FILLARM")
                     end
