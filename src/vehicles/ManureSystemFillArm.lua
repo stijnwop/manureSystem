@@ -1,19 +1,17 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemFillArm
-----------------------------------------------------------------------------------------------------
--- Purpose: allows filling from lagoons and fillarm receivers.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: Allows filling from lagoons and fillarm receivers
+-- Name: ManureSystemFillArm
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
 
 ---@class ManureSystemFillArm
 ManureSystemFillArm = {}
 ManureSystemFillArm.MOD_NAME = g_currentModName
 
-function ManureSystemFillArm.prerequisitesPresent(specializations)
-    return SpecializationUtil.hasSpecialization(FillUnit, specializations)
-end
-
+---@return void
 function ManureSystemFillArm.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemFillArm")
@@ -25,6 +23,12 @@ function ManureSystemFillArm.initSpecialization()
     ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(?)")
 end
 
+---@return boolean
+function ManureSystemFillArm.prerequisitesPresent(specializations)
+    return SpecializationUtil.hasSpecialization(FillUnit, specializations)
+end
+
+---@return void
 function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
     XMLExtensions.registerXMLPaths(schema, baseName)
     schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Fill Y offset to the plane")
@@ -39,15 +43,18 @@ function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
     EffectManager.registerEffectXMLPaths(schema, baseName .. ".effects")
 end
 
+---@return void
 function ManureSystemFillArm.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "loadManureSystemFillArmFromXML", ManureSystemFillArm.loadManureSystemFillArmFromXML)
     SpecializationUtil.registerFunction(vehicleType, "getFillArms", ManureSystemFillArm.getFillArms)
 end
 
+---@return void
 function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "canChangePumpDirection", ManureSystemFillArm.canChangePumpDirection)
 end
 
+---@return void
 function ManureSystemFillArm.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArm)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemFillArm)
@@ -55,7 +62,7 @@ function ManureSystemFillArm.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ManureSystemFillArm)
 end
 
----Called on load.
+---@return void
 function ManureSystemFillArm:onLoad(savegame)
     self.spec_manureSystemFillArm = self[("spec_%s.manureSystemFillArm"):format(ManureSystemFillArm.MOD_NAME)]
     local spec = self.spec_manureSystemFillArm
@@ -106,7 +113,7 @@ function ManureSystemFillArm:onLoad(savegame)
     end
 end
 
----Called on delete.
+---@return void
 function ManureSystemFillArm:onDelete()
     local spec = self.spec_manureSystemFillArm
 
@@ -118,6 +125,7 @@ function ManureSystemFillArm:onDelete()
     end
 end
 
+---@return void
 function ManureSystemFillArm:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
     if self.isClient and spec.hasFillArm and self.canTurnOnPump ~= nil then
@@ -145,7 +153,7 @@ function ManureSystemFillArm:onUpdate(dt, isActiveForInput, isActiveForInputIgno
     end
 end
 
----Called on update tick.
+---@return void
 function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
     if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
@@ -211,12 +219,12 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
     end
 end
 
----Gets the current active fill arms.
+---@return table
 function ManureSystemFillArm:getFillArms()
     return self.spec_manureSystemFillArm.fillArms
 end
 
----Load the current fill arm from the xml.
+---@return boolean
 function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, id)
     local node = XMLExtensions.ensureExistingNode(self, xmlFile, baseKey)
 
@@ -271,7 +279,8 @@ end
 -- Overwrites --
 ----------------
 
----Allow limiting the pump direction for a given fill arm.
+---Allow limiting the pump direction for a given fill arm
+---@return boolean
 function ManureSystemFillArm:canChangePumpDirection(superFunc)
     local spec = self.spec_cylindered
     --We need cylindered (for moving tools) to check the limited fill direction of the arm.

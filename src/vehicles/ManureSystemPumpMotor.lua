@@ -1,10 +1,11 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemPumpMotor
-----------------------------------------------------------------------------------------------------
--- Purpose: enables the pump functionality for the vehicle.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: The pump functionality for the vehicles
+-- Name: ManureSystemPumpMotor
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
 
 ---@class ManureSystemPumpMotor
 ManureSystemPumpMotor = {}
@@ -36,6 +37,7 @@ ManureSystemPumpMotor.MODE_CONNECTOR = 1
 ManureSystemPumpMotor.MODE_FILLARM = 2
 ManureSystemPumpMotor.MODE_FILLARM_DOCK = 3
 
+---@return void
 function ManureSystemPumpMotor.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemPumpMotor")
@@ -50,16 +52,19 @@ function ManureSystemPumpMotor.initSpecialization()
     schema:setXMLSpecializationType()
 end
 
+---@return boolean
 function ManureSystemPumpMotor.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(PowerConsumer, specializations)
 end
 
+---@return void
 function ManureSystemPumpMotor.registerEvents(vehicleType)
     SpecializationUtil.registerEvent(vehicleType, "onPumpStarted")
     SpecializationUtil.registerEvent(vehicleType, "onPumpStopped")
     SpecializationUtil.registerEvent(vehicleType, "onPumpInvalid")
 end
 
+---@return void
 function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "setIsPumpRunning", ManureSystemPumpMotor.setIsPumpRunning)
     SpecializationUtil.registerFunction(vehicleType, "isPumpRunning", ManureSystemPumpMotor.isPumpRunning)
@@ -89,6 +94,7 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getOriginalPumpMaxTime", ManureSystemPumpMotor.getOriginalPumpMaxTime)
 end
 
+---@return void
 function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getIsTurnedOn", ManureSystemPumpMotor.getIsTurnedOn)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanBeTurnedOn", ManureSystemPumpMotor.getCanBeTurnedOn)
@@ -104,6 +110,7 @@ function ManureSystemPumpMotor.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getUseTurnedOnSchema", ManureSystemPumpMotor.getUseTurnedOnSchema)
 end
 
+---@return void
 function ManureSystemPumpMotor.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemPumpMotor)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemPumpMotor)
@@ -116,6 +123,7 @@ function ManureSystemPumpMotor.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", ManureSystemPumpMotor)
 end
 
+---@return void
 function ManureSystemPumpMotor:onLoad(savegame)
     self.spec_manureSystemPumpMotor = self[("spec_%s.manureSystemPumpMotor"):format(ManureSystemPumpMotor.MOD_NAME)]
     local spec = self.spec_manureSystemPumpMotor
@@ -191,6 +199,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
     end
 end
 
+---@return void
 function ManureSystemPumpMotor.disableDischargeable(self)
     local spec = self.spec_dischargeable
     for _, dischargeNode in ipairs(spec.dischargeNodes) do
@@ -207,6 +216,7 @@ function ManureSystemPumpMotor.disableDischargeable(self)
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:onDelete()
     if self.isClient then
         local spec = self.spec_manureSystemPumpMotor
@@ -214,6 +224,7 @@ function ManureSystemPumpMotor:onDelete()
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:onReadStream(streamId, connection)
     local pumpIsRunning = streamReadBool(streamId)
     self:setIsPumpRunning(pumpIsRunning, true)
@@ -224,6 +235,7 @@ function ManureSystemPumpMotor:onReadStream(streamId, connection)
     self:setPumpDirection(pumpDirection, true)
 end
 
+---@return void
 function ManureSystemPumpMotor:onWriteStream(streamId, connection)
     local spec = self.spec_manureSystemPumpMotor
     streamWriteBool(streamId, spec.pumpIsRunning)
@@ -231,6 +243,7 @@ function ManureSystemPumpMotor:onWriteStream(streamId, connection)
     streamWriteUIntN(streamId, pumpDirection, 10)
 end
 
+---@return void
 function ManureSystemPumpMotor:onReadUpdateStream(streamId, timestamp, connection)
     if connection:getIsServer() then
         local isDirty = streamReadBool(streamId)
@@ -244,6 +257,7 @@ function ManureSystemPumpMotor:onReadUpdateStream(streamId, timestamp, connectio
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:onWriteUpdateStream(streamId, connection, dirtyMask)
     if not connection:getIsServer() then
         local spec = self.spec_manureSystemPumpMotor
@@ -256,6 +270,7 @@ function ManureSystemPumpMotor:onWriteUpdateStream(streamId, connection, dirtyMa
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:onUpdate(dt)
     if self.isClient then
         local canTurnOnPump = self:canTurnOnPump()
@@ -286,6 +301,7 @@ function ManureSystemPumpMotor:onUpdate(dt)
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:onUpdateTick(dt)
     local spec = self.spec_manureSystemPumpMotor
     local isPumpRunning = self:isPumpRunning()
@@ -372,6 +388,7 @@ function ManureSystemPumpMotor:onUpdateTick(dt)
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:setIsPumpRunning(pumpIsRunning, noEventSend)
     local spec = self.spec_manureSystemPumpMotor
 
@@ -380,27 +397,23 @@ function ManureSystemPumpMotor:setIsPumpRunning(pumpIsRunning, noEventSend)
 
         spec.pumpIsRunning = pumpIsRunning
 
+        local event = pumpIsRunning and "onPumpStarted" or "onPumpStopped"
+        SpecializationUtil.raiseEvent(self, event)
+
         local actionEvent = spec.actionEvents[InputAction.MS_ACTIVATE_PUMP]
-        local text
-
-        if pumpIsRunning then
-            SpecializationUtil.raiseEvent(self, "onPumpStarted")
-            text = g_i18n:getText("action_deactivatePump"):format(self.typeDesc)
-        else
-            SpecializationUtil.raiseEvent(self, "onPumpStopped")
-            text = g_i18n:getText("action_activatePump"):format(self.typeDesc)
-        end
-
         if actionEvent ~= nil then
-            g_inputBinding:setActionEventText(actionEvent.actionEventId, text)
+            local key = pumpIsRunning and "action_deactivatePump" or "action_activatePump"
+            g_inputBinding:setActionEventText(actionEvent.actionEventId, g_i18n:getText(key):format(self.typeDesc))
         end
     end
 end
 
+---@return boolean
 function ManureSystemPumpMotor:isPumpRunning()
     return self.spec_manureSystemPumpMotor.pumpIsRunning
 end
 
+---@return boolean
 function ManureSystemPumpMotor:canTurnOnPump()
     if self.getIsMotorStarted ~= nil then
         return self:getIsMotorStarted()
@@ -417,6 +430,7 @@ function ManureSystemPumpMotor:canTurnOnPump()
 end
 
 ---Checks if we allow pumping on server and we show the warning to the client.
+---@return void
 function ManureSystemPumpMotor:checkPumpNotAllowedWarning(warningId)
     if self.isServer then
         local warning = self:getTurnOnPumpNotAllowedWarning()
@@ -435,6 +449,7 @@ function ManureSystemPumpMotor:checkPumpNotAllowedWarning(warningId)
 end
 
 ---Checks if we allow pumping.
+---@return number|nil
 function ManureSystemPumpMotor:getTurnOnPumpNotAllowedWarning()
     local spec = self.spec_manureSystemPumpMotor
     local targetObject, targetFillUnitIndex = self:getPumpTargetObject()
@@ -477,6 +492,7 @@ function ManureSystemPumpMotor:getTurnOnPumpNotAllowedWarning()
     return nil
 end
 
+---@return number
 function ManureSystemPumpMotor:getPumpLoadPercentage()
     if self:isPumpRunning() then
         return self.spec_manureSystemPumpMotor.pumpEfficiency.currentLoad
@@ -486,6 +502,7 @@ function ManureSystemPumpMotor:getPumpLoadPercentage()
 end
 
 ---Sets the current pump mode to use
+---@return void
 function ManureSystemPumpMotor:setPumpMode(mode, noEventSend)
     local spec = self.spec_manureSystemPumpMotor
 
@@ -496,15 +513,18 @@ function ManureSystemPumpMotor:setPumpMode(mode, noEventSend)
 end
 
 ---Returns the current pump mode.
+---@return number
 function ManureSystemPumpMotor:getPumpMode()
     return self.spec_manureSystemPumpMotor.pumpMode
 end
 
 ---Allows for overwriting pump limitations.
+---@return boolean
 function ManureSystemPumpMotor:canChangePumpDirection()
     return true
 end
 
+---@return void
 function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
     local spec = self.spec_manureSystemPumpMotor
 
@@ -515,28 +535,32 @@ function ManureSystemPumpMotor:setPumpDirection(pumpDirection, noEventSend)
 
         local actionEvent = spec.actionEvents[InputAction.MS_TOGGLE_PUMP_DIRECTION]
         if actionEvent ~= nil then
-            local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
+            local key = self:isPumpingIn() and "action_directionOut" or "action_directionIn"
             if self:isStandalonePump() and spec.useStandalonePumpText then
-                pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
+                key = self:isPumpingIn() and "action_directionLeftRight" or "action_directionRightLeft"
             end
 
-            g_inputBinding:setActionEventText(actionEvent.actionEventId, pumpDirectionText)
+            g_inputBinding:setActionEventText(actionEvent.actionEventId, g_i18n:getText(key))
         end
     end
 end
 
+---@return number
 function ManureSystemPumpMotor:getPumpDirection()
     return self.spec_manureSystemPumpMotor.pumpDirection
 end
 
+---@return boolean
 function ManureSystemPumpMotor:isPumpingIn()
     return self.spec_manureSystemPumpMotor.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN
 end
 
+---@return boolean
 function ManureSystemPumpMotor:isPumpingOut()
     return self.spec_manureSystemPumpMotor.pumpDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT
 end
 
+---@return void
 function ManureSystemPumpMotor:handlePump(dt)
     if not self.isServer then
         return
@@ -607,6 +631,7 @@ function ManureSystemPumpMotor:handlePump(dt)
     end
 end
 
+---@return void
 function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, fillType, deltaFill)
     if deltaFill <= 0 then
         return
@@ -639,11 +664,13 @@ function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, target
     end
 end
 
+---@return boolean
 function ManureSystemPumpMotor:isStandalonePump()
     return self.spec_manureSystemPumpMotor.isStandalone
 end
 
 ---Returns true when the target object is valid, false otherwise.
+---@return boolean
 function ManureSystemPumpMotor:isPumpTargetObjectValid()
     local spec = self.spec_manureSystemPumpMotor
 
@@ -664,25 +691,30 @@ function ManureSystemPumpMotor:isPumpTargetObjectValid()
     return false
 end
 
+---@return void
 function ManureSystemPumpMotor:setPumpTargetObject(object, fillUnitIndex)
     self.spec_manureSystemPumpMotor.targetObject = object
     self.spec_manureSystemPumpMotor.targetFillUnitIndex = fillUnitIndex
 end
 
+---@return table, number
 function ManureSystemPumpMotor:getPumpTargetObject()
     return self.spec_manureSystemPumpMotor.targetObject, self.spec_manureSystemPumpMotor.targetFillUnitIndex
 end
 
+---@return void
 function ManureSystemPumpMotor:setPumpSourceObject(object, fillUnitIndex)
     self.spec_manureSystemPumpMotor.sourceObject = object
     self.spec_manureSystemPumpMotor.sourceFillUnitIndex = fillUnitIndex
 end
 
+---@return table, number
 function ManureSystemPumpMotor:getPumpSourceObject()
     return self.spec_manureSystemPumpMotor.sourceObject, self.spec_manureSystemPumpMotor.sourceFillUnitIndex
 end
 
 ---Get the source object, else default on ourselves when we have the FillUnit spec.
+---@return table, number
 function ManureSystemPumpMotor:getPumpSourceObjectOrSelf()
     local object, fillUnitIndex = self:getPumpSourceObject()
 
@@ -694,14 +726,17 @@ function ManureSystemPumpMotor:getPumpSourceObjectOrSelf()
     return object, fillUnitIndex
 end
 
+---@return void
 function ManureSystemPumpMotor:setIsPumpSourceWater(isWater)
     self.spec_manureSystemPumpMotor.sourceIsWater = isWater
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getIsPumpSourceWater()
     return self.spec_manureSystemPumpMotor.sourceIsWater
 end
 
+---@return table, number
 function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, rootObject)
     if fillType == nil or object == nil then
         return nil
@@ -736,39 +771,52 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
     return nil, nil
 end
 
+---@return number
 function ManureSystemPumpMotor:getOriginalPumpMaxTime()
     return self.spec_manureSystemPumpMotor.pumpEfficiency.orgMaxTime
 end
 
+---@return void
 function ManureSystemPumpMotor:setPumpMaxTime(maxTime)
     self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime = maxTime
 end
 
+---@return number
 function ManureSystemPumpMotor:getPumpMaxTime()
     return self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime
 end
 
+----------------
+-- Overwrites --
+----------------
+
+---@return boolean
 function ManureSystemPumpMotor:getDoConsumePtoPower(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getRequiresPower(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getIsPowerTakeOffActive(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getIsOperating(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getUseTurnedOnSchema(superFunc)
     return self:isPumpRunning() or superFunc(self)
 end
 
 --Todo: check for remove
+---@return boolean
 function ManureSystemPumpMotor:getCanBeTurnedOn(superFunc)
     if self:isPumpRunning() then
         return false
@@ -778,6 +826,7 @@ function ManureSystemPumpMotor:getCanBeTurnedOn(superFunc)
 end
 
 --Todo: check for remove
+---@return boolean
 function ManureSystemPumpMotor:getCanToggleTurnedOn(superFunc)
     if self:isPumpRunning() then
         return false
@@ -790,6 +839,7 @@ function ManureSystemPumpMotor:getCanToggleTurnedOn(superFunc)
     return superFunc(self)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getIsWorkAreaActive(superFunc, workArea)
     if self:isPumpRunning() then
         return false
@@ -798,6 +848,7 @@ function ManureSystemPumpMotor:getIsWorkAreaActive(superFunc, workArea)
     return superFunc(self, workArea)
 end
 
+---@return boolean
 function ManureSystemPumpMotor:getIsFillUnitActive(superFunc, fillUnitIndex)
     -- We don't allow spraying water as fertilizer.
     if self:getFillUnitFillType(fillUnitIndex) == FillType.WATER then
@@ -807,7 +858,7 @@ function ManureSystemPumpMotor:getIsFillUnitActive(superFunc, fillUnitIndex)
     return superFunc(self, fillUnitIndex)
 end
 
----Calculate the load based on the liters per second.
+---@return number, number
 function ManureSystemPumpMotor:getConsumingLoad(superFunc)
     local value, count = superFunc(self)
 
@@ -816,6 +867,7 @@ function ManureSystemPumpMotor:getConsumingLoad(superFunc)
     return value + load, count + 1
 end
 
+---@return void
 function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
     if self.isClient then
         local spec = self.spec_manureSystemPumpMotor
@@ -826,26 +878,24 @@ function ManureSystemPumpMotor:onRegisterActionEvents(isActiveForInput, isActive
             local _, actionEventIdTogglePump = self:addActionEvent(spec.actionEvents, InputAction.MS_ACTIVATE_PUMP, self, ManureSystemPumpMotor.actionEventTogglePump, false, true, false, true, nil, nil, true)
             local _, actionEventIdTogglePumpDirection = self:addActionEvent(spec.actionEvents, InputAction.MS_TOGGLE_PUMP_DIRECTION, self, ManureSystemPumpMotor.actionEventTogglePumpDirection, false, true, false, true, nil, nil, true)
 
-            local text = g_i18n:getText("action_activatePump"):format(self.typeDesc)
-            if self:isPumpRunning() then
-                text = g_i18n:getText("action_deactivatePump"):format(self.typeDesc)
-            end
-            g_inputBinding:setActionEventText(actionEventIdTogglePump, text)
+            local pumpKey = self:isPumpRunning() and "action_deactivatePump" or "action_activatePump"
+            g_inputBinding:setActionEventText(actionEventIdTogglePump, g_i18n:getText(pumpKey):format(self.typeDesc))
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePump, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePump, GS_PRIO_HIGH)
 
-            local pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionOut") or g_i18n:getText("action_directionIn")
+            local directionKey = self:isPumpingIn() and "action_directionOut" or "action_directionIn"
             if self:isStandalonePump() and spec.useStandalonePumpText then
-                pumpDirectionText = self:isPumpingIn() and g_i18n:getText("action_directionLeftRight") or g_i18n:getText("action_directionRightLeft")
+                directionKey = self:isPumpingIn() and "action_directionLeftRight" or "action_directionRightLeft"
             end
 
-            g_inputBinding:setActionEventText(actionEventIdTogglePumpDirection, pumpDirectionText)
+            g_inputBinding:setActionEventText(actionEventIdTogglePumpDirection, g_i18n:getText(directionKey))
             g_inputBinding:setActionEventTextVisibility(actionEventIdTogglePumpDirection, true)
             g_inputBinding:setActionEventTextPriority(actionEventIdTogglePumpDirection, GS_PRIO_NORMAL)
         end
     end
 end
 
+---@return void
 function ManureSystemPumpMotor.actionEventTogglePump(self, actionName, inputValue, callbackState, isAnalog)
     local spec = self.spec_manureSystemPumpMotor
     local canTurnOnPump = self:canTurnOnPump()
@@ -875,6 +925,7 @@ function ManureSystemPumpMotor.actionEventTogglePump(self, actionName, inputValu
     end
 end
 
+---@return void
 function ManureSystemPumpMotor.actionEventTogglePumpDirection(self, actionName, inputValue, callbackState, isAnalog)
     if not self:isPumpRunning() then
         if self:canChangePumpDirection() then

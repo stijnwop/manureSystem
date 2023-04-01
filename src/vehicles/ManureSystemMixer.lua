@@ -11,10 +11,7 @@
 ManureSystemMixer = {}
 ManureSystemMixer.MOD_NAME = g_currentModName
 
-function ManureSystemMixer.prerequisitesPresent(specializations)
-    return SpecializationUtil.hasSpecialization(TurnOnVehicle, specializations)
-end
-
+---@return void
 function ManureSystemMixer.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemMixer")
@@ -26,6 +23,12 @@ function ManureSystemMixer.initSpecialization()
     schema:setXMLSpecializationType()
 end
 
+---@return boolean
+function ManureSystemMixer.prerequisitesPresent(specializations)
+    return SpecializationUtil.hasSpecialization(TurnOnVehicle, specializations)
+end
+
+---@return void
 function ManureSystemMixer.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemMixer)
     SpecializationUtil.registerEventListener(vehicleType, "onDelete", ManureSystemMixer)
@@ -35,10 +38,12 @@ function ManureSystemMixer.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", ManureSystemMixer)
 end
 
+---@return void
 function ManureSystemMixer.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getConsumingLoad", ManureSystemMixer.getConsumingLoad)
 end
 
+---@return void
 function ManureSystemMixer:onLoad(savegame)
     self.spec_manureSystemMixer = self[("spec_%s.manureSystemMixer"):format(ManureSystemMixer.MOD_NAME)]
     local spec = self.spec_manureSystemMixer
@@ -70,6 +75,7 @@ function ManureSystemMixer:onLoad(savegame)
     end
 end
 
+---@return void
 function ManureSystemMixer:onDelete()
     local spec = self.spec_manureSystemMixer
     if self.isClient then
@@ -77,6 +83,7 @@ function ManureSystemMixer:onDelete()
     end
 end
 
+---@return void
 function ManureSystemMixer:onReadUpdateStream(streamId, timestamp, connection)
     if connection:getIsServer() then
         local isDirty = streamReadBool(streamId)
@@ -88,6 +95,7 @@ function ManureSystemMixer:onReadUpdateStream(streamId, timestamp, connection)
     end
 end
 
+---@return void
 function ManureSystemMixer:onWriteUpdateStream(streamId, connection, dirtyMask)
     if not connection:getIsServer() then
         local spec = self.spec_manureSystemMixer
@@ -98,6 +106,7 @@ function ManureSystemMixer:onWriteUpdateStream(streamId, connection, dirtyMask)
     end
 end
 
+---@return void
 function ManureSystemMixer:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemMixer
     if not self.isClient then
@@ -113,6 +122,7 @@ function ManureSystemMixer:onUpdate(dt, isActiveForInput, isActiveForInputIgnore
     end
 end
 
+---@return void
 function ManureSystemMixer:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemMixer
     if self.isServer and spec.node ~= nil then
@@ -148,6 +158,11 @@ function ManureSystemMixer:onUpdateTick(dt, isActiveForInput, isActiveForInputIg
     end
 end
 
+----------------
+-- Overwrites --
+----------------
+
+---@return number, number
 function ManureSystemMixer:getConsumingLoad(superFunc)
     local value, count = superFunc(self)
     local spec = self.spec_manureSystemMixer

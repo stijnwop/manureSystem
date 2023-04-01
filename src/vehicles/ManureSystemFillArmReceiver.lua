@@ -1,15 +1,17 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemFillArmReceiver
-----------------------------------------------------------------------------------------------------
--- Purpose: allows fillArm interaction with the vehicle.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: Allows fillArm interaction with vehicles
+-- Name: ManureSystemFillArmReceiver
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
 
 ---@class ManureSystemFillArmReceiver
 ManureSystemFillArmReceiver = {}
 ManureSystemFillArmReceiver.MOD_NAME = g_currentModName
 
+---@return void
 function ManureSystemFillArmReceiver.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemFillArmReceiver")
@@ -19,19 +21,23 @@ function ManureSystemFillArmReceiver.initSpecialization()
     schema:setXMLSpecializationType()
 end
 
+---@return boolean
 function ManureSystemFillArmReceiver.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(FillVolume, specializations)
 end
 
+---@return void
 function ManureSystemFillArmReceiver.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getFillArmFillUnitIndex", ManureSystemFillArmReceiver.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(vehicleType, "isUnderFillPlane", ManureSystemFillArmReceiver.isUnderFillPlane)
 end
 
+---@return void
 function ManureSystemFillArmReceiver.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemFillArmReceiver)
 end
 
+---@return void
 function ManureSystemFillArmReceiver:onLoad(savegame)
     self.spec_manureSystemFillArmReceiver = self[("spec_%s.manureSystemFillArmReceiver"):format(ManureSystemFillArmReceiver.MOD_NAME)]
     local spec = self.spec_manureSystemFillArmReceiver
@@ -66,10 +72,12 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
     end
 end
 
+---@return number
 function ManureSystemFillArmReceiver:getFillArmFillUnitIndex()
     return self.spec_manureSystemFillArmReceiver.fillArmFillUnitIndex
 end
 
+---@return boolean
 function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
     local spec = self.spec_manureSystemFillArmReceiver
     if not spec.isActive or #self.spec_fillVolume.volumes == 0 then

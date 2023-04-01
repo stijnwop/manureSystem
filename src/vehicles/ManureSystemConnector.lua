@@ -1,18 +1,17 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemConnector
-----------------------------------------------------------------------------------------------------
--- Purpose: connects different strategies together in order to allow pumping.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: Connector implementation for vehicles
+-- Name: ManureSystemConnector
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
 
+---@class ManureSystemConnector
 ManureSystemConnector = {}
 ManureSystemConnector.MOD_NAME = g_currentModName
 
-function ManureSystemConnector.prerequisitesPresent(specializations)
-    return SpecializationUtil.hasSpecialization(FillUnit, specializations)
-end
-
+---@return void
 function ManureSystemConnector.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemConnector")
@@ -20,6 +19,12 @@ function ManureSystemConnector.initSpecialization()
     schema:setXMLSpecializationType()
 end
 
+---@return boolean
+function ManureSystemConnector.prerequisitesPresent(specializations)
+    return SpecializationUtil.hasSpecialization(FillUnit, specializations)
+end
+
+---@return void
 function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "setIsConnected", ManureSystemConnector.setIsConnected)
     SpecializationUtil.registerFunction(vehicleType, "setIsManureFlowOpen", ManureSystemConnector.setIsManureFlowOpen)
@@ -29,12 +34,14 @@ function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorInRangeNode", ManureSystemConnector.getConnectorInRangeNode)
 end
 
+---@return void
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
 end
 
+---@return void
 function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", ManureSystemConnector)
     SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", ManureSystemConnector)
@@ -46,6 +53,7 @@ function ManureSystemConnector.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onPumpInvalid", ManureSystemConnector)
 end
 
+---@return void
 function ManureSystemConnector:onLoad(savegame)
     self.spec_manureSystemConnector = self[("spec_%s.manureSystemConnector"):format(ManureSystemConnector.MOD_NAME)]
 
@@ -70,10 +78,12 @@ function ManureSystemConnector:onLoad(savegame)
     end
 end
 
+---@return void
 function ManureSystemConnector:onPostLoad(savegame)
     self.spec_manureSystemConnector.connectors:register()
 end
 
+---@return void
 function ManureSystemConnector:onDelete()
     local spec = self.spec_manureSystemConnector
     if spec.isActive then
@@ -81,46 +91,57 @@ function ManureSystemConnector:onDelete()
     end
 end
 
+---@return void
 function ManureSystemConnector:onReadStream(streamId, connection)
     self.spec_manureSystemConnector.connectors:readStream(streamId, connection)
 end
 
+---@return void
 function ManureSystemConnector:onWriteStream(streamId, connection)
     self.spec_manureSystemConnector.connectors:writeStream(streamId, connection)
 end
 
+---@return void
 function ManureSystemConnector:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     self.spec_manureSystemConnector.connectors:update(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
 end
 
+---@return void
 function ManureSystemConnector:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     self.spec_manureSystemConnector.connectors:updateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
 end
 
+---@return void
 function ManureSystemConnector:setIsConnected(id, state, grabNodeId, hose, noEventSend)
     self.spec_manureSystemConnector.connectors:setIsConnected(id, state, grabNodeId, hose, noEventSend)
 end
 
+---@return void
 function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend)
     self.spec_manureSystemConnector.connectors:setIsManureFlowOpen(id, state, force, noEventSend)
 end
 
+---@return table
 function ManureSystemConnector:getConnectorById(type)
     return self.spec_manureSystemConnector.connectors:getConnectorById(type)
 end
 
+---@return table
 function ManureSystemConnector:getConnectorsByType(type)
     return self.spec_manureSystemConnector.connectors:getConnectorsByType(type)
 end
 
+---@return table
 function ManureSystemConnector:getActiveConnectorsByType(type)
     return self.spec_manureSystemConnector.connectors:getActiveConnectorsByType(type)
 end
 
+---@return boolean
 function ManureSystemConnector:getConnectorInRangeNode()
     return self.spec_manureSystemConnector.connectors:getConnectorInRangeNode()
 end
 
+---@return void
 function ManureSystemConnector:onPumpInvalid()
     local connectors = self.spec_manureSystemConnector.connectors
 
@@ -139,7 +160,6 @@ function ManureSystemConnector:onPumpInvalid()
         g_currentMission:showBlinkingWarning(message)
     end
 end
-
 
 ----------------
 -- Overwrites --
