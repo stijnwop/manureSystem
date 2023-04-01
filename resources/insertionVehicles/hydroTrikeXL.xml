@@ -16,6 +16,7 @@
 
         <manureSystemPumpMotor>
             <entry type="float" key="#litersPerSecond" value="197"/>
+            <entry type="int" key="#fillUnitIndex" value="3"/>
         </manureSystemPumpMotor>
 
         <manureSystemConnectors>

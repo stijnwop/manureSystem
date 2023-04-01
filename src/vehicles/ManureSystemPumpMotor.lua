@@ -45,8 +45,8 @@ function ManureSystemPumpMotor.initSpecialization()
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#litersPerSecond", "Offset for the fillarm interaction")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#autoStopPercentageIn", "Offset for the fillarm interaction")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#autoStopPercentageOut", "Offset for the fillarm interaction")
-
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#warningTime", "Offset for the fillarm interaction")
+    schema:register(XMLValueType.INT, "vehicle.manureSystemPumpMotor#fillUnitIndex", "Fill unit index the pump defaults to when using self as source")
     schema:setXMLSpecializationType()
 end
 
@@ -130,6 +130,7 @@ function ManureSystemPumpMotor:onLoad(savegame)
 
     spec.isStandalone = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#isStandalone", false)
     spec.useStandalonePumpText = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#useStandalonePumpText", spec.isStandalone)
+    spec.fillUnitIndex = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#fillUnitIndex", ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX)
 
     local maxTime = self.xmlFile:getValue("vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", 1500)
     spec.pumpEfficiency = {
@@ -687,7 +688,7 @@ function ManureSystemPumpMotor:getPumpSourceObjectOrSelf()
 
     --When the current source object isn't set, we use ourselves as source when we have the FillUnit specialization.
     if object == nil and SpecializationUtil.hasSpecialization(FillUnit, self.specializations) then
-        return self, ManureSystemPumpMotor.DEFAULT_FILLUNIT_INDEX
+        return self, self.spec_manureSystemPumpMotor.fillUnitIndex
     end
 
     return object, fillUnitIndex
