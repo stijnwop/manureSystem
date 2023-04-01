@@ -176,13 +176,22 @@ local function loadInsertion(directory, xmlRoot)
     end
 end
 
-local function init()
+local function loadInsertions()
     for xmlRoot, directory in pairs(insertionDirectories) do
         loadInsertion(directory, xmlRoot)
     end
+end
 
+local function consoleCommandReloadVehicle(mission, superFunc, resetVehicle, radius)
+    loadInsertions()
+    return superFunc(mission, resetVehicle, radius)
+end
+
+local function init()
+    loadInsertions()
     Vehicle.load = Utils.overwrittenFunction(Vehicle.load, vehicleLoad)
     Placeable.load = Utils.overwrittenFunction(Placeable.load, placeableLoad)
+    FSBaseMission.consoleCommandReloadVehicle = Utils.overwrittenFunction(FSBaseMission.consoleCommandReloadVehicle, consoleCommandReloadVehicle)
 end
 
 init()
