@@ -25,7 +25,7 @@
         <text name="warning_objectFull" text="La cible de la pompe est pleine!"/>
         <text name="warning_invalidFillType" text="Le type de remplissage de la pompe n&#39;est pas pris en charge!"/>
         <text name="warning_checkManureFlow" text="Veuillez vérifier l&#39;écoulement du lisier pour le raccord de %s!"/>
-        <text name="warning_parkingPlaceTooSmall" text="L&#39;emplacement de %sm est trop petit pour le tuyau de %sm!"/>
+        <text name="warning_parkingPlaceTooSmall" text="L&#39;emplacement de est trop petit pour le tuyau de %sm!"/>
         <text name="warning_hoseRangeRestriction" text="La limite de portée des tuyaux ne vous permettra pas d&#39;aller plus loin!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Vous n&#39;êtes pas un surhomme!"/>
         <text name="configuration_manureSystemFillArm" text="Bras de remplissage"/>

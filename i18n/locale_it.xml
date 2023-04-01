@@ -26,7 +26,7 @@
         <text name="warning_invalidFillType" text="Il tipo di liquido non è supportato!"/>
         <text name="warning_checkManureFlow" text="Controlla la valvola sul connettore di %s!"/>
         <text name="configuration_manureSystemFillArm" text="Braccio di riempimento"/>
-        <text name="warning_parkingPlaceTooSmall" text="Il luogo per riporre %sm di tubo è troppo piccolo per il tubo da %sm!"/>
+        <text name="warning_parkingPlaceTooSmall" text="Il luogo per riporre di tubo è troppo piccolo per il tubo da %sm!"/>
         <text name="warning_hoseRangeRestriction" text="Il limite di lunghezza del tubo non ti consente di andare oltre!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Non hai i superpoteri!"/>
         <text name="action_enableMixer" text="Accendi miscelatore"/>

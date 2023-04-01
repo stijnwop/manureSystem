@@ -25,7 +25,7 @@
         <text name="warning_objectFull" text="O destino da bomba está cheio"/>
         <text name="warning_invalidFillType" text="O tipo de enchimento da bomba não é suportado!"/>
         <text name="warning_checkManureFlow" text="Por favor, verifique o fluxo de estrume para o conector de %s!"/>
-        <text name="warning_parkingPlaceTooSmall" text="O local de armazenamento %sm é muito pequeno para a mangueira %sm!"/>
+        <text name="warning_parkingPlaceTooSmall" text="O local de armazenamento é muito pequeno para a mangueira %sm!"/>
         <text name="warning_hoseRangeRestriction" text="A restrição do alcance das mangueiras não permite que vá mais longe!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Você não é super humano!"/>
         <text name="configuration_manureSystemFillArm" text="Braço de enchimento"/>

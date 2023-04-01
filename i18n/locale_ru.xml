@@ -26,7 +26,7 @@
         <text name="warning_invalidFillType" text="Данный тип жидкости не поддерживается!"/>
         <text name="warning_checkManureFlow" text="Пожалуйста, проверьте задвижку/кран на %s!"/>
         <text name="configuration_manureSystemFillArm" text="Штанга-наполнитель"/>
-        <text name="warning_parkingPlaceTooSmall" text="Место для укладки в %sм слишком маленькое для %sм-го рукава!"/>
+        <text name="warning_parkingPlaceTooSmall" text="Место для укладки в слишком маленькое для %sм-го рукава!"/>
         <text name="warning_hoseRangeRestriction" text="Ограничение длинны рукава не позволит Вам идти дальше!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Вы не супермен!"/>
         <text name="action_enableMixer" text="Включить миксер"/>

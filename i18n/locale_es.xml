@@ -25,7 +25,7 @@
         <text name="warning_objectFull" text="¡El depósito destino esta lleno!"/>
         <text name="warning_invalidFillType" text="¡La bomba no soporta este material!"/>
         <text name="warning_checkManureFlow" text="Compruebe el flujo de estiércol para el conector de %s!"/>
-        <text name="warning_parkingPlaceTooSmall" text="El %sm sitio es muy pequeño para la manguera de %sm!"/>
+        <text name="warning_parkingPlaceTooSmall" text="El sitio es muy pequeño para la manguera de %sm!"/>
         <text name="warning_hoseRangeRestriction" text="El límite de lobgitud de la manguera no te permite ir más lejos!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Tu no tienes superpoderes!"/>
         <text name="configuration_manureSystemFillArm" text="Brazo de Llenado"/>

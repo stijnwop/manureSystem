@@ -967,15 +967,10 @@ end
 function Hose:parkHose(connector, vehicle)
     local spec = self.spec_hose
 
-    local parkPlace = connector
-    -- New format.
-    if connector.parkPlaces ~= nil and connector.parkPlaces[spec.length] ~= nil then
-        parkPlace = connector.parkPlaces[spec.length]
-    end
-
-    if parkPlace.length < spec.length then
+    local parkPlace = connector.parkPlaces[spec.length]
+    if parkPlace == nil or parkPlace.length < spec.length then
         if self.isClient then
-            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_parkingPlaceTooSmall"):format(parkPlace.length, spec.length), 2000)
+            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_parkingPlaceTooSmall"):format(spec.length), 2000)
         end
 
         return

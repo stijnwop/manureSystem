@@ -73,7 +73,7 @@
             <!--Todo: add missing translation for warning_objectEmpty--></e>
         <e k="warning_objectFull" v="The pump target is full!" tag="todo">
             <!--Todo: add missing translation for warning_objectFull--></e>
-        <e k="warning_parkingPlaceTooSmall" v="The %sm parking place is too small for the %sm hose!" tag="todo">
+        <e k="warning_parkingPlaceTooSmall" v="The parking place is too small for the %sm hose!" tag="todo">
             <!--Todo: add missing translation for warning_parkingPlaceTooSmall--></e>
         <e k="warning_pumpDirectionLimited" v="Pump direction is limited to only: %s" tag="todo">
             <!--Todo: add missing translation for warning_pumpDirectionLimited--></e>

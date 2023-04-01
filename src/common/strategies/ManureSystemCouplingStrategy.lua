@@ -44,9 +44,7 @@ function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, base
 end
 
 function ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName)
-    schema:register(XMLValueType.NODE_INDEX, baseName .. ".deformer#node", "Connector node")
-    schema:register(XMLValueType.BOOL, baseName .. ".deformer#createNode", "Create connector node")
-    schema:register(XMLValueType.NODE_INDEX, baseName .. ".deformer#linkNode", "Link node for linking the created nodes to")
+    XMLExtensions.registerXMLPaths(schema, baseName .. ".deformer")
 
     schema:register(XMLValueType.FLOAT, baseName .. "#length", "The park place length")
     schema:register(XMLValueType.FLOAT, baseName .. "#offsetThreshold", "The park offset threshold")
