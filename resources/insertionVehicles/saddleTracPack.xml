@@ -9,6 +9,7 @@
         <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
             <entry type="string" key="#linkNode" value="arm03"/>
+            <entry type="string" key="#type" value="dock"/>
             <entry type="float" key="#fillYOffset" value="-0.5"/>
             <entry type="float" key="#rayCastDistance" value="4"/>
             <entry type="string" key="#position" value="0.25 -2.848 -0.188"/>

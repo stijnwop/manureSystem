@@ -31,6 +31,7 @@ end
 ---@return void
 function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
     XMLExtensions.registerXMLPaths(schema, baseName)
+    schema:register(XMLValueType.STRING, baseName .. "#type", "Connector type")
     schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Fill Y offset to the plane")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index")
     schema:register(XMLValueType.FLOAT, baseName .. "#rayCastDistance", "Distance to raycast for objects")
@@ -231,12 +232,15 @@ function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, ba
     if node ~= nil then
         fillArm.id = id + 1
         fillArm.node = node
-        fillArm.type = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
         fillArm.fillYOffset = xmlFile:getValue(baseKey .. "#fillYOffset", 0)
         fillArm.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
         fillArm.rayCastDistance = xmlFile:getValue(baseKey .. "#rayCastDistance", 2)
         fillArm.controlGroupIndex = xmlFile:getValue(baseKey .. "#controlGroupIndex", 0)
         fillArm.isRaycastAllowed = true
+
+        local connectorManager = g_currentMission.manureSystem.connectorManager
+        local typeString = xmlFile:getValue(baseKey .. "#type", ManureSystemConnectorManager.CONNECTOR_TYPE_OPTICAL)
+        fillArm.type = connectorManager:getConnectorType(typeString) or connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_OPTICAL)
 
         local limit = xmlFile:getValue(baseKey .. "#limitedFillDirection")
         if limit ~= nil then

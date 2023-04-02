@@ -124,6 +124,7 @@
         <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
             <entry type="string" key="#linkNode" value="armMainPart03Extension"/>
+            <entry type="string" key="#type" value="dock"/>
             <entry type="float" key="#fillYOffset" value="-0.5"/>
             <entry type="string" key="#position" value="-0.15 -0.05 -1.4"/>
             <entry type="string" key="#rotation" value="-90 0 0"/>
