@@ -259,41 +259,64 @@ function ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
     return false
 end
 
+function ManureSystem.insertPumpMotor(vehicleTypeManager, typeName, typeEntry, modName)
+    if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
+        vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
+        Logging.info(("Adding ManureSystemPumpMotor to: '%s'"):format(typeName))
+    end
+end
+
+function ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
+    if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations)
+        and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
+        vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
+        Logging.info(("Adding ManureSystemConnector to: '%s'"):format(typeName))
+    end
+end
+
+function ManureSystem.insertFillArm(vehicleTypeManager, typeName, typeEntry, modName)
+    if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations)
+        and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
+        vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
+        Logging.info(("Adding ManureSystemFillArm to: '%s'"):format(typeName))
+    end
+end
+
+function ManureSystem.insertFillArmReceiver(vehicleTypeManager, typeName, typeEntry, modName)
+    if not SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, typeEntry.specializations)
+        and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations)
+        and SpecializationUtil.hasSpecialization(FillVolume, typeEntry.specializations) then
+        vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
+        Logging.info(("Adding ManureSystemFillArmReceiver to: '%s'"):format(typeName))
+    end
+end
+
+function ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modName)
+    if not SpecializationUtil.hasSpecialization(ManureSystemMixer, typeEntry.specializations)
+        and SpecializationUtil.hasSpecialization(TurnOnVehicle, typeEntry.specializations) then
+        vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemMixer")
+        Logging.info(("Adding ManureSystemMixer to: '%s'"):format(typeName))
+    end
+end
+
 function ManureSystem.installVehicleSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName)
     for typeName, typeEntry in pairs(vehicleTypeManager:getTypes()) do
         local hasRegistry = ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
-        if typeName == "manureTrailer" or hasRegistry
-            or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations) then
-            if not SpecializationUtil.hasSpecialization(ManureSystemPumpMotor, typeEntry.specializations) then
-                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemPumpMotor")
-                Logging.info(("Adding ManureSystemPumpMotor to: '%s'"):format(typeName))
-            end
+        local isValidType = typeName == "manureTrailer" or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations)
 
-            if not SpecializationUtil.hasSpecialization(ManureSystemConnector, typeEntry.specializations)
-                and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
-                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemConnector")
-                Logging.info(("Adding ManureSystemConnector to: '%s'"):format(typeName))
-            end
+        if hasRegistry then
+            ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modName)
+        end
 
-            if not SpecializationUtil.hasSpecialization(ManureSystemFillArm, typeEntry.specializations)
-                and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
-                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArm")
-                Logging.info(("Adding ManureSystemFillArm to: '%s'"):format(typeName))
-            end
+        if typeName == "pallet" and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
+            ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
+        end
 
-            if not SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, typeEntry.specializations)
-                and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations)
-                and SpecializationUtil.hasSpecialization(FillVolume, typeEntry.specializations) then
-                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemFillArmReceiver")
-                Logging.info(("Adding ManureSystemFillArmReceiver to: '%s'"):format(typeName))
-            end
-
-            if hasRegistry
-                and not SpecializationUtil.hasSpecialization(ManureSystemMixer, typeEntry.specializations)
-                and SpecializationUtil.hasSpecialization(TurnOnVehicle, typeEntry.specializations) then
-                vehicleTypeManager:addSpecialization(typeName, modName .. ".manureSystemMixer")
-                Logging.info(("Adding ManureSystemMixer to: '%s'"):format(typeName))
-            end
+        if isValidType or hasRegistry then
+            ManureSystem.insertPumpMotor(vehicleTypeManager, typeName, typeEntry, modName)
+            ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
+            ManureSystem.insertFillArm(vehicleTypeManager, typeName, typeEntry, modName)
+            ManureSystem.insertFillArmReceiver(vehicleTypeManager, typeName, typeEntry, modName)
         end
     end
 end
