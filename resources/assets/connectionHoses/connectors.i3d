@@ -1,75 +1,57 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <i3D name="connectors" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+
   <Files>
-    <File fileId="4" filename="$data/shaders/vehicleShader.xml"/>
-    <File fileId="2" filename="$data/shared/connectionHoses/connectors_normal.png"/>
-    <File fileId="3" filename="$data/shared/connectionHoses/connectors_specular.png"/>
-    <File fileId="10" filename="$data/shared/connectionHoses/frontConnector_normal.png"/>
-    <File fileId="11" filename="$data/shared/connectionHoses/frontConnector_specular.png"/>
-    <File fileId="8" filename="$data/shared/connectionHoses/hoses_normal.png"/>
-    <File fileId="9" filename="$data/shared/connectionHoses/hoses_specular.png"/>
-    <File fileId="12" filename="flanges_normal.png"/>
-    <File fileId="13" filename="flanges_specular.png"/>
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+    <File fileId="8" filename="$data/shared/connectionHoses/connectors_normal.png" />
+    <File fileId="9" filename="$data/shared/connectionHoses/connectors_vmask.png" />
+    <File fileId="6" filename="$data/shared/connectionHoses/frontConnector_normal.png" />
+    <File fileId="7" filename="$data/shared/connectionHoses/frontConnector_vmask.png" />
+    <File fileId="4" filename="$data/shared/connectionHoses/hoses_normal.png" />
+    <File fileId="5" filename="$data/shared/connectionHoses/hoses_vmask.png" />
+    <File fileId="1" filename="flanges_normal.png" />
+    <File fileId="2" filename="flanges_specular.png" />
   </Files>
 
-
   <Materials>
-    <Material name="connector_mat" materialId="7" diffuseColor="0.498039 0.498039 0.498039 1" customShaderId="4" customShaderVariation="colorMask">
-      <Normalmap fileId="2"/>
-      <Glossmap fileId="3"/>
-      <CustomParameter name="RDT" value="1 1 0 0"/>
-      <CustomParameter name="dirtColor" value="0.2 0.14 0.08 0"/>
-      <CustomParameter name="colorMat0" value="0.5356 0.0254 0.0254 1"/>
-      <CustomParameter name="colorMat1" value="0.5356 0.0254 0.0254 8"/>
-      <CustomParameter name="colorMat2" value="0.673 0.4704 0.022 1"/>
-      <CustomParameter name="colorMat3" value="0.1 0.1 1 1"/>
-      <CustomParameter name="colorMat4" value="1 1 0.1 1"/>
-      <CustomParameter name="colorMat5" value="0.05 0.05 0.05 1"/>
-      <CustomParameter name="colorMat6" value="1 0.1 1 1"/>
-      <CustomParameter name="colorMat7" value="0.1 1 1 1"/>
-    </Material>
-    <Material name="flange_mat" materialId="4" diffuseColor="0.498039 0.498039 0.498039 1" customShaderId="4" customShaderVariation="colorMask">
-      <Normalmap fileId="12"/>
-      <Glossmap fileId="13"/>
-      <CustomParameter name="RDT" value="1 1 0 0"/>
-      <CustomParameter name="dirtColor" value="0.2 0.14 0.08 0"/>
+    <Material name="flange_mat" materialId="4" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat3" value="1 0.38 0.1 1"/>
+      <CustomParameter name="colorMat2" value="0.916 0.142 0 1"/>
+      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
       <CustomParameter name="colorMat0" value="0.71 0 0 0"/>
       <CustomParameter name="colorMat1" value="0 0.04 0.38 0"/>
-      <CustomParameter name="colorMat2" value="0.916 0.142 0 1"/>
-      <CustomParameter name="colorMat3" value="1 0.38 0.1 1"/>
+      <CustomParameter name="colorMat6" value="1.00 0.10 1.00 1.0"/>
+      <CustomParameter name="colorMat7" value="0.10 1.00 1.00 1.0"/>
       <CustomParameter name="colorMat4" value="1 0.037 0.037 1"/>
       <CustomParameter name="colorMat5" value="1 1 0.1 1"/>
-      <CustomParameter name="colorMat6" value="1 0.1 1 1"/>
-      <CustomParameter name="colorMat7" value="0.1 1 1 1"/>
+      <Normalmap fileId="1"/>
+      <Glossmap fileId="2"/>
     </Material>
-    <Material name="hoses_mat" materialId="5" diffuseColor="0.498039 0.498039 0.498039 1" customShaderId="4" customShaderVariation="colorMask">
-      <Normalmap fileId="8"/>
-      <Glossmap fileId="9"/>
-      <CustomParameter name="RDT" value="1 1 0 0"/>
-      <CustomParameter name="dirtColor" value="0.2 0.14 0.08 0"/>
+    <Material name="hoses_mat" materialId="2" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat3" value="1 0.38 0.1 1"/>
+      <CustomParameter name="colorMat2" value="0.916 0.142 0 1"/>
+      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
       <CustomParameter name="colorMat0" value="0 0.18 0.1 5"/>
       <CustomParameter name="colorMat1" value="0.98 0.66 0 5"/>
-      <CustomParameter name="colorMat2" value="0.916 0.142 0 1"/>
-      <CustomParameter name="colorMat3" value="1 0.38 0.1 1"/>
+      <CustomParameter name="colorMat6" value="1.00 0.10 1.00 1.0"/>
+      <CustomParameter name="colorMat7" value="0.10 1.00 1.00 1.0"/>
       <CustomParameter name="colorMat4" value="1 0.037 0.037 1"/>
       <CustomParameter name="colorMat5" value="1 1 0.1 1"/>
-      <CustomParameter name="colorMat6" value="1 0.1 1 1"/>
-      <CustomParameter name="colorMat7" value="0.1 1 1 1"/>
+      <Normalmap fileId="4"/>
+      <Glossmap fileId="5"/>
     </Material>
-    <Material name="sockets_mat" materialId="6" diffuseColor="0.498039 0.498039 0.498039 1" customShaderId="4" customShaderVariation="colorMask">
-      <Normalmap fileId="10"/>
-      <Glossmap fileId="11"/>
-      <CustomParameter name="RDT" value="1 1 0 0"/>
-      <CustomParameter name="dirtColor" value="0.2 0.14 0.08 0"/>
-      <CustomParameter name="colorMat0" value="0.5924 0.0078 0.022 1"/>
-      <CustomParameter name="colorMat1" value="1 0.1 0.1 1"/>
-      <CustomParameter name="colorMat2" value="0.1 1 0.1 1"/>
-      <CustomParameter name="colorMat3" value="0.1 0.1 1 1"/>
-      <CustomParameter name="colorMat4" value="1 1 0.1 1"/>
-      <CustomParameter name="colorMat5" value="0.05 0.05 0.05 1"/>
-      <CustomParameter name="colorMat6" value="1 0.1 1 1"/>
-      <CustomParameter name="colorMat7" value="0.1 1 1 1"/>
+    <Material name="sockets_mat" materialId="3" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat0" value="0.5924 0.0078 0.0220 1.0"/>
+      <Normalmap fileId="6"/>
+      <Glossmap fileId="7"/>
+    </Material>
+    <Material name="connector_mat" materialId="1" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
+      <CustomParameter name="colorMat2" value="0.6730 0.4704 0.0220 1"/>
+      <CustomParameter name="colorMat0" value="0.5356 0.0254 0.0254 1"/>
+      <CustomParameter name="colorMat1" value="0.5356 0.0254 0.0254 8"/>
+      <Normalmap fileId="8"/>
+      <Glossmap fileId="9"/>
     </Material>
   </Materials>
 
@@ -77,35 +59,33 @@
   <Shapes externalShapesFile="connectors.i3d.shapes">
   </Shapes>
 
-
-  <Dynamics>
-  </Dynamics>
-
   <Scene>
-    <TransformGroup name="adapters" clipDistance="300" nodeId="19">
-      <Shape shapeId="1" name="bundle_adapter" translation="1.86265e-09 0.00385503 -0.146359" clipDistance="300" nodeId="20" materialIds="7" castsShadows="true" receiveShadows="true">
-        <TransformGroup name="referenceNode" translation="-1.86265e-09 -0.0283788 -0.23846" nodeId="21"/>
-        <Shape shapeId="2" name="bundle_hoses" translation="-1.86265e-09 -0.00385503 0.146359" clipDistance="300" nodeId="22" materialIds="5" castsShadows="true" receiveShadows="true"/>
+    <TransformGroup name="adapters" collision="false" clipDistance="300" nodeId="1">
+      <Shape name="bundle_adapter" translation="0 0.003855 -0.146359" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="2">
+        <TransformGroup name="referenceNode" translation="-0 -0.028379 -0.23846" nodeId="3"/>
+        <Shape name="bundle_hoses" translation="-0 -0.003855 0.146359" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="4"/>
       </Shape>
     </TransformGroup>
-    <TransformGroup name="sockets" nodeId="23">
-      <Shape shapeId="3" name="bundle_socket" clipDistance="300" nodeId="24" materialIds="6" castsShadows="true" receiveShadows="true">
-        <TransformGroup name="referenceNode" translation="0 0.00385503 -0.146359" nodeId="25"/>
-        <TransformGroup name="caps" nodeId="26">
-          <Shape shapeId="4" name="cab" translation="-0.045 -0.0493826 -0.0965034" clipDistance="300" nodeId="27" materialIds="6" castsShadows="true" receiveShadows="true"/>
-          <Shape shapeId="5" name="cab1" translation="-3.46945e-18 -0.0493826 -0.0965034" clipDistance="300" nodeId="28" materialIds="6" castsShadows="true" receiveShadows="true"/>
-          <Shape shapeId="6" name="cab2" translation="0.045 -0.0493826 -0.0965034" clipDistance="300" nodeId="29" materialIds="6" castsShadows="true" receiveShadows="true"/>
-          <Shape shapeId="7" name="cab3" translation="0.014 0.0106174 -0.0965034" clipDistance="300" nodeId="30" materialIds="6" castsShadows="true" receiveShadows="true"/>
-          <Shape shapeId="8" name="cab4" translation="-0.032 0.0106174 -0.0965034" clipDistance="300" nodeId="31" materialIds="6" castsShadows="true" receiveShadows="true"/>
+    <TransformGroup name="sockets" nodeId="5">
+      <Shape name="bundle_socket" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="6">
+        <TransformGroup name="referenceNode" translation="0 0.003855 -0.146359" nodeId="7"/>
+        <TransformGroup name="caps" nodeId="8">
+          <Shape name="cab" translation="-0.045 -0.049383 -0.096503" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="9"/>
+          <Shape name="cab1" translation="-0 -0.049383 -0.096503" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="10"/>
+          <Shape name="cab2" translation="0.045 -0.049383 -0.096503" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="11"/>
+          <Shape name="cab3" translation="0.014 0.010617 -0.096503" shapeId="7" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="12"/>
+          <Shape name="cab4" translation="-0.032 0.010617 -0.096503" shapeId="8" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="13"/>
         </TransformGroup>
       </Shape>
-      <Shape shapeId="9" name="flange_straight" clipDistance="300" nodeId="32" materialIds="4" castsShadows="true" receiveShadows="true">
-        <TransformGroup name="referenceNode" translation="3.91887e-17 0 0" nodeId="33"/>
+      <Shape name="flange_straight" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="4" clipDistance="300" nodeId="14">
+        <TransformGroup name="referenceNode" translation="0 0 0" nodeId="15"/>
       </Shape>
-      <Shape shapeId="10" name="flange_curved" translation="9.86001e-32 -5.20793e-21 0" rotation="90 3.18055e-15 90" clipDistance="300" nodeId="34" materialIds="4" castsShadows="true" receiveShadows="true">
-        <TransformGroup name="referenceNode" translation="-0.0021555 0.049206 -0.439609" nodeId="35"/>
+      <Shape name="flange_curved" translation="0 -0 0" rotation="90 0 90" shapeId="10" castsShadows="true" receiveShadows="true" materialIds="4" clipDistance="300" nodeId="16">
+        <TransformGroup name="referenceNode" translation="-0.002155 0.049206 -0.439609" nodeId="17"/>
       </Shape>
     </TransformGroup>
   </Scene>
 
+  <UserAttributes>
+  </UserAttributes>
 </i3D>

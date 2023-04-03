@@ -3,13 +3,13 @@
 <i3D name="funnel_set_1" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
 
   <Files>
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
     <File fileId="1" filename="funnel_normal.png" />
     <File fileId="2" filename="funnel_specular.png" />
-    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
   </Files>
 
   <Materials>
-    <Material name="funnel_mat" materialId="1" diffuseColor="0.5 0.5 0.5 1" cosPower="20" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+    <Material name="funnel_mat" materialId="1" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
       <CustomParameter name="colorMat3" value="0.10 0.10 1.00 1.0"/>
       <CustomParameter name="colorMat2" value="0.916 0.142 0 1"/>
       <CustomParameter name="colorMat0" value="0.033 0.148 0 5"/>
@@ -31,8 +31,8 @@
     <TransformGroup name="set" nodeId="1">
       <TransformGroup name="funnel_eightInch" nodeId="2">
         <TransformGroup name="root" nodeId="3">
-          <Shape name="funnel" translation="-2 0 0" rotation="2.50448e-06 0 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="3 5" clipDistance="300" nodeId="4">
-            <TransformGroup name="deformer" translation="2 0.135883 -5.93965e-09" rotation="-2.50448e-06 0 0" nodeId="5"/>
+          <Shape name="funnel" translation="-2 0 0" rotation="0.000003 0 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="3 5" clipDistance="300" nodeId="4">
+            <TransformGroup name="deformer" translation="2 0.135883 -0" rotation="-0.000003 0 0" nodeId="5"/>
           </Shape>
         </TransformGroup>
         <Shape name="pipe" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="6"/>
@@ -41,8 +41,8 @@
       </TransformGroup>
       <TransformGroup name="funnel_tenInch" nodeId="9">
         <TransformGroup name="root" nodeId="10">
-          <Shape name="funnel" rotation="2.50448e-06 0 0" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="10 12" clipDistance="300" nodeId="11">
-            <TransformGroup name="deformer" translation="0 0.23 -1.00536e-08" rotation="-2.50448e-06 0 0" nodeId="12"/>
+          <Shape name="funnel" rotation="0.000003 0 0" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="10 12" clipDistance="300" nodeId="11">
+            <TransformGroup name="deformer" translation="0 0.23 -0" rotation="-0.000003 0 0" nodeId="12"/>
           </Shape>
         </TransformGroup>
         <Shape name="pipe" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="13"/>

@@ -3,15 +3,15 @@
 <i3D name="set_1" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
 
   <Files>
-    <File fileId="2" filename="valves2_specular.png" />
-    <File fileId="1" filename="valves2_normal.png" />
-    <File fileId="5" filename="valves1_specular.png" />
-    <File fileId="4" filename="valves1_normal.png" />
     <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
+    <File fileId="4" filename="valves1_normal.png" />
+    <File fileId="5" filename="valves1_specular.png" />
+    <File fileId="1" filename="valves2_normal.png" />
+    <File fileId="2" filename="valves2_specular.png" />
   </Files>
 
   <Materials>
-    <Material name="valves10inch_mat" materialId="2" diffuseColor="0.8 0.8 0.8 1" cosPower="9.60784" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+    <Material name="valves10inch_mat" materialId="2" diffuseColor="0.8 0.8 0.8 1" customShaderId="3" customShaderVariation="colorMask">
       <CustomParameter name="colorMat3" value="0.015 0.16 0.075 0.0"/>
       <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
       <CustomParameter name="colorMat0" value="0.005 0.085 0.035 0.0"/>
@@ -20,7 +20,7 @@
       <Normalmap fileId="1"/>
       <Glossmap fileId="2"/>
     </Material>
-    <Material name="valves8inch_mat" materialId="1" diffuseColor="0.8 0.8 0.8 1" cosPower="9.60784" specularColor="1 1 1" ambientColor="1 1 1" customShaderId="3" customShaderVariation="colorMask">
+    <Material name="valves8inch_mat" materialId="1" diffuseColor="0.8 0.8 0.8 1" customShaderId="3" customShaderVariation="colorMask">
       <CustomParameter name="colorMat2" value="0.015 0.16 0.075 0.0"/>
       <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
       <CustomParameter name="colorMat0" value="0.005 0.085 0.035 0.0"/>
@@ -36,25 +36,25 @@
 
   <Scene>
     <TransformGroup name="set" collision="false" clipDistance="300" nodeId="1">
-      <Shape name="hose_connector" translation="0 -1.19261e-18 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="2 3 4 5" clipDistance="300" nodeId="2">
-        <TransformGroup name="handle_connector" translation="0.0588567 0.112407 -0.0257013" rotation="0 0 -150" collision="false" clipDistance="300" nodeId="3"/>
-        <TransformGroup name="hose_clamp" translation="0.13248 -0.136818 0.00015129" rotation="0 0 -20" collision="false" clipDistance="300" nodeId="4">
-          <TransformGroup name="link" translation="3.78788e-05 0.224781 0.000225914" rotation="0 0 60" collision="false" clipDistance="300" nodeId="5"/>
+      <Shape name="hose_connector" translation="0 -0 0" shapeId="1" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="2 3 4 5" clipDistance="300" nodeId="2">
+        <TransformGroup name="handle_connector" translation="0.058857 0.112407 -0.025701" rotation="0 0 -150" collision="false" clipDistance="300" nodeId="3"/>
+        <TransformGroup name="hose_clamp" translation="0.13248 -0.136818 0.000151" rotation="0 0 -20" collision="false" clipDistance="300" nodeId="4">
+          <TransformGroup name="link" translation="0.000038 0.224781 0.000226" rotation="0 0 60" collision="false" clipDistance="300" nodeId="5"/>
         </TransformGroup>
-        <TransformGroup name="connector_node" translation="0.065 1.19261e-18 0" rotation="0 90 0" nodeId="6"/>
+        <TransformGroup name="connector_node" translation="0.065 0 0" rotation="0 90 0" nodeId="6"/>
       </Shape>
       <Shape name="eightInchMZBrassValve" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="7"/>
       <Shape name="eightInchMZcastIronValve" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="8"/>
       <Shape name="handle_new" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="9 10 11 12" clipDistance="300" nodeId="9">
         <TransformGroup name="piston" collision="false" clipDistance="300" nodeId="10"/>
-        <TransformGroup name="handle_valve" translation="0.0308889 0.25821 0" collision="false" clipDistance="300" nodeId="11">
-          <TransformGroup name="handle_bar" translation="-0.130318 -0.0184616 -3.53903e-08" collision="false" clipDistance="300" nodeId="12"/>
+        <TransformGroup name="handle_valve" translation="0.030889 0.25821 0" collision="false" clipDistance="300" nodeId="11">
+          <TransformGroup name="handle_bar" translation="-0.130318 -0.018462 -0" collision="false" clipDistance="300" nodeId="12"/>
         </TransformGroup>
       </Shape>
       <Shape name="handle_old" shapeId="5" castsShadows="true" receiveShadows="true" materialIds="1" skinBindNodeIds="13 14 15 16" clipDistance="300" nodeId="13">
         <TransformGroup name="piston" translation="0 0.24 -0.0003" collision="false" clipDistance="300" nodeId="14"/>
-        <TransformGroup name="handle_bar" translation="-0.0541045 0.258523 0.0845319" collision="false" clipDistance="300" nodeId="15">
-          <TransformGroup name="handle_valve" translation="0 0.125811 0.0919794" collision="false" clipDistance="300" nodeId="16"/>
+        <TransformGroup name="handle_bar" translation="-0.054104 0.258523 0.084532" collision="false" clipDistance="300" nodeId="15">
+          <TransformGroup name="handle_valve" translation="0 0.125811 0.091979" collision="false" clipDistance="300" nodeId="16"/>
         </TransformGroup>
       </Shape>
       <Shape name="brass_hydraulic" shapeId="6" castsShadows="true" receiveShadows="true" materialIds="1" clipDistance="300" nodeId="17"/>

@@ -1,0 +1,1820 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CustomShader version="5">
+    <Parameters>
+        <Parameter name="RDT"                      target="RDT"                      type="float4" group="base"                 defaultValue="0.0 0.0 0.0 0.0"       minValue = "0.0 0.0 0.0 0.0"          maxValue = "1.0 1.0 1.0 50.0"/>
+        <Parameter name="dirtColor"                target="dirtColor"                type="float4" group="base"                 defaultValue="0.20 0.14 0.08 0.0"    minValue = "0.0 0.0 0.0 0.0"          maxValue = "1.0 1.0 1.0 1.0"/>
+        <Parameter name="offsetUV"                 target="offsetUV"                 type="float4" group="offsetUV"             defaultValue="0.0 0.0 0.0 0.0"       minValue = "-50.0 -50.0 -50.0 -50.0"  maxValue = "50.0 50.0 50.0 50.0"/>
+        <Parameter name="uvCenterSize"             target="uvCenterSize"             type="float4" group="uvRotate"             defaultValue="0.5 0.5 1.0 1.0"       minValue = "-8.0 -8.0 0.0 0.0"        maxValue = "8.0 8.0 50.0 50.0"/>
+        <Parameter name="uvScale"                  target="uvScale"                  type="float4" group="uvScale"              defaultValue="1.0 1.0 0.0 0.0"       minValue = "-10.0 -10.0 -10.0 -10.0"  maxValue = "10.0 10.0 10.0 10.0"/>
+        <Parameter name="colorMat"                 target="colorMat"                 type="float4" group="colorMask" arraySize="8" defaultValue="0.5 0.5 0.5 1.0" minValue = "0.0 0.0 0.0 0.0" maxValue = "1.0 1.0 1.0 255.0">
+            <Default index="0">0.80 0.55 0.05 1.0</Default>
+            <Default index="1">1.00 0.10 0.10 1.0</Default>
+            <Default index="2">0.10 1.00 0.10 1.0</Default>
+            <Default index="3">0.10 0.10 1.00 1.0</Default>
+            <Default index="4">1.00 1.00 0.10 1.0</Default>
+            <Default index="5">0.05 0.05 0.05 1.0</Default>
+            <Default index="6">1.00 0.10 1.00 1.0</Default>
+            <Default index="7">0.10 1.00 1.00 1.0</Default>
+        </Parameter>
+        <Parameter name="morphPosition"             target="morphPosition"             type="float4" group="morphPosition"        defaultValue="-0.45 -0.915 0.5 0.1"  minValue = "-4.0 -4.0 0.0 0.0"        maxValue = "2.0 2.0 1.0 1.0"/>
+        <Parameter name="prevMorphPosition"         target="prevMorphPosition"         type="float4" group="morphPosition"        defaultValue="-0.45 -0.915 0.5 0.1"  minValue = "-4.0 -4.0 0.0 0.0"        maxValue = "2.0 2.0 1.0 1.0"/>
+        <Parameter name="scrollPosition"            target="scrollPosition"            type="float4" group="scroll"               defaultValue="0.0 0.0 0.0 0.0"       minValue = "-1.0 0.0 0.0 0.0"         maxValue = "1.0 10.0 10.0 1.0"/>
+        <Parameter name="prevScrollPosition"        target="prevScrollPosition"        type="float4" group="scroll"               defaultValue="0.0 0.0 0.0 0.0"       minValue = "-1.0 0.0 0.0 0.0"         maxValue = "1.0 10.0 10.0 1.0"/>
+        <Parameter name="lengthAndRadius"           target="lengthAndRadius"           type="float4" group="scroll"               defaultValue="2.0 0.5 0.0 0.0"/>
+        <Parameter name="widthAndDiam"              target="widthAndDiam"              type="float2" group="rim"                  defaultValue="40 40"                 minValue = "1.0 1.0 0.0 0.0"          maxValue = "80.0 80.0 1.0 1.0"/>
+        <Parameter name="connectorPos"              target="connectorPos"              type="float4" group="connectorPos"         defaultValue="0 80 40 40"/>
+        <Parameter name="numberOfStatics"           target="numberOfStatics"           type="float"  group="numStatics"           defaultValue="4"/>
+        <Parameter name="connectorPosAndScale"      target="connectorPosAndScale"      type="float3" group="connectorPosAndScale" defaultValue="0 80 1.0"/>
+        <Parameter name="beltPos"                   target="beltPos"                   type="float"  group="beltPos"              defaultValue="0.0"/>
+        <Parameter name="prevBeltPos"               target="prevBeltPos"               type="float"  group="beltPos"              defaultValue="0.0"/>
+        <Parameter name="cv0"                       target="cv0"                       type="float4" group="catmull"              defaultValue="0 0 -1 0"/>
+        <Parameter name="cv1"                       target="cv1"                       type="float4" group="catmull"              defaultValue="0 0 0 0"/>
+        <Parameter name="cv2"                       target="cv2"                       type="float4" group="catmull"              defaultValue="0 0 0 0"/>
+        <Parameter name="cv3"                       target="cv3"                       type="float4" group="catmull"              defaultValue="0 0 2 0"/>
+        <Parameter name="cv4"                       target="cv4"                       type="float4" group="catmull"              defaultValue="0 0 3 0"/>
+        <Parameter name="lengthAndDiameter"         target="lengthAndDiameter"         type="float4" group="catmull"              defaultValue="10 1 0 0"/>
+        <Parameter name="backLightScale"            target="backLightScale"            type="float"  group="backLight"            defaultValue="0.35" minValue="0.0" maxValue="1.0"/>
+        <Parameter name="lightControl"              target="lightControl"              type="float"  group="staticLight"          defaultValue="0.0"/>
+        <Parameter name="blinkOffset"               target="blinkOffset"               type="float4" group="staticLight"          defaultValue="0.0 0.0 1.0 0.0"/>
+        <Parameter name="amplFreq"                  target="amplFreq"                  type="float4" group="jiggling"             defaultValue="1 1 1 0"/>
+        <Parameter name="prevAmplFreq"              target="prevAmplFreq"              type="float4" group="jiggling"             defaultValue="1 1 1 0"/>
+        <Parameter name="shaking"                   target="shaking"                   type="float4" group="shaking"              defaultValue="0 0 0 0"/>
+        <Parameter name="prevShaking"               target="prevShaking"               type="float4" group="shaking"              defaultValue="0 0 0 0"/>
+        <Parameter name="rotationAngle"             target="rotationAngle"             type="float"  group="vtxRotate"            defaultValue="0" minValue = "-10.0"  maxValue = "10.0"/>
+        <Parameter name="prevRotationAngle"         target="prevRotationAngle"         type="float"  group="vtxRotate"            defaultValue="0" minValue = "-10.0"  maxValue = "10.0"/>
+        <Parameter name="directionBend"             target="directionBend"             type="float4" group="windBend"             defaultValue="0.0 0.0 1.0 0.0" minValue = "-1.0 -1.0 -1.0 -2.0" maxValue = "1.0 1.0 1.0 2.0"/>
+        <Parameter name="prevDirectionBend"         target="prevDirectionBend"         type="float4" group="windBend"             defaultValue="0.0 0.0 1.0 0.0" minValue = "-1.0 -1.0 -1.0 -2.0" maxValue = "1.0 1.0 1.0 2.0"/>
+        <Parameter name="controlPointAndLength"     target="controlPointAndLength"     type="float3" group="cableTrayChain"       defaultValue="-0.25 -0.5 3 0" minValue = "-2.0 -2.0 0.0" maxValue = "2.0 2.0 10.0"/>
+        <Parameter name="prevControlPointAndLength" target="prevControlPointAndLength" type="float3" group="cableTrayChain"       defaultValue="-0.25 -0.5 3 0" minValue = "-2.0 -2.0 0.0" maxValue = "2.0 2.0 10.0"/>
+    </Parameters>
+    <UvUsages>
+        <UvUsage textureName="baseMap"        uvType="uv0" uvScale="1.0"/>
+        <UvUsage textureName="normalMap"      uvType="uv0" uvScale="1.0"/>
+        <UvUsage textureName="glossMap"       uvType="uv0" uvScale="1.0"/>
+        <UvUsage textureName="mArraySpecular" uvType="custom"/>
+        <UvUsage textureName="mArrayNormal"   uvType="custom"/>
+        <UvUsage textureName="mArrayDiffuse"  uvType="custom"/>
+        <UvUsage textureName="mTrackArray"    uvType="custom"/>
+    </UvUsages>
+    <Textures>
+        <Texture name = "mArraySpecular" group="base"  type = "2dArray" defaultColorProfile = "linearRGB" defaultFilename = "../shared/detailArray_specular.png"/>
+        <Texture name = "mArrayNormal"   group="base"  type = "2dArray" defaultColorProfile = "linearRGB" defaultFilename = "../shared/detailArray_normal.png"/>
+        <Texture name = "mArrayDiffuse"  group="base"  type = "2dArray" defaultColorProfile = "sRGB"      defaultFilename = "../shared/detailArray_diffuse.png"/>
+        <Texture name = "mTrackArray"    group="track" type = "2dArray" defaultColorProfile = "linearRGB" />
+    </Textures>
+    <VertexAttributes>
+        <VertexAttribute name="uv1"   group="uv1"/>
+        <VertexAttribute name="uv2"   group="uv2"/>
+        <VertexAttribute name="color" group="vtxColor"/>
+    </VertexAttributes>
+    <Variations>
+        <Variation name="motionPathRubber" groups="base scroll track">
+<![CDATA[
+    // Enables vertex shader motionPath based on texture for rubber like objects.
+    // Usually used with continously connected vertices.
+    // Texture index is defined by the z value of the vertices, there is no 1:1 object to pixel/objectData mapping.
+    // Object needs to be 10m long.
+    #define MOTION_PATH_RUBBER
+]]>
+        </Variation>
+        <Variation name="motionPathRubber_secondUV_colorMask" groups="base colorMask uv1 scroll track">
+            <UvUsages>
+                <UvUsage textureName="glossMap" uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    #define MOTION_PATH_RUBBER
+    // Enables 2nd UV set for specular
+    #define SPECULAR_SECONDUV
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="motionPath_secondUV_colorMask" groups="base colorMask uv1 scroll track">
+            <UvUsages>
+                <UvUsage textureName="glossMap" uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables vertex shader motionPath based on texture
+    #define MOTION_PATH
+    // Enables 2nd UV set for specular
+    #define SPECULAR_SECONDUV
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="meshScroll" groups="base scroll">
+<![CDATA[
+    // Enables caterpillar mesh scrolling
+    #define MESH_SCROLL
+]]>
+        </Variation>
+        <Variation name="meshScroll_colorMask" groups="base scroll colorMask">
+<![CDATA[
+    // Enables caterpillar mesh scrolling
+    #define MESH_SCROLL
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="uvScroll" groups="base offsetUV">
+<![CDATA[
+    // Enables UV scrolling
+    #define UV_SCROLL
+]]>
+        </Variation>
+        <Variation name="uvScroll_colorMask" groups="base offsetUV colorMask">
+<![CDATA[
+    // Enables UV scrolling
+    #define UV_SCROLL
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="uvRotate" groups="base offsetUV uvRotate">
+<![CDATA[
+    // Enables UV rotation
+    #define UV_ROTATE
+]]>
+        </Variation>
+        <Variation name="uvRotate_colorMask" groups="base offsetUV uvRotate colorMask">
+<![CDATA[
+    // Enables UV rotation
+    #define UV_ROTATE
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="uvScale" groups="base uvScale">
+<![CDATA[
+    // Enables UV scaling
+    #define UV_SCALE
+]]>
+        </Variation>
+        <Variation name="uvScale_colorMask" groups="base uvScale colorMask">
+<![CDATA[
+    // Enables UV scaling
+    #define UV_SCALE
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="secondUV_colorMask" groups="base colorMask uv1">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define SPECULAR_SECONDUV
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="Decal" groups="base uv1">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+]]>
+        </Variation>
+        <Variation name="Decal_normalThirdUV" groups="base uv1 uv2">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+                <UvUsage textureName="normalMap" uvType="uv2" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    // Enables 3nd UV set for normalMap
+    #define NORMAL_THIRDUV
+]]>
+        </Variation>
+        <Variation name="Decal_normalThirdUV_colorMask" groups="base colorMask uv1 uv2">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+                <UvUsage textureName="normalMap" uvType="uv2" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    // Enables 3nd UV set for normalMap
+    #define NORMAL_THIRDUV
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="Decal_colorMask" groups="base colorMask uv1">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="shaking_colorMask" groups="base colorMask shaking">
+<![CDATA[
+    #define COLOR_MASK
+    #define SHAKING
+]]>
+        </Variation>
+        <Variation name="shaking_colorMask_Decal" groups="base colorMask uv1 shaking">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    #define COLOR_MASK
+    #define SHAKING
+]]>
+        </Variation>
+        <Variation name="Decal_uvScroll" groups="base uv1 offsetUV">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    // Enables UV scrolling
+    #define UV_SCROLL
+]]>
+        </Variation>
+        <Variation name="colorMask" groups="base colorMask">
+<![CDATA[
+/*
+    Enables colorPainting.
+            if uv.y>0 use mArrayDiffuse
+            if uv.y<0 colorMat<index> is loaded with index=floor(uv.x)
+*/
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="tirePressureDeformation" groups="base morphPosition colorMask">
+<![CDATA[
+    // Enables deformation of the tire (offset vertices of the mesh)
+    #define TIRE_PRESSURE_DEFORMATION
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="tirePressureDeformation_secondUV" groups="base morphPosition colorMask uv1">
+<![CDATA[
+    #define TIRE_PRESSURE_DEFORMATION
+    #define COLOR_MASK
+    #define SPECULAR_SECONDUV
+]]>
+        </Variation>
+        <Variation name="rim" groups="base rim vtxColor">
+<![CDATA[
+    // Enables smart scale for some parts of the mesh (masked by vertex colors)
+    // see example file
+    #define RIM
+]]>
+        </Variation>
+        <Variation name="rim_colorMask" groups="base rim colorMask vtxColor">
+<![CDATA[
+    #define RIM
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="rim_numberOfStatics_colorMask" groups="base rim numStatics colorMask vtxColor">
+<![CDATA[
+    #define NUMBER_OF_STATICS_AND_DIAM
+    #define RIM
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="rimDual_colorMask" groups="base rim connectorPos numStatics colorMask vtxColor">
+<![CDATA[
+    // Enables smart scale for some parts of the mesh (masked by vertex colors)
+    // see example file
+    #define NUMBER_OF_STATICS_AND_DIAM
+    #define RIM_DUAL
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="hubDual_colorMask" groups="base connectorPosAndScale colorMask vtxColor">
+<![CDATA[
+    // Enables smart scale for some parts of the mesh (masked by vertex colors)
+    // see example file
+    #define HUB_DUAL
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="cableTray" groups="base beltPos vtxColor uv1">
+<![CDATA[
+    // Enables smart mesh and uv deform (masked by vertex colors)
+    // see example file
+    #define CABLE_TRAY
+]]>
+        </Variation>
+        <Variation name="cableTray_colorMask" groups="base beltPos vtxColor colorMask uv1">
+<![CDATA[
+    // Enables smart mesh and uv deform (masked by vertex colors)
+    // see example file
+    #define CABLE_TRAY
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="cableTrayChain_colorMask" groups="base colorMask cableTrayChain">
+<![CDATA[
+    // deforms position of the vertices based on special formula
+    // which mimics cable tray deforming behavior 
+    // similar to meshScroll, only it has 1 circle in the formula
+    // no vertex colors, no extra uv's
+    // see example file, mesh should be Z+ oriented, without any baked offsets 
+    #define CABLE_TRAY_CHAIN
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="localCatmullRom" groups="base catmull">
+<![CDATA[
+    // Enables 4 points Catmull rom spline
+    #define LOCAL_CATMULL_ROM
+]]>
+        </Variation>
+        <Variation name="localCatmullRom_colorMask" groups="base catmull colorMask">
+<![CDATA[
+    // Enables 4 points Catmull rom spline
+    #define LOCAL_CATMULL_ROM
+    #define COLOR_MASK
+]]>
+        </Variation>
+        <Variation name="localCatmullRom_colorMask_uvScale" groups="base catmull colorMask uvScale offsetUV">
+<![CDATA[
+    // Enables 4 points Catmull rom spline
+    #define LOCAL_CATMULL_ROM
+    #define COLOR_MASK
+    #define UV_SCALE
+    #define UV_SCROLL
+]]>
+        </Variation>
+        <Variation name="reflector_colorMask" groups="base colorMask">
+<![CDATA[
+    #define COLOR_MASK
+    #define REFLECTOR_SHADING
+]]>
+        </Variation>
+        <Variation name="backLight_colorMask" groups="base colorMask backLight">
+<![CDATA[
+    #define COLOR_MASK
+    #define BACK_LIGHT
+]]>
+        </Variation>
+        <Variation name="staticLight" groups="base colorMask staticLight vtxColor">
+<![CDATA[
+    #define COLOR_MASK
+    #define STATIC_LIGHT
+]]>
+        </Variation>
+        <Variation name="staticLight_slide" groups="base colorMask staticLight vtxColor uv1">
+<![CDATA[
+    #define COLOR_MASK
+    #define STATIC_LIGHT
+    #define STATIC_LIGHT_SLIDE
+]]>
+        </Variation>
+        <Variation name="staticLight_multiBlink" groups="base colorMask staticLight vtxColor">
+<![CDATA[
+    #define COLOR_MASK
+    #define STATIC_LIGHT
+    #define STATIC_MULTI_BLINK
+]]>
+        </Variation>
+        <Variation name="jiggling_colorMask" groups="base colorMask jiggling vtxColor uv1">
+<![CDATA[
+    // Enables jiggling effect
+    // requires:
+    //      vertexColor.rgb  - jiggling (rotation) pivot (per vertex part)
+    //      vertexColor.a    - random value used to offset jiggling (makes unique movement per vertex part)
+    //
+    //      In.texCoords1.x  - controls intensity of jiggling  (used as 0..1 gradient)
+    //
+    #define COLOR_MASK
+    #define MESH_JIGGLING
+]]>
+        </Variation>
+
+        <Variation name="vtxRotate_colorMask" groups="base colorMask vtxRotate track">
+<![CDATA[
+    #define COLOR_MASK
+    #define VERTEX_ROTATE
+]]>
+        </Variation>
+        <Variation name="vtxRotate" groups="base vtxRotate track">
+<![CDATA[
+    #define VERTEX_ROTATE
+]]>
+        </Variation>
+        <Variation name="windBend" groups="base windBend">
+<![CDATA[
+    #define WIND_BENDING
+]]>
+        </Variation>
+        <Variation name="windBend_colorMask" groups="base colorMask windBend">
+<![CDATA[
+    #define COLOR_MASK
+    #define WIND_BENDING
+]]>
+        </Variation>
+        <Variation name="windBend_colorMask_vtxColor" groups="base colorMask windBend vtxColor">
+<![CDATA[
+    #define COLOR_MASK
+    #define WIND_BENDING
+    #define VERTEX_COLOR
+]]>
+        </Variation>
+        <Variation name="windBend_vtxColor_Decal" groups="base uv1 windBend vtxColor">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    #define WIND_BENDING
+    #define VERTEX_COLOR
+]]>
+        </Variation>
+        <Variation name="windBend_vtxColor_Decal_colorMask" groups="base colorMask uv1 windBend vtxColor">
+            <UvUsages>
+                <UvUsage textureName="glossMap"  uvType="uv1" uvScale="1.0"/>
+            </UvUsages>
+<![CDATA[
+    // Enables 2nd UV set for specular
+    #define DECAL_RENDER
+    #define COLOR_MASK
+    #define WIND_BENDING
+    #define VERTEX_COLOR
+]]>
+        </Variation>
+    </Variations>
+    <LodLevel startDistance = "0">
+        <CodeInjections>
+            <CodeInjection position = "OBJECT_PARAMETERS">
+<![CDATA[
+/*
+    RDT.x - Scratches Amount
+    RDT.y - Dirt Amount
+    RDT.z - Snow Amount
+    RDT.w - NOT USED
+*/
+    float4 RDT;
+    float4 dirtColor;
+#if defined( COLOR_MASK )
+/*
+    colorMat<index>.rgb - diffuse color information
+    colorMat<index>.a   - material index
+*/
+    float4 colorMat[8];
+#endif
+#if defined(MESH_SCROLL) || defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER)
+/*
+    MESH_SCROLL:
+
+    Assumption first_circle.radius == second_circle.radius, see example file how to use it
+    scrollPosition.x  - position of the caterpillar elements (scrolling time based parameter)
+    lengthAndRadius.x - caterpillar length (from first_circle center to second_circle center)
+    lengthAndRadius.y - caterpillar radius (circle radius)
+
+    MOTION_PATH, MOTION_PATH_RUBBER:
+
+    scrollPosition.x - position of the caterpillar elements (scrolling time based parameter)
+    scrollPosition.y - motion_path_source (index 0,1,2,...)
+    scrollPosition.z - motion_path_target (index 0,1,2,...)
+    scrollPosition.w - blending between motion_path_source and motion_path_target
+    lengthAndRadius  - not used
+*/
+    float4 scrollPosition;
+    float4 prevScrollPosition; // scrollPosition from previous frame, set by LUA, needed for motionblur
+    float4 lengthAndRadius;
+#endif
+#if defined( UV_SCROLL ) || defined( UV_ROTATE )
+/*
+    offsetUV.xy - translate
+    offsetUV.z  - rotate
+*/
+    float4 offsetUV;
+#endif
+#if defined( UV_ROTATE )
+/*
+    uvCenterSize.xy - roattion center in UV space (for example, 0.25 0.5 )
+    uvCenterSize.zw - proportion of the texture ( for example, 2x1 (horizontal x vertical) == 512x256 )
+*/
+    float4 uvCenterSize;
+#endif
+#if defined( UV_SCALE )
+/*
+    uvScale.xy - scale UV
+    uvScale.zw - scale pivot
+*/
+    float4 uvScale;
+#endif
+#if defined( TIRE_PRESSURE_DEFORMATION )
+/*
+    Enables tirePressureDeformation uses morphPosition parameter
+    morphPosition.x - start deforming position ( objectSpace by "Y" )
+    morphPosition.y - end deforming position ( objectSpace by "Y" )
+    morphPosition.z - mPushOutRatio HARDCODED // relationship between deformation and mPushOut ( 0 - [do noting], 1 - [mPushOut == mPushUp] )
+    morphPosition.w - mPushUp - deformation in meters
+*/
+    float4 morphPosition;
+    float4 prevMorphPosition; // morphPosition from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( RIM ) || defined( NUMBER_OF_STATICS_AND_DIAM )
+/*
+    widthAndDiam.x - rim width (real size in inches)
+    widthAndDiam.y - diameter of the rim (real size in inches)
+*/
+    float2 widthAndDiam;
+#endif
+#if defined( RIM_DUAL )
+/*
+    connectorPos.x - offset of the hooks ( absolute, do not offset other parameters, in inches )
+    connectorPos.y - fisrt rim width (real size in inches)
+    connectorPos.z - connection between rims (real size in inches)
+    connectorPos.w - second rim width (real size in inches)
+
+    Pivot point for the second rim (in meters) is:
+    ( 0.5*connectorPos.y + connectorPos.z + 0.5*connectorPos.w ) * 0.0254
+*/
+    float4 connectorPos;
+#endif
+#if defined( NUMBER_OF_STATICS_AND_DIAM )
+/*
+    numberOfStatics.x - number of hooks
+*/
+    float numberOfStatics;
+#endif
+#if defined( HUB_DUAL )
+/*
+    connectorPosAndScale.x - offset of the center ( absolute, do not offset other parameters, in inches )
+    connectorPosAndScale.y - offset to the second hub (real size in inches)
+    connectorPosAndScale.z - object scale
+*/
+    float3 connectorPosAndScale;
+#endif
+#if defined( CABLE_TRAY )
+/*
+    beltPos - defines bending position of vertices
+*/
+    float beltPos;
+    float prevBeltPos; // beltPos from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( CABLE_TRAY_CHAIN )
+/*
+    controlPointAndLength.x - horizontal offset from the pivot // set dynamically by LUA script
+    controlPointAndLength.y - vertical offset from the pivot   // set dynamically by LUA script
+    controlPointAndLength.z - length of the cableTray mesh // should be constant 
+*/
+    float3 controlPointAndLength;
+    float3 prevControlPointAndLength; // controlPointAndLength from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( LOCAL_CATMULL_ROM )
+/*
+    the curve is placed between cv1 and cv2.
+    cv0 and cv3 control the tangential direction at cv1 and cv2 respectively
+*/
+    float4 cv0;
+    float4 cv1;
+    float4 cv2;
+    float4 cv3;
+    float4 cv4;
+    float4 lengthAndDiameter;
+#endif
+#if defined( BACK_LIGHT )
+    float backLightScale;
+#endif
+#if defined( STATIC_LIGHT )
+/*
+    enables selfillum on the glass
+*/
+    float lightControl;
+/*
+    blinkOffset.x - 2*pi*blinkOffset.x offset in the cosinus
+    blinkOffset.y - (cTime_s - blinkOffset.y) offset in the cosinus
+    blinkOffset.z - frequency control
+
+    saturate(cos( 7*blinkOffset.z*(cTime_s - blinkOffset.y) + 2*pi*blinkOffset.x ) + 0.2);
+
+    MULTI BLINK:
+    blinkOffset.x - blink ticks
+    blinkOffset.y - pause ticks
+    blinkOffset.z - frequency control
+*/
+    float4 blinkOffset;
+#endif
+#if defined( MESH_JIGGLING )
+/*
+    amplFreq.x - amplitude of jiggling
+    amplFreq.y - frequency of jiggling
+    amplFreq.z - not used
+    amplFreq.w - time controlled by script
+*/
+    float4 amplFreq;
+    float4 prevAmplFreq; // amplFreq from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( SHAKING )
+    float4 shaking;
+    float4 prevShaking; // shaking from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( VERTEX_ROTATE )
+/*
+    rotationAngle (radians around X axis of each object)
+*/
+    float rotationAngle;
+    float prevRotationAngle; // rotationAngle from previous frame, set by LUA, needed for motionblur
+#endif
+#if defined( WIND_BENDING )
+/*
+    directionBend.xyz - acceleration vector (local space)
+    directionBend.w   - bending amount
+*/
+    float4 directionBend;
+    float4 prevDirectionBend; // directionBend from previous frame, set by LUA, needed for motionblur
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "VS_INPUT">
+<![CDATA[
+#if defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER) || defined(VERTEX_ROTATE)
+    float4 gPosition;
+    float4 gOrient;
+    float4 gPrevPosition; // gPosition from previous frame, needed for motionblur
+    float4 gPrevOrient;   // gOrient   from previous frame, needed for motionblur
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "SAMPLERS">
+<![CDATA[
+/*
+glossMap.r - scratches mask
+glossMap.g - global AO
+glossMap.b - dirt mask
+
+mArraySpecular.r - smoothness
+mArraySpecular.g - micro AO
+mArraySpecular.b - metalness
+*/
+sampler2DArray mArraySpecular;
+sampler2DArray mArrayNormal;
+sampler2DArray mArrayDiffuse;
+#if defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER) || defined(VERTEX_ROTATE)
+    sampler2DArray mTrackArray;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "FS_GLOBALS">
+<![CDATA[
+    float3 gDetailDiffuse;
+    float3 gDetailSpecular;
+    float3 gDetailNormal;
+    float  gScratchesMask;
+    float  gAO;
+    float  gDirt;
+    float  gSnowMask;
+    float3 gSnowDiffuse;
+    float3 gSnowSpecular;
+]]>
+            </CodeInjection>
+            <CodeInjection position = "CONFIG_DEFINES">
+<![CDATA[
+#if defined(DECAL_RENDER) || defined(SPECULAR_SECONDUV)
+    // Remap gloss map lookups to our custom tex coord
+    #define GLOSS_MAP_TEXCOORDS In.vs.glossMapTexCoords2
+#endif
+#if defined(NORMAL_THIRDUV)
+    #define NORMAL_MAP_TEXCOORDS In.vs.normalMapTexCoords3
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="LIB_FUNCTION_VS">
+<![CDATA[
+// Custom vertex functions
+float4 getQuaternion( float mAngle, float3 mAxis ){
+    float pi = 3.141592653589793238;
+    float4 mQr = float4(0,0,0,0);
+    float mHalfAngle = ( mAngle * 0.5 ) * pi / 180.0;
+    float mSin = sin( mHalfAngle );
+    mQr.x = mAxis.x * mSin;
+    mQr.y = mAxis.y * mSin;
+    mQr.z = mAxis.z * mSin;
+    mQr.w = cos( mHalfAngle );
+    return mQr;
+}
+// Quaternion rotating about X axis
+float4 getQuaternionRxInRadians(float angle)
+{
+    float halfAngle = angle * 0.5;
+    return float4(sin(halfAngle), 0, 0, cos(halfAngle));
+}
+
+float4 getQuaternionInRadians(float mAngle, float3 mAxis){
+    float4 mQr = float4(0,0,0,0);
+    float  mHalfAngle = mAngle * 0.5;
+    mAxis = normalize(mAxis);
+    float mSin = sin( mHalfAngle );
+    mQr.x = mAxis.x * mSin;
+    mQr.y = mAxis.y * mSin;
+    mQr.z = mAxis.z * mSin;
+    mQr.w = cos( mHalfAngle );
+    return mQr;
+}
+float4 eulerToQuaternion(float rx, float ry, float rz){
+    float pi = 3.141592653589793238;
+    rx = rx * pi / 180.0;
+    ry = ry * pi / 180.0;
+    rz = rz * pi / 180.0;
+    // ------
+    float cy = cos(rz * 0.5);
+    float sy = sin(rz * 0.5);
+    float cp = cos(ry * 0.5);
+    float sp = sin(ry * 0.5);
+    float cr = cos(rx * 0.5);
+    float sr = sin(rx * 0.5);
+    float4 q;
+    q.w = cy * cp * cr + sy * sp * sr;
+    q.x = cy * cp * sr - sy * sp * cr;
+    q.y = sy * cp * sr + cy * sp * cr;
+    q.z = sy * cp * cr - cy * sp * sr;
+    return q;
+}
+float4 QuaternionMultiply(float4 a, float4 b){
+    float4 q;
+    q.w = a.w*b.w - a.x*b.x - a.y*b.y - a.z*b.z;
+    q.x = a.w*b.x + a.x*b.w + a.y*b.z - a.z*b.y;
+    q.y = a.w*b.y - a.x*b.z + a.y*b.w + a.z*b.x;
+    q.z = a.w*b.z + a.x*b.y - a.y*b.x + a.z*b.w;
+    return q;
+}
+float3 getQuaternionPos( float4 mQr, float3 mPos ){
+    float3 mQ = float3(mQr.x,mQr.y,mQr.z);
+    float3 mDeformPos = mPos + 2.0 * cross( mQ, cross(mQ, mPos) + mQr.w*mPos );
+    return mDeformPos;
+}
+float3 getQuaternionDeformPos( float mAngle, float3 mAxis, float3 mPos )
+{
+    float pi = 3.141592653589793238;
+    float4 mQr = float4(0,0,0,0);
+    float  mHalfAngle = ( mAngle * 0.5 ) * pi / 180.0;
+    float mSin = sin( mHalfAngle );
+    mQr.x = mAxis.x * mSin;
+    mQr.y = mAxis.y * mSin;
+    mQr.z = mAxis.z * mSin;
+    mQr.w = cos( mHalfAngle );
+    float3 mQ = float3(mQr.x,mQr.y,mQr.z);
+    float3 mDeformPos = mPos + 2.0 * cross( mQ, cross(mQ, mPos) + mQr.w*mPos );
+    return mDeformPos;
+}
+#if defined( UV_ROTATE )
+    float2 getUVRotationSinCos(ObjectParameters& object)
+    {
+        float mTime = object.offsetUV.z;
+        float2 mSinCos;
+        // compute sin and cos for this angle
+        sincos( mTime, mSinCos.x, mSinCos.y );
+        return mSinCos;
+    }
+#endif
+#if defined( WIND_BENDING )
+    float3 bendToWind(VS_INPUT In, ObjectParameters& object, float3 inputVector, float4 mDirectionBend, float mTime ){
+        // wind animation
+        float3 mFreq = 5.0*In.position.xyz;
+    #if defined(VERTEX_COLOR)
+        float mAttenuation = In.color.x;
+    #else
+        float mAttenuation = saturate(-In.position.y);
+    #endif
+        float3 mOffset = 0.4*sin(mTime*8.15 + mFreq.x+mFreq.y+mFreq.z)*cos(mTime*3.35 + 0.5*mFreq.x+mFreq.y+mFreq.z);
+        mOffset *= float3(mAttenuation,0,mAttenuation);
+        float3 mDeformed = inputVector.xyz ;
+        mDeformed += mOffset*clamp(mDirectionBend.w,-0.4,0.4);
+        // accelerationDirection bending
+        float3 accelerationDirection = normalize(mDirectionBend.xyz);
+        mDeformed -= mDirectionBend.w*accelerationDirection.xyz*mAttenuation;
+        return mDeformed;
+    }
+#endif
+#if defined( MESH_SCROLL )
+float3 getMeshScrollPos(VS_INPUT In, ObjectParameters& object, float mScrollPosition){
+    // deforms position of the vertices based on special formula
+    // this deformation makes vertices move like chatelpiller tread
+    float3 position = In.position.xyz;
+    float mTotalLenght = 2*3.1415926*object.lengthAndRadius.y + 2*object.lengthAndRadius.x;
+
+    float crawlerRadius = object.lengthAndRadius.y;
+    float crawlerRadiusPi = 3.1415926*crawlerRadius;
+    float crawlerLength = object.lengthAndRadius.x;
+
+    float posFirstRot = crawlerLength;
+    float posAfterRot = posFirstRot + crawlerRadiusPi;
+    float posAfterBottom = posAfterRot + crawlerLength;
+    float posAfterLastRot = posAfterBottom + crawlerRadiusPi;
+
+    float offsetZRaw = mTotalLenght * ( mScrollPosition - floor(mScrollPosition) );
+    float posZ = fmod(In.position.z+offsetZRaw,posAfterLastRot);
+    position.z = posZ;
+
+    if (posZ > posFirstRot){
+        // z=0 -> 0
+        // z=pi*r -> pi
+        float angle = (posZ - posFirstRot) / crawlerRadius;
+        float cosAngle = cos(angle);
+        float sinAngle = sin(angle);
+        position.y = cosAngle*In.position.y;
+        position.z = posFirstRot + sinAngle*In.position.y;
+        if (posZ > posAfterRot) {
+            position.z = posFirstRot - (posZ - posAfterRot);
+            position.y = -In.position.y;
+            if (posZ > posAfterBottom) {
+                // z=0 -> 0
+                // z=pi*r -> pi
+                float angle = (posZ - posAfterBottom) / crawlerRadius;
+                float cosAngle = cos(angle);
+                float sinAngle = sin(angle);
+                position.y = - cosAngle*In.position.y;
+                position.z = - sinAngle*In.position.y;
+            }
+        }
+    }
+    return position;
+}
+float3 getMeshScrollVector(VS_INPUT In, ObjectParameters& object, float mScrollPosition, float3 inputVector){
+    // similar to getMeshScrollPos
+    // only rotation no translation
+    float3 mVector = inputVector.xyz;
+    float mTotalLenght = 2*3.1415926*object.lengthAndRadius.y + 2*object.lengthAndRadius.x;
+
+    float crawlerRadius = object.lengthAndRadius.y;
+    float crawlerRadiusPi = 3.1415926*crawlerRadius;
+    float crawlerLength = object.lengthAndRadius.x;
+
+    float posFirstRot = crawlerLength;
+    float posAfterRot = posFirstRot + crawlerRadiusPi;
+    float posAfterBottom = posAfterRot + crawlerLength;
+    float posAfterLastRot = posAfterBottom + crawlerRadiusPi;
+
+    float offsetZRaw = mTotalLenght * ( mScrollPosition - floor(mScrollPosition) );
+    float posZ = fmod(In.position.z+offsetZRaw,posAfterLastRot);
+
+    if (posZ > posFirstRot) {
+        // z=0 -> 0
+        // z=pi*r -> pi
+        float angle = (posZ - posFirstRot) / crawlerRadius;
+        float cosAngle = cos(angle);
+        float sinAngle = sin(angle);
+        mVector.y = cosAngle*inputVector.y - sinAngle*inputVector.z;
+        mVector.z = sinAngle*inputVector.y + cosAngle*inputVector.z;
+        if (posZ > posAfterRot) {
+            mVector.yz = -inputVector.yz;
+            if (posZ > posAfterBottom) {
+                // z=0 -> 0
+                // z=pi*r -> pi
+                float angle = (posZ - posAfterBottom) / crawlerRadius;
+                float cosAngle = cos(angle);
+                float sinAngle = sin(angle);
+                mVector.y = -cosAngle*inputVector.y + sinAngle*inputVector.z;
+                mVector.z = -sinAngle*inputVector.y - cosAngle*inputVector.z;
+            }
+        }
+    }
+    return mVector;
+}
+#endif
+#if defined( CABLE_TRAY_CHAIN )
+float3 getCableTrayChainPos(VS_INPUT In, ObjectParameters& object, float3 mControlPointAndLength){
+    // deforms position of the vertices based on special formula
+    // which mimics cable tray deforming behavior 
+    float mRadius = abs(0.5 * mControlPointAndLength.y);
+    float mLength = 0.5*(mControlPointAndLength.z + mControlPointAndLength.x - 3.1415926 * mRadius);
+    
+    float3 mPos = In.position.xyz;
+    mPos.y += mRadius;
+    float3 position = mPos;
+    
+    float posAfterRot = mLength + 3.1415926*mRadius;
+    if (mPos.z > mLength){
+        // z=0 -> 0
+        // z=pi*r -> pi
+        float angle = (mPos.z - mLength) / mRadius;
+        float sinAngle, cosAngle;
+        sincos(angle, sinAngle, cosAngle);
+        position.y = cosAngle*mPos.y;
+        position.z = mLength + sinAngle*mPos.y;
+        if (mPos.z > posAfterRot) {
+            position.z = mLength - (mPos.z - posAfterRot);
+            position.y = -mPos.y;
+        }
+    }
+    position.y -= mRadius;
+    return position;
+}
+float3 getCableTrayChainVector(VS_INPUT In, ObjectParameters& object, float3 mControlPointAndLength, float3 inputVector){
+    // similar to getCableTrayChainPos
+    // only rotation no translation
+    float3 mVector = inputVector.xyz;
+    float mRadius = abs(0.5 * mControlPointAndLength.y);
+    float mLength = 0.5*(mControlPointAndLength.z + mControlPointAndLength.x - 3.1415926 * mRadius);
+    
+    float3 mPos = In.position.xyz;
+    
+    float posAfterRot = mLength + 3.1415926*mRadius;
+    if (mPos.z > mLength){
+        // z=0 -> 0
+        // z=pi*r -> pi
+        float angle = (mPos.z - mLength) / mRadius;
+        float sinAngle, cosAngle;
+        sincos(angle, sinAngle, cosAngle);
+        mVector.y = cosAngle*inputVector.y - sinAngle*inputVector.z;
+        mVector.z = sinAngle*inputVector.y + cosAngle*inputVector.z;
+        if (mPos.z > posAfterRot) {
+            mVector.yz = -inputVector.yz;
+        }
+    }
+    return mVector;
+}
+#endif
+#if defined( LOCAL_CATMULL_ROM )
+float3 getLocalCatmullRomPos(VS_INPUT In, ObjectParameters& object ){
+    // perform catmull rom
+    float3 position = In.position.xyz;
+    position.x *= object.lengthAndDiameter.y;
+    position.y *= object.lengthAndDiameter.y;
+
+    float3 v = float3( position.x, position.y, 0 );
+
+    //	q(t) = 0.5f *((2 * P1) + (-P0 + P2) * t + (2*P0 - 5*P1 + 4*P2 - P3) * t^2 + (-P0 + 3*P1 - 3*P2 + P3) * t^3)
+    //float3 splinePos = 0.5f *((2.0f* object.cv1.xyz) + (- object.cv0.xyz+ object.cv2.xyz)*sT + (2.0f* object.cv0.xyz - 5.0f* object.cv1.xyz + 4.0f* object.cv2.xyz -  object.cv3.xyz) * (sT*sT) + (- object.cv0.xyz + 3.0f* object.cv1.xyz - 3.0f* object.cv2.xyz +  object.cv3.xyz) * (sT*sT*sT));
+    float3 P0 = object.cv0.xyz;
+    float3 P1 = object.cv1.xyz;
+    float3 P2 = object.cv2.xyz;
+    float3 P3 = object.cv3.xyz;
+
+    float sT = In.position.z/object.lengthAndDiameter.x;
+    float sT2 = (In.position.z+0.01f)/object.lengthAndDiameter.x;
+
+    float3 splinePos = float3(0.0f, 0.0f, 0.0f);
+    float3 splinePos2 = float3(0.0f, 0.0f, 0.0f);
+
+    const float NEAR_ZERO = 1e-06;
+    if(dot(object.cv2, object.cv2) <= NEAR_ZERO) {
+        // two point catmull rom
+        P0 = object.cv0.xyz - (object.cv0.xyz * min(sT-0.01, 0) * 10000) * object.cv0.w;
+        P3 = object.cv4.xyz + ((object.cv4.xyz - object.cv3.xyz) * max(sT-0.99, 0) * 10000) * object.cv4.w;
+
+        splinePos = 0.5f *((2.0f* object.cv1.xyz) + (- P0+ object.cv3.xyz)*sT + (2.0f* P0 - 5.0f* object.cv1.xyz + 4.0f* object.cv3.xyz - P3) * (sT*sT) + (- P0 + 3.0f* object.cv1.xyz - 3.0f* object.cv3.xyz + P3) * (sT*sT*sT));
+        splinePos2 = 0.5f *((2.0f* object.cv1.xyz) + (- P0+ object.cv3.xyz)*sT2 + (2.0f* P0 - 5.0f* object.cv1.xyz + 4.0f* object.cv3.xyz - P3) * (sT2*sT2) + (- P0 + 3.0f* object.cv1.xyz - 3.0f* object.cv3.xyz + P3) * (sT2*sT2*sT2));
+
+    } else {
+        // two point catmull rom with center point
+        if(sT <= 0.5) {
+            sT = 2.0 * sT;
+            sT2 = 2.0 * sT2;
+            P0 = object.cv0.xyz - (object.cv0.xyz * min(sT-0.01, 0) * 10000) * object.cv0.w;
+            P3 = lerp(object.cv3.xyz, P2-float3(0.0f, 0.0f, -4.0f * abs(P2.y)), object.cv2.w);
+        } else {
+            sT = 2.0 * (sT - 0.5);
+            sT2 = 2.0 * (sT2 - 0.5);
+            P1 = object.cv2.xyz;
+            P2 = object.cv3.xyz;
+            P3 = object.cv4.xyz + ((object.cv4.xyz - object.cv3.xyz) * max(sT-0.99, 0) * 10000) * object.cv4.w;
+            P0 = lerp(object.cv0.xyz, P1-float3(0.0f, 0.0f, 4.0f * abs(P1.y)), object.cv2.w);
+        }
+
+        splinePos = 0.5f *((2.0f*P1) + (-P0 + P2) * sT + (2.0f*P0 - 5.0f*P1 + 4.0f*P2 - P3) * (sT*sT) + (-P0 + 3.0f*P1 - 3.0f*P2 + P3) * (sT*sT*sT));
+        splinePos2 = 0.5f *((2.0f*P1) + (-P0 + P2) * sT2 + (2.0f*P0 - 5.0f*P1 + 4.0f*P2 - P3) * (sT2*sT2) + (-P0 + 3.0f*P1 - 3.0f*P2 + P3) * (sT2*sT2*sT2));
+    }
+
+     // calculate rotation matrix
+    float3 z1 = float3(0.0f, 0.0f, 1.0f);
+    float3 z2 = normalize( splinePos2.xyz - splinePos.xyz );
+
+    float3 ra = normalize( cross(z2, z1) );             // rot. axis
+    float a = acos( dot(z2, z1) );                      // rot. angle
+
+    float sa = sin(a);
+    float ca = cos(a);
+    float cam = 1.0f - ca;
+
+    float3x3 rotMat = float3x3(
+        ra.x*ra.x * cam + ca,       ra.y*ra.x * cam + ra.z*sa,  ra.z*ra.x * cam - ra.y*sa,
+        ra.x*ra.y * cam - ra.z*sa,  ra.y*ra.y * cam + ca,       ra.z*ra.y * cam + ra.x*sa,
+        ra.x*ra.z * cam + ra.y*sa,  ra.y*ra.z * cam - ra.x*sa,  ra.z*ra.z * cam + ca
+        );
+
+    position.xyz = splinePos.xyz + mul( rotMat, v );
+    return position.xyz;
+}
+
+float3 getLocalCatmullRomVector(VS_INPUT In, ObjectParameters& object, float3 inputVector){
+    // perform catmull rom
+    float3 mVector = inputVector.xyz;
+
+    float3 v = float3( mVector.x, mVector.y, mVector.z);
+
+    float3 P0 = object.cv0.xyz;
+    float3 P1 = object.cv1.xyz;
+    float3 P2 = object.cv2.xyz;
+    float3 P3 = object.cv3.xyz;
+
+    float sT = In.position.z/object.lengthAndDiameter.x;
+    float sT2 = (In.position.z+0.01f)/object.lengthAndDiameter.x;
+
+    float3 splinePos = float3(0.0f, 0.0f, 0.0f);
+    float3 splinePos2 = float3(0.0f, 0.0f, 0.0f);
+
+     const float NEAR_ZERO = 1e-06f;
+     if(dot(object.cv2, object.cv2) <= NEAR_ZERO) {
+        // two point catmull rom
+        P0 = object.cv0.xyz - (object.cv0.xyz * min(sT-0.01, 0) * 10000) * object.cv0.w;
+        P3 = object.cv4.xyz + ((object.cv4.xyz - object.cv3.xyz) * max(sT-0.99, 0) * 10000) * object.cv4.w;
+
+        splinePos = 0.5f *((2.0f* object.cv1.xyz) + (- P0+ object.cv3.xyz)*sT + (2.0f* P0 - 5.0f* object.cv1.xyz + 4.0f* object.cv3.xyz - P3) * (sT*sT) + (- P0 + 3.0f* object.cv1.xyz - 3.0f* object.cv3.xyz + P3) * (sT*sT*sT));
+        splinePos2 = 0.5f *((2.0f* object.cv1.xyz) + (- P0+ object.cv3.xyz)*sT2 + (2.0f* P0 - 5.0f* object.cv1.xyz + 4.0f* object.cv3.xyz - P3) * (sT2*sT2) + (- P0 + 3.0f* object.cv1.xyz - 3.0f* object.cv3.xyz + P3) * (sT2*sT2*sT2));
+
+    } else {
+        // two point catmull rom with center point
+        if(sT <= 0.5) {
+            sT = 2.0 * sT;
+            sT2 = 2.0 * sT2;
+            P0 = object.cv0.xyz - (object.cv0.xyz * min(sT-0.01, 0) * 10000) * object.cv0.w;
+            P3 = lerp(object.cv3.xyz, P2-float3(0.0f, 0.0f, -4.0f * abs(P2.y)), object.cv2.w);
+        }
+        else {
+            sT = 2.0 * (sT - 0.5);
+            sT2 = 2.0 * (sT2 - 0.5);
+            P1 = object.cv2.xyz;
+            P2 = object.cv3.xyz;
+            P3 = object.cv4.xyz + ((object.cv4.xyz - object.cv3.xyz) * max(sT-0.99, 0) * 10000) * object.cv4.w;
+            P0 = lerp(object.cv0.xyz, P1-float3(0.0f, 0.0f, 4.0f * abs(P1.y)), object.cv2.w);
+        }
+
+        splinePos = 0.5f *((2.0f*P1) + (-P0 + P2) * sT + (2.0f*P0 - 5.0f*P1 + 4.0f*P2 - P3) * (sT*sT) + (-P0 + 3.0f*P1 - 3.0f*P2 + P3) * (sT*sT*sT));
+        splinePos2 = 0.5f *((2.0f*P1) + (-P0 + P2) * sT2 + (2.0f*P0 - 5.0f*P1 + 4.0f*P2 - P3) * (sT2*sT2) + (-P0 + 3.0f*P1 - 3.0f*P2 + P3) * (sT2*sT2*sT2));
+    }
+
+     // calculate rotation matrix
+    float3 z1 = float3(0.0f, 0.0f, 1.0f);
+    float3 z2 = normalize( splinePos2.xyz - splinePos.xyz );
+
+    float3 ra = normalize( cross(z2, z1) );             // rot. axis
+    float a = acos( dot(z2, z1) );                      // rot. angle
+
+    float sa = sin(a);
+    float ca = cos(a);
+    float cam = 1.0f - ca;
+
+    float3x3 rotMat = float3x3(
+        ra.x*ra.x * cam + ca,       ra.y*ra.x * cam + ra.z*sa,  ra.z*ra.x * cam - ra.y*sa,
+        ra.x*ra.y * cam - ra.z*sa,  ra.y*ra.y * cam + ca,       ra.z*ra.y * cam + ra.x*sa,
+        ra.x*ra.z * cam + ra.y*sa,  ra.y*ra.z * cam - ra.x*sa,  ra.z*ra.z * cam + ca
+        );
+
+    mVector.xyz = mul( rotMat, v );
+    return mVector;
+}
+#endif
+#if defined( CABLE_TRAY )
+float3 getCableTrayPos(VS_INPUT In, ObjectParameters& object, float mBeltPos ){
+    float3 mPos = In.position.xyz;
+    mPos.x += mBeltPos*In.color.x;
+    mPos.x += 2*mBeltPos*In.color.z;
+    return mPos;
+}
+float2 getCableTrayUVs(VS_INPUT In, ObjectParameters& object, float mBeltPos){
+    float2 mUV = convertDefaultTexCoords( In, object, In.texCoords1.xy );
+    float mScaler1 = mBeltPos + 1;
+    float mScaler2 = 1 - 0.5 * mBeltPos;
+    mUV.y = lerp( mUV.y, mUV.y * mScaler1, In.color.y );
+    mUV.y = lerp( mUV.y, ( mUV.y + 0.25 ) * mScaler2 - 0.25, In.color.w );
+    float mBlendFactor = In.color.x*(1-In.color.y)*(1-In.color.z)*(1-In.color.w);
+    float mScaler3 = 0.5 * mBeltPos;
+    mUV.y = lerp( mUV.y, mUV.y + mScaler3, mBlendFactor);
+    return mUV;
+}
+#endif
+#if defined( SHAKING )
+float3 getShakingPos(VS_INPUT In, ObjectParameters& object, float4 mShaking, float mTime){
+    float3 mPos = In.position.xyz;
+    mPos.xyz += sin(mTime*mShaking.w) * mShaking.xyz;
+    return mPos;
+}
+#endif
+#if defined( TIRE_PRESSURE_DEFORMATION )
+float3 getTirePressurePos(VS_INPUT In, ObjectParameters& object, float4 mMorphPosition){
+    float3 localY = mul(float3(0,1,0), (float3x3)object.modelMatrix);
+    localY.x = 0;
+    localY = normalize(localY);
+    float pi = 3.14159265359;
+
+    float3 mDeformedPosition = In.position.xyz;
+    float localYPosition = dot(In.position.xyz, localY);
+
+    float mBlendIn  = mMorphPosition.x;
+    float mBlendOut = mMorphPosition.y;
+
+    float mMaskBase = saturate((localYPosition - mBlendIn) / ( mBlendOut - mBlendIn ));
+    float mMaskSide = sin( mMaskBase * pi );
+
+    float mPushOutRatio = 0.5; //mMorphPosition.z;
+    float mPushUp  = mMorphPosition.w;
+    float mBound   = abs( mBlendOut - mBlendIn + 0.05);
+    mPushUp = clamp( mPushUp, 0.0, mBound );
+    float mPushOut = mPushUp * mPushOutRatio;
+
+    mBlendIn  = mMorphPosition.y + mPushUp + 0.05;
+    mBlendOut = mMorphPosition.y;
+    float mMaskUp = saturate((localYPosition - mBlendIn) / ( mBlendOut - mBlendIn ));
+
+    mDeformedPosition.x += mPushOut * mMaskSide * sign(In.position.x);
+    // extra side push out
+    mDeformedPosition.x += clamp(mPushUp,0,0.125) * mMaskUp * sign(In.position.x);
+    mDeformedPosition += localY * (mPushUp * mMaskUp);
+
+    return mDeformedPosition;
+}
+#endif
+#if defined( RIM ) || defined( NUMBER_OF_STATICS_AND_DIAM ) || defined( RIM_DUAL )
+float3 getRimPos(VS_INPUT In, ObjectParameters& object){
+    float3 mPos = In.position.xyz;
+    #if defined( NUMBER_OF_STATICS_AND_DIAM )
+        float mDiameter = 0.0254 * object.widthAndDiam.y;
+        // Apply radial distortion (we assume that the initial mesh radius is 1)
+        if (In.color.w < 0.5) {
+            // Move whole blocks towards the center that are placed around the rim with the same angular distance
+            float stepSize = 6.283185307179586476925286766559 / object.numberOfStatics.x;
+            float angle = atan2(In.position.y, In.position.z);
+            angle = floor(angle / stepSize + 0.5) * stepSize;
+            float2 d = float2(sin(angle), cos(angle));
+            mPos.yz = In.position.yz + d * (mDiameter-1)*0.5;
+        } else {
+            mPos.yz = In.position.yz + normalize(In.position.yz) * (mDiameter-1)*0.5;
+        }
+    #endif
+    #if defined( RIM )
+        float2 mWidthAndDiam = 0.0254 * object.widthAndDiam.xy; // inch to meter convertion
+        #if defined( NUMBER_OF_STATICS_AND_DIAM )
+            // Do not distort, already done at NUMBER_OF_STATICS_AND_DIAM
+        #else
+            // Apply radial distortion (we assume that the mesh radius is 1)
+            mPos.yz = In.position.yz + normalize(In.position.yz) * (mWidthAndDiam.y-1)*0.5;
+        #endif
+        // Apply distortion along x axis from 2 control points (control points in the mesh are assumed to be 0.5 from the center)
+        mPos.x  = In.color.x * (In.position.x + mWidthAndDiam.x*0.5-0.5);
+        mPos.x += In.color.y * (In.position.x - mWidthAndDiam.x*0.5+0.5);
+        mPos.x += (1-(dot(In.color.xy, float2(1,1)))) * In.position.x;
+        return mPos;
+    #endif
+    #if defined( RIM_DUAL )
+        // Apply distortion along x axis from 3 control points (distance between control points in the mesh is assumed to be 1)
+        float mSide = 1.0;
+        if ( In.position.x < 0 ) {
+            mSide  = -1.0;
+        }
+        float4 mRealPosition =  0.0254 * object.connectorPos; // convert inches to meters
+        mPos.x = (1-In.color.x)*(1-In.color.y)*(1-In.color.z)*( In.position.x + mSide*mRealPosition.x);
+        mRealPosition.y *= 0.5;
+        mPos.x += In.color.x * (In.position.x + mSide*(mRealPosition.y-1));
+        mRealPosition.z += mRealPosition.y;
+        mPos.x += In.color.y * (In.position.x + mSide*(mRealPosition.z-2));
+        mRealPosition.w += mRealPosition.z;
+        mPos.x += In.color.z * (In.position.x + mSide*(mRealPosition.w-3));
+        mPos.x += (1-(dot(In.color.xyz, float3(1,1,1)))) * In.position.x;
+        return mPos;
+    #endif
+}
+#endif
+#if defined( HUB_DUAL )
+float3 getHubDualPos(VS_INPUT In, ObjectParameters& object){
+    float3 mPos = In.position.xyz;
+    float2 mRealPosition = 0.0254 * object.connectorPosAndScale.xy;
+    float mSide = 1.0;
+    if ( In.position.x < 0 ) {
+        mSide  = -1.0;
+    }
+    mPos.x += In.color.x * mSide*( - 1 );
+    mPos *= object.connectorPosAndScale.z;
+    mPos.x += In.color.y * mSide*( 4 *(1 - object.connectorPosAndScale.z ) );
+
+    mPos.x += In.color.x * mSide* mRealPosition.x;
+    mPos.x += In.color.y * mSide* ( mRealPosition.y - 4 );
+    return mPos;
+}
+#endif
+#if defined( MESH_JIGGLING )
+float3 getMeshJigglingPos(VS_INPUT In, ObjectParameters& object, float4 mAmplFreq ){
+    float3 mPos = In.position.xyz;
+    float  mAttenuation = In.texCoords1.x;
+    float3 mAxis        = float3(1.0,0.0,0.0);   // was always constant
+    float  mCompression = 5.0;                   // constant even in maya python script
+    float  mAmplitude   = mAmplFreq.x;
+    float  mFrequency   = mAmplFreq.y; // not used in lua, passed by i3d file
+    // float  mJigAmountElements   = 1 - mAmplFreq.z; // not used in lua
+    float  mTime        = mAmplFreq.w;
+    float  mSinus = sin(2.78*In.color.a + 5.67*mTime*mFrequency)*sin(16.75*In.color.a - 28.45*mTime*mFrequency);
+    float  mAngle = 10*mAmplitude*saturate(mSinus);
+    // mAngle *= saturate(sign( sin(0.53*mTime + 23.16*In.color.a) * sin(1.476*mTime - 12.78*In.color.a ) - mJigAmountElements ));
+    float3 mPivot = mCompression*(2.0*In.color.xyz - 1.0);
+    mPos -= mPivot;
+    float3 mDeformPos = getQuaternionDeformPos(mAngle,mAxis,mPos);
+    mPos = lerp( mPos, mDeformPos, mAttenuation );
+    mPos += mPivot;
+    return mPos;
+}
+#endif
+#if defined(VERTEX_ROTATE)
+    #define OBJECT_DATA_INDEX uint2
+    uint2 getObjectDataIndex(VS_INPUT In, ObjectParameters& object) {
+        return uint2(32767*In.normal.w+0.5, 0); // y is always zero since there are not multiple sets of objects
+    }
+    float4 getObjectDataPos(uint2 index, ObjectParameters& object) {
+        return tex2DFetch(mTrackArray, uint3(index, 0), 0);
+    }
+    float4 getObjectDataOrient(uint2 index, ObjectParameters& object) {
+        return tex2DFetch(mTrackArray, uint3(index, 1), 0);
+    }
+#elif defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER)
+    #define OBJECT_DATA_INDEX float2
+    float2 getObjectDataIndex(VS_INPUT In, ObjectParameters& object, float4 mScrollPosition ){
+        float2 pIndex = float2(0.0,0.0);
+        #if defined( MOTION_PATH )
+            uint2 texSize  = tex2DSize(mTrackArray,0);
+            float ptnum = 32767*In.normal.w; // 0,1,2 ... 32767
+            return float2(frac(mScrollPosition.x+(ptnum+0.5)/float(texSize.x)), (floor(ptnum / float(texSize.x))+0.5)/float(texSize.y));
+        #else // MOTION_PATH_RUBBER
+            return float2(frac(mScrollPosition.x + 0.1*In.position.z), 0.5);
+        #endif
+    }
+    float4 getObjectDataPos(float2 pIndex, ObjectParameters& object, float4 mScrollPosition) {
+        float4 position = tex2Dlod( mTrackArray, float3(pIndex.xy, 2*mScrollPosition.y), 0);
+        if (mScrollPosition.w > 0) {
+            position = lerp(position, tex2Dlod( mTrackArray, float3(pIndex.xy, 2*mScrollPosition.z), 0), mScrollPosition.w);
+        }
+        return position;
+    }
+    float4 getObjectDataOrient(float2 pIndex, ObjectParameters& object, float4 mScrollPosition) {
+        float4 orient = tex2Dlod(mTrackArray, float3(pIndex.xy, 2*mScrollPosition.y + 1), 0);
+        if (mScrollPosition.w > 0) {
+            orient = lerp(orient, tex2Dlod(mTrackArray, float3(pIndex.xy, 2*mScrollPosition.z + 1), 0), mScrollPosition.w);
+        }
+        return orient;
+    }
+#endif
+#if defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( VERTEX_ROTATE )
+float3 getMotionPathPos(VS_INPUT In, ObjectParameters& object, float4 mPosition, float4 mOrient){
+    float3 mDeformPos = In.position.xyz;
+    #if defined( MOTION_PATH ) || defined(VERTEX_ROTATE)
+        // apply quaternion rotation
+        mDeformPos = getQuaternionPos( mOrient, In.position.xyz );
+        // apply translation
+        mDeformPos += mPosition.xyz;
+        return mDeformPos;
+    #endif
+    #if defined( MOTION_PATH_RUBBER )
+        // apply quaternion rotation
+        mDeformPos.z -= In.position.z;
+        mDeformPos = getQuaternionPos( mOrient, mDeformPos );
+        // apply translation
+        mDeformPos += mPosition.xyz;
+        return mDeformPos;
+    #endif
+}
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "FILL_VERTEX_INPUT_VS">
+<![CDATA[
+#if defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER) || defined(VERTEX_ROTATE)
+    // get orient and position
+    #if defined(MOTION_PATH) || defined(MOTION_PATH_RUBBER)
+        // get the indexes
+        OBJECT_DATA_INDEX objectDataIndexMP     = getObjectDataIndex(In, object, object.scrollPosition).xy;
+        OBJECT_DATA_INDEX prevObjectDataIndexMP = getObjectDataIndex(In, object, object.prevScrollPosition).xy;
+        // calculate rotations
+        In.gOrient     = getObjectDataOrient(objectDataIndexMP,     object, object.scrollPosition);
+        In.gPrevOrient = getObjectDataOrient(prevObjectDataIndexMP, object, object.prevScrollPosition);
+        // calculate positions
+        In.gPosition     = getObjectDataPos(objectDataIndexMP,     object, object.scrollPosition);
+        In.gPrevPosition = getObjectDataPos(prevObjectDataIndexMP, object, object.prevScrollPosition);
+    #elif defined( VERTEX_ROTATE )
+        // get the index
+        OBJECT_DATA_INDEX objectDataIndexVR = getObjectDataIndex(In, object ).xy;
+        // get initial rotation
+        float4 mInitRot  = getObjectDataOrient(objectDataIndexVR, object);
+        // apply additinal rotations
+        float4 mRotation     = getQuaternionRxInRadians(object.rotationAngle);
+        float4 mPrevRotation = getQuaternionRxInRadians(object.prevRotationAngle);
+        In.gOrient      = QuaternionMultiply(mInitRot,mRotation);
+        In.gPrevOrient  = QuaternionMultiply(mInitRot,mPrevRotation);
+        // calculate positions
+        In.gPosition     = getObjectDataPos(objectDataIndexVR, object);
+        In.gPrevPosition = In.gPosition;
+    #endif
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="VS_OUTPUT">
+<![CDATA[
+#if defined(STATIC_LIGHT_SLIDE)
+    float2 albedoMapTexCoords2 : TEXCOORDn;
+#endif
+#if defined(DECAL_RENDER) || defined(SPECULAR_SECONDUV)
+    float2 glossMapTexCoords2  : TEXCOORDn;
+#endif
+#if defined(NORMAL_THIRDUV)
+    float2 normalMapTexCoords3: TEXCOORDn;
+#endif
+    float2 texCoordsOrig : TEXCOORDn;
+    float2 texCoordsX    : TEXCOORDn;
+    float2 texCoordsY    : TEXCOORDn;
+    float2 texCoordsZ    : TEXCOORDn;
+    float3 localNormal   : TEXCOORDn;
+#if defined( STATIC_LIGHT )
+    float mVisScale : TEXCOORDn;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_POSITION_VS">
+<![CDATA[
+{
+    // no skinning support
+    #if defined( RIM ) || defined( NUMBER_OF_STATICS_AND_DIAM ) || defined( RIM_DUAL )
+        return getRimPos(In, object);
+    #endif
+    #if defined( HUB_DUAL )
+        return getHubDualPos(In, object);
+    #endif
+    #if defined( LOCAL_CATMULL_ROM )
+        return getLocalCatmullRomPos(In, object);
+    #endif
+    {   // with motion blur support
+        #if defined( TIRE_PRESSURE_DEFORMATION )
+            return getTirePressurePos(In, object, object.morphPosition);
+        #endif
+        #if defined( CABLE_TRAY )
+            return getCableTrayPos(In, object, object.beltPos);
+        #endif
+        #if defined( MESH_JIGGLING )
+            return getMeshJigglingPos(In, object, object.amplFreq);
+        #endif
+        #if defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( VERTEX_ROTATE )
+            return getMotionPathPos(In, object, In.gPosition, In.gOrient);
+        #endif
+        #if defined( MESH_SCROLL )
+            return getMeshScrollPos(In, object, object.scrollPosition.x);
+        #endif
+        #if defined( CABLE_TRAY_CHAIN )
+            return getCableTrayChainPos(In, object, object.controlPointAndLength);
+        #endif
+    }
+}
+{
+    // with skinning support
+    float3 mDeformed = In.position.xyz;
+    #if defined( SHAKING )
+        mDeformed = getShakingPos(In, object, object.shaking, cTime_s);
+    #endif
+    #if defined( WIND_BENDING )
+        mDeformed = bendToWind(In, object, In.position.xyz, object.directionBend, cTime_s);
+    #endif
+    #if defined(SKINNING)
+        return skinPoint(mDeformed.xyz, In, object) - float3(invViewMatrix[0][3], invViewMatrix[1][3], invViewMatrix[2][3]);
+    #else
+        return mDeformed;
+    #endif
+}
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_PREV_POSITION_VS">
+<![CDATA[
+{
+    // no skinning support
+    #if defined( RIM ) || defined( NUMBER_OF_STATICS_AND_DIAM ) || defined( RIM_DUAL )
+        return getRimPos(In, object);
+    #endif
+    #if defined( HUB_DUAL )
+        return getHubDualPos(In, object);
+    #endif
+    #if defined( LOCAL_CATMULL_ROM )
+        return getLocalCatmullRomPos(In, object);
+    #endif
+    {   // with motion blur support
+        #if defined( TIRE_PRESSURE_DEFORMATION )
+            return getTirePressurePos(In, object, object.prevMorphPosition);
+        #endif
+        #if defined( CABLE_TRAY )
+            return getCableTrayPos(In, object, object.prevBeltPos);
+        #endif
+        #if defined( MESH_JIGGLING )
+            return getMeshJigglingPos(In, object, object.prevAmplFreq);
+        #endif
+        #if defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( VERTEX_ROTATE )
+            return getMotionPathPos(In, object, In.gPrevPosition, In.gPrevOrient);
+        #endif
+        #if defined( MESH_SCROLL )
+            return getMeshScrollPos(In, object, object.prevScrollPosition.x);
+        #endif
+        #if defined( CABLE_TRAY_CHAIN )
+            return getCableTrayChainPos(In, object, object.prevControlPointAndLength);
+        #endif
+    }
+}
+{
+    // with skinning support
+    float3 mDeformed = In.position.xyz;
+    #if defined( SHAKING )
+        mDeformed = getShakingPos(In, object, object.prevShaking, cPrevTime_s);
+    #endif
+    #if defined( WIND_BENDING )
+        mDeformed = bendToWind(In, object, In.position.xyz, object.prevDirectionBend, cPrevTime_s);
+    #endif
+    #if defined(SKINNING)
+        return skinPrevPoint(mDeformed.xyz, In, object) - float3(invViewMatrix[0][3], invViewMatrix[1][3], invViewMatrix[2][3]);
+    #else
+        return mDeformed;
+    #endif
+}
+]]>
+            </CodeInjection>
+            <CodeInjection position="POST_GET_WORLD_POSE_VS">
+<![CDATA[
+    #if !defined(SKINNING)
+        prevWorldPosition = mul(object.prevModelMatrix, float4(prevPosition, 1));
+    #endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="POST_SET_TEXCOORDS_VS">
+<![CDATA[
+    float3 localPosition = In.position.xyz;
+    float mUVScale = 3.0;
+    Out.texCoordsOrig = getDefaultTexCoords(In, object);
+    Out.texCoordsX = mUVScale * localPosition.yz;
+    Out.texCoordsY = mUVScale * localPosition.xz;
+    Out.texCoordsZ = mUVScale * localPosition.xy;
+    Out.localNormal = normalize(In.normal.xyz);
+#if defined( CABLE_TRAY )
+    Out.defaultTexCoords = getCableTrayUVs(In, object, object.beltPos);
+#endif
+#if defined(STATIC_LIGHT_SLIDE)
+    // Pass second UVSet to the Pixel Shader
+    Out.albedoMapTexCoords2 = convertDefaultTexCoords(In, object, In.texCoords1.xy);
+#endif
+#if defined(DECAL_RENDER) || defined(SPECULAR_SECONDUV)
+    // Pass second UVSet to the Pixel Shader
+    Out.glossMapTexCoords2  = convertDefaultTexCoords(In, object, In.texCoords1.xy);
+#endif
+#if defined(NORMAL_THIRDUV)
+    // Pass third UVSet to the Pixel Shader
+    Out.normalMapTexCoords3 = convertDefaultTexCoords(In, object, In.texCoords2.xy);
+#endif
+#if defined( UV_ROTATE ) && defined( ALBEDO_MAP )
+    float2 mOutgoingUV = getDefaultTexCoords(In, object);
+    mOutgoingUV *= object.uvCenterSize.zw;
+    float2 mRotationCenter = object.uvCenterSize.xy;
+    mRotationCenter *= object.uvCenterSize.zw;
+    float2 mSinCos = getUVRotationSinCos(object);
+    // move the rotation center to the origin
+    float2 mTmpUV = mOutgoingUV - mRotationCenter;
+    // rotate the uv
+    mOutgoingUV.x = dot( mTmpUV, float2( mSinCos.y, - mSinCos.x ) );
+    mOutgoingUV.y = dot( mTmpUV, mSinCos.xy );
+    // move the uv's back to the correct place
+    mOutgoingUV += mRotationCenter;
+    mOutgoingUV /= object.uvCenterSize.zw;
+    Out.defaultTexCoords = mOutgoingUV;
+#endif
+#if defined( UV_SCROLL ) && defined( ALBEDO_MAP ) && !defined( UV_SCALE )
+    float2 mUV = getDefaultTexCoords(In, object);
+    mUV.xy += object.offsetUV.xy;
+    Out.defaultTexCoords = mUV;
+#endif
+#if defined( UV_SCALE ) && defined( ALBEDO_MAP ) && !defined( UV_SCROLL )
+    float2 mUV = getDefaultTexCoords(In, object);
+    mUV.xy -= object.uvScale.zw;
+    mUV.xy *= object.uvScale.xy;
+    mUV.xy += object.uvScale.zw;
+    Out.defaultTexCoords = mUV;
+#endif
+#if defined( UV_SCALE ) && defined( UV_SCROLL ) && defined( ALBEDO_MAP )
+    float2 mUV = getDefaultTexCoords(In, object);
+    mUV.xy -= object.uvScale.zw;
+    mUV.xy *= object.uvScale.xy;
+    mUV.xy += object.uvScale.zw;
+    mUV.xy += object.offsetUV.xy;
+    Out.defaultTexCoords = mUV;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_NORMAL_VS">
+<![CDATA[
+{
+    // no skinning support
+    #if defined( LOCAL_CATMULL_ROM )
+        return getLocalCatmullRomVector(In, object,In.normal.xyz);
+    #endif
+    #if defined( MESH_SCROLL )
+        return getMeshScrollVector(In, object, object.scrollPosition.x,In.normal.xyz);
+    #endif
+    #if defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( VERTEX_ROTATE )
+        // apply quaternion rotation
+        return getQuaternionPos( In.gOrient, In.normal.xyz );
+    #endif
+    #if defined( CABLE_TRAY_CHAIN )
+        return getCableTrayChainVector(In, object, object.controlPointAndLength,In.normal.xyz);
+    #endif
+}
+{
+    // with skinning support
+    #if defined( WIND_BENDING )
+        float3 mDeformed = bendToWind(In,object,In.normal.xyz,object.directionBend,cTime_s);
+        #if defined(SKINNING)
+            return skinVector(mDeformed.xyz, In, object);
+        #else
+            return mDeformed;
+        #endif
+    #endif
+}
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_TANGENT_VS">
+<![CDATA[
+{
+    // no skinning support
+    #if defined( UV_ROTATE ) && defined( ALBEDO_MAP )
+        float2 mSinCos = getUVRotationSinCos(object);
+
+        float3 b = cross(In.normal.xyz, In.tangent.xyz)*In.tangent.w;
+        float3 t = In.tangent.xyz;
+
+        // Rotate tangent in oposite direction than uvs to compensate changed tangent space
+        return float3(
+            t.x*mSinCos.y - b.x*mSinCos.x,
+            t.y*mSinCos.y - b.y*mSinCos.x,
+            t.z*mSinCos.y - b.z*mSinCos.x);
+    #endif
+    #if defined( LOCAL_CATMULL_ROM )
+        return getLocalCatmullRomVector(In, object,In.tangent.xyz);
+    #endif
+    #if defined( MESH_SCROLL )
+        return getMeshScrollVector(In, object, object.scrollPosition.x,In.tangent.xyz);
+    #endif
+    #if defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( VERTEX_ROTATE )
+        // apply quaternion rotation
+        return getQuaternionPos( In.gOrient, In.tangent.xyz );
+    #endif
+    #if defined( CABLE_TRAY_CHAIN )
+        return getCableTrayChainVector(In, object, object.controlPointAndLength,In.tangent.xyz);
+    #endif
+}
+{
+    // with skinning support
+    #if defined( WIND_BENDING )
+        float3 mDeformed = bendToWind(In,object,In.tangent.xyz,object.directionBend,cTime_s);
+        #if defined(SKINNING)
+            return skinPoint(mDeformed.xyz, In, object) - float3(invViewMatrix[0][3], invViewMatrix[1][3], invViewMatrix[2][3]);
+        #else
+            return mDeformed;
+        #endif
+    #endif
+}
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_BITANGENT_VS">
+<![CDATA[
+#if defined( MESH_SCROLL ) || defined( MOTION_PATH ) || defined( MOTION_PATH_RUBBER ) || defined( LOCAL_CATMULL_ROM ) || defined( VERTEX_ROTATE ) || defined( WIND_BENDING ) || defined( CABLE_TRAY_CHAIN )
+    return cross(getNormal(In, object), getTangent(In, object))*In.tangent.w;
+#endif
+#if defined( UV_ROTATE ) && defined( ALBEDO_MAP )
+    return cross(In.normal.xyz, getTangent(In, object))*In.tangent.w;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="VS_END">
+<![CDATA[
+#if defined( STATIC_LIGHT )
+    float pi = 3.14159265359;
+    #if defined(STATIC_MULTI_BLINK)
+        Out.mVisScale = saturate((sin(cTime_s * object.blinkOffset.z) - max(fmod((cTime_s * object.blinkOffset.z), ((object.blinkOffset.x * 2) + object.blinkOffset.y * 2) * pi) - (object.blinkOffset.x * 2 - 1) * pi, 0)) + 0.2);
+    #elif defined(STATIC_LIGHT_SLIDE)
+        float mTime = 3.5*object.blinkOffset.z*( cTime_s + 2 * pi * object.blinkOffset.x - object.blinkOffset.y )/pi - 0.3;
+        Out.mVisScale = saturate( 2*( mTime - floor(mTime) - 0.5) + 0.2);
+    #else
+        // slower blinking + variation to achieve different ratio between on and off state
+        //Out.mVisScale = saturate(cos(7 * object.blinkOffset.z * (cTime_s - object.blinkOffset.y) + 2 * pi * object.blinkOffset.x) + 0.2);
+        // the same as:
+        float mTime = 3.5*object.blinkOffset.z*( cTime_s + 2 * pi * object.blinkOffset.x - object.blinkOffset.y)/pi;
+        Out.mVisScale = saturate( 4*abs( mTime - floor(mTime) - 0.5) - 0.8);
+    #endif
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "LIB_FUNCTION_FS">
+<![CDATA[
+// simplifed smoothstep
+// remaps the values of x between a and b to the range [0, 1], and clamps values outside this range
+float linearstepFS(float a, float b, float x){
+    return saturate((x - a)/(b - a));
+}
+float fitRangeFS(float mIn,float mOldMin,float mOldMax ,float mNewMin ,float mNewMax ){
+    return (mNewMin + (mIn - mOldMin) * (mNewMax  - mNewMin ) / (mOldMax  - mOldMin));
+}
+]]>
+            </CodeInjection>
+            <CodeInjection position = "START_FS">
+<![CDATA[
+    float4 mGloss  = float4(0.0,1.0,0.0,0.0);;
+    globals.gAO     = 1.0;
+    globals.gScratchesMask = 0.0;
+    globals.gDirt          = 0.0;
+    globals.gSnowMask      = 0.0;
+#if defined( GLOSS_MAP )
+    mGloss = tex2D( glossMap, GLOSS_MAP_TEXCOORDS).rgba;
+    globals.gScratchesMask = mGloss.r;
+    globals.gAO = mGloss.g;
+    globals.gDirt = mGloss.b;
+    globals.gSnowMask = mGloss.b;
+#endif
+    float mScratches = min(object.RDT.x,0.95); // limit scratches to 0.95
+    globals.gScratchesMask = linearstepFS(1-mScratches, 1-mScratches+0.05, globals.gScratchesMask);
+    float mDirt = linearstepFS(1-object.RDT.y, 1-object.RDT.y+0.5, globals.gDirt);
+    float mDust = globals.gDirt*object.RDT.y;
+    globals.gDirt = saturate(mDust + mDirt);
+    // Detail textures
+    globals.gDetailSpecular    = float3(0.1,1.0,0.0);
+    globals.gDetailNormal      = float3(0.5,0.5,1.0);
+    float4 colorMat = float4(0.5,0.5,0.5,0.0);
+    float  aIndex   = 0;
+#if defined(COLOR_MASK)
+    if (In.vs.texCoordsOrig.y < 0) {
+        float2 uv = In.vs.texCoordsOrig;
+        colorMat = object.colorMat[clamp(int(uv.x), 0, 7)];
+        aIndex = colorMat.w;
+    } else
+#endif
+    {
+        aIndex = floor(In.vs.texCoordsOrig.x) + floor(In.vs.texCoordsOrig.y)*8;
+        aIndex = max(0.0,aIndex);
+    }
+    {
+        float3 mAbsNormal   = abs(In.vs.localNormal);
+        mAbsNormal /= (mAbsNormal.x + mAbsNormal.y + mAbsNormal.z);
+        float2 uvs = mAbsNormal.x > mAbsNormal.y ? (mAbsNormal.x > mAbsNormal.z ? In.vs.texCoordsX : In.vs.texCoordsZ) : (mAbsNormal.y > mAbsNormal.z ? In.vs.texCoordsY : In.vs.texCoordsZ);
+        globals.gDetailSpecular = tex2D( mArraySpecular, float3(uvs, aIndex) ).rgb;
+        globals.gDetailNormal   = tex2D( mArrayNormal,   float3(uvs, aIndex) ).rgb;
+        globals.gDetailDiffuse  = tex2D( mArrayDiffuse,  float3(uvs, aIndex) ).rgb;
+        // Scratches
+        float3 mScratchesSpecular = tex2D( mArraySpecular, float3(uvs, 8) ).rgb; //float3(0.85,1.0,1.0);
+        float3 mScratchesNormal   = float3(0.5,0.5,1.0);
+        globals.gDetailSpecular   = lerp(globals.gDetailSpecular,mScratchesSpecular,globals.gScratchesMask);
+        globals.gDetailNormal     = lerp(globals.gDetailNormal,mScratchesNormal,globals.gScratchesMask);
+        // Dirt
+        float3 mDirtSpecular    = tex2D( mArraySpecular, float3(uvs, 15) ).rgb;
+        float3 mDirtNormal      = tex2D( mArrayNormal,   float3(uvs, 15) ).rgb;
+        globals.gDetailSpecular = lerp(globals.gDetailSpecular,mDirtSpecular,globals.gDirt);
+        globals.gDetailNormal   = lerp(globals.gDetailNormal,mDirtNormal,globals.gDirt);
+    }
+    globals.gDetailNormal = 2.0*globals.gDetailNormal - 1.0;
+    {
+        // snow code
+        float snowControl     = object.RDT.z;
+        globals.gSnowMask     = saturate(linearstepFS(1-snowControl, 1-snowControl+0.5, globals.gSnowMask ) + globals.gSnowMask*snowControl);
+        globals.gSnowMask     = globals.gSnowMask*globals.gSnowMask*globals.gSnowMask; // power of 3
+        globals.gSnowDiffuse  = float3(0.7300,0.7668,0.8356);
+        globals.gSnowSpecular = float3(0.1922,0.8706,0.0000);
+    }
+]]>
+            </CodeInjection>
+            <CodeInjection position = "GET_UNNORMALIZED_TANGENT_SPACE_NORMAL_FS">
+<![CDATA[
+#if defined( NORMAL_MAP )
+    float3 mNormal;
+    #ifdef NORMAL_MAP_SIGNED_2CHANNEL
+        // use BC5 signed format for the normal map
+        mNormal.xy = tex2D(normalMap, NORMAL_MAP_TEXCOORDS).xy;
+        mNormal.z = sqrt(1.0 - dot(mNormal.xy, mNormal.xy));
+    #else
+        mNormal = tex2D(normalMap, NORMAL_MAP_TEXCOORDS).xyz - 0.5;
+    #endif
+    mNormal.xy += globals.gDetailNormal.xy;
+    return mNormal;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "GET_TANGENT_SPACE_NORMAL_FS">
+<![CDATA[
+#if defined( NORMAL_MAP )
+    return normalize(getUnnormalizedTangentSpaceNormal(In, globals, object));
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position = "POST_DIFFUSE_COLOR_FS">
+<![CDATA[
+#if defined( SPECULAR ) && defined( GLOSS_MAP )
+    #if defined(COLOR_MASK)
+        if (In.vs.texCoordsOrig.y < 0) {
+            diffuseColor = colorMat.rgb;
+            diffuseColor *= globals.gDetailSpecular.g;
+        } else {
+            diffuseColor = globals.gDetailDiffuse;
+        }
+    #else
+        diffuseColor *= globals.gDetailSpecular.g;
+    #endif
+    {
+        float3 mScratchesDiffuse  = float3(0.98,0.98,0.98);
+        diffuseColor  = lerp(diffuseColor, mScratchesDiffuse, globals.gScratchesMask);
+        float3 mDirtDiffuse = object.dirtColor.rgb*globals.gDetailSpecular.g; // HardCoded Dirt Color
+        diffuseColor  = lerp(diffuseColor,mDirtDiffuse,globals.gDirt);
+    }
+#endif
+    { // Snow mixing code
+        diffuseColor.rgb = lerp( diffuseColor.rgb, globals.gSnowDiffuse.rgb, globals.gSnowMask );
+    }
+]]>
+            </CodeInjection>
+            <CodeInjection position = "POST_GLOSS_COLOR_FS">
+<![CDATA[
+#if defined( SPECULAR ) && defined( GLOSS_MAP )
+    roughness = 1 - globals.gDetailSpecular.r;
+    metalness = globals.gDetailSpecular.b;
+    bakedAO   = globals.gAO;
+#endif
+    { // Snow mixing code
+        float3 mPbrMapValues = lerp( float3(1-roughness,bakedAO,metalness), globals.gSnowSpecular, globals.gSnowMask );
+        roughness = 1-mPbrMapValues.x;
+        bakedAO   = mPbrMapValues.y;
+        metalness = mPbrMapValues.z;
+    }
+]]>
+            </CodeInjection>
+            <CodeInjection position = "POST_GET_LIGHTING_FS">
+<![CDATA[
+#if defined( REFLECTOR_SHADING )
+    float VdotL = max(dot(viewDir, lightDir), 0.00001);
+    float specDistribution  = saturate(pow(VdotL,20));
+    float3 retroReflection = specDistribution * diffuseColor*4;
+    retroReflection = lerp(retroReflection,0,globals.gDirt);
+    lighting = (atten*NdotL) * (diffuseShading + specularShading + retroReflection) * lightColor;
+    /*float NdotV = max(dot(normal, viewDir), 0.00001);
+    float specDistribution  = saturate(pow(NdotL*NdotV,4));
+    float3 specularShading2 = 4*diffuseColor * specularShading;
+    float3 resSpecular = lerp(specularShading,specularShading2,specDistribution );
+    lighting = (atten*NdotL) * (diffuseShading + resSpecular) * lightColor;*/
+    //lighting = retroReflection;
+#endif
+#if defined( BACK_LIGHT )
+    float NdotLNegative = dot(normal, lightDir);
+    if (NdotLNegative < 0) {
+        NdotLNegative = -NdotLNegative*object.backLightScale;
+    }
+    NdotLNegative = min(NdotLNegative, 1);
+    NdotL = saturate(dot(normal, lightDir));
+    lighting = ((atten*NdotLNegative) * diffuseShading + (atten*NdotL)* specularShading )* lightColor;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="ALPHA_FS">
+<![CDATA[
+#if defined(ALPHA_BLENDED) && defined(DECAL_RENDER)
+    reflectingLightingScale = alpha;
+#endif
+#if defined(ALPHA_BLENDED) && !defined(DECAL_RENDER)
+    alpha = lerp(alpha,1.0,globals.gDirt);
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="POST_LIGHTING_FS">
+<![CDATA[
+#if defined(STATIC_LIGHT)
+    float2 uv = In.vs.texCoordsOrig.xy;
+    float3 mEmitColor = In.vs.vertexColor.rgb;
+    float visScale    = In.vs.mVisScale;
+    #if defined(STATIC_LIGHT_SLIDE)
+        // overwrite visScale
+        visScale = float(In.vs.albedoMapTexCoords2.x < visScale);
+    #endif
+    if (uv.y < -1.0){
+        mEmitColor *= visScale;
+    }
+    float mLightControl = object.lightControl;
+#if GPU_PROFILE < GPU_PROFILE_MEDIUM
+    mLightControl = clamp(mLightControl,0.0,1.0);
+#endif
+    mEmitColor *= mLightControl;
+    lighting.xyz += mEmitColor;
+#endif
+]]>
+            </CodeInjection>
+            <CodeInjection position="CALC_SHOW_MIP_LEVELS_FS">
+<![CDATA[
+// Color mask textures have no albedo map, use the normal map or gloss map mapping instead
+#if defined( SPECULAR ) && defined( GLOSS_MAP )
+    #if defined(COLOR_MASK)
+        #if defined(NORMAL_MAP)
+            numMips = (float)tex2DGetNumMipLevels(normalMap);
+            texLod  = tex2DCalcLodUnclamped(normalMap, NORMAL_MAP_TEXCOORDS*8);
+        #else
+            numMips = (float)tex2DGetNumMipLevels(glossMap);
+            texLod  = tex2DCalcLodUnclamped(glossMap, GLOSS_MAP_TEXCOORDS*8);
+        #endif
+    #endif
+#endif
+]]>
+            </CodeInjection>
+        </CodeInjections>
+    </LodLevel>
+</CustomShader>
