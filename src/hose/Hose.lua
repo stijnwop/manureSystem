@@ -707,7 +707,7 @@ function Hose:computeCatmullSpline()
 
     local w1x, w1y, w1z = getWorldTranslation(spec.p1)
     local w2x, w2y, w2z = getWorldTranslation(spec.p2)
-    p1x, p1y, p1z = worldToLocal(spec.mesh, (w1x + w2x) * 0.5, (w1y + w2y) * 0.5, (w1z + w2z) * 0.5)
+    p1x, p1y, p1z = worldToLocal(spec.mesh, (w1x + w2x) * 0.5, math.min(w1y, w2y), (w1z + w2z) * 0.5)
 
     -- Fix flickering on the hose mesh.
     local intersectionOffset = 0.003
@@ -875,13 +875,6 @@ function Hose:connectGrabNode(grabNode, connector, vehicle)
 
         -- Restore joint transform position
         setTranslation(desc.transform, unpack(connector.jointOrigTrans))
-
-        if not grabNode.isExtension then
-            local limit = math.rad(10)
-            for i = 1, 3 do
-                self:setComponentJointRotLimit(self.componentJoints[grabNode.componentJointIndex], i, -limit, limit)
-            end
-        end
     else
         -- Set joint index to '1' on client side, so we can check if something is attached
         grabNode.jointIndex = 1
@@ -919,11 +912,6 @@ function Hose:disconnectGrabNode(grabNode, connector, vehicle)
         if grabNode.jointTransform ~= nil then
             delete(grabNode.jointTransform)
             grabNode.jointTransform = nil
-        end
-
-        local jointDesc = self.componentJoints[grabNode.componentJointIndex]
-        for i = 1, 3 do
-            self:setComponentJointRotLimit(jointDesc, i, jointDesc.orgRotMinLimit[i], jointDesc.orgRotLimit[i])
         end
     end
 

@@ -26,10 +26,10 @@
         <filename>resources/hoses/slurry/slurryHose.i3d</filename>
         <size width="0.2" length="3"/>
         <components>
-            <component centerOfMass="0 0 -0.25" solverIterationCount="20" mass="5"/>
+            <component centerOfMass="0 0 -0.25" solverIterationCount="40" mass="5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
             <component centerOfMass="0 0 0" solverIterationCount="20" mass="5"/>
-            <component centerOfMass="0 0 0.25" solverIterationCount="20" mass="5"/>
+            <component centerOfMass="0 0 0.25" solverIterationCount="40" mass="5"/>
 
             <joint component1="1" component2="2" node="componentJoint1" rotLimit="22 22 22"
                    rotMinLimit="-22 -22 -22"
@@ -47,7 +47,7 @@
     <wearable wearDuration="480" workMultiplier="5" fieldMultiplier="2"/>
     <washable dirtDuration="90" washDuration="1" workMultiplier="3" fieldMultiplier="2"/>
 
-    <hose length="3" mesh="hose" targetNode="grabNode2" centerNode1="1>" centerNode2="2>">
+    <hose length="3" mesh="hose" targetNode="target" centerNode1="1>" centerNode2="2>">
         <manureSystemHoseConfigurations>
             <manureSystemHoseConfiguration name="$l10n_configuration_valueDefault" price="10">
                 <grabNodes>
@@ -130,9 +130,9 @@
         <i3dMapping id="hose_main_component3" node="2>" />
         <i3dMapping id="hose_main_component4" node="3>" />
         <i3dMapping id="grabNode2" node="3>0" />
-        <i3dMapping id="target" node="3>1" />
-        <i3dMapping id="coupling_normal_end" node="3>2" />
-        <i3dMapping id="componentJoint3" node="3>3" />
-        <i3dMapping id="raycastNode2" node="3>4" />
+        <i3dMapping id="coupling_normal_end" node="3>1" />
+        <i3dMapping id="componentJoint3" node="3>2" />
+        <i3dMapping id="raycastNode2" node="3>3" />
+        <i3dMapping id="target" node="3>4" />
     </i3dMappings>
 </vehicle>
