@@ -6,7 +6,7 @@
   </Files>
 
   <Materials>
-    <Material name="lambert1" materialId="1" diffuseColor="0.5 0.5 0.5 1" specularColor="0 0 0" ambientColor="1 1 1">
+    <Material name="lambert1" materialId="1" diffuseColor="0.5 0.5 0.5 1">
     </Material>
   </Materials>
 
@@ -15,7 +15,7 @@
   </Shapes>
 
   <Scene>
-    <Shape name="collision" shapeId="1" kinematic="true" trigger="true" density="0.001" collisionMask="1088430080" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" nodeId="1"/>
+    <Shape name="collision" shapeId="1" kinematic="true" trigger="true" density="0.001" collisionMask="8192" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" nodeId="1"/>
   </Scene>
 
   <UserAttributes>
