@@ -302,7 +302,8 @@ end
 function ManureSystem.installVehicleSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName)
     for typeName, typeEntry in pairs(vehicleTypeManager:getTypes()) do
         local hasRegistry = ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
-        local isValidType = typeName == "manureTrailer" or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations)
+        local isValidTypeManureVehicle = typeName == "manureTrailer" or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations)
+        local isValidTypeSprayer = typeName == "sprayer" or typeName == "selfPropelledSprayer"
 
         if hasRegistry then
             ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modName)
@@ -312,7 +313,7 @@ function ManureSystem.installVehicleSpecializations(vehicleTypeManager, speciali
             ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
         end
 
-        if isValidType or hasRegistry then
+        if isValidTypeManureVehicle or isValidTypeSprayer or hasRegistry then
             ManureSystem.insertPumpMotor(vehicleTypeManager, typeName, typeEntry, modName)
             ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
             ManureSystem.insertFillArm(vehicleTypeManager, typeName, typeEntry, modName)
