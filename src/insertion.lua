@@ -35,6 +35,17 @@ local typeToXMLGetFunction = {
     ["string"] = 'getString',
 }
 
+---@type table<string, boolean>
+local mappablePaths = {
+    ["attributes"] = { isIterable = false, childPath = "" },
+    ["manureSystem"] = { isIterable = false, childPath = "" },
+    ["manureSystemConnectors"] = { isIterable = true, childPath = "connector" },
+    ["manureSystemFillArm"] = { isIterable = false, childPath = "" },
+    ["manureSystemFillArmReceiver"] = { isIterable = false, childPath = "" },
+    ["manureSystemPumpMotor"] = { isIterable = false, childPath = "" },
+    ["manureSystemPumpMixer"] = { isIterable = false, childPath = "" },
+}
+
 local function replaceSanitized(input, what, with)
     what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
     with = string.gsub(with, "[%%]", "%%%%") -- escape replacement
@@ -159,14 +170,16 @@ local function loadInsertion(directory, xmlRoot)
                 entry.xml = xmlFile:getString(xmlRootKey .. "#xml")
 
                 entry.mapping = {}
-                loadMapping(xmlFile, xmlRootKey .. ".manureSystem", entry.mapping)
-                loadMapping(xmlFile, xmlRootKey .. ".manureSystemFillArm", entry.mapping)
-                loadMapping(xmlFile, xmlRootKey .. ".manureSystemFillArmReceiver", entry.mapping)
-                loadMapping(xmlFile, xmlRootKey .. ".manureSystemPumpMotor", entry.mapping)
 
-                xmlFile:iterate(xmlRootKey .. ".manureSystemConnectors.connector", function(_, key)
-                    loadMapping(xmlFile, key, entry.mapping)
-                end)
+                for path, info in pairs(mappablePaths) do
+                    if info.isIterable then
+                        xmlFile:iterate(xmlRootKey .. "." .. path .. "." .. info.childPath, function(_, key)
+                            loadMapping(xmlFile, key, entry.mapping)
+                        end)
+                    else
+                        loadMapping(xmlFile, xmlRootKey .. "." .. path, entry.mapping)
+                    end
+                end
 
                 insertions[entry.xml] = entry
             end)
