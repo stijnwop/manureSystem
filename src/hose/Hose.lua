@@ -30,6 +30,7 @@ Hose.JOINT_BREAK_FORCE = 20
 Hose.JOINT_BREAK_TORQUE = 20
 
 Hose.EXTENSION_IN_RANGE_DISTANCE = 1.5
+Hose.UPDATE_FRAME_THRESHOLD = 1
 
 function Hose.prerequisitesPresent(specializations)
     return true
@@ -107,8 +108,8 @@ function Hose.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onLoadFinished", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onPreDelete", Hose)
-    SpecializationUtil.registerEventListener(vehicleType, "onUpdateInterpolation", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", Hose)
+    SpecializationUtil.registerEventListener(vehicleType, "onPostUpdate", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", Hose)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", Hose)
@@ -164,6 +165,8 @@ function Hose:onLoad(savegame)
 
     spec.rayCast = FillPlaneRayCast.new(-0.25)
     spec.dirtyFlag = self:getNextDirtyFlag()
+    spec.updateFrameThreshold = Hose.UPDATE_FRAME_THRESHOLD
+    spec.updateFrameCount = 0
 end
 
 function Hose:onPostLoad(savegame)
@@ -178,7 +181,9 @@ function Hose:onLoadFinished(savegame)
         end
     end
 
-    self:computeCatmullSpline()
+    if self.isClient then
+        self:computeCatmullSpline()
+    end
 end
 
 function Hose:onPreDelete()
@@ -346,12 +351,6 @@ function Hose:onWriteUpdateStream(streamId, connection, dirtyMask)
     end
 end
 
-function Hose:onUpdateInterpolation(dt)
-    if self.isClient then
-        self:computeCatmullSpline()
-    end
-end
-
 function Hose:onUpdate(dt)
     local spec = self.spec_hose
 
@@ -365,44 +364,61 @@ function Hose:onUpdate(dt)
     end
 end
 
+function Hose:onPostUpdate(dt)
+    if self.isClient then
+        self:computeCatmullSpline()
+    end
+end
+
 function Hose:onUpdateTick(dt)
+    if not self.isServer or not self.finishedFirstUpdate then
+        return
+    end
+
     local spec = self.spec_hose
+    spec.updateFrameCount = spec.updateFrameCount + 1
 
-    if self.isServer and self.finishedFirstUpdate then
-        local grabNodeId = next(spec.grabNodesToObjects)
-        if grabNodeId ~= nil then
-            local grabNode = self:getGrabNodeById(grabNodeId)
+    local canPerformCheck = spec.updateFrameCount > spec.updateFrameThreshold
+    if not canPerformCheck then
+        return
+    end
 
-            local desc = spec.grabNodesToObjects[grabNodeId]
-            if desc ~= nil and desc.connectorId ~= nil then
-                local vehicle = desc.vehicle
-                local connector1 = vehicle:getConnectorById(desc.connectorId)
+    spec.updateFrameCount = 0
 
-                if not connector1.isParkPlace then
-                    local connectorDesc, length = self:getConnectorObjectDesc(grabNodeId)
+    local grabNodeId = next(spec.grabNodesToObjects)
+    if grabNodeId == nil then
+        return
+    end
 
-                    if connectorDesc ~= nil and connectorDesc.connectorId ~= nil then
-                        local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed(true) > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed(true) > 2
-                        if doCheck then
-                            local connector2 = connectorDesc.vehicle:getConnectorById(connectorDesc.connectorId)
-                            local ax, _, az = getWorldTranslation(connector1.node)
-                            local bx, _, bz = getWorldTranslation(connector2.node)
+    local grabNode = self:getGrabNodeById(grabNodeId)
+    local desc = spec.grabNodesToObjects[grabNodeId]
+    if desc ~= nil and desc.connectorId ~= nil then
+        local vehicle = desc.vehicle
+        local connector1 = vehicle:getConnectorById(desc.connectorId)
 
-                            local distance = MathUtil.vector2Length(ax - bx, az - bz)
-                            length = length + Hose.RESPAWN_LENGTH_OFFSET
+        if not connector1.isParkPlace then
+            local connectorDesc, length = self:getConnectorObjectDesc(grabNodeId)
 
-                            if distance > length then
-                                if g_currentMission.manureSystem.debug then
-                                    Logging.info("Restriction detach distance: ", distance)
-                                end
+            if connectorDesc ~= nil and connectorDesc.connectorId ~= nil then
+                local doCheck = vehicle.getLastSpeed ~= nil and vehicle:getLastSpeed(true) > 2 or connectorDesc.vehicle.getLastSpeed ~= nil and connectorDesc.vehicle:getLastSpeed(true) > 2
+                if doCheck then
+                    local connector2 = connectorDesc.vehicle:getConnectorById(connectorDesc.connectorId)
+                    local ax, _, az = getWorldTranslation(connector1.node)
+                    local bx, _, bz = getWorldTranslation(connector2.node)
 
-                                if grabNode.isExtension then
-                                    --When the grabNode is an extension we detach it from the other hose.
-                                    desc.vehicle:detach(desc.connectorId, grabNodeId, self)
-                                else
-                                    self:detach(grabNodeId, desc.connectorId, vehicle)
-                                end
-                            end
+                    local distance = MathUtil.vector2Length(ax - bx, az - bz)
+                    length = length + Hose.RESPAWN_LENGTH_OFFSET
+
+                    if distance > length then
+                        if g_currentMission.manureSystem.debug then
+                            Logging.info("Restriction detach distance: ", distance)
+                        end
+
+                        if grabNode.isExtension then
+                            --When the grabNode is an extension we detach it from the other hose.
+                            desc.vehicle:detach(desc.connectorId, grabNodeId, self)
+                        else
+                            self:detach(grabNodeId, desc.connectorId, vehicle)
                         end
                     end
                 end
@@ -424,57 +440,58 @@ function Hose:restrictPlayerMovement(id, player, dt)
             or math.abs(zt - interpolatorPosition.targetPositionZ) > 0.001
     end
 
-    if movementIsDirty then
-        local grabNode = self:getGrabNodeById(id)
+    if not movementIsDirty then
+        return
+    end
 
-        if self:isAttached(grabNode) then
-            local desc, length = self:getConnectorObjectDesc(id)
+    local grabNode = self:getGrabNodeById(id)
+    if self:isAttached(grabNode) then
+        local desc, length = self:getConnectorObjectDesc(id)
 
-            if length > spec.playerMaxHoseLength then
-                if player == g_currentMission.player then
-                    g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestrictionLength"), 1000)
-                end
-                local x, y, z = unpack(spec.lastInRangePosition)
-                --Set current position when the last in range position isn't set.
-                if x == 0 or y == 0 or z == 0 then
-                    spec.lastInRangePosition = { getTranslation(player.rootNode) }
-                end
-
-                player:moveToAbsoluteInternal(unpack(spec.lastInRangePosition))
-                return
-            else
+        if length > spec.playerMaxHoseLength then
+            if player == g_currentMission.player then
+                g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestrictionLength"), 1000)
+            end
+            local x, y, z = unpack(spec.lastInRangePosition)
+            --Set current position when the last in range position isn't set.
+            if x == 0 or y == 0 or z == 0 then
                 spec.lastInRangePosition = { getTranslation(player.rootNode) }
             end
 
-            if desc ~= nil and desc.connectorId ~= nil then
-                local connector = desc.vehicle:getConnectorById(desc.connectorId)
-                local cx, cy, cz = getWorldTranslation(connector.node)
-                local px, py, pz = getWorldTranslation(player.rootNode)
-                local dx, dz = px - cx, pz - cz
-                local radius = dx * dx + dz * dz
-                length = length + Hose.RESPAWN_LENGTH_OFFSET
+            player:moveToAbsoluteInternal(unpack(spec.lastInRangePosition))
+            return
+        else
+            spec.lastInRangePosition = { getTranslation(player.rootNode) }
+        end
 
-                local actionRadius = length * length
+        if desc ~= nil and desc.connectorId ~= nil then
+            local connector = desc.vehicle:getConnectorById(desc.connectorId)
+            local cx, cy, cz = getWorldTranslation(connector.node)
+            local px, py, pz = getWorldTranslation(player.rootNode)
+            local dx, dz = px - cx, pz - cz
+            local radius = dx * dx + dz * dz
+            length = length + Hose.RESPAWN_LENGTH_OFFSET
 
-                if radius < actionRadius then
-                    spec.lastInRangePosition = { getTranslation(player.rootNode) }
-                else
-                    cx, cy, cz = getWorldTranslation(connector.node)
-                    px, py, pz = getWorldTranslation(player.rootNode)
+            local actionRadius = length * length
 
-                    local distance = MathUtil.vector2Length(px - cx, pz - cz)
-                    local x, _, z = unpack(spec.lastInRangePosition)
+            if radius < actionRadius then
+                spec.lastInRangePosition = { getTranslation(player.rootNode) }
+            else
+                cx, cy, cz = getWorldTranslation(connector.node)
+                px, py, pz = getWorldTranslation(player.rootNode)
 
-                    x = cx + ((px - cx) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
-                    z = cz + ((pz - cz) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
+                local distance = MathUtil.vector2Length(px - cx, pz - cz)
+                local x, _, z = unpack(spec.lastInRangePosition)
 
-                    player:moveToAbsoluteInternal(x, py, z)
-                    spec.lastInRangePosition = { x, py, z }
+                x = cx + ((px - cx) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
+                z = cz + ((pz - cz) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
 
-                    if not spec.rangeRestrictionMessageShown and player == g_currentMission.player then
-                        spec.rangeRestrictionMessageShown = true
-                        g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestriction"), 5000)
-                    end
+                player:moveToAbsoluteInternal(x, py, z)
+                spec.lastInRangePosition = { x, py, z }
+
+                if not spec.rangeRestrictionMessageShown and player == g_currentMission.player then
+                    spec.rangeRestrictionMessageShown = true
+                    g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestriction"), 5000)
                 end
             end
         end
@@ -520,9 +537,7 @@ function Hose:findConnector(id)
             local vx, _, vz = getWorldTranslation(inRangeNode)
             local distanceToObject = MathUtil.vector2LengthSq(x - vx, z - vz)
 
-            if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE
-                or object:isa(Placeable) or object:isa(Bga) then
-
+            if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE or object:isa(Placeable) then
                 if object.isaHose ~= nil and object:isaHose() then
                     for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
                         if not self:isConnected(connectorGrabNode) then
@@ -663,7 +678,7 @@ function Hose:getClosestGrabNode(x, y, z)
     local closestGrabNode
     local closestDistance = math.huge
 
-    for id, grabNode in ipairs(self:getGrabNodes()) do
+    for _, grabNode in ipairs(self:getGrabNodes()) do
         local xg, yg, zg = getWorldTranslation(grabNode.node)
         local distance = math.sqrt((xg - x) * (xg - x) + (yg - y) * (yg - y) + (zg - z) * (zg - z))
 
@@ -678,17 +693,6 @@ end
 
 function Hose:getConnectorInRangeNode()
     return self.components[1].node
-end
-
----Sets the shader catmull point
----@param node number
----@param point string
----@param x number
----@param y number
----@param z number
----@param w number
-function Hose.setCatmullPoint(node, point, x, y, z, w)
-    setShaderParameter(node, point, x, y, z, w, false)
 end
 
 ---Computes a catmull rom spline over shader
@@ -711,10 +715,10 @@ function Hose:computeCatmullSpline()
 
     -- Fix flickering on the hose mesh.
     local intersectionOffset = 0.003
-    Hose.setCatmullPoint(spec.mesh, "cv0", p0x, p0y, p0z, 0)
-    Hose.setCatmullPoint(spec.mesh, "cv2", p1x + intersectionOffset, p1y, p1z, 0)
-    Hose.setCatmullPoint(spec.mesh, "cv3", p2x - intersectionOffset, p2y, p2z, 0)
-    Hose.setCatmullPoint(spec.mesh, "cv4", p3x - intersectionOffset, p3y, p3z, 0)
+    setShaderParameter(spec.mesh, "cv0", p0x, p0y, p0z, 0)
+    setShaderParameter(spec.mesh, "cv2", p1x + intersectionOffset, p1y, p1z, 0, false)
+    setShaderParameter(spec.mesh, "cv3", p2x - intersectionOffset, p2y, p2z, 0, false)
+    setShaderParameter(spec.mesh, "cv4", p3x - intersectionOffset, p3y, p3z, 0, false)
 end
 
 function Hose:grab(id, player, noEventSend)
@@ -1127,18 +1131,18 @@ function Hose:constructPlayerJoint(jointDesc, mass)
     local rotLimitSpring = {}
     local rotLimitDamping = {}
     local transLimitSpring = {}
-    local translimitDamping = {}
+    local transLimitDamping = {}
     local springMass = mass * 60
 
     for i = 1, 3 do
         rotLimitSpring[i] = springMass
         rotLimitDamping[i] = math.sqrt(mass * rotLimitSpring[i]) * 2
         transLimitSpring[i] = springMass
-        translimitDamping[i] = math.sqrt(mass * transLimitSpring[i]) * 2
+        transLimitDamping[i] = math.sqrt(mass * transLimitSpring[i]) * 2
     end
 
     constructor:setRotationLimitSpring(rotLimitSpring[1], rotLimitDamping[1], rotLimitSpring[2], rotLimitDamping[2], rotLimitSpring[3], rotLimitDamping[3])
-    constructor:setTranslationLimitSpring(transLimitSpring[1], translimitDamping[1], transLimitSpring[2], translimitDamping[1], transLimitSpring[3], translimitDamping[3])
+    constructor:setTranslationLimitSpring(transLimitSpring[1], transLimitDamping[1], transLimitSpring[2], transLimitDamping[1], transLimitSpring[3], transLimitDamping[3])
 
     for i = 0, 2 do
         constructor:setRotationLimit(i, 0, 0)
@@ -1152,7 +1156,6 @@ function Hose:constructPlayerJoint(jointDesc, mass)
     end
 
     local jointIndex = constructor:finalize()
-
     if not g_currentMission.manureSystem.debug then
         addJointBreakReport(jointIndex, "onPlayerJointBreak", self)
     end
