@@ -201,18 +201,19 @@ end
 
 ---@return void
 function ManureSystemPumpMotor.disableDischargeable(self)
-    local spec = self.spec_dischargeable
-    for _, dischargeNode in ipairs(spec.dischargeNodes) do
-        if dischargeNode.trigger.node ~= nil then
-            removeTrigger(dischargeNode.trigger.node)
+    local spec_dischargeable = self.spec_dischargeable
+    if spec_dischargeable ~= nil then
+        for _, dischargeNode in ipairs(spec_dischargeable.dischargeNodes) do
+            if dischargeNode.trigger.node ~= nil then
+                removeTrigger(dischargeNode.trigger.node)
+            end
         end
     end
 
-    spec = self.spec_fillTriggerVehicle
-
-    if spec.fillTrigger ~= nil then
-        spec.fillTrigger:delete()
-        spec.fillTrigger = nil
+    local spec_fillTriggerVehicle = self.spec_fillTriggerVehicle
+    if spec_fillTriggerVehicle ~= nil and spec_fillTriggerVehicle.fillTrigger ~= nil then
+        spec_fillTriggerVehicle.fillTrigger:delete()
+        spec_fillTriggerVehicle.fillTrigger = nil
     end
 end
 
