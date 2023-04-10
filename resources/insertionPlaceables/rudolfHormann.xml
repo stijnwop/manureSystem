@@ -1,7 +1,7 @@
 <data>
     <placeable xml="data/placeables/rudolfHormann/cowBarnMedium/cowBarnMedium.xml">
         <attributes>
-            <entry type="string" key=".deletedNodes.deletedNode(0)#node" value="0>22|0|9|2"/>
+            <entry type="string" key="placeable.deletedNodes.deletedNode(0)#node" value="0>22|0|9|2"/>
         </attributes>
 
         <manureSystem>
@@ -28,7 +28,7 @@
 
     <placeable xml="data/placeables/rudolfHormann/cowBarnBig/cowBarnBig.xml">
         <attributes>
-            <entry type="string" key=".deletedNodes.deletedNode(0)#node" value="0>26|0|8|2"/>
+            <entry type="string" key="placeable.deletedNodes.deletedNode(0)#node" value="0>26|0|8|2"/>
         </attributes>
 
         <manureSystem>
@@ -55,7 +55,7 @@
 
     <placeable xml="data/placeables/rudolfHormann/cowBarnBig/cowBarnBigVector.xml">
         <attributes>
-            <entry type="string" key=".deletedNodes.deletedNode(0)#node" value="0>26|0|8|2"/>
+            <entry type="string" key="placeable.deletedNodes.deletedNode(0)#node" value="0>26|0|8|2"/>
         </attributes>
 
         <manureSystem>
@@ -82,7 +82,7 @@
 
     <placeable xml="data/placeables/rudolfHormann/pigBarnMedium/pigBarnMedium.xml">
         <attributes>
-            <entry type="string" key=".deletedNodes.deletedNode(0)#node" value="0>20|0|8"/>
+            <entry type="string" key="placeable.deletedNodes.deletedNode(0)#node" value="0>20|0|8"/>
         </attributes>
 
         <manureSystem>
@@ -109,7 +109,7 @@
 
     <placeable xml="data/placeables/rudolfHormann/pigBarnBig/pigBarnBig.xml">
         <attributes>
-            <entry type="string" key=".deletedNodes.deletedNode(0)#node" value="0>20|0|2|0"/> <!-- the fence collision is a part of the main collision... -->
+            <entry type="string" key="placeable.deletedNodes.deletedNode(0)#node" value="0>20|0|2|0"/> <!-- the fence collision is a part of the main collision... -->
         </attributes>
 
         <manureSystem>
