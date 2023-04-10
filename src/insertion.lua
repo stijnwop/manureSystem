@@ -37,13 +37,13 @@ local typeToXMLGetFunction = {
 
 ---@type table<string, boolean>
 local mappablePaths = {
-    ["attributes"] = { isIterable = false, childPath = "" },
-    ["manureSystem"] = { isIterable = false, childPath = "" },
-    ["manureSystemConnectors"] = { isIterable = true, childPath = "connector" },
-    ["manureSystemFillArm"] = { isIterable = false, childPath = "" },
-    ["manureSystemFillArmReceiver"] = { isIterable = false, childPath = "" },
-    ["manureSystemPumpMotor"] = { isIterable = false, childPath = "" },
-    ["manureSystemPumpMixer"] = { isIterable = false, childPath = "" },
+    ["attributes"] = { isIterable = false, childPath = "", isRelative = false },
+    ["manureSystem"] = { isIterable = false, childPath = "", isRelative = true },
+    ["manureSystemConnectors"] = { isIterable = true, childPath = "connector", isRelative = true },
+    ["manureSystemFillArm"] = { isIterable = false, childPath = "", isRelative = true },
+    ["manureSystemFillArmReceiver"] = { isIterable = false, childPath = "", isRelative = true },
+    ["manureSystemPumpMotor"] = { isIterable = false, childPath = "", isRelative = true },
+    ["manureSystemPumpMixer"] = { isIterable = false, childPath = "", isRelative = true },
 }
 
 local function replaceSanitized(input, what, with)
@@ -68,11 +68,24 @@ local function generateSpecObject(data)
 
         for baseKey, mapping in pairs(data.mapping) do
             for _, map in ipairs(mapping) do
+                local key = map.isRelative and baseKey .. map.xmlKey or map.xmlKey
+
                 if g_currentMission.manureSystem.debug then
-                    log(("MS map - <%s> [%s] %s"):format(baseKey .. map.xmlKey, map.xmlType, map.xmlValue))
+                    log(("MS map - <%s> [%s] %s"):format(key, map.xmlType, map.xmlValue))
                 end
 
-                self.xmlFile[typeToXMLSetFunction[map.xmlType]](self.xmlFile, baseKey .. map.xmlKey, map.xmlValue)
+                self.xmlFile[typeToXMLSetFunction[map.xmlType]](self.xmlFile, key, map.xmlValue)
+            end
+        end
+
+        if data.reloadStoreItem then
+            local storeItem = g_storeManager:getItemByXMLFilename(self.configFileName)
+            local rootName = self.xmlFile:getRootName()
+
+            if storeItem.species == "vehicle" then
+                storeItem.configurations, storeItem.defaultConfigurationIds = StoreItemUtil.getConfigurationsFromXML(self.xmlFile, rootName, self.baseDirectory, self.customEnvironment, false, storeItem)
+                storeItem.subConfigurations = StoreItemUtil.getSubConfigurationsFromXML(storeItem.configurations)
+                storeItem.configurationSets = StoreItemUtil.getConfigurationSetsFromXML(storeItem, self.xmlFile, rootName, self.baseDirectory, self.customEnvironment, false)
             end
         end
     end
@@ -146,12 +159,13 @@ local function loadInsertion(directory, xmlRoot)
         return key:gsub("%(%d*%)", "", 1)
     end
 
-    local function loadMapping(xmlFile, baseKey, mapping)
+    local function loadMapping(xmlFile, baseKey, mapping, isRelative)
         local mappingKey = convertToMappingKey(baseKey)
         mapping[mappingKey] = {}
 
         xmlFile:iterate(baseKey .. ".entry", function(_, key)
             local map = {}
+            map.isRelative = isRelative
             map.xmlType = xmlFile:getString(key .. "#type", "string")
             map.xmlKey = xmlFile:getString(key .. "#key")
             map.xmlValue = xmlFile[typeToXMLGetFunction[map.xmlType]](xmlFile, key .. "#value")
@@ -168,16 +182,17 @@ local function loadInsertion(directory, xmlRoot)
                 local entry = {}
                 entry.name = Utils.getFilenameInfo(file.filename)
                 entry.xml = xmlFile:getString(xmlRootKey .. "#xml")
+                entry.reloadStoreItem = xmlFile:getBool(xmlRootKey .. "#reloadStoreItem") or false
 
                 entry.mapping = {}
 
                 for path, info in pairs(mappablePaths) do
                     if info.isIterable then
                         xmlFile:iterate(xmlRootKey .. "." .. path .. "." .. info.childPath, function(_, key)
-                            loadMapping(xmlFile, key, entry.mapping)
+                            loadMapping(xmlFile, key, entry.mapping, info.isRelative)
                         end)
                     else
-                        loadMapping(xmlFile, xmlRootKey .. "." .. path, entry.mapping)
+                        loadMapping(xmlFile, xmlRootKey .. "." .. path, entry.mapping, info.isRelative)
                     end
                 end
 
