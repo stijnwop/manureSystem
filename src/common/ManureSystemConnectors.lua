@@ -279,7 +279,8 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
     connector.isParkPlace = xmlFile:getValue(baseKey .. "#isParkPlace", false)
     connector.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
 
-    connector.componentNode = self.object.components[1].node
+    connector.componentNode = xmlFile:getValue(baseKey .. "#componentNode", self.object.components[1].node, self.object.components, self.object.i3dMappings)
+
     if not NodeExtensions.isRigidBody(connector.componentNode) then
         for _, component in ipairs(self.object.components) do
             connector.componentNode = NodeExtensions.getFirstRigidBodyNode(component.node)
@@ -344,6 +345,7 @@ function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
     schema:register(XMLValueType.FLOAT, baseName .. "#inRangeDistance", "The distance needed for the hose being in range")
     schema:register(XMLValueType.BOOL, baseName .. "#isParkPlace", "Determines if the connector is a park place")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
+    schema:register(XMLValueType.NODE_INDEX, baseName .. "#componentNode", "Connector component node", "0>")
     SharedSet.registerXMLPaths(schema, baseName .. ".sharedSet")
 end
 --endregion
