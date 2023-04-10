@@ -47,20 +47,6 @@ function FillPlaneRayCast:clear()
 end
 
 ---@return void
-function FillPlaneRayCast:draw(node, distance)
-    distance = distance or self.distance
-
-    local x, y, z = getWorldTranslation(node)
-    local lx, ly, lz = worldToLocal(node, x, y, z)
-    local color = self.hitObject ~= nil and FillPlaneRayCast.DEBUG_COLOR_HIT or FillPlaneRayCast.DEBUG_COLOR_MISS
-
-    lz = lz - distance
-    lx, ly, lz = localToWorld(node, lx, ly, lz)
-
-    drawDebugLine(x, y, z, color[1], color[2], color[3], lx, ly, lz, color[1], color[2], color[3])
-end
-
----@return void
 function FillPlaneRayCast:castRay(x, y, z, dx, dy, dz, distance)
     distance = distance or self.distance
 
@@ -71,6 +57,11 @@ function FillPlaneRayCast:castRay(x, y, z, dx, dy, dz, distance)
     self:clear()
 
     raycastAll(x, y, z, dx, dy, dz, "castCallback", distance, self, self.mask, true)
+
+    if g_currentMission.manureSystem.debug then
+        local color = self.hitObject ~= nil and FillPlaneRayCast.DEBUG_COLOR_HIT or FillPlaneRayCast.DEBUG_COLOR_MISS
+        drawDebugArrow(x, y, z, dx * distance, dy * distance, dz * distance, 0.3, 0.3, 0.3, color[1], color[2], color[3], true)
+    end
 
     return self.hitObject, self.hitDistance
 end

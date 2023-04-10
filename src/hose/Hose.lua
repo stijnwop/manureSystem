@@ -629,10 +629,6 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRayCast, startHose)
 
                 spec.rayCast:castRay(x, y, z, dx, dy, dz)
 
-                if g_currentMission.manureSystem.debug then
-                    spec.rayCast:draw(grabNode.node)
-                end
-
                 local object = spec.rayCast.hitObject
                 if object ~= nil then
                     if object:isUnderFillPlane(x, y + 0.1, z) then

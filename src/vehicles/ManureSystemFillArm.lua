@@ -224,10 +224,6 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                     self:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM)
                 end
                 self:setIsPumpSourceWater(isNearWater)
-
-                if g_currentMission.manureSystem.debug then
-                    spec.rayCast:draw(fillArm.node, fillArm.rayCastDistance)
-                end
             end
 
             -- Reset

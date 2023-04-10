@@ -155,10 +155,6 @@ function ManureSystemMixer:onUpdateTick(dt, isActiveForInput, isActiveForInputIg
             end
         end
 
-        if g_currentMission.manureSystem.debug then
-            spec.rayCast:draw(spec.node)
-        end
-
         if spec.hasContact ~= spec.hasContactSend then
             spec.hasContactSend = spec.hasContact
             self:raiseDirtyFlags(spec.dirtyFlag)
