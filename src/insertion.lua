@@ -14,10 +14,7 @@ local modDirectory = g_currentModDirectory or ""
 local modName = g_currentModName or "unknown"
 
 local insertionFunction = "onPreLoad"
-local insertionDirectories = {
-    ["vehicle"] = "resources/insertionVehicles/",
-    ["placeable"] = "resources/insertionPlaceables/",
-}
+local insertionRootFile = "resources/insertions.xml"
 
 local insertions = {}
 
@@ -149,9 +146,8 @@ local function placeableLoad(self, superFunc, data, ...)
     return loadingState
 end
 
-local function loadInsertion(directory, xmlRoot)
-    local baseDirectory = Utils.getFilename(directory, modDirectory)
-    local files = Files.new(baseDirectory).files
+local function loadInsertion(filePath, type)
+    local filename = Utils.getFilename(filePath, modDirectory)
 
     ---Replace the 'data.' prefix and remove the iteration marker for the xml root
     local function convertToMappingKey(baseKey)
@@ -174,40 +170,40 @@ local function loadInsertion(directory, xmlRoot)
         end)
     end
 
-    for _, file in ipairs(files) do
-        if not file.isDirectory then
-            local xmlFile = XMLFile.load(xmlRoot, baseDirectory .. file.filename)
+    local xmlFile = XMLFile.load(type, filename)
 
-            xmlFile:iterate("data." .. xmlRoot, function(_, xmlRootKey)
-                local entry = {}
-                entry.name = Utils.getFilenameInfo(file.filename)
-                entry.xml = xmlFile:getString(xmlRootKey .. "#xml")
-                entry.reloadStoreItem = xmlFile:getBool(xmlRootKey .. "#reloadStoreItem") or false
+    xmlFile:iterate("data." .. type, function(_, xmlRootKey)
+        local entry = {}
+        entry.name = Utils.getFilenameInfo(filename)
+        entry.xml = xmlFile:getString(xmlRootKey .. "#xml")
+        entry.reloadStoreItem = xmlFile:getBool(xmlRootKey .. "#reloadStoreItem") or false
 
-                entry.mapping = {}
+        entry.mapping = {}
 
-                for path, info in pairs(mappablePaths) do
-                    if info.isIterable then
-                        xmlFile:iterate(xmlRootKey .. "." .. path .. "." .. info.childPath, function(_, key)
-                            loadMapping(xmlFile, key, entry.mapping, info.isRelative)
-                        end)
-                    else
-                        loadMapping(xmlFile, xmlRootKey .. "." .. path, entry.mapping, info.isRelative)
-                    end
-                end
-
-                insertions[entry.xml] = entry
-            end)
-
-            xmlFile:delete()
+        for path, info in pairs(mappablePaths) do
+            if info.isIterable then
+                xmlFile:iterate(xmlRootKey .. "." .. path .. "." .. info.childPath, function(_, key)
+                    loadMapping(xmlFile, key, entry.mapping, info.isRelative)
+                end)
+            else
+                loadMapping(xmlFile, xmlRootKey .. "." .. path, entry.mapping, info.isRelative)
+            end
         end
-    end
+
+        insertions[entry.xml] = entry
+    end)
+
+    xmlFile:delete()
 end
 
 local function loadInsertions()
-    for xmlRoot, directory in pairs(insertionDirectories) do
-        loadInsertion(directory, xmlRoot)
-    end
+    local xmlFile = XMLFile.load("insertions", modDirectory .. insertionRootFile)
+    xmlFile:iterate("files.file", function(_, key)
+        local type = xmlFile:getString(key .. "#type") or "vehicle"
+        local path = xmlFile:getString(key .. "#path")
+        loadInsertion(path, type)
+    end)
+    xmlFile:delete()
 end
 
 local function consoleCommandReloadVehicle(mission, superFunc, resetVehicle, radius)

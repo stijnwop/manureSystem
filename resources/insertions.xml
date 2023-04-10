@@ -1,0 +1,20 @@
+<files>
+    <file path="resources/insertionVehicles/briri.xml"/>
+    <file path="resources/insertionVehicles/farmtech.xml"/>
+    <file path="resources/insertionVehicles/fliegl.xml"/>
+    <file path="resources/insertionVehicles/kotte.xml"/>
+    <file path="resources/insertionVehicles/pallets.xml"/>
+    <file path="resources/insertionVehicles/ploeger.xml"/>
+    <file path="resources/insertionVehicles/saddleTracPack.xml"/>
+    <file path="resources/insertionVehicles/samson.xml"/>
+    <file path="resources/insertionVehicles/schouten.xml"/>
+    <file path="resources/insertionVehicles/veenhuis.xml"/>
+    <file path="resources/insertionVehicles/vervaet.xml"/>
+    <file path="resources/insertionVehicles/zunhammer.xml"/>
+
+    <file type="placeable" path="resources/insertionPlaceables/lizard.xml"/>
+    <file type="placeable" path="resources/insertionPlaceables/mapAlpine.xml"/>
+    <file type="placeable" path="resources/insertionPlaceables/meridian.xml"/>
+    <file type="placeable" path="resources/insertionPlaceables/planET.xml"/>
+    <file type="placeable" path="resources/insertionPlaceables/rudolfHormann.xml"/>
+</files>
