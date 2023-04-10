@@ -1,0 +1,70 @@
+<data>
+    <placeable xml="data/placeables/lizard/liquidManureTank/baseTank/baseTank.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#componentNode" value="1>6|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="1"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#linkNode" value="1>6"/>
+                <entry type="string" key=".sharedSet#position" value="3.05 0.45 8.85"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -72 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_OLD"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/lizard/liquidManureTank/extensionSmall/extensionSmall.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#componentNode" value="1>6|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="1"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#linkNode" value="1>6"/>
+                <entry type="string" key=".sharedSet#position" value="3.05 0.45 8.85"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -72 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_OLD"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/lizard/liquidManureTank/extensionLarge/extensionLarge.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#componentNode" value="0>6|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="1"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>6"/>
+                <entry type="string" key=".sharedSet#position" value="0 0.45 15.019"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_OLD"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>

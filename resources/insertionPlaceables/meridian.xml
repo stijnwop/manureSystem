@@ -1,0 +1,27 @@
+<data>
+    <placeable xml="data/placeables/meridian/liquidFlatBottomTank1630/liquidFlatBottomTank1630.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="string" key="#componentNode" value="0>7|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>1"/>
+                <entry type="string" key="#position" value="-1.243 0.691 2.153"/>
+                <entry type="string" key="#rotation" value="0 -29.7 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="string" key="#componentNode" value="0>7|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>1"/>
+                <entry type="string" key="#position" value="-1.425 0.36 2.036"/>
+                <entry type="string" key="#rotation" value="0 -35 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>

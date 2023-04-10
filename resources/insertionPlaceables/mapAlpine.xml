@@ -1,0 +1,39 @@
+<data>
+    <placeable xml="data/placeables/mapAlpine/bga/alpsBGA.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="1>10|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="1"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#linkNode" value="1>"/>
+                <entry type="string" key=".sharedSet#position" value="28.816 0.5 -5.065"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 192.268 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_CASTIRON"/>
+                <entry type="string" key=".sharedSet.handle#type" value="PNEUMATIC"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="1>10|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="1"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#linkNode" value="1>"/>
+                <entry type="string" key=".sharedSet#position" value="29.154 0.5 -15.29"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 215 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_CASTIRON"/>
+                <entry type="string" key=".sharedSet.handle#type" value="PNEUMATIC"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>

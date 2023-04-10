@@ -1,0 +1,143 @@
+<data>
+    <placeable xml="data/placeables/planET/bga99kw/bga99kw.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>6|1"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>11|1"/>
+                <entry type="string" key="#position" value="15.141 0.24 -65.073"/>
+                <entry type="string" key="#rotation" value="0 143.3 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>6|1"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>11|0"/>
+                <entry type="string" key="#position" value="-23.859 0.469 -72.41"/>
+                <entry type="string" key="#rotation" value="0 194.3 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/planET/bga250kw/bga250kw.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>7|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>12|3"/>
+                <entry type="string" key="#position" value="-11.819 0.376 8.658"/>
+                <entry type="string" key="#rotation" value="0 -4.5 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>7|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>12|0"/>
+                <entry type="string" key="#position" value="13.812 0.468 7.663"/>
+                <entry type="string" key="#rotation" value="0 -12.23 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>7|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>12|0"/>
+                <entry type="string" key="#position" value="31.455 0.189 -7.011"/>
+                <entry type="string" key="#rotation" value="0 87.048 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/planET/bga500kw/bga500kw.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>8|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>14|5"/>
+                <entry type="string" key="#position" value="-4.79 0.448 -10.184"/>
+                <entry type="string" key="#rotation" value="0 178.25 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>8|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>14|0"/>
+                <entry type="string" key="#position" value="-0.615 -1.919 3.506"/>
+                <entry type="string" key="#rotation" value="0 178.25 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>8|0"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>14|1"/>
+                <entry type="string" key="#position" value="-0.354 -1.79 3.458"/>
+                <entry type="string" key="#rotation" value="0 181.85 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/planET/bga1mw/bga1mw.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>0|0|3"/> <!-- not the best node but there isn't much choice... -->
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>2|2"/>
+                <entry type="string" key="#position" value="75.217 0.479 -35.39"/> <!-- mapFR: "75.085 0.524 -33.735" -->
+                <entry type="string" key="#rotation" value="0 -206.146 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>0|0|3"/> <!-- not the best node but there isn't much choice... -->
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>2|2"/>
+                <entry type="string" key="#position" value="60.79 0.479 -36.009"/> <!-- mapFR: "60.658 0.524 -34.354" -->
+                <entry type="string" key="#rotation" value="0 -206.146 0"/>
+            </connector>
+
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="DIGESTATE"/>
+                <entry type="string" key="#componentNode" value="0>0|0|3"/> <!-- not the best node but there isn't much choice... -->
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#linkNode" value="0>2|3"/>
+                <entry type="string" key="#position" value="62.054 0.468 17.356"/> <!-- mapFR: "61.923 0.513 19.011" -->
+                <entry type="string" key="#rotation" value="0 4.66 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>
