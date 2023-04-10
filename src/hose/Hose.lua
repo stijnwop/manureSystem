@@ -52,7 +52,7 @@ function Hose.initSpecialization()
     Hose.registerGrabNodeXMLPaths(schema, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(?).grabNodes.grabNode(?)")
     schema:setXMLSpecializationType()
 
-    g_configurationManager:addConfigurationType("manureSystemHose", g_i18n:getText("configuration_hose"), "manureSystemHose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    g_configurationManager:addConfigurationType("manureSystemHose", g_i18n:getText("configuration_hose"), "hose", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
     ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(?)")
 end
 
@@ -1251,7 +1251,7 @@ end
 function Hose.loadGrabNodes(self)
     local spec = self.spec_hose
 
-    local hoseConfigurationId = Utils.getNoNil(self.configurations["hose"], 1)
+    local hoseConfigurationId = Utils.getNoNil(self.configurations["manureSystemHose"], 1)
     local baseKey = ("vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration(%d)"):format(hoseConfigurationId - 1)
     ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.hose.manureSystemHoseConfigurations.manureSystemHoseConfiguration", hoseConfigurationId, self.components, self)
 
@@ -1303,6 +1303,7 @@ function Hose.loadGrabNodes(self)
             grabNode.componentJointIndex = self.xmlFile:getValue(key .. "#componentJointIndex", 1)
 
             local componentNode = self.components[grabNode.componentIndex].node
+            grabNode.componentNode = componentNode
             grabNode.componentCollisionMask = getCollisionMask(componentNode)
             grabNode.state = Hose.STATE_DETACHED
             grabNode.player = nil
