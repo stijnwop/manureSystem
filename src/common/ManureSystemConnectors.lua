@@ -146,9 +146,7 @@ end
 ---Sets the given connector active or not to reduce processing of non active connectors
 function ManureSystemConnectors:setIsConnectorActive(connector, isActive)
     if isActive then
-        if not table.hasElement(self.activeConnectorsByType[connector.type], connector) then
-            table.addElement(self.activeConnectorsByType[connector.type], connector)
-        end
+        table.addElement(self.activeConnectorsByType[connector.type], connector)
     else
         table.removeElement(self.activeConnectorsByType[connector.type], connector)
 
@@ -252,10 +250,9 @@ function ManureSystemConnectors:loadFromXML(typeKey, xmlFile)
             self.connectorStrategies[type] = self.manureSystem.connectorManager:getConnectorStrategy(type, self.object)
         end
 
-        local nextId = i + 1
         local connector = {}
 
-        connector.id = nextId
+        connector.id = #self.connectors + 1
         connector.type = type
 
         if self:loadConnectorFromXML(connector, xmlFile, baseKey) then
@@ -267,7 +264,7 @@ function ManureSystemConnectors:loadFromXML(typeKey, xmlFile)
             end
         end
 
-        i = nextId
+        i = i + 1
     end
 
     return true
@@ -290,6 +287,10 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
                 break
             end
         end
+    end
+
+    if connector.componentNode == nil then
+        Logging.xmlWarning(xmlFile, "Missing componentNode for connector '%s'.", baseKey)
     end
 
     if connector.hasSharedSet then

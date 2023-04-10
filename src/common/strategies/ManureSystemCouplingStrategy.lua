@@ -108,7 +108,7 @@ function ManureSystemCouplingStrategy:onUpdateTick(dt, isActiveForInput, isActiv
     end
 
     --We don't have to search for possible source object on placeables.
-    if object.getActiveConnectorsByType == nil then
+    if object.isa ~= nil and object:isa(Placeable) then
         return
     end
 

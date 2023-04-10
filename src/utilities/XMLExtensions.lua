@@ -28,15 +28,25 @@ function XMLExtensions.ensureExistingNode(object, xmlFile, baseKey)
         local node = createTransformGroup("manureSystemConnector_node")
         local linkNode = xmlFile:getValue(baseKey .. "#linkNode", "0>", object.components, object.i3dMappings)
 
-        if not NodeExtensions.hasFrozenScale(linkNode) then
-            Logging.warning(("Freeze scale of link node '%s'"):format(getName(linkNode)))
-            return nil
+        local currentNode = linkNode
+        while currentNode ~= object.rootNode do
+            if not NodeExtensions.hasFrozenScale(currentNode) then
+                Logging.xmlWarning(xmlFile, "Freeze scale of node '%s'.", getName(currentNode))
+                return nil
+            end
+
+            currentNode = getParent(currentNode)
         end
 
         NodeExtensions.setVectorByXML(node, xmlFile, baseKey .. "#position", NodeExtensions.setPosition)
         NodeExtensions.setVectorByXML(node, xmlFile, baseKey .. "#rotation", NodeExtensions.setRotation)
 
         setVisibility(linkNode, true)
+
+        if not getEffectiveVisibility(linkNode) then
+            Logging.xmlWarning(xmlFile, "Not all parents of link node '%s' are visible.", getName(linkNode))
+        end
+
         link(linkNode, node)
 
         return node
