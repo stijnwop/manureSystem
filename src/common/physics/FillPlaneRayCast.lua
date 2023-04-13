@@ -37,6 +37,11 @@ end
 
 ---@return void
 function FillPlaneRayCast:clear()
+    local object = self.hitObject
+    if object ~= nil and object.resetFillPlaneInfo ~= nil then
+        object:resetFillPlaneInfo()
+    end
+
     self.hitObject = nil
     self.hitDistance = nil
 end
@@ -78,20 +83,15 @@ function FillPlaneRayCast:castCallback(hitObjectId, x, y, z, distance, nx, ny, n
         end
 
         local object = g_currentMission:getNodeObject(hitObjectId)
-        if object ~= nil and object.isa ~= nil then
+        if object ~= nil and object.isUnderFillPlane ~= nil then
+            self.hitDistance = distance
+            self.hitObject = object
 
-            if object:isa(Vehicle) then
-                if SpecializationUtil.hasSpecialization(ManureSystemFillArmReceiver, object.specializations) then
-                    self.hitDistance = distance
-                    self.hitObject = object
-                    return false
-                end
-            elseif object:isa(Placeable) and object.isUnderFillPlane ~= nil then
-                self.hitDistance = distance
-                self.hitObject = object
-
-                return false
+            if object.updateFillPlaneInfo ~= nil then
+                object:updateFillPlaneInfo(x, y, z)
             end
+
+            return false
         end
     end
 

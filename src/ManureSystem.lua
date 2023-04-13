@@ -322,11 +322,37 @@ function ManureSystem.installVehicleSpecializations(vehicleTypeManager, speciali
     end
 end
 
+function ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, specName, modName)
+    local specializationObject = specializationManager:getSpecializationObjectByName(modName .. "." .. specName)
+    if specializationObject ~= nil then
+        if not SpecializationUtil.hasSpecialization(specializationObject, typeEntry.specializations) and specializationObject.prerequisitesPresent(typeEntry.specializations) then
+            typeManager:addSpecialization(typeName, modName .. "." .. specName)
+            Logging.info("Adding '%s' to: '%s'", specName, typeName)
+
+            return true
+        end
+    end
+
+    return false
+end
+
 function ManureSystem.installPlaceableSpecializations(typeManager, specializationManager, modDirectory, modName)
+    local specNames = {
+        "manureSystemPlaceableSilo",
+        "manureSystemPlaceableSiloExtension",
+        "manureSystemPlaceableHusbandry",
+        "manureSystemPlaceableProductionPoint",
+        "manureSystemPlaceableSellingStation",
+        "manureSystemPlaceableBuyingStation"
+    }
+
     for typeName, typeEntry in pairs(typeManager:getTypes()) do
-        if SpecializationUtil.hasSpecialization(PlaceableSilo, typeEntry.specializations) then
-            typeManager:addSpecialization(typeName, modName .. ".manureSystemPlaceableSilo")
-            Logging.info(("Adding ManureSystemPlaceableSilo to: '%s'"):format(typeName))
+        for _, specName in ipairs(specNames) do
+            if ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, specName, modName) then
+                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableBase", modName)
+                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableConnector", modName)
+                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableFillArmReceiver", modName)
+            end
         end
     end
 end

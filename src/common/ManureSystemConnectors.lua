@@ -162,6 +162,15 @@ function ManureSystemConnectors:setIsConnectorActive(connector, isActive)
     end
 end
 
+---Gets whether if fill type is allowed on the given connector or not
+function ManureSystemConnectors:getConnectorAllowsFillType(connector, fillTypeIndex)
+    if connector.fillTypes == nil then
+        return true
+    end
+
+    return connector.fillTypes[fillTypeIndex]
+end
+
 ---Sets the `isConnected` state on the connector with additional information of the connected hose object, if present it will play the animations.
 function ManureSystemConnectors:setIsConnected(id, state, grabNodeId, hose, noEventSend)
     local connector = self:getConnectorById(id)
@@ -279,9 +288,18 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
     connector.isParkPlace = xmlFile:getValue(baseKey .. "#isParkPlace", false)
     connector.fillUnitIndex = xmlFile:getValue(baseKey .. "#fillUnitIndex", 1)
 
+    local fillTypes = g_fillTypeManager:getFillTypesFromXML(xmlFile, baseKey .. "#fillTypeCategories", baseKey .. "#fillTypes", false)
+    if fillTypes ~= nil and #fillTypes > 0 then
+        connector.fillTypes = {}
+
+        for _, fillTypeIndex in ipairs(fillTypes) do
+            connector.fillTypes[fillTypeIndex] = true
+        end
+    end
+
     connector.componentNode = xmlFile:getValue(baseKey .. "#componentNode", self.object.components[1].node, self.object.components, self.object.i3dMappings)
 
-    if not NodeExtensions.isRigidBody(connector.componentNode) then
+    if connector.componentNode == nil or not NodeExtensions.isRigidBody(connector.componentNode) then
         for _, component in ipairs(self.object.components) do
             connector.componentNode = NodeExtensions.getFirstRigidBodyNode(component.node)
             if connector.componentNode ~= nil then
@@ -345,6 +363,8 @@ function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
     schema:register(XMLValueType.FLOAT, baseName .. "#inRangeDistance", "The distance needed for the hose being in range")
     schema:register(XMLValueType.BOOL, baseName .. "#isParkPlace", "Determines if the connector is a park place")
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
+    schema:register(XMLValueType.STRING, baseName .. "#fillTypeCategories", "Supported fill type categories")
+    schema:register(XMLValueType.STRING, baseName .. "#fillTypes", "Supported fill types")
     schema:register(XMLValueType.NODE_INDEX, baseName .. "#componentNode", "Connector component node", "0>")
     SharedSet.registerXMLPaths(schema, baseName .. ".sharedSet")
 end

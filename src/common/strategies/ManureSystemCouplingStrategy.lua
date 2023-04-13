@@ -302,7 +302,7 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
                 return {
                     vehicle = desc.vehicle,
                     hasOpenManureFlow = hasOpenManureFlow,
-                    fillUnitIndex = 1
+                    fillUnitIndex = desc.vehicle:getFillArmFillUnitIndex()
                 }, length
             else
                 -- Pump from water.

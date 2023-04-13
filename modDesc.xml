@@ -93,7 +93,16 @@ Changelog:
     </extraSourceFiles>
 
     <placeableSpecializations>
+        <specialization name="manureSystemPlaceableBase" className="ManureSystemPlaceableBase" filename="src/placeables/specializations/ManureSystemPlaceableBase.lua"/>
+        <specialization name="manureSystemPlaceableConnector" className="ManureSystemPlaceableConnector" filename="src/placeables/specializations/ManureSystemPlaceableConnector.lua"/>
+        <specialization name="manureSystemPlaceableFillArmReceiver" className="ManureSystemPlaceableFillArmReceiver" filename="src/placeables/specializations/ManureSystemPlaceableFillArmReceiver.lua"/>
+
         <specialization name="manureSystemPlaceableSilo" className="ManureSystemPlaceableSilo" filename="src/placeables/specializations/ManureSystemPlaceableSilo.lua"/>
+        <specialization name="manureSystemPlaceableSiloExtension" className="ManureSystemPlaceableSiloExtension" filename="src/placeables/specializations/ManureSystemPlaceableSiloExtension.lua"/>
+        <specialization name="manureSystemPlaceableHusbandry" className="ManureSystemPlaceableHusbandry" filename="src/placeables/specializations/ManureSystemPlaceableHusbandry.lua"/>
+        <specialization name="manureSystemPlaceableProductionPoint" className="ManureSystemPlaceableProductionPoint" filename="src/placeables/specializations/ManureSystemPlaceableProductionPoint.lua"/>
+        <specialization name="manureSystemPlaceableSellingStation" className="ManureSystemPlaceableSellingStation" filename="src/placeables/specializations/ManureSystemPlaceableSellingStation.lua"/>
+        <specialization name="manureSystemPlaceableBuyingStation" className="ManureSystemPlaceableBuyingStation" filename="src/placeables/specializations/ManureSystemPlaceableBuyingStation.lua"/>
     </placeableSpecializations>
 
     <specializations>
