@@ -24,7 +24,7 @@
         <text name="warning_objectEmpty" text="Fahrzeug- oder Zielbehälter ist leer!"/>
         <text name="warning_objectFull" text="Zielbehälter ist voll!"/>
         <text name="warning_invalidFillType" text="Pumpmaterial wird nicht unterstützt!"/>
-        <text name="warning_checkManureFlow" text="Bitte den Absperrschieber von %s prüfen!"/>
+        <text name="warning_checkManureFlow" text="Bitte den Absperrschieber am %s prüfen!"/>
         <text name="warning_parkingPlaceTooSmall" text="Der Lagerplatz ist zu klein für den %sm Schlauch!"/>
         <text name="warning_hoseRangeRestriction" text="Die maximale Schlauchlänge ist erreicht. Sie können sich nicht weiter entfernen!"/>
         <text name="warning_hoseRangeRestrictionLength" text="Du bist kein Superheld!"/>
