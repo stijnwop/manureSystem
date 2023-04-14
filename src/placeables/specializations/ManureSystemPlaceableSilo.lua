@@ -9,7 +9,6 @@
 
 ---@class ManureSystemPlaceableSilo
 ManureSystemPlaceableSilo = {}
-ManureSystemPlaceableSilo.MOD_NAME = g_currentModName
 
 ---@return boolean
 function ManureSystemPlaceableSilo.prerequisitesPresent(specializations)
@@ -20,16 +19,14 @@ end
 function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onPreLoad", ManureSystemPlaceableSilo)
     SpecializationUtil.registerEventListener(placeableType, "onLoad", ManureSystemPlaceableSilo)
-    SpecializationUtil.registerEventListener(placeableType, "onDelete", ManureSystemPlaceableSilo)
+    SpecializationUtil.registerEventListener(placeableType, "onPreDelete", ManureSystemPlaceableSilo)
 end
 
 ---@return void
 function ManureSystemPlaceableSilo:onPreLoad(savegame)
-    self.spec_manureSystemPlaceableSilo = self[("spec_%s.manureSystemPlaceableSilo"):format(ManureSystemPlaceableSilo.MOD_NAME)]
-
     if self.addManureSystemStorage == nil or self.removeManureSystemStorage == nil then
         SpecializationUtil.removeEventListener(self, "onLoad", ManureSystemPlaceableSilo)
-        SpecializationUtil.removeEventListener(self, "onDelete", ManureSystemPlaceableSilo)
+        SpecializationUtil.removeEventListener(self, "onPreDelete", ManureSystemPlaceableSilo)
     end
 end
 
@@ -38,58 +35,21 @@ function ManureSystemPlaceableSilo:onLoad(savegame)
     local spec = self.spec_silo
     if spec.storages ~= nil then
         for _, storage in ipairs(spec.storages) do
-            local manureSystemStorage = table.copy(storage, math.huge)
-            if manureSystemStorage ~= nil then
-                manureSystemStorage.getOwnerFarmId = function(_, ...)
-                    return storage:getOwnerFarmId(...)
-                end
-
-                manureSystemStorage.getSupportedFillTypes = function(_, ...)
-                    return storage:getSupportedFillTypes(...)
-                end
-
-                manureSystemStorage.getIsFillTypeSupported = function(_, ...)
-                    return storage:getIsFillTypeSupported(...)
-                end
-
-                manureSystemStorage.setFillLevel = function(_, ...)
-                    return storage:setFillLevel(...)
-                end
-
-                manureSystemStorage.getFillLevel = function(_, ...)
-                    return storage:getFillLevel(...)
-                end
-
-                manureSystemStorage.getFillLevels = function(_, ...)
-                    return storage:getFillLevels(...)
-                end
-
-                manureSystemStorage.getCapacity = function(_, ...)
-                    return storage:getCapacity(...)
-                end
-
-                manureSystemStorage.getFreeCapacity = function(_, ...)
-                    return storage:getFreeCapacity(...)
-                end
-
-                manureSystemStorage.canFarmAccess = function(_, farmId)
+            if self:addManureSystemStorage(storage) then
+                storage.canFarmAccess = function(_, farmId)
                     if spec.loadingStation ~= nil then
-                        return spec.loadingStation:hasFarmAccessToStorage(farmId, manureSystemStorage)
+                        return spec.loadingStation:hasFarmAccessToStorage(farmId, storage)
                     end
 
-                    return g_currentMission.accessHandler:canFarmAccess(farmId, manureSystemStorage)
+                    return g_currentMission.accessHandler:canFarmAccess(farmId, storage)
                 end
 
-                manureSystemStorage.changeFillLevel = function(_, farmId, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
-                    local oldFillLevel = manureSystemStorage:getFillLevel(fillTypeIndex)
-                    manureSystemStorage:setFillLevel(oldFillLevel + fillLevelDelta, fillTypeIndex)
-                    local newFillLevel = manureSystemStorage:getFillLevel(fillTypeIndex)
+                storage.changeFillLevel = function(_, farmId, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
+                    local oldFillLevel = storage:getFillLevel(fillTypeIndex)
+                    storage:setFillLevel(oldFillLevel + fillLevelDelta, fillTypeIndex)
+                    local newFillLevel = storage:getFillLevel(fillTypeIndex)
 
                     return newFillLevel - oldFillLevel
-                end
-
-                if self:addManureSystemStorage(manureSystemStorage) then
-                    self.spec_manureSystemPlaceableSilo.storage = manureSystemStorage
                 end
             end
         end
@@ -97,10 +57,11 @@ function ManureSystemPlaceableSilo:onLoad(savegame)
 end
 
 ---@return void
-function ManureSystemPlaceableSilo:onDelete()
-    local spec = self.spec_manureSystemPlaceableSilo
-    if spec.storage ~= nil then
-        self:removeManureSystemStorage(spec.storage)
-        spec.storage = nil
+function ManureSystemPlaceableSilo:onPreDelete()
+    local spec = self.spec_silo
+    if spec.storages ~= nil then
+        for _, storage in ipairs(spec.storages) do
+            self:removeManureSystemStorage(storage)
+        end
     end
 end
