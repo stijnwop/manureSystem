@@ -35,6 +35,7 @@ function ManureSystemPlaceableFillArmReceiver.registerOverwrittenFunctions(place
     SpecializationUtil.registerOverwrittenFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableFillArmReceiver.getFillUnitFillType)
     SpecializationUtil.registerOverwrittenFunction(placeableType, "addFillUnitFillLevel", ManureSystemPlaceableFillArmReceiver.addFillUnitFillLevel)
 
+    SpecializationUtil.registerOverwrittenFunction(placeableType, "getNeedHourChanged", ManureSystemPlaceableFillArmReceiver.getNeedHourChanged)
     SpecializationUtil.registerOverwrittenFunction(placeableType, "updateInfo", ManureSystemPlaceableFillArmReceiver.updateInfo)
 end
 
@@ -55,7 +56,7 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver.registerSavegameXMLPaths(schema, basePath)
-    schema:register(XMLValueType.FLOAT, basePath .. ".manureSystemFillArmReceiver#thickness", "Thickness")
+    schema:register(XMLValueType.FLOAT, basePath .. "#thickness", "Thickness")
 end
 
 ---@return void
@@ -83,7 +84,7 @@ end
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:loadFromXMLFile(xmlFile, key)
     if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
-        local thickness = xmlFile:getValue(key .. ".manureSystemFillArmReceiver#thickness")
+        local thickness = xmlFile:getValue(key .. "#thickness")
         if thickness ~= nil then
             self:setThickness(thickness)
         end
@@ -94,7 +95,7 @@ end
 function ManureSystemPlaceableFillArmReceiver:saveToXMLFile(xmlFile, key, usedModNames)
     if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
         local thickness = self:getThickness()
-        xmlFile:setValue(key .. ".manureSystemFillArmReceiver#thickness", thickness)
+        xmlFile:setValue(key .. "#thickness", thickness)
     end
 end
 
@@ -155,7 +156,15 @@ function ManureSystemPlaceableFillArmReceiver:updateFillPlaneInfo(x, y, z)
                     if fillPlane.loaded then
                         local wx, _, wz = getWorldTranslation(fillPlane.node)
                         local distance = MathUtil.vector2Length(wx - x, wz - z)
-                        if distance < closestDistance then
+
+                        local force = false
+                        if math.abs(distance - closestDistance) < 0.1 then
+                            local fillLevel1 = storage:getFillLevel(fillTypeIndex)
+                            local fillLevel2 = storage:getFillLevel(spec.fillPlaneInfo.fillTypeIndex)
+                            force = fillLevel1 > fillLevel2
+                        end
+
+                        if distance < closestDistance or force then
                             closestDistance = distance
 
                             spec.fillPlaneInfo.node = fillPlane.node
@@ -235,7 +244,11 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:increaseThickness()
-    if not self.isServer or not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if not self.isServer then
+        return
+    end
+
+    if not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
         return
     end
 
@@ -254,7 +267,11 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:decreaseThickness(mixPerSecond)
-    if not self.isServer or not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if not self.isServer then
+        return
+    end
+
+    if not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
         return
     end
 
@@ -284,8 +301,14 @@ end
 function ManureSystemPlaceableFillArmReceiver:getFillUnitFillType(superFunc, fillUnitIndex, ...)
     if fillUnitIndex == self:getFillArmFillUnitIndex() then
         local fillPlaneInfo = self:getFillPlaneInfo()
-        if fillPlaneInfo ~= nil then
-            return fillPlaneInfo.fillTypeIndex
+        if fillPlaneInfo ~= nil and fillPlaneInfo.node ~= nil then
+            local storage = self:getManureSystemStorageByIndex(fillPlaneInfo.fillArmFillUnitIndex)
+            if storage ~= nil then
+                local fillLevel = storage:getFillLevel(fillPlaneInfo.fillTypeIndex)
+                if fillLevel > 0 then
+                    return fillPlaneInfo.fillTypeIndex
+                end
+            end
         end
 
         return FillType.UNKNOWN
@@ -303,6 +326,15 @@ function ManureSystemPlaceableFillArmReceiver:addFillUnitFillLevel(superFunc, ..
     end
 
     return movedFillLevel
+end
+
+---@return boolean
+function ManureSystemPlaceableFillArmReceiver:getNeedHourChanged(superFunc, ...)
+    if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+        return true
+    end
+
+    return superFunc(self, ...)
 end
 
 ---@return void

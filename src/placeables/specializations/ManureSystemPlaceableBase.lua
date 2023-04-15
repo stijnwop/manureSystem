@@ -100,7 +100,7 @@ end
 function ManureSystemPlaceableBase:getFillUnitFillLevelPercentage(fillUnitIndex)
     local capacity = self:getFillUnitCapacity(fillUnitIndex)
     if capacity <= 0 then
-        return 1
+        return 0
     end
 
     local fillLevel = self:getFillUnitFillLevel(fillUnitIndex)

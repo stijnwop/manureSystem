@@ -66,5 +66,9 @@
                 <entry type="string" key=".sharedSet.handle#type" value="HANDLE_OLD"/>
             </connector>
         </manureSystemConnectors>
+
+        <manureSystemFillArmReceiver>
+            <entry type="float" key="#fillArmOffset" value="1.65"/>
+        </manureSystemFillArmReceiver>
     </placeable>
 </data>
