@@ -142,7 +142,9 @@ function ManureSystemMixer:onUpdateTick(dt, isActiveForInput, isActiveForInputIg
         if object ~= nil and object.decreaseThickness ~= nil then
             spec.hasContact = object:isUnderFillPlane(x, y + spec.mixYOffset, z)
             if isTurnedOn and spec.hasContact then
-                object:decreaseThickness(spec.mixPerSecond)
+                local fillUnitIndex = object:getFillArmFillUnitIndex()
+                local fillTypeIndex = object:getFillUnitFillType(fillUnitIndex)
+                object:decreaseThickness(fillUnitIndex, fillTypeIndex, spec.mixPerSecond)
                 self:raiseActive()
             end
         end
@@ -168,8 +170,10 @@ function ManureSystemMixer:getConsumingLoad(superFunc)
     local spec = self.spec_manureSystemMixer
     local load = 0
     local object = spec.rayCast.hitObject
-    if object ~= nil then
-        local thickness = object:getThickness()
+    if object ~= nil and object.getThickness ~= nil then
+        local fillUnitIndex = object:getFillArmFillUnitIndex()
+        local fillTypeIndex = object:getFillUnitFillType(fillUnitIndex)
+        local thickness = object:getThickness(fillUnitIndex, fillTypeIndex)
         load = load + thickness * 0.5
     end
     return value + load, count + 1
