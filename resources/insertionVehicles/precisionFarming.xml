@@ -1,0 +1,51 @@
+<data>
+    <vehicle xml="vehicles/kotte/ptr30000/ptr30000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArm" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="350"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1200"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemFillArm>
+            <entry type="bool" key="#createNode" value="true"/>
+            <entry type="string" key="#linkNode" value="armMainPart"/>
+            <entry type="string" key="#type" value="dock"/>
+            <entry type="float" key="#fillYOffset" value="-0.5"/>
+            <entry type="string" key="#position" value="-0.061 -2.947 -0.226"/>
+            <entry type="string" key="#rotation" value="0 -90 0"/>
+        </manureSystemFillArm>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.912 0.665 2.455"/>
+                <entry type="string" key="#rotation" value="30 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="vehicles/johnDeere/r700i/r700i.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="34"/>
+            <entry type="float" key="#toReachMaxEfficiencyTime" value="1100"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.02 1.082 1.164"/>
+                <entry type="string" key="#rotation" value="40 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>
