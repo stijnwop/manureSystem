@@ -451,12 +451,17 @@ function ManureSystemPlaceableFillArmReceiver:updateInfo(superFunc, infoTable, .
     if spec.thicknessEnabled then
         local averageThicknessByFillType = {}
 
-        for _, data in pairs(spec.thickness) do
-            for fillTypeIndex, thickness in pairs(data) do
-                if averageThicknessByFillType[fillTypeIndex] == nil then
-                    averageThicknessByFillType[fillTypeIndex] = thickness
-                else
-                    averageThicknessByFillType[fillTypeIndex] = (averageThicknessByFillType[fillTypeIndex] + thickness) / 2
+        for storageIndex, data in pairs(spec.thickness) do
+            local storage = self:getManureSystemStorageByIndex(storageIndex)
+            if storage ~= nil then
+                for fillTypeIndex, thickness in pairs(data) do
+                    if storage:getFillLevel(fillTypeIndex) > 0 then
+                        if averageThicknessByFillType[fillTypeIndex] == nil then
+                            averageThicknessByFillType[fillTypeIndex] = thickness
+                        else
+                            averageThicknessByFillType[fillTypeIndex] = (averageThicknessByFillType[fillTypeIndex] + thickness) / 2
+                        end
+                    end
                 end
             end
         end
