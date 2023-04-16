@@ -196,7 +196,7 @@ function ManureSystemPlaceableFillArmReceiver:updateFillPlaneInfo(x, y, z)
                         local textureArrayIndex, _, _, _ = getShaderParameter(storage.dynamicFillPlane, "fillTypeId")
                         if textureArrayIndex ~= nil then
                             for _, fillType in ipairs(g_fillTypeManager:getFillTypes()) do
-                                if fillType.textureArrayIndex == textureArrayIndex then
+                                if fillType.textureArrayIndex == textureArrayIndex + 1 then
                                     storage.dynamicFillPlaneFillType = fillType.index
                                     break
                                 end
