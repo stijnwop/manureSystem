@@ -98,6 +98,10 @@ function ManureSystemDockStrategy:onUpdate(dt)
                         end
                     end
 
+                    if fillObject.setUsedConnectorId ~= nil then
+                        fillObject:setUsedConnectorId(connector.id)
+                    end
+
                     dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
                     dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM_DOCK)
                     if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
@@ -117,6 +121,11 @@ function ManureSystemDockStrategy:onUpdate(dt)
                 end
             elseif dockingArmObject:getPumpTargetObject() ~= nil then
                 if dockingArmObject:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM_DOCK then
+                    local targetObject = dockingArmObject:getPumpTargetObject()
+                    if targetObject ~= nil and targetObject.setUsedConnectorId ~= nil then
+                        targetObject:setUsedConnectorId(nil)
+                    end
+
                     dockingArmObject:setPumpTargetObject(nil, nil)
                 end
             end

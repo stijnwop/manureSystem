@@ -29,6 +29,8 @@ function ManureSystemPlaceableConnector.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "setIsConnected", ManureSystemPlaceableConnector.setIsConnected)
     SpecializationUtil.registerFunction(placeableType, "setIsManureFlowOpen", ManureSystemPlaceableConnector.setIsManureFlowOpen)
 
+    SpecializationUtil.registerFunction(placeableType, "setUsedConnectorId", ManureSystemPlaceableConnector.setUsedConnectorId)
+
     SpecializationUtil.registerFunction(placeableType, "getAnimatedObjectByIndex", ManureSystemPlaceableConnector.getAnimatedObjectByIndex)
     SpecializationUtil.registerFunction(placeableType, "getIsAnimationPlaying", ManureSystemPlaceableConnector.getIsAnimationPlaying)
     SpecializationUtil.registerFunction(placeableType, "getAnimationTime", ManureSystemPlaceableConnector.getAnimationTime)
@@ -38,6 +40,7 @@ end
 ---@return void
 function ManureSystemPlaceableConnector.registerOverwrittenFunctions(placeableType)
     SpecializationUtil.registerOverwrittenFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableConnector.getFillUnitFillType)
+    SpecializationUtil.registerOverwrittenFunction(placeableType, "getFillUnitAllowsFillType", ManureSystemPlaceableConnector.getFillUnitAllowsFillType)
 end
 
 ---@return void
@@ -76,6 +79,8 @@ function ManureSystemPlaceableConnector:onLoad(savegame)
             spec.connectors:delete()
             spec.connectors = nil
         end
+
+        spec.usedConnectorId = nil
     end
 
     if not self:hasConnectors() then
@@ -206,6 +211,13 @@ function ManureSystemPlaceableConnector:setIsManureFlowOpen(...)
     end
 end
 
+---@return void
+function ManureSystemPlaceableConnector:setUsedConnectorId(connectorId)
+    if self:hasConnectors() then
+        self.spec_manureSystemPlaceableConnector.usedConnectorId = connectorId
+    end
+end
+
 ---@return table | nil
 function ManureSystemPlaceableConnector:getAnimatedObjectByIndex(index)
     local spec = self.spec_animatedObjects
@@ -255,12 +267,11 @@ function ManureSystemPlaceableConnector:getFillUnitFillType(superFunc, fillUnitI
         if storage ~= nil then
             local fillType = FillType.UNKNOWN
 
-            for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
-                if fillLevel > 0 then
-                    for _, connector in ipairs(self:getConnectors()) do
-                        if self:getConnectorAllowsFillType(connector, fillTypeIndex) then
-                            fillType = fillTypeIndex
-                        end
+            local connector = self:getConnectorById(self.spec_manureSystemPlaceableConnector.usedConnectorId)
+            if connector ~= nil then
+                for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
+                    if self:getConnectorAllowsFillType(connector, fillTypeIndex) and fillLevel > 0 then
+                        fillType = fillTypeIndex
                     end
                 end
             end
@@ -270,4 +281,14 @@ function ManureSystemPlaceableConnector:getFillUnitFillType(superFunc, fillUnitI
     end
 
     return superFunc(self, fillUnitIndex, ...)
+end
+
+---@return boolean
+function ManureSystemPlaceableConnector:getFillUnitAllowsFillType(superFunc, fillUnitIndex, fillTypeIndex, ...)
+    local connector = self:getConnectorById(self.spec_manureSystemPlaceableConnector.usedConnectorId)
+    if connector ~= nil and not self:getConnectorAllowsFillType(connector, fillTypeIndex) then
+        return false
+    end
+
+    return superFunc(self, fillUnitIndex, fillTypeIndex, ...)
 end

@@ -150,7 +150,12 @@ end
 ---Resets the pump settings.
 function ManureSystemCouplingStrategy:resetPumpTargetObject(object)
     if object:getPumpMode() == ManureSystemPumpMotor.MODE_CONNECTOR then
-        if (object:getPumpTargetObject() ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
+        local targetObject = object:getPumpTargetObject()
+        if targetObject ~= nil and targetObject.setUsedConnectorId ~= nil then
+            targetObject:setUsedConnectorId(nil)
+        end
+
+        if (targetObject ~= nil or object:getIsPumpSourceWater()) and object:getPumpSourceObject() ~= nil then
             object:setPumpTargetObject(nil, nil)
             object:setPumpSourceObject(nil, nil)
             object:setIsPumpSourceWater(false)
@@ -289,6 +294,10 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
             local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
             if connector.hasOpenManureFlow and descConnector.isConnected then
+                if desc.vehicle.setUsedConnectorId ~= nil then
+                    desc.vehicle:setUsedConnectorId(descConnector.id)
+                end
+
                 return {
                     vehicle = desc.vehicle,
                     hasOpenManureFlow = descConnector.hasOpenManureFlow,
