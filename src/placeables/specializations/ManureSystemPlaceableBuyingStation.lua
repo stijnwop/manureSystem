@@ -52,13 +52,13 @@ function ManureSystemPlaceableBuyingStation:onLoad(savegame)
         end
 
         manureSystemStorage.getFillLevel = function(_, fillTypeIndex)
-            return 1
+            return math.huge
         end
 
         manureSystemStorage.getFillLevels = function(_)
             local fillLevels = {}
             for fillTypeIndex, _ in pairs(buyingStation.providedFillTypes) do
-                fillLevels[fillTypeIndex] = 1
+                fillLevels[fillTypeIndex] = math.huge
             end
             return fillLevels
         end

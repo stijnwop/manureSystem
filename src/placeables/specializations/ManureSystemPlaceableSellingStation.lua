@@ -64,11 +64,11 @@ function ManureSystemPlaceableSellingStation:onLoad(savegame)
         end
 
         manureSystemStorage.getCapacity = function(_, fillTypeIndex)
-            return 1
+            return math.huge
         end
 
         manureSystemStorage.getFreeCapacity = function(_, fillTypeIndex)
-            return 1
+            return math.huge
         end
 
         manureSystemStorage.canFarmAccess = function(_, farmId)
