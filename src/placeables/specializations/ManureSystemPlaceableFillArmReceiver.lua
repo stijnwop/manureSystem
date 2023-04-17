@@ -32,6 +32,9 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver.registerOverwrittenFunctions(placeableType)
+    SpecializationUtil.registerOverwrittenFunction(placeableType, "addManureSystemStorage", ManureSystemPlaceableFillArmReceiver.addManureSystemStorage)
+    SpecializationUtil.registerOverwrittenFunction(placeableType, "removeManureSystemStorage", ManureSystemPlaceableFillArmReceiver.removeManureSystemStorage)
+
     SpecializationUtil.registerOverwrittenFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableFillArmReceiver.getFillUnitFillType)
     SpecializationUtil.registerOverwrittenFunction(placeableType, "addFillUnitFillLevel", ManureSystemPlaceableFillArmReceiver.addFillUnitFillLevel)
 
@@ -64,7 +67,18 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:onPreLoad(savegame)
-    self.spec_manureSystemPlaceableFillArmReceiver = self[("spec_%s.manureSystemPlaceableFillArmReceiver"):format(ManureSystemPlaceableFillArmReceiver.MOD_NAME)]
+    local spec = self[("spec_%s.manureSystemPlaceableFillArmReceiver"):format(ManureSystemPlaceableFillArmReceiver.MOD_NAME)]
+
+    spec.fillPlanes = {}
+
+    spec.textureArrayIndexToFillTypeIndex = {}
+    for _, fillType in ipairs(g_fillTypeManager:getFillTypes()) do
+        if fillType.textureArrayIndex ~= nil then
+            spec.textureArrayIndexToFillTypeIndex[fillType.textureArrayIndex] = fillType.index
+        end
+    end
+
+    self.spec_manureSystemPlaceableFillArmReceiver = spec
 end
 
 ---@return void
@@ -74,6 +88,7 @@ function ManureSystemPlaceableFillArmReceiver:onLoad(savegame)
     spec.isActive = self.xmlFile:getBool("placeable.manureSystem#hasFillArmReceiver", false)
 
     spec.fillPlaneInfo = {}
+
     spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
 
     spec.thicknessEnabled = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#thicknessEnabled", spec.isActive)
@@ -89,18 +104,11 @@ end
 function ManureSystemPlaceableFillArmReceiver:onPostLoad(savegame)
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
 
-    local storages = self:getManureSystemStorages()
-    if storages ~= nil then
-        for i, storage in ipairs(storages) do
-            if storage.dynamicFillPlane ~= nil or storage.fillPlanes ~= nil and table.size(storage.fillPlanes) > 0 then
-                if spec.thickness[i] == nil then
-                    spec.thickness[i] = {}
-                end
+    for storage, fillPlanes in pairs(spec.fillPlanes) do
+        spec.thickness[storage.index] = {}
 
-                for fillTypeIndex, _ in pairs(storage:getSupportedFillTypes()) do
-                    spec.thickness[i][fillTypeIndex] = 0 -- 0-1 range
-                end
-            end
+        for _, fillPlane in ipairs(fillPlanes) do
+            spec.thickness[storage.index][fillPlane.fillTypeIndex] = 0 -- 0-1 range
         end
     end
 end
@@ -181,63 +189,26 @@ function ManureSystemPlaceableFillArmReceiver:updateFillPlaneInfo(x, y, z)
         return
     end
 
-    local storages = self:getManureSystemStorages()
-    if storages ~= nil then
-        local closestDistance = math.huge
+    local closestDistance = math.huge
 
-        for i, storage in ipairs(storages) do
-            if storage.dynamicFillPlane ~= nil then
-                local wx, _, wz = getWorldTranslation(storage.dynamicFillPlane)
-                local distance = MathUtil.vector2Length(wx - x, wz - z)
-                if distance < closestDistance then
-                    closestDistance = distance
+    for storage, fillPlanes in pairs(spec.fillPlanes) do
+        for _, fillPlane in ipairs(fillPlanes) do
+            local distance = MathUtil.vector2Length(fillPlane.worldPosX - x, fillPlane.worldPosZ - z)
 
-                    if storage.dynamicFillPlaneFillType == nil then
-                        local textureArrayIndex, _, _, _ = getShaderParameter(storage.dynamicFillPlane, "fillTypeId")
-                        if textureArrayIndex ~= nil then
-                            for _, fillType in ipairs(g_fillTypeManager:getFillTypes()) do
-                                if fillType.textureArrayIndex == textureArrayIndex + 1 then
-                                    storage.dynamicFillPlaneFillType = fillType.index
-                                    break
-                                end
-                            end
-                        end
-
-                        if storage.dynamicFillPlaneFillType == nil or not storage:getIsFillTypeSupported(storage.dynamicFillPlaneFillType) then
-                            storage.dynamicFillPlaneFillType = next(storage:getSupportedFillTypes())
-                        end
-                    end
-
-                    spec.fillPlaneInfo.node = storage.dynamicFillPlane
-                    spec.fillPlaneInfo.isDynamic = true
-                    spec.fillPlaneInfo.fillTypeIndex = storage.dynamicFillPlaneFillType
-                    spec.fillPlaneInfo.fillArmFillUnitIndex = i
-                end
+            local force = false
+            if math.abs(distance - closestDistance) < 0.1 then
+                local fillLevel1 = storage:getFillLevel(fillPlane.fillTypeIndex)
+                local fillLevel2 = storage:getFillLevel(spec.fillPlaneInfo.fillTypeIndex)
+                force = fillLevel1 > fillLevel2
             end
 
-            if storage.fillPlanes ~= nil then
-                for fillTypeIndex, fillPlane in pairs(storage.fillPlanes) do
-                    if fillPlane.loaded then
-                        local wx, _, wz = getWorldTranslation(fillPlane.node)
-                        local distance = MathUtil.vector2Length(wx - x, wz - z)
+            if distance < closestDistance or force then
+                closestDistance = distance
 
-                        local force = false
-                        if math.abs(distance - closestDistance) < 0.1 then
-                            local fillLevel1 = storage:getFillLevel(fillTypeIndex)
-                            local fillLevel2 = storage:getFillLevel(spec.fillPlaneInfo.fillTypeIndex)
-                            force = fillLevel1 > fillLevel2
-                        end
-
-                        if distance < closestDistance or force then
-                            closestDistance = distance
-
-                            spec.fillPlaneInfo.node = fillPlane.node
-                            spec.fillPlaneInfo.isDynamic = false
-                            spec.fillPlaneInfo.fillTypeIndex = fillTypeIndex
-                            spec.fillPlaneInfo.fillArmFillUnitIndex = i
-                        end
-                    end
-                end
+                spec.fillPlaneInfo.node = fillPlane.node
+                spec.fillPlaneInfo.isDynamic = fillPlane.isDynamic
+                spec.fillPlaneInfo.fillTypeIndex = fillPlane.fillTypeIndex
+                spec.fillPlaneInfo.fillArmFillUnitIndex = storage.index
             end
         end
     end
@@ -270,10 +241,6 @@ end
 ---@return boolean
 function ManureSystemPlaceableFillArmReceiver:isUnderFillPlane(x, y, z)
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
-
-    if not spec.isActive and not spec.thicknessEnabled then
-        return false
-    end
 
     local fillPlaneInfo = self:getFillPlaneInfo()
     if fillPlaneInfo ~= nil then
@@ -348,6 +315,9 @@ function ManureSystemPlaceableFillArmReceiver:increaseThickness(fillUnitIndex, f
     end
 
     local thickness = self:getThickness(fillUnitIndex, fillTypeIndex)
+    if thickness >= 1 then
+        return
+    end
 
     -- The more it's filled the slower thickening is.
     local percentage = fillLevel / capacity
@@ -394,6 +364,73 @@ end
 ----------------
 -- Overwrites --
 ----------------
+
+---@return boolean, number
+function ManureSystemPlaceableFillArmReceiver:addManureSystemStorage(superFunc, storage, ...)
+    local success, index = superFunc(self, storage, ...)
+
+    if success then
+        local spec = self.spec_manureSystemPlaceableFillArmReceiver
+
+        spec.fillPlanes[storage] = {}
+
+        if storage.dynamicFillPlane ~= nil then
+            local fillTypeIndex = nil
+
+            local textureArrayIndex, _, _, _ = getShaderParameter(storage.dynamicFillPlane, "fillTypeId")
+            if textureArrayIndex ~= nil then
+                fillTypeIndex = spec.textureArrayIndexToFillTypeIndex[textureArrayIndex + 1]
+            end
+
+            if fillTypeIndex == nil or not storage:getIsFillTypeSupported(fillTypeIndex) then
+                fillTypeIndex = next(storage:getSupportedFillTypes())
+            end
+
+            local wx, _, wz = getWorldTranslation(storage.dynamicFillPlane)
+
+            table.insert(spec.fillPlanes[storage], {
+                node = storage.dynamicFillPlane,
+                worldPosX = wx,
+                worldPosZ = wz,
+                isDynamic = true,
+                fillTypeIndex = fillTypeIndex
+            })
+        end
+
+        if storage.fillPlanes ~= nil then
+            for fillTypeIndex, fillPlane in pairs(storage.fillPlanes) do
+                if fillPlane.loaded then
+                    local wx, _, wz = getWorldTranslation(fillPlane.node)
+
+                    table.insert(spec.fillPlanes[storage], {
+                        node = fillPlane.node,
+                        worldPosX = wx,
+                        worldPosZ = wz,
+                        isDynamic = false,
+                        fillTypeIndex = fillTypeIndex
+                    })
+                end
+            end
+        end
+
+        if #spec.fillPlanes[storage] == 0 then
+            spec.fillPlanes[storage] = nil
+        end
+    end
+
+    return success, index
+end
+
+---@return boolean
+function ManureSystemPlaceableFillArmReceiver:removeManureSystemStorage(superFunc, storage, ...)
+    local success = superFunc(self, storage, ...)
+
+    if success then
+        self.spec_manureSystemPlaceableFillArmReceiver.fillPlanes[storage] = nil
+    end
+
+    return success
+end
 
 ---@return number
 function ManureSystemPlaceableFillArmReceiver:getFillUnitFillType(superFunc, fillUnitIndex, ...)

@@ -57,12 +57,26 @@ end
 
 ---@return boolean, number
 function ManureSystemPlaceableBase:addManureSystemStorage(storage)
-    return table.addElement(self.spec_manureSystemPlaceableBase.storages, storage)
+    local success, index = table.addElement(self.spec_manureSystemPlaceableBase.storages, storage)
+
+    if success then
+        storage.index = index
+    end
+
+    return success, index
 end
 
 ---@return boolean
 function ManureSystemPlaceableBase:removeManureSystemStorage(storage)
-    return table.removeElement(self.spec_manureSystemPlaceableBase.storages, storage)
+    local success = table.removeElement(self.spec_manureSystemPlaceableBase.storages, storage)
+
+    if success then
+        for i, storage in ipairs(self.spec_manureSystemPlaceableBase.storages) do
+            storage.index = i
+        end
+    end
+
+    return success
 end
 
 ---@return number

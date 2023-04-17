@@ -19,7 +19,7 @@ end
 ---@return void
 function ManureSystemPlaceableBuyingStation.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onPreLoad", ManureSystemPlaceableBuyingStation)
-    SpecializationUtil.registerEventListener(placeableType, "onLoad", ManureSystemPlaceableBuyingStation)
+    SpecializationUtil.registerEventListener(placeableType, "onPostLoad", ManureSystemPlaceableBuyingStation)
     SpecializationUtil.registerEventListener(placeableType, "onPreDelete", ManureSystemPlaceableBuyingStation)
 end
 
@@ -28,13 +28,13 @@ function ManureSystemPlaceableBuyingStation:onPreLoad(savegame)
     self.spec_manureSystemPlaceableBuyingStation = self[("spec_%s.manureSystemPlaceableBuyingStation"):format(ManureSystemPlaceableBuyingStation.MOD_NAME)]
 
     if self.addManureSystemStorage == nil or self.removeManureSystemStorage == nil then
-        SpecializationUtil.removeEventListener(self, "onLoad", ManureSystemPlaceableBuyingStation)
+        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemPlaceableBuyingStation)
         SpecializationUtil.removeEventListener(self, "onPreDelete", ManureSystemPlaceableBuyingStation)
     end
 end
 
 ---@return void
-function ManureSystemPlaceableBuyingStation:onLoad(savegame)
+function ManureSystemPlaceableBuyingStation:onPostLoad(savegame)
     local buyingStation = self:getBuyingStation()
     if buyingStation ~= nil then
         local manureSystemStorage = {}

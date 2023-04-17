@@ -18,20 +18,20 @@ end
 ---@return void
 function ManureSystemPlaceableHusbandry.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onPreLoad", ManureSystemPlaceableHusbandry)
-    SpecializationUtil.registerEventListener(placeableType, "onLoad", ManureSystemPlaceableHusbandry)
+    SpecializationUtil.registerEventListener(placeableType, "onPostLoad", ManureSystemPlaceableHusbandry)
     SpecializationUtil.registerEventListener(placeableType, "onPreDelete", ManureSystemPlaceableHusbandry)
 end
 
 ---@return void
 function ManureSystemPlaceableHusbandry:onPreLoad(savegame)
     if self.addManureSystemStorage == nil or self.removeManureSystemStorage == nil then
-        SpecializationUtil.removeEventListener(self, "onLoad", ManureSystemPlaceableHusbandry)
+        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemPlaceableHusbandry)
         SpecializationUtil.removeEventListener(self, "onPreDelete", ManureSystemPlaceableHusbandry)
     end
 end
 
 ---@return void
-function ManureSystemPlaceableHusbandry:onLoad(savegame)
+function ManureSystemPlaceableHusbandry:onPostLoad(savegame)
     local spec = self.spec_husbandry
 
     if self:addManureSystemStorage(spec.storage) then

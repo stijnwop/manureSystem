@@ -18,20 +18,20 @@ end
 ---@return void
 function ManureSystemPlaceableSilo.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onPreLoad", ManureSystemPlaceableSilo)
-    SpecializationUtil.registerEventListener(placeableType, "onLoad", ManureSystemPlaceableSilo)
+    SpecializationUtil.registerEventListener(placeableType, "onPostLoad", ManureSystemPlaceableSilo)
     SpecializationUtil.registerEventListener(placeableType, "onPreDelete", ManureSystemPlaceableSilo)
 end
 
 ---@return void
 function ManureSystemPlaceableSilo:onPreLoad(savegame)
     if self.addManureSystemStorage == nil or self.removeManureSystemStorage == nil then
-        SpecializationUtil.removeEventListener(self, "onLoad", ManureSystemPlaceableSilo)
+        SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemPlaceableSilo)
         SpecializationUtil.removeEventListener(self, "onPreDelete", ManureSystemPlaceableSilo)
     end
 end
 
 ---@return void
-function ManureSystemPlaceableSilo:onLoad(savegame)
+function ManureSystemPlaceableSilo:onPostLoad(savegame)
     local spec = self.spec_silo
     if spec.storages ~= nil then
         for _, storage in ipairs(spec.storages) do

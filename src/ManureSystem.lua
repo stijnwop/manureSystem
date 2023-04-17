@@ -347,12 +347,18 @@ function ManureSystem.installPlaceableSpecializations(typeManager, specializatio
     }
 
     for typeName, typeEntry in pairs(typeManager:getTypes()) do
+        local success = false
+
         for _, specName in ipairs(specNames) do
             if ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, specName, modName) then
-                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableBase", modName)
-                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableConnector", modName)
-                ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableFillArmReceiver", modName)
+                success = true
             end
+        end
+
+        if success then
+            ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableBase", modName)
+            ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableConnector", modName)
+            ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableFillArmReceiver", modName)
         end
     end
 end
