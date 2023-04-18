@@ -30,6 +30,7 @@ function ManureSystemPlaceableConnector.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "setIsManureFlowOpen", ManureSystemPlaceableConnector.setIsManureFlowOpen)
 
     SpecializationUtil.registerFunction(placeableType, "setUsedConnectorId", ManureSystemPlaceableConnector.setUsedConnectorId)
+    SpecializationUtil.registerFunction(placeableType, "getUsedConnectorId", ManureSystemPlaceableConnector.getUsedConnectorId)
 
     SpecializationUtil.registerFunction(placeableType, "getAnimatedObjectByIndex", ManureSystemPlaceableConnector.getAnimatedObjectByIndex)
     SpecializationUtil.registerFunction(placeableType, "getIsAnimationPlaying", ManureSystemPlaceableConnector.getIsAnimationPlaying)
@@ -50,6 +51,8 @@ function ManureSystemPlaceableConnector.registerEventListeners(placeableType)
     SpecializationUtil.registerEventListener(placeableType, "onDelete", ManureSystemPlaceableConnector)
     SpecializationUtil.registerEventListener(placeableType, "onReadStream", ManureSystemPlaceableConnector)
     SpecializationUtil.registerEventListener(placeableType, "onWriteStream", ManureSystemPlaceableConnector)
+    SpecializationUtil.registerEventListener(placeableType, "onReadUpdateStream", ManureSystemPlaceableConnector)
+    SpecializationUtil.registerEventListener(placeableType, "onWriteUpdateStream", ManureSystemPlaceableConnector)
     SpecializationUtil.registerEventListener(placeableType, "onFinalizePlacement", ManureSystemPlaceableConnector)
     SpecializationUtil.registerEventListener(placeableType, "onUpdate", ManureSystemPlaceableConnector)
     SpecializationUtil.registerEventListener(placeableType, "onUpdateTick", ManureSystemPlaceableConnector)
@@ -81,11 +84,14 @@ function ManureSystemPlaceableConnector:onLoad(savegame)
         end
 
         spec.usedConnectorId = nil
+        spec.dirtyFlag = self:getNextDirtyFlag()
     end
 
     if not self:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPlaceableConnector)
         SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemPlaceableConnector)
+        SpecializationUtil.removeEventListener(self, "onReadUpdateStream", ManureSystemPlaceableConnector)
+        SpecializationUtil.removeEventListener(self, "onWriteUpdateStream", ManureSystemPlaceableConnector)
         SpecializationUtil.removeEventListener(self, "onFinalizePlacement", ManureSystemPlaceableConnector)
         SpecializationUtil.removeEventListener(self, "onUpdate", ManureSystemPlaceableConnector)
         SpecializationUtil.removeEventListener(self, "onUpdateTick", ManureSystemPlaceableConnector)
@@ -102,13 +108,45 @@ function ManureSystemPlaceableConnector:onDelete(...)
 end
 
 ---@return void
-function ManureSystemPlaceableConnector:onReadStream(...)
-    self.spec_manureSystemPlaceableConnector.connectors:readStream(...)
+function ManureSystemPlaceableConnector:onReadStream(streamId, ...)
+    self.spec_manureSystemPlaceableConnector.connectors:readStream(streamId, ...)
+
+    local connectorId = nil
+    if streamReadBool(streamId) then
+        connectorId = streamReadUIntN(streamId, ManureSystemConnectors.SEND_NUM_BITS)
+    end
+    self:setUsedConnectorId(connectorId)
 end
 
 ---@return void
-function ManureSystemPlaceableConnector:onWriteStream(...)
-    self.spec_manureSystemPlaceableConnector.connectors:writeStream(...)
+function ManureSystemPlaceableConnector:onWriteStream(streamId, ...)
+    self.spec_manureSystemPlaceableConnector.connectors:writeStream(streamId, ...)
+
+    local connectorId = self:getUsedConnectorId()
+    if streamWriteBool(streamId, connectorId ~= nil) then
+        streamWriteUIntN(streamId, connectorId, ManureSystemConnectors.SEND_NUM_BITS)
+    end
+end
+
+---@return void
+function ManureSystemPlaceableConnector:onReadUpdateStream(streamId, timestamp, connection)
+    if connection:getIsServer() and streamReadBool(streamId) then
+        local connectorId = nil
+        if streamReadBool(streamId) then
+            connectorId = streamReadUIntN(streamId, ManureSystemConnectors.SEND_NUM_BITS)
+        end
+        self:setUsedConnectorId(connectorId)
+    end
+end
+
+---@return void
+function ManureSystemPlaceableConnector:onWriteUpdateStream(streamId, connection, dirtyMask)
+    if not connection:getIsServer() and streamWriteBool(streamId, bitAND(dirtyMask, self.spec_manureSystemPlaceableConnector.dirtyFlag) ~= 0) then
+        local connectorId = self:getUsedConnectorId()
+        if streamWriteBool(streamId, connectorId ~= nil) then
+            streamWriteUIntN(streamId, connectorId, ManureSystemConnectors.SEND_NUM_BITS)
+        end
+    end
 end
 
 ---@return void
@@ -214,8 +252,23 @@ end
 ---@return void
 function ManureSystemPlaceableConnector:setUsedConnectorId(connectorId)
     if self:hasConnectors() then
-        self.spec_manureSystemPlaceableConnector.usedConnectorId = connectorId
+        local spec = self.spec_manureSystemPlaceableConnector
+        if spec.usedConnectorId ~= connectorId then
+            spec.usedConnectorId = connectorId
+            if self.isServer then
+                self:raiseDirtyFlags(spec.dirtyFlag)
+            end
+        end
     end
+end
+
+---@return number, nil
+function ManureSystemPlaceableConnector:getUsedConnectorId()
+    if self:hasConnectors() then
+        return self.spec_manureSystemPlaceableConnector.usedConnectorId
+    end
+
+    return nil
 end
 
 ---@return table | nil
@@ -267,11 +320,14 @@ function ManureSystemPlaceableConnector:getFillUnitFillType(superFunc, fillUnitI
         if storage ~= nil then
             local fillType = FillType.UNKNOWN
 
-            local connector = self:getConnectorById(self.spec_manureSystemPlaceableConnector.usedConnectorId)
-            if connector ~= nil then
-                for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
-                    if self:getConnectorAllowsFillType(connector, fillTypeIndex) and fillLevel > 0 then
-                        fillType = fillTypeIndex
+            local connectorId = self:getUsedConnectorId()
+            if connectorId ~= nil then
+                local connector = self:getConnectorById(connectorId)
+                if connector ~= nil then
+                    for fillTypeIndex, fillLevel in pairs(storage:getFillLevels()) do
+                        if self:getConnectorAllowsFillType(connector, fillTypeIndex) and fillLevel > 0 then
+                            fillType = fillTypeIndex
+                        end
                     end
                 end
             end
@@ -285,9 +341,12 @@ end
 
 ---@return boolean
 function ManureSystemPlaceableConnector:getFillUnitAllowsFillType(superFunc, fillUnitIndex, fillTypeIndex, ...)
-    local connector = self:getConnectorById(self.spec_manureSystemPlaceableConnector.usedConnectorId)
-    if connector ~= nil and not self:getConnectorAllowsFillType(connector, fillTypeIndex) then
-        return false
+    local connectorId = self:getUsedConnectorId()
+    if connectorId ~= nil then
+        local connector = self:getConnectorById(connectorId)
+        if connector ~= nil and not self:getConnectorAllowsFillType(connector, fillTypeIndex) then
+            return false
+        end
     end
 
     return superFunc(self, fillUnitIndex, fillTypeIndex, ...)
