@@ -71,13 +71,6 @@ function ManureSystemPlaceableFillArmReceiver:onPreLoad(savegame)
 
     spec.fillPlanes = {}
 
-    spec.textureArrayIndexToFillTypeIndex = {}
-    for _, fillType in ipairs(g_fillTypeManager:getFillTypes()) do
-        if fillType.textureArrayIndex ~= nil then
-            spec.textureArrayIndexToFillTypeIndex[fillType.textureArrayIndex] = fillType.index
-        end
-    end
-
     self.spec_manureSystemPlaceableFillArmReceiver = spec
 end
 
@@ -379,7 +372,7 @@ function ManureSystemPlaceableFillArmReceiver:addManureSystemStorage(superFunc, 
 
             local textureArrayIndex, _, _, _ = getShaderParameter(storage.dynamicFillPlane, "fillTypeId")
             if textureArrayIndex ~= nil then
-                fillTypeIndex = spec.textureArrayIndexToFillTypeIndex[textureArrayIndex + 1]
+                fillTypeIndex = g_currentMission.manureSystem:getFillTypeIndexByTextureArrayIndex(textureArrayIndex + 1)
             end
 
             if fillTypeIndex == nil or not storage:getIsFillTypeSupported(fillTypeIndex) then

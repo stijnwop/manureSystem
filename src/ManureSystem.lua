@@ -74,6 +74,13 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
 
     self:loadManureSystemSamples()
 
+    self.textureArrayIndexToFillTypeIndex = {}
+    for _, fillType in ipairs(g_fillTypeManager:getFillTypes()) do
+        if fillType.textureArrayIndex ~= nil then
+            self.textureArrayIndexToFillTypeIndex[fillType.textureArrayIndex] = fillType.index
+        end
+    end
+
     addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
     addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
 
@@ -215,6 +222,11 @@ end
 ---Returns the current loaded samples.
 function ManureSystem:getManureSystemSamples()
     return self.samples
+end
+
+---Returns the fill type index for the given texture array index.
+function ManureSystem:getFillTypeIndexByTextureArrayIndex(textureArrayIndex)
+    return self.textureArrayIndexToFillTypeIndex[textureArrayIndex]
 end
 
 ---Adds connector object to the list and force it being distinct.
