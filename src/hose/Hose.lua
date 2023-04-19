@@ -641,7 +641,8 @@ function Hose:getConnectorObjectDesc(id, totalHoseLength, doRayCast, startHose)
                         return { vehicle = object }, totalHoseLength
                     end
                 else
-                    local isNearWater = (y <= g_currentMission.waterY + 0.1)
+                    local waterY = g_currentMission.environmentAreaSystem:getWaterYAtWorldPosition(x, y, z) or -2000
+                    local isNearWater = (y <= waterY + 0.1)
                     if isNearWater then
                         return { vehicle = nil, isNearWater = isNearWater }, totalHoseLength
                     end
