@@ -208,6 +208,9 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
 
                 local waterY = g_currentMission.environmentAreaSystem:getWaterYAtWorldPosition(x, y, z) or -2000
                 local isNearWater = (y <= waterY + 0.1)
+                if isNearWater then
+                    self:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM)
+                end
                 self:setIsPumpSourceWater(isNearWater)
 
                 if g_currentMission.manureSystem.debug then
