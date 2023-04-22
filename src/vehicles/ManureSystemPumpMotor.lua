@@ -583,9 +583,8 @@ function ManureSystemPumpMotor:handlePump(dt)
 
                     if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillType) then
                         local targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
-                        local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
 
-                        if targetFillLevel > 0 and sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
+                        if targetFillLevel > 0 then
                             if spec.pumpEfficiency.currentLoad > 0 then
                                 local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, targetFillLevel)
                                 self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, targetFillType, deltaFillLevel)
@@ -596,6 +595,8 @@ function ManureSystemPumpMotor:handlePump(dt)
                     else
                         self:setIsPumpRunning(false) -- invalid
                     end
+                else
+                    self:setIsPumpRunning(false) -- full self
                 end
             elseif self:isPumpingOut() then
                 local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
@@ -603,8 +604,10 @@ function ManureSystemPumpMotor:handlePump(dt)
                     local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
 
                     if targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
-                        local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
-                        self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
+                        if spec.pumpEfficiency.currentLoad > 0 then
+                            local deltaFillLevel = math.min((spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt, sourceFillLevel)
+                            self:runPump(sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex, sourceFillType, deltaFillLevel)
+                        end
                     else
                         self:setIsPumpRunning(false) -- invalid
                     end
@@ -618,15 +621,16 @@ function ManureSystemPumpMotor:handlePump(dt)
 
         if sourceObject ~= nil then
             if sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, FillType.WATER) then
-                local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
-                if sourceFillLevel > 0 or sourceFillLevel < sourceObject:getFillUnitCapacity(sourceFillUnitIndex) then
-                    local delta = (spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt
-                    sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, delta * self:getPumpDirection(), FillType.WATER, ToolType.UNDEFINED, nil)
+                if sourceObject:getFillUnitFreeCapacity(sourceFillUnitIndex) > 0 then
+                    if spec.pumpEfficiency.currentLoad > 0 then
+                        local delta = (spec.pumpEfficiency.litersPerSecond * spec.pumpEfficiency.currentLoad) * 0.001 * dt
+                        sourceObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), sourceFillUnitIndex, delta * self:getPumpDirection(), FillType.WATER, ToolType.UNDEFINED, nil)
+                    end
                 else
-                    self:setIsPumpRunning(false)
+                    self:setIsPumpRunning(false) -- full self
                 end
             else
-                self:setIsPumpRunning(false)
+                self:setIsPumpRunning(false) -- invalid
             end
         end
     end
@@ -660,7 +664,7 @@ function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, target
         local targetObjectFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
 
         if targetObjectFillLevel >= (targetObject:getFillUnitCapacity(targetFillUnitIndex)) then
-            self:setIsPumpRunning(false) -- full
+            self:setIsPumpRunning(false) -- full target
         end
     end
 end
