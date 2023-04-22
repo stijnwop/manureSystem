@@ -177,7 +177,7 @@ function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInput
                 end
 
                 local object = spec.rayCast.hitObject
-                if object ~= nil then
+                if object ~= nil and object ~= self then
                     if fillArm.limitedFillDirection ~= nil then
                         --When the limited direction is present, but not set, we force it.
                         if self:getPumpDirection() ~= fillArm.limitedFillDirection then
