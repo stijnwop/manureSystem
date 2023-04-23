@@ -102,17 +102,16 @@ function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
     end
 
     local fillVolumeIndex = spec.fillVolumeIndex
-    if self.spec_fillVolume.volumes[fillVolumeIndex].volume == nil then
+    local volume = self.spec_fillVolume.volumes[fillVolumeIndex].volume
+    if volume == nil or not getVisibility(volume) then
         return false
     end
 
-    local fillArmOffset = spec.fillArmOffset
-    local volume = self.spec_fillVolume.volumes[fillVolumeIndex].volume
     local xl, _, zl = worldToLocal(volume, x, y, z)
     local height = getFillPlaneHeightAtLocalPos(volume, xl, zl)
     local _, volumeWorldY, _ = localToWorld(volume, xl, height, zl)
 
-    volumeWorldY = volumeWorldY + fillArmOffset
+    volumeWorldY = volumeWorldY + spec.fillArmOffset
 
     return volumeWorldY >= y
 end
