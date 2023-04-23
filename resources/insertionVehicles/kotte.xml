@@ -54,19 +54,19 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="bool" key="#createNode" value="true"/>
-                <entry type="string" key="#position" value="0.627 1.039 4.669"/>
+                <entry type="string" key="#position" value="0.623 1.043 4.584"/>
                 <entry type="string" key="#rotation" value="5 45 0"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="bool" key="#createNode" value="true"/>
-                <entry type="string" key="#position" value="-0.627 1.039 4.669"/>
+                <entry type="string" key="#position" value="-0.623 1.043 4.584"/>
                 <entry type="string" key="#rotation" value="5 -45 0"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="bool" key="#createNode" value="true"/>
-                <entry type="string" key="#position" value="0.767 0.936 -5.972"/>
+                <entry type="string" key="#position" value="0.79 0.948 -5.843"/>
                 <entry type="string" key="#rotation" value="0 180 0"/>
             </connector>
             <connector>
@@ -74,9 +74,9 @@
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>"/>
                 <entry type="bool" key=".funnel#createNode" value="true"/>
-                <entry type="string" key=".funnel#position" value="0 3.854 -5.9"/>
+                <entry type="string" key=".funnel#position" value="0 3.955 -5.907"/>
                 <entry type="string" key=".trigger#linkNode" value="0>"/>
-                <entry type="string" key=".trigger#position" value="0 3.854 -5.9"/>
+                <entry type="string" key=".trigger#position" value="0 3.955 -5.907"/>
             </connector>
         </manureSystemConnectors>
     </vehicle>
@@ -84,6 +84,7 @@
     <vehicle xml="data/vehicles/kotte/tsa/tsa.xml">
         <manureSystem>
             <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
         </manureSystem>
 
         <manureSystemPumpMotor>
@@ -113,6 +114,7 @@
     <vehicle xml="data/vehicles/kotte/pq32000/pq32000.xml">
         <manureSystem>
             <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
             <entry type="bool" key="#hasFillArm" value="true"/>
         </manureSystem>
 
@@ -123,10 +125,11 @@
 
         <manureSystemFillArm>
             <entry type="bool" key="#createNode" value="true"/>
+            <entry type="bool" key="#needsDockingCollision" value="true"/>
             <entry type="string" key="#linkNode" value="armMainPart03Extension"/>
             <entry type="string" key="#type" value="dock"/>
             <entry type="float" key="#fillYOffset" value="-0.5"/>
-            <entry type="string" key="#position" value="-0.15 -0.05 -1.4"/>
+            <entry type="string" key="#position" value="-0.144 -0.26 -1.397"/>
             <entry type="string" key="#rotation" value="-90 0 0"/>
         </manureSystemFillArm>
 
@@ -147,7 +150,7 @@
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#position" value="-1.29 0.769 4.616"/>
-                <entry type="string" key="#rotation" value="-5 -90 0"/>
+                <entry type="string" key="#rotation" value="5 -90 0"/>
             </connector>
         </manureSystemConnectors>
     </vehicle>
