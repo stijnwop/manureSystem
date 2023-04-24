@@ -753,9 +753,26 @@ function ManureSystemPumpMotor.getAttachedPumpSourceObject(object, fillType, roo
 
     if object ~= rootObject and SpecializationUtil.hasSpecialization(FillUnit, object.specializations) then
         local fillUnits = object:getFillUnits()
-        for fillUnitIndex, _ in ipairs(fillUnits) do
-            if object:getFillUnitAllowsFillType(fillUnitIndex, fillType) or fillType == FillType.UNKNOWN then
-                return object, fillUnitIndex
+
+        if fillType == FillType.UNKNOWN then
+            if rootObject.getPumpTargetObject ~= nil then
+                local targetObject, targetFillUnitIndex = rootObject:getPumpTargetObject()
+                if targetObject ~= nil then
+                    for fillUnitIndex, _ in ipairs(fillUnits) do
+                        if object:getFillUnitFillLevel(fillUnitIndex) > 0 then
+                            local fillTypeIndex = object:getFillUnitFillType(fillUnitIndex)
+                            if targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, fillTypeIndex) then
+                                return object, fillUnitIndex
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            for fillUnitIndex, _ in ipairs(fillUnits) do
+                if object:getFillUnitAllowsFillType(fillUnitIndex, fillType) then
+                    return object, fillUnitIndex
+                end
             end
         end
     end
