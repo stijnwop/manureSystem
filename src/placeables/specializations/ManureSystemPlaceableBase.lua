@@ -148,13 +148,15 @@ end
 function ManureSystemPlaceableBase:addFillUnitFillLevel(farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, ...)
     local movedFillLevel = 0
 
-    local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
-    if storage ~= nil and storage:canFarmAccess(farmId) then
-        if self:getFillUnitAllowsFillType(fillUnitIndex, fillTypeIndex) then
-            movedFillLevel = storage:changeFillLevel(farmId, fillLevelDelta, fillTypeIndex, ...)
+    if fillLevelDelta ~= 0 then
+        local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
+        if storage ~= nil and storage:canFarmAccess(farmId) then
+            if self:getFillUnitAllowsFillType(fillUnitIndex, fillTypeIndex) then
+                movedFillLevel = storage:changeFillLevel(farmId, fillLevelDelta, fillTypeIndex, ...)
 
-            if movedFillLevel >= fillLevelDelta - 0.001 then
-                movedFillLevel = fillLevelDelta
+                if movedFillLevel >= math.abs(fillLevelDelta) - 0.001 then
+                    movedFillLevel = fillLevelDelta
+                end
             end
         end
     end

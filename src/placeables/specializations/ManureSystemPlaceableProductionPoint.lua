@@ -36,14 +36,24 @@ function ManureSystemPlaceableProductionPoint:onPostLoad(savegame)
     if productionPoint ~= nil then
         if self:addManureSystemStorage(productionPoint.storage) then
             productionPoint.storage.canFarmAccess = function(_, farmId)
-                if productionPoint.loadingStation ~= nil then
-                    return productionPoint.loadingStation:hasFarmAccessToStorage(farmId, productionPoint.storage)
+                if productionPoint.isOwned then
+                    if productionPoint.loadingStation ~= nil then
+                        return productionPoint.loadingStation:hasFarmAccessToStorage(farmId, productionPoint.storage)
+                    end
                 end
 
                 return g_currentMission.accessHandler:canFarmAccess(farmId, productionPoint.storage)
             end
 
             productionPoint.storage.changeFillLevel = function(_, farmId, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
+                if not productionPoint.isOwned then
+                    if productionPoint.unloadingStation ~= nil then
+                        return productionPoint.unloadingStation:addFillLevelFromTool(farmId, fillLevelDelta, fillTypeIndex, fillPositionData, toolType)
+                    end
+
+                    return 0
+                end
+
                 local oldFillLevel = productionPoint.storage:getFillLevel(fillTypeIndex)
                 productionPoint.storage:setFillLevel(oldFillLevel + fillLevelDelta, fillTypeIndex)
                 local newFillLevel = productionPoint.storage:getFillLevel(fillTypeIndex)

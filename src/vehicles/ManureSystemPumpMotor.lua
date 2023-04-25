@@ -640,7 +640,7 @@ function ManureSystemPumpMotor:runPump(sourceObject, sourceFillUnitIndex, target
 
     deltaFill = deltaFill * self:getPumpDirection()
 
-    local movedFill = targetObject:addFillUnitFillLevel(targetObject:getOwnerFarmId(), targetFillUnitIndex, -deltaFill, fillType, ToolType.UNDEFINED, nil)
+    local movedFill = targetObject:addFillUnitFillLevel(sourceObject:getOwnerFarmId(), targetFillUnitIndex, -deltaFill, fillType, ToolType.UNDEFINED, nil)
 
     local difference = math.abs(-deltaFill - movedFill)
     if difference > 0.01 then
