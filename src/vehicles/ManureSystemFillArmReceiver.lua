@@ -28,6 +28,7 @@ end
 
 ---@return void
 function ManureSystemFillArmReceiver.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "getSupportsFillArms", ManureSystemFillArmReceiver.getSupportsFillArms)
     SpecializationUtil.registerFunction(vehicleType, "getFillArmFillUnitIndex", ManureSystemFillArmReceiver.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(vehicleType, "isUnderFillPlane", ManureSystemFillArmReceiver.isUnderFillPlane)
 end
@@ -70,6 +71,22 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
         spec.fillTrigger:delete()
         spec.fillTrigger = nil
     end
+end
+
+---@return boolean
+function ManureSystemFillArmReceiver:getSupportsFillArms()
+    local spec = self.spec_manureSystemFillArmReceiver
+
+    if not spec.isActive then
+        return false
+    end
+
+    local volumes = self.spec_fillVolume.volumes
+    if #volumes == 0 or volumes[spec.fillVolumeIndex] == nil or volumes[spec.fillVolumeIndex].volume == nil then
+        return false
+    end
+
+    return true
 end
 
 ---@return number

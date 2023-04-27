@@ -19,6 +19,7 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver.registerFunctions(placeableType)
+    SpecializationUtil.registerFunction(placeableType, "getSupportsFillArms", ManureSystemPlaceableFillArmReceiver.getSupportsFillArms)
     SpecializationUtil.registerFunction(placeableType, "getFillPlaneInfo", ManureSystemPlaceableFillArmReceiver.getFillPlaneInfo)
     SpecializationUtil.registerFunction(placeableType, "updateFillPlaneInfo", ManureSystemPlaceableFillArmReceiver.updateFillPlaneInfo)
     SpecializationUtil.registerFunction(placeableType, "resetFillPlaneInfo", ManureSystemPlaceableFillArmReceiver.resetFillPlaneInfo)
@@ -175,6 +176,11 @@ function ManureSystemPlaceableFillArmReceiver:onHourChanged()
             self:increaseThickness(storage.index, fillTypeIndex)
         end
     end
+end
+
+---@return boolean
+function ManureSystemPlaceableFillArmReceiver:getSupportsFillArms()
+    return self.spec_manureSystemPlaceableFillArmReceiver.isActive
 end
 
 ---@return table | nil

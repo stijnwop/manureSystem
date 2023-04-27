@@ -26,6 +26,7 @@ end
 
 ---@return void
 function ManureSystemConnector.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "hasConnectors", ManureSystemConnector.hasConnectors)
     SpecializationUtil.registerFunction(vehicleType, "setIsConnected", ManureSystemConnector.setIsConnected)
     SpecializationUtil.registerFunction(vehicleType, "setIsManureFlowOpen", ManureSystemConnector.setIsManureFlowOpen)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorById", ManureSystemConnector.getConnectorById)
@@ -36,6 +37,7 @@ end
 
 ---@return void
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanDischargeToObject", ManureSystemConnector.getCanDischargeToObject)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
@@ -68,7 +70,7 @@ function ManureSystemConnector:onLoad(savegame)
         end
     end
 
-    if not spec.isActive or not spec.connectors:hasConnectors() then
+    if not self:hasConnectors() then
         SpecializationUtil.removeEventListener(self, "onPostLoad", ManureSystemConnector)
         SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemConnector)
         SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemConnector)
@@ -109,6 +111,16 @@ end
 ---@return void
 function ManureSystemConnector:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     self.spec_manureSystemConnector.connectors:updateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+end
+
+---@return boolean
+function ManureSystemConnector:hasConnectors()
+    local spec = self.spec_manureSystemConnector
+    if spec.connectors ~= nil then
+        return spec.connectors:hasConnectors()
+    end
+
+    return false
 end
 
 ---@return void
@@ -164,6 +176,27 @@ end
 ----------------
 -- Overwrites --
 ----------------
+
+---@return boolean
+function ManureSystemConnector:getCanDischargeToObject(superFunc, dischargeNode)
+    if self:hasConnectors() then
+        local object, _ = self:getDischargeTargetObject(dischargeNode)
+        if object ~= nil then
+            if object.hasConnectors ~= nil and object:hasConnectors() then
+                return false
+            end
+
+            if object.target ~= nil then
+                local owningPlaceable = object.target.owningPlaceable
+                if owningPlaceable ~= nil and owningPlaceable.hasConnectors ~= nil and owningPlaceable:hasConnectors() then
+                    return false
+                end
+            end
+        end
+    end
+
+    return superFunc(self, dischargeNode)
+end
 
 ---Load extra depending part on connectors for moving tools.
 function ManureSystemConnector:loadExtraDependentParts(superFunc, xmlFile, baseName, entry)

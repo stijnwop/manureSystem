@@ -22,41 +22,48 @@ local function objectHasConnectors(object)
     return object ~= nil and object.hasConnectors ~= nil and object:hasConnectors()
 end
 
-local function inj_fillTrigger_getIsActivatable(trigger, superFunc, vehicle, ...)
-    if vehicle.getConnectorById ~= nil then
-        if objectHasConnectors(trigger.sourceObject) or objectHasConnectors(trigger.sourceObject.owner) then
-            return false
-        end
-    end
-
-    return superFunc(trigger, vehicle, ...)
+local function objectSupportsFillArms(object)
+    return object ~= nil and object.getSupportsFillArms ~= nil and object:getSupportsFillArms()
 end
 
-local function inj_loadTrigger_getAllowsActivation(trigger, superFunc, object, ...)
-    if object.getConnectorById ~= nil then
-        return false
-    end
-
-    return superFunc(trigger, object, ...)
-end
-
-local function inj_loadTrigger_getIsFillableObjectAvailable(trigger, superFunc, ...)
-    if objectHasConnectors(trigger.source) or objectHasConnectors(trigger.source.owner) then
-        for _, filleable in pairs(trigger.fillableObjects) do
-            if filleable.object.getConnectorById ~= nil then
-                return false
+local function objectHasFillArms(object)
+    if object ~= nil and object.getFillArms ~= nil then
+        for _, fillArm in ipairs(object:getFillArms()) do
+            if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN then
+                return true
             end
         end
     end
 
-    return superFunc(trigger, ...)
+    return false
+end
+
+local function inj_fillTrigger_getIsActivatable(self, superFunc, vehicle, ...)
+    if objectHasConnectors(self.sourceObject) and objectHasConnectors(vehicle) then
+        return false
+    end
+
+    return superFunc(self, vehicle, ...)
+end
+
+local function inj_loadTrigger_getAllowsActivation(self, superFunc, fillableObject, ...)
+    if self.source ~= nil then
+        if objectHasConnectors(self.source.owningPlaceable) and objectHasConnectors(fillableObject) then
+            return false
+        end
+
+        if objectSupportsFillArms(self.source.owningPlaceable) and objectHasFillArms(fillableObject) then
+            return false
+        end
+    end
+
+    return superFunc(self, fillableObject, ...)
 end
 
 ---Early hook to overwrite
 function manureSystem_overwrite.init()
     manureSystem_overwrite.overwrittenFunction(FillTrigger, "getIsActivatable", inj_fillTrigger_getIsActivatable)
     manureSystem_overwrite.overwrittenFunction(LoadTrigger, "getAllowsActivation", inj_loadTrigger_getAllowsActivation)
-    manureSystem_overwrite.overwrittenFunction(LoadTrigger, "getIsFillableObjectAvailable", inj_loadTrigger_getIsFillableObjectAvailable)
 end
 
 ---Store the original function on consoles

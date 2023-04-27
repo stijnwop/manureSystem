@@ -53,6 +53,7 @@ end
 ---@return void
 function ManureSystemFillArm.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "canChangePumpDirection", ManureSystemFillArm.canChangePumpDirection)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanDischargeToObject", ManureSystemFillArm.getCanDischargeToObject)
 end
 
 ---@return void
@@ -309,4 +310,31 @@ function ManureSystemFillArm:canChangePumpDirection(superFunc)
     end
 
     return superFunc(self)
+end
+
+---@return boolean
+function ManureSystemFillArm:getCanDischargeToObject(superFunc, dischargeNode)
+    local object, _ = self:getDischargeTargetObject(dischargeNode)
+    if object ~= nil then
+        local supportsFillArms = false
+
+        if object.getSupportsFillArms ~= nil then
+            supportsFillArms = object:getSupportsFillArms()
+        elseif object.target ~= nil then
+            local owningPlaceable = object.target.owningPlaceable
+            if owningPlaceable ~= nil and owningPlaceable.getSupportsFillArms ~= nil then
+                supportsFillArms = owningPlaceable:getSupportsFillArms()
+            end
+        end
+
+        if supportsFillArms then
+            for _, fillArm in ipairs(self:getFillArms()) do
+                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
+                    return false
+                end
+            end
+        end
+    end
+
+    return superFunc(self, dischargeNode)
 end
