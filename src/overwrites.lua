@@ -18,19 +18,39 @@ local originalFunctions = {}
 -- Overwrites --
 ----------------
 
-local function objectHasConnectors(object)
-    return object ~= nil and object.hasConnectors ~= nil and object:hasConnectors()
+local function objectHasConnectors(object, typeName)
+    if object ~= nil and object.hasConnectors ~= nil and object:hasConnectors() then
+        local typeIndex
+
+        if typeName ~= nil then
+            typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
+        end
+
+        if typeIndex == nil or #object:getConnectorsByType(typeIndex) > 0 then
+            return true
+        end
+    end
+
+    return false
 end
 
 local function objectSupportsFillArms(object)
     return object ~= nil and object.getSupportsFillArms ~= nil and object:getSupportsFillArms()
 end
 
-local function objectHasFillArms(object)
+local function objectHasFillArms(object, typeName)
     if object ~= nil and object.getFillArms ~= nil then
+        local typeIndex
+
+        if typeName ~= nil then
+            typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
+        end
+
         for _, fillArm in ipairs(object:getFillArms()) do
-            if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN then
-                return true
+            if typeIndex == nil or fillArm.type == typeIndex then
+                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN then
+                    return true
+                end
             end
         end
     end
@@ -38,8 +58,33 @@ local function objectHasFillArms(object)
     return false
 end
 
+local function getAllowTriggerActivation(trigger, sourceObject, targetObject)
+    if (sourceObject.getCanDisableVanillaLoading == nil or sourceObject:getCanDisableVanillaLoading(targetObject, trigger)) and (targetObject.getCanDisableVanillaLoading == nil or targetObject:getCanDisableVanillaLoading(sourceObject, trigger)) then
+        local connectorTypeNames = {
+            ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
+            ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
+        }
+
+        for _, typeName in ipairs(connectorTypeNames) do
+            if objectHasConnectors(sourceObject, typeName) and objectHasConnectors(targetObject, typeName) then
+                return false
+            end
+        end
+
+        if objectSupportsFillArms(sourceObject) and objectHasFillArms(targetObject) then
+            return false
+        end
+
+        if objectHasConnectors(sourceObject, ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) and objectHasFillArms(targetObject, ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) then
+            return false
+        end
+    end
+
+    return true
+end
+
 local function inj_fillTrigger_getIsActivatable(self, superFunc, vehicle, ...)
-    if objectHasConnectors(self.sourceObject) and objectHasConnectors(vehicle) then
+    if not getAllowTriggerActivation(self, self.sourceObject, vehicle) then
         return false
     end
 
@@ -47,23 +92,44 @@ local function inj_fillTrigger_getIsActivatable(self, superFunc, vehicle, ...)
 end
 
 local function inj_loadTrigger_getAllowsActivation(self, superFunc, fillableObject, ...)
-    if self.source ~= nil then
-        if objectHasConnectors(self.source.owningPlaceable) and objectHasConnectors(fillableObject) then
-            return false
-        end
-
-        if objectSupportsFillArms(self.source.owningPlaceable) and objectHasFillArms(fillableObject) then
-            return false
-        end
+    if self.source ~= nil and not getAllowTriggerActivation(self, self.source.owningPlaceable, fillableObject) then
+        return false
     end
 
     return superFunc(self, fillableObject, ...)
+end
+
+local function inj_placeable_loadI3dFinished(self, superFunc, ...)
+    local oldLoadEffect = EffectManager.loadEffect
+
+    EffectManager.loadEffect = function(_, xmlFile, baseName, rootNode, parent, ...)
+        local oldGetFilename = Utils.getFilename
+
+        Utils.getFilename = function(filename, baseDirectory, ...)
+            if baseDirectory == nil or baseDirectory == "" then
+                baseDirectory = g_currentMission.manureSystem.modDirectory
+            end
+
+            return oldGetFilename(filename, baseDirectory, ...)
+        end
+
+        local effects = oldLoadEffect(g_effectManager, xmlFile, baseName, rootNode, self, ...)
+
+        Utils.getFilename = oldGetFilename
+
+        return effects
+    end
+
+    superFunc(self, ...)
+
+    EffectManager.loadEffect = oldLoadEffect
 end
 
 ---Early hook to overwrite
 function manureSystem_overwrite.init()
     manureSystem_overwrite.overwrittenFunction(FillTrigger, "getIsActivatable", inj_fillTrigger_getIsActivatable)
     manureSystem_overwrite.overwrittenFunction(LoadTrigger, "getAllowsActivation", inj_loadTrigger_getAllowsActivation)
+    manureSystem_overwrite.overwrittenFunction(Placeable, "loadI3dFinished", inj_placeable_loadI3dFinished)
 end
 
 ---Store the original function on consoles

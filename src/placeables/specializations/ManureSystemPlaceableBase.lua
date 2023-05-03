@@ -23,6 +23,9 @@ function ManureSystemPlaceableBase.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "addManureSystemStorage", ManureSystemPlaceableBase.addManureSystemStorage)
     SpecializationUtil.registerFunction(placeableType, "removeManureSystemStorage", ManureSystemPlaceableBase.removeManureSystemStorage)
 
+    SpecializationUtil.registerFunction(placeableType, "getCanDisableVanillaUnloading", ManureSystemPlaceableBase.getCanDisableVanillaUnloading)
+    SpecializationUtil.registerFunction(placeableType, "getCanDisableVanillaLoading", ManureSystemPlaceableBase.getCanDisableVanillaLoading)
+
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableBase.getFillUnitFillType)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitAllowsFillType", ManureSystemPlaceableBase.getFillUnitAllowsFillType)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFillLevel", ManureSystemPlaceableBase.getFillUnitFillLevel)
@@ -77,6 +80,57 @@ function ManureSystemPlaceableBase:removeManureSystemStorage(storage)
     end
 
     return success
+end
+
+---@return boolean
+function ManureSystemPlaceableBase:getCanDisableVanillaUnloading(sourceObject, trigger)
+    return true
+end
+
+---@return boolean
+function ManureSystemPlaceableBase:getCanDisableVanillaLoading(targetObject, trigger)
+    if trigger ~= nil and trigger.effects ~= nil and #trigger.effects > 0 then
+        if targetObject ~= nil then
+            if targetObject.getSupportsFillArms ~= nil and targetObject:getSupportsFillArms() then
+                return false
+            end
+
+            if targetObject.getCoverByFillUnitIndex ~= nil then
+                local spec = targetObject.spec_cover
+                if spec.hasCovers then
+                    if targetObject.getPumpSourceObjectOrSelf ~= nil then
+                        local pumpObject, fillUnitIndex = targetObject:getPumpSourceObjectOrSelf()
+                        if pumpObject == targetObject then
+                            local cover = targetObject:getCoverByFillUnitIndex(fillUnitIndex)
+                            if cover ~= nil and spec.state == cover.index then
+                                return false
+                            end
+                        end
+                    end
+
+                    if targetObject.getConnectors ~= nil then
+                        for _, connector in ipairs(targetObject:getConnectors()) do
+                            local cover = targetObject:getCoverByFillUnitIndex(connector.fillUnitIndex)
+                            if cover ~= nil and spec.state == cover.index then
+                                return false
+                            end
+                        end
+                    end
+
+                    if targetObject.getFillArms ~= nil then
+                        for _, fillArm in ipairs(targetObject:getFillArms()) do
+                            local cover = targetObject:getCoverByFillUnitIndex(fillArm.fillUnitIndex)
+                            if cover ~= nil and spec.state == cover.index then
+                                return false
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return true
 end
 
 ---@return number

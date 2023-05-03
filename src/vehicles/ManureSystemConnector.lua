@@ -29,6 +29,7 @@ function ManureSystemConnector.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "hasConnectors", ManureSystemConnector.hasConnectors)
     SpecializationUtil.registerFunction(vehicleType, "setIsConnected", ManureSystemConnector.setIsConnected)
     SpecializationUtil.registerFunction(vehicleType, "setIsManureFlowOpen", ManureSystemConnector.setIsManureFlowOpen)
+    SpecializationUtil.registerFunction(vehicleType, "getConnectors", ManureSystemConnector.getConnectors)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorById", ManureSystemConnector.getConnectorById)
     SpecializationUtil.registerFunction(vehicleType, "getConnectorsByType", ManureSystemConnector.getConnectorsByType)
     SpecializationUtil.registerFunction(vehicleType, "getActiveConnectorsByType", ManureSystemConnector.getActiveConnectorsByType)
@@ -134,6 +135,11 @@ function ManureSystemConnector:setIsManureFlowOpen(id, state, force, noEventSend
 end
 
 ---@return table
+function ManureSystemConnector:getConnectors()
+    return self.spec_manureSystemConnector.connectors:getConnectors()
+end
+
+---@return table
 function ManureSystemConnector:getConnectorById(type)
     return self.spec_manureSystemConnector.connectors:getConnectorById(type)
 end
@@ -182,14 +188,42 @@ function ManureSystemConnector:getCanDischargeToObject(superFunc, dischargeNode)
     if self:hasConnectors() then
         local object, _ = self:getDischargeTargetObject(dischargeNode)
         if object ~= nil then
-            if object.hasConnectors ~= nil and object:hasConnectors() then
-                return false
+            local targetObject = object
+            local trigger
+
+            if object.target ~= nil and object.target.owningPlaceable ~= nil then
+                targetObject = object.target.owningPlaceable
+                trigger = object
             end
 
-            if object.target ~= nil then
-                local owningPlaceable = object.target.owningPlaceable
-                if owningPlaceable ~= nil and owningPlaceable.hasConnectors ~= nil and owningPlaceable:hasConnectors() then
-                    return false
+            if (self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)) and (targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)) then
+                if targetObject.hasConnectors ~= nil and targetObject:hasConnectors() then
+                    local connectorTypeNames = {
+                        ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
+                        ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
+                    }
+
+                    for _, typeName in ipairs(connectorTypeNames) do
+                        local typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
+
+                        if #self:getConnectorsByType(typeIndex) > 0 and #targetObject:getConnectorsByType(typeIndex) > 0 then
+                            return false
+                        end
+                    end
+                end
+
+                if targetObject.getFillArms ~= nil then
+                    local typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
+
+                    if #self:getConnectorsByType(typeIndex) > 0 then
+                        for _, fillArm in ipairs(targetObject:getFillArms()) do
+                            if fillArm.type == typeIndex then
+                                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
+                                    return false
+                                end
+                            end
+                        end
+                    end
                 end
             end
         end

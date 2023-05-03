@@ -316,21 +316,34 @@ end
 function ManureSystemFillArm:getCanDischargeToObject(superFunc, dischargeNode)
     local object, _ = self:getDischargeTargetObject(dischargeNode)
     if object ~= nil then
-        local supportsFillArms = false
+        local targetObject = object
+        local trigger
 
-        if object.getSupportsFillArms ~= nil then
-            supportsFillArms = object:getSupportsFillArms()
-        elseif object.target ~= nil then
-            local owningPlaceable = object.target.owningPlaceable
-            if owningPlaceable ~= nil and owningPlaceable.getSupportsFillArms ~= nil then
-                supportsFillArms = owningPlaceable:getSupportsFillArms()
-            end
+        if object.target ~= nil and object.target.owningPlaceable ~= nil then
+            targetObject = object.target.owningPlaceable
+            trigger = object
         end
 
-        if supportsFillArms then
-            for _, fillArm in ipairs(self:getFillArms()) do
-                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
-                    return false
+        if (self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)) and (targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)) then
+            if targetObject.getSupportsFillArms ~= nil and targetObject:getSupportsFillArms() then
+                for _, fillArm in ipairs(self:getFillArms()) do
+                    if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
+                        return false
+                    end
+                end
+            end
+
+            if targetObject.hasConnectors ~= nil and targetObject:hasConnectors() then
+                local typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
+
+                if #targetObject:getConnectorsByType(typeIndex) > 0 then
+                    for _, fillArm in ipairs(self:getFillArms()) do
+                        if fillArm.type == typeIndex then
+                            if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
+                                return false
+                            end
+                        end
+                    end
                 end
             end
         end
