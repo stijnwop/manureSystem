@@ -443,6 +443,14 @@ function ManureSystemCouplingStrategy:loadSharedSetConnectorAnimation(xmlFile, k
                 animatedObject.dependencies = {}
 
                 if animatedObject:load(connectorNode, xmlFile, key .. ".placeable.animatedObject", self.object.configFileName, self.object.i3dMappings) then
+                    animatedObject.loadFromXMLFile = Utils.overwrittenFunction(animatedObject.loadFromXMLFile, function(_, superFunc, ...)
+                        -- do not load animation time and direction for connector animation
+                        return true
+                    end)
+                    animatedObject.saveToXMLFile = Utils.overwrittenFunction(animatedObject.saveToXMLFile, function(_, superFunc, ...)
+                        -- do not save animation time and direction for connector animation
+                    end)
+
                     table.insert(self.object.spec_animatedObjects.animatedObjects, animatedObject)
                     connector[connectorAnimationName] = #self.object.spec_animatedObjects.animatedObjects
                 else
