@@ -38,7 +38,9 @@ end
 
 function ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)
     schema:register(XMLValueType.STRING, baseName .. "#lockAnimationName", "The lock animation name for vehicles")
+    schema:register(XMLValueType.INT, baseName .. "#lockAnimationIndex", "The lock animation index for placeables")
     schema:register(XMLValueType.STRING, baseName .. "#manureFlowAnimationName", "The manure flow animation name for vehicles")
+    schema:register(XMLValueType.INT, baseName .. "#manureFlowAnimationIndex", "The manure flow animation index for placeables")
 
     ManureSystemCouplingStrategy.registerConnectorParkPlaceXMLPaths(schema, baseName .. ".parkPlaces.parkPlace(?)")
 end
@@ -330,8 +332,8 @@ function ManureSystemCouplingStrategy:load(connector, xmlFile, key)
     connector.hasOpenManureFlow = false
 
     if not connector.hasSharedSet then
-        connector.lockAnimationName = xmlFile:getValue(key .. "#lockAnimationName")
-        connector.manureFlowAnimationName = xmlFile:getValue(key .. "#manureFlowAnimationName")
+        connector.lockAnimationName = xmlFile:getValue(key .. "#lockAnimationName") or xmlFile:getValue(key .. "#lockAnimationIndex")
+        connector.manureFlowAnimationName = xmlFile:getValue(key .. "#manureFlowAnimationName") or xmlFile:getValue(key .. "#manureFlowAnimationIndex")
     end
 
     connector.jointOrigRot = { getRotation(connector.node) }
