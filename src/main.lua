@@ -33,8 +33,6 @@ local sourceFiles = {
     "src/common/ManureSystemConnectors.lua",
     "src/common/SharedSet.lua",
     "src/common/physics/FillPlaneRayCast.lua",
-    --Placeables
-    "src/placeables/ManureSystemAnimatedObjectExtension.lua",
     --Misc
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",
