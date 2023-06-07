@@ -359,7 +359,7 @@ function ManureSystem.installPlaceableSpecializations(typeManager, specializatio
     }
 
     for typeName, typeEntry in pairs(typeManager:getTypes()) do
-        local success = false
+        local success = ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
 
         for _, specName in ipairs(specNames) do
             if ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, specName, modName) then
