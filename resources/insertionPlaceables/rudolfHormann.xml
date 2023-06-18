@@ -7,7 +7,7 @@
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="0>22|0|9|1"/>
-            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#position" value="2.5 4.79 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>
@@ -47,7 +47,7 @@
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="0>26|0|8|1"/>
-            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#position" value="2.5 4.79 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>
@@ -87,7 +87,7 @@
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="0>26|0|8|1"/>
-            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#position" value="2.5 4.79 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>
@@ -127,7 +127,7 @@
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="0>20|0|7"/>
-            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#position" value="2.5 4.79 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>
@@ -167,7 +167,7 @@
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="0>20|0|2"/>
-            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#position" value="2.5 4.79 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.husbandry.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>

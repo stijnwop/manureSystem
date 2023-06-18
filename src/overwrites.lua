@@ -106,7 +106,10 @@ local function inj_placeable_loadI3dFinished(self, superFunc, ...)
         local oldGetFilename = Utils.getFilename
 
         Utils.getFilename = function(filename, baseDirectory, ...)
-            if baseDirectory == nil or baseDirectory == "" then
+            local manureSystemPrefix = "$manureSystemDir$"
+
+            if filename:lower():startsWith(manureSystemPrefix:lower()) then
+                filename = filename:sub(manureSystemPrefix:len() + 2)
                 baseDirectory = g_currentMission.manureSystem.modDirectory
             end
 

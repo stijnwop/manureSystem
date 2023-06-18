@@ -5,7 +5,7 @@
             <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#effectClass" value="PipeEffect"/>
             <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#node" value="0|0"/>
             <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#linkNode" value="dischargeNode"/>
-            <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#filename" value="resources/effects/effect.i3d"/>
+            <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#filename" value="$manureSystemDir$/resources/effects/effect.i3d"/>
             <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#rotation" value="90 0 0"/>
             <entry type="string" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#materialType" value="PIPE"/>
             <entry type="float" key="placeable.silo.loadingStation.loadTrigger(0).effectNode(0)#stopDelay" value="0.5"/>
