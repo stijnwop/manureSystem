@@ -11,7 +11,6 @@
 ---@field fillArmManager ManureSystemFillArmManager
 ---@field player HosePlayer
 ManureSystem = {}
-ManureSystem.VEHICLE_CLASSNAME = "Vehicle"
 
 local ManureSystem_mt = Class(ManureSystem)
 
@@ -19,30 +18,10 @@ local ManureSystem_mt = Class(ManureSystem)
 local sortByClassAndId = function(arg1, arg2)
     -- Sort by id when dealing with the same classNames.
     if arg1.className == arg2.className then
-        if arg1.className == ManureSystem.VEHICLE_CLASSNAME then
-            local id1 = g_currentMission.manureSystem.savedVehiclesToId[arg1] or 0
-            local id2 = g_currentMission.manureSystem.savedVehiclesToId[arg2] or 0
-            return id1 < id2
-        else
-            -- When placeable we sort on the current position because the load order is not guarantee by the item system.
-            local item1 = g_currentMission.manureSystem.savedItemsToId[arg1]
-            local item2 = g_currentMission.manureSystem.savedItemsToId[arg2]
-            if item1 and item2 ~= nil then
-                local x1, y1, z1 = unpack(item1.pos)
-                local x2, y2, z2 = unpack(item2.pos)
-                local cord1 = math.abs(x1) + math.abs(y1) + math.abs(z1)
-                local cord2 = math.abs(x2) + math.abs(y2) + math.abs(z2)
+        local id1 = g_currentMission.manureSystem.savedVehiclesToId[arg1] or g_currentMission.manureSystem.savedItemsToId[arg1] or 0
+        local id2 = g_currentMission.manureSystem.savedVehiclesToId[arg2] or g_currentMission.manureSystem.savedItemsToId[arg2] or 0
 
-                local name1 = arg1:getName() or "placeable"
-                local name2 = arg2:getName() or "placeable"
-                -- Compare same placeables based on the position.
-                if name1 == name2 then
-                    return cord1 < cord2
-                end
-
-                return name1 < name2
-            end
-        end
+        return id1 < id2
     end
 
     return arg1.className < arg2.className
@@ -110,9 +89,11 @@ function ManureSystem:getSavedItemsList()
     local savedItemsToId = {}
 
     local id = 1
-    for _, placeable in pairs(self.mission.placeableSystem.placeables) do
-        savedItemsToId[placeable] = { id = id, pos = { getWorldTranslation(placeable.rootNode) } }
-        id = id + 1
+    for _, placeable in ipairs(self.mission.placeableSystem.placeables) do
+        if placeable:getNeedsSaving() then
+            savedItemsToId[placeable] = id
+            id = id + 1
+        end
     end
 
     return savedItemsToId
@@ -123,7 +104,7 @@ function ManureSystem:getSavedVehiclesList()
     local savedVehiclesToId = {}
 
     local id = 1
-    for _, vehicle in pairs(self.mission.vehicles) do
+    for _, vehicle in ipairs(self.mission.vehicles) do
         if vehicle.isVehicleSaved then
             savedVehiclesToId[vehicle] = id
             id = id + 1
