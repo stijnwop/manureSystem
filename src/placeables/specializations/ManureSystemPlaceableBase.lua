@@ -102,7 +102,7 @@ function ManureSystemPlaceableBase:getCanDisableVanillaLoading(targetObject, tri
                         local pumpObject, fillUnitIndex = targetObject:getPumpSourceObjectOrSelf()
                         if pumpObject == targetObject then
                             local cover = targetObject:getCoverByFillUnitIndex(fillUnitIndex)
-                            if cover ~= nil and spec.state == cover.index then
+                            if cover ~= nil then
                                 return false
                             end
                         end
@@ -111,7 +111,7 @@ function ManureSystemPlaceableBase:getCanDisableVanillaLoading(targetObject, tri
                     if targetObject.getConnectors ~= nil then
                         for _, connector in ipairs(targetObject:getConnectors()) do
                             local cover = targetObject:getCoverByFillUnitIndex(connector.fillUnitIndex)
-                            if cover ~= nil and spec.state == cover.index then
+                            if cover ~= nil then
                                 return false
                             end
                         end
@@ -120,7 +120,7 @@ function ManureSystemPlaceableBase:getCanDisableVanillaLoading(targetObject, tri
                     if targetObject.getFillArms ~= nil then
                         for _, fillArm in ipairs(targetObject:getFillArms()) do
                             local cover = targetObject:getCoverByFillUnitIndex(fillArm.fillUnitIndex)
-                            if cover ~= nil and spec.state == cover.index then
+                            if cover ~= nil then
                                 return false
                             end
                         end
