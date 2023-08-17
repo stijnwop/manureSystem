@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<CustomShader version="5">
+    <Parameters>
+        <Parameter name="displacementScaleSpeedFrequency" target="displacementScaleSpeedFrequency" type="float3" group="base" defaultValue="0.01 0.1 0.1" minValue="0 0 0" maxValue="1 1.5 1.5"/>
+        <Parameter name="mixParams" target="mixParams" type="float4" group="base" defaultValue="1.5 0 0 30" minValue="0 0 0 1" maxValue="2 1 100 100"/>
+    </Parameters>
+    <UvUsages/>
+    <VertexAttributes>
+        <VertexAttribute name="uv1" group="base"/>
+    </VertexAttributes>
+    <LodLevel startDistance="0">
+        <CodeInjections>
+            <CodeInjection position="OBJECT_PARAMETERS">
+<![CDATA[
+    float3 displacementScaleSpeedFrequency;
+    float4 mixParams;
+]]>
+            </CodeInjection>
+            <CodeInjection position="FS_GLOBALS">
+<![CDATA[
+    float gRoughnessPow;
+]]>
+            </CodeInjection>
+            <CodeInjection position="START_FS">
+<![CDATA[
+    globals.gRoughnessPow = object.mixParams.x;
+]]>
+            </CodeInjection>
+            <CodeInjection position="GET_POSITION_VS">
+<![CDATA[
+    float offset2 = sin(cTime_s * object.displacementScaleSpeedFrequency.y + In.position.x * In.position.z * object.displacementScaleSpeedFrequency.z);
+    float offset1 = cos(cTime_s * object.displacementScaleSpeedFrequency.y + In.position.x * In.position.z * object.displacementScaleSpeedFrequency.z);
+    float offset = lerp(offset1, offset2, object.mixParams.y);
+
+    float3 mOffset = float3(0.2 * object.displacementScaleSpeedFrequency.x * offset, 0.1 * object.displacementScaleSpeedFrequency.x * offset, 0);
+    float3 deform = In.position.xyz;
+    float2 uv = convertDefaultTexCoords(In, object, In.texCoords1.xy);
+    float index = uv.x + floor(uv.y) * 8;
+    float indexRounded = floor(uv.x) + floor(uv.y) * 8;
+    float current = min(object.mixParams.z, object.mixParams.w);
+
+    if (object.mixParams.y > 0) {
+        if (indexRounded == current || index - 0.5 <= current && index + 0.5 >= current || index - 1.5 <= current && index - 0.5 >= current) {
+            float offset2 = cos(cTime_s * object.displacementScaleSpeedFrequency.y * 3 + In.position.x * In.position.z * object.displacementScaleSpeedFrequency.z);
+            deform.y = lerp(deform.y, offset2 * object.displacementScaleSpeedFrequency.x, uv.y * 0.5) * 5;
+        }
+    }
+    return deform + mOffset;
+]]>
+            </CodeInjection>
+            <CodeInjection position="POST_GLOSS_COLOR_FS">
+<![CDATA[
+    #if defined(GLOSS_MAP)
+        roughness = 1 - 0.5 * globals.gRoughnessPow;
+    #endif
+]]>
+            </CodeInjection>
+        </CodeInjections>
+    </LodLevel>
+</CustomShader>

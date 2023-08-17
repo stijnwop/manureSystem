@@ -30,6 +30,7 @@ function ManureSystemPlaceableFillArmReceiver.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "getThickness", ManureSystemPlaceableFillArmReceiver.getThickness)
     SpecializationUtil.registerFunction(placeableType, "increaseThickness", ManureSystemPlaceableFillArmReceiver.increaseThickness)
     SpecializationUtil.registerFunction(placeableType, "decreaseThickness", ManureSystemPlaceableFillArmReceiver.decreaseThickness)
+    --SpecializationUtil.registerFunction(placeableType, "updateFillPlaneShader", ManureSystemPlaceableFillArmReceiver.updateFillPlaneShader)
 end
 
 ---@return void
@@ -349,6 +350,8 @@ function ManureSystemPlaceableFillArmReceiver:increaseThickness(fillUnitIndex, f
     local mq = (1.1 - percentage) * 0.001
 
     self:setThickness(fillUnitIndex, fillTypeIndex, thickness + mq * 2)
+
+    --self:updateFillPlaneShader(fillUnitIndex, fillTypeIndex, 0)
 end
 
 ---@return void
@@ -371,19 +374,56 @@ function ManureSystemPlaceableFillArmReceiver:decreaseThickness(fillUnitIndex, f
         return
     end
 
-    local thickness = self:getThickness(fillUnitIndex, fillTypeIndex)
-    if thickness <= 0 then
-        return
-    end
-
     if mixPerSecond <= 0 then
         return
     end
 
-    -- Mixed amount depends on the fill level because low fill level is mixed faster.
-    local mixedAmount = mixPerSecond / 100 / fillLevel
+    local thickness = self:getThickness(fillUnitIndex, fillTypeIndex)
+    if thickness > 0 then
+        -- Mixed amount depends on the fill level because low fill level is mixed faster.
+        local mixedAmount = mixPerSecond / 100 / fillLevel
 
-    self:setThickness(fillUnitIndex, fillTypeIndex, thickness - mixedAmount)
+        self:setThickness(fillUnitIndex, fillTypeIndex, thickness - mixedAmount)
+    end
+
+    --self:updateFillPlaneShader(fillUnitIndex, fillTypeIndex, mixPerSecond)
+end
+
+---@return void
+function ManureSystemPlaceableFillArmReceiver:updateFillPlaneShader(fillUnitIndex, fillTypeIndex, litersPerSecond)
+    local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
+    if storage == nil or storage.fillPlanes == nil then
+        return
+    end
+
+    local fillPlane = storage.fillPlanes[fillTypeIndex]
+    if fillPlane == nil or not fillPlane.loaded or not getHasClassId(fillPlane.node, ClassIds.SHAPE) then
+        return
+    end
+
+    local thickness = self:getThickness(fillUnitIndex, fillTypeIndex)
+
+    local impact = 0
+    if litersPerSecond > 0 then
+        impact = MathUtil.clamp(litersPerSecond * (1.1 - thickness) / litersPerSecond, 0, 1)
+    end
+
+    if getHasShaderParameter(fillPlane.node, "displacementScaleSpeedFrequency") then
+        local maxOffsetScale = litersPerSecond / 2 / 1000
+        local offsetScale = math.max(0.01, maxOffsetScale * impact)
+        local waveY = math.max(0.1, impact * 1.1)
+        local waveZ = math.max(0.1, impact)
+
+        setShaderParameter(fillPlane.node, "displacementScaleSpeedFrequency", offsetScale, waveY, waveZ, 0, false)
+    end
+
+    if getHasShaderParameter(fillPlane.node, "mixParams") then
+        local mixedRoughnessPow = 0.5 + (1 - thickness)
+        local yOffset = impact / 2
+        local _, _, angle, numberOfAngles = getShaderParameter(fillPlane.node, "mixParams") -- Todo: calculate angle for dynamic impact position
+
+        setShaderParameter(fillPlane.node, "mixParams", mixedRoughnessPow, yOffset, angle, numberOfAngles, false)
+    end
 end
 
 ----------------
@@ -444,6 +484,8 @@ function ManureSystemPlaceableFillArmReceiver:addManureSystemStorage(superFunc, 
             for _, fillPlane in ipairs(spec.fillPlanes[storage]) do
                 spec.thickness[storage][fillPlane.fillTypeIndex] = 0 -- 0-1 range
                 spec.thicknessSent[storage][fillPlane.fillTypeIndex] = 0 -- 0-1 range
+
+                --self:updateFillPlaneShader(index, fillPlane.fillTypeIndex, 0)
             end
         else
             spec.fillPlanes[storage] = nil
