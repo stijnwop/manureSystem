@@ -348,7 +348,7 @@ function ManureSystem.installVehicleSpecializations(vehicleTypeManager, speciali
     for typeName, typeEntry in pairs(vehicleTypeManager:getTypes()) do
         local hasRegistry = ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
         local isValidTypeManureVehicle = typeName == "manureTrailer" or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations)
-        local isValidTypeSprayer = typeName == "sprayer" or typeName == "selfPropelledSprayer"
+        local isValidTypeSprayer = typeName == "sprayer" or typeName == "selfPropelledSprayer" or typeName == "pdlc_oxboPack.selfPropelledSprayerExtended"
 
         if hasRegistry then
             ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modName)
