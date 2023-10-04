@@ -23,6 +23,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="1>10|0"/>
 
                 <entry type="int" key=".sharedSet#id" value="1"/>

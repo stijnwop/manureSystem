@@ -87,37 +87,55 @@ function ManureSystemDockStrategy:onUpdate(dt)
             if inRange then
                 local connector = object:getConnectorById(connectorId)
                 if not connector.isParkPlace then
-                    local fillObject = object
-                    local fillUnitIndex = connector.fillUnitIndex
-
-                    if connector.isStationary then
-                        local desc = self:getStationaryConnectorDesc(connector)
-                        if desc ~= nil then
-                            fillObject = desc.vehicle
-                            fillUnitIndex = desc.fillUnitIndex
+                    if fillArm.limitedFillDirection == nil or connector.limitedPumpDirection == nil or fillArm.limitedFillDirection ~= connector.limitedPumpDirection then
+                        local currentPumpDirection = dockingArmObject:getPumpDirection()
+                        if fillArm.limitedFillDirection ~= nil and currentPumpDirection ~= fillArm.limitedFillDirection then
+                            -- When the limited pump direction is present (source object), but not set, we force it.
+                            dockingArmObject:setPumpDirection(fillArm.limitedFillDirection)
+                        elseif connector.limitedPumpDirection ~= nil then
+                            local targetPumpDirection = -(connector.limitedPumpDirection)
+                            if currentPumpDirection ~= targetPumpDirection then
+                                -- When the limited pump direction is present (target object), but not set, we force it.
+                                dockingArmObject:setPumpDirection(targetPumpDirection)
+                            end
                         end
-                    end
 
-                    if fillObject.setUsedConnectorId ~= nil then
-                        fillObject:setUsedConnectorId(connector.id)
-                    end
+                        local fillObject = object
+                        local fillUnitIndex = connector.fillUnitIndex
 
-                    dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
-                    dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM_DOCK)
-                    if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
-                        local fillType = fillObject:getFillUnitFillType(fillUnitIndex)
-                        local rootVehicle = dockingArmObject:getRootVehicle()
-                        local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(rootVehicle, fillType, dockingArmObject)
-                        if sourceObject ~= nil then
-                            dockingArmObject:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
+                        if connector.isStationary then
+                            local desc = self:getStationaryConnectorDesc(connector)
+                            if desc ~= nil then
+                                fillObject = desc.vehicle
+                                fillUnitIndex = desc.fillUnitIndex
+                            end
                         end
+
+                        if fillObject.setUsedConnectorId ~= nil then
+                            fillObject:setUsedConnectorId(connector.id)
+                        end
+
+                        dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
+                        dockingArmObject:setPumpMode(ManureSystemPumpMotor.MODE_FILLARM_DOCK)
+                        if dockingArmObject.isStandalonePump ~= nil and dockingArmObject:isStandalonePump() then
+                            local fillType = fillObject:getFillUnitFillType(fillUnitIndex)
+                            local rootVehicle = dockingArmObject:getRootVehicle()
+                            local sourceObject, sourceFillUnitIndex = ManureSystemPumpMotor.getAttachedPumpSourceObject(rootVehicle, fillType, dockingArmObject)
+                            if sourceObject ~= nil then
+                                dockingArmObject:setPumpSourceObject(sourceObject, sourceFillUnitIndex)
+                            end
+                        else
+                            dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
+                        end
+
+                        object:setIsConnected(connectorId, inRange, fillArm.id, dockingArmObject)
+
+                        fillArm.isRaycastAllowed = false
                     else
-                        dockingArmObject:setPumpSourceObject(dockingArmObject, fillArm.fillUnitIndex)
+                        if object.isClient then
+                            g_currentMission:showBlinkingWarning(g_i18n:getText("warning_limitedPumpDirectionsNotCompatible"))
+                        end
                     end
-
-                    object:setIsConnected(connectorId, inRange, fillArm.id, dockingArmObject)
-
-                    fillArm.isRaycastAllowed = false
                 end
             elseif dockingArmObject:getPumpTargetObject() ~= nil then
                 if dockingArmObject:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM_DOCK then

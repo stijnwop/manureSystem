@@ -91,7 +91,7 @@ end
 function ManureSystemPlaceableBase:getCanDisableVanillaLoading(targetObject, trigger)
     if trigger ~= nil and trigger.effects ~= nil and #trigger.effects > 0 then
         if targetObject ~= nil then
-            if targetObject.getSupportsFillArms ~= nil and targetObject:getSupportsFillArms() then
+            if g_currentMission.manureSystem:getObjectSupportsFillArms(targetObject) then
                 return false
             end
 

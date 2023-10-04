@@ -86,7 +86,7 @@ function ManureSystemConnectors:writeStream(streamId, connection)
 end
 
 function ManureSystemConnectors:register()
-    if #self.connectors ~= 0 then
+    if self:hasConnectors() then
         self.manureSystem:addConnectorObject(self.object)
     end
 end
@@ -297,6 +297,17 @@ function ManureSystemConnectors:loadConnectorFromXML(connector, xmlFile, baseKey
         end
     end
 
+    local limitedPumpDirectionName = xmlFile:getValue(baseKey .. "#limitedPumpDirection")
+    if limitedPumpDirectionName ~= nil then
+        local limitedPumpDirectionNameUpper = limitedPumpDirectionName:upper()
+
+        if limitedPumpDirectionNameUpper == ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR then
+            connector.limitedPumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_IN
+        elseif limitedPumpDirectionNameUpper == ManureSystemPumpMotor.PUMP_DIRECTION_OUT_STR then
+            connector.limitedPumpDirection = ManureSystemPumpMotor.PUMP_DIRECTION_OUT
+        end
+    end
+
     connector.componentNode = xmlFile:getValue(baseKey .. "#componentNode", self.object.components[1].node, self.object.components, self.object.i3dMappings)
 
     if connector.componentNode == nil or not NodeExtensions.isRigidBody(connector.componentNode) then
@@ -365,6 +376,7 @@ function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
     schema:register(XMLValueType.INT, baseName .. "#fillUnitIndex", "Fill unit index the connector is linked to")
     schema:register(XMLValueType.STRING, baseName .. "#fillTypeCategories", "Supported fill type categories")
     schema:register(XMLValueType.STRING, baseName .. "#fillTypes", "Supported fill types")
+    schema:register(XMLValueType.STRING, baseName .. "#limitedPumpDirection", ("Limit the pump direction of a connector to only '%s' or '%s'"):format(ManureSystemPumpMotor.PUMP_DIRECTION_IN_STR, ManureSystemPumpMotor.PUMP_DIRECTION_OUT_STR))
     schema:register(XMLValueType.NODE_INDEX, baseName .. "#componentNode", "Connector component node", "0>")
     SharedSet.registerXMLPaths(schema, baseName .. ".sharedSet")
 end

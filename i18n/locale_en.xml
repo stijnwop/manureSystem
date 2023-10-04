@@ -21,6 +21,7 @@
         <text name="info_directionOut" text="emptying"/>
         <text name="info_directionIn" text="filling"/>
         <text name="warning_pumpDirectionLimited" text="Pump direction is limited to only: %s"/>
+        <text name="warning_limitedPumpDirectionsNotCompatible" text="Limited pump directions of pump source and target are not compatible!"/>
         <text name="warning_objectEmpty" text="The pump source or target is empty!"/>
         <text name="warning_objectFull" text="The pump target is full!"/>
         <text name="warning_invalidFillType" text="The pump fill type is not supported!"/>

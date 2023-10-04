@@ -8,6 +8,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="0>6|1"/>
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>11|1"/>
@@ -36,6 +37,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="0>7|0"/>
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>12|3"/>
@@ -74,6 +76,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="0>8|0"/>
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>14|5"/>
@@ -112,6 +115,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="0>0|0|3"/> <!-- not the best node but there isn't much choice... -->
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>2|2"/>
@@ -122,6 +126,7 @@
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
                 <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#limitedPumpDirection" value="IN"/>
                 <entry type="string" key="#componentNode" value="0>0|0|3"/> <!-- not the best node but there isn't much choice... -->
                 <entry type="bool" key="#createNode" value="true"/>
                 <entry type="string" key="#linkNode" value="0>2|2"/>

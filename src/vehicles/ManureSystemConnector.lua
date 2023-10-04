@@ -39,6 +39,7 @@ end
 ---@return void
 function ManureSystemConnector.registerOverwrittenFunctions(vehicleType)
     SpecializationUtil.registerOverwrittenFunction(vehicleType, "getCanDischargeToObject", ManureSystemConnector.getCanDischargeToObject)
+    SpecializationUtil.registerOverwrittenFunction(vehicleType, "canChangePumpDirection", ManureSystemConnector.canChangePumpDirection)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadExtraDependentParts", ManureSystemConnector.loadExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateExtraDependentParts", ManureSystemConnector.updateExtraDependentParts)
     --SpecializationUtil.registerOverwrittenFunction(vehicleType, "loadHoseTargetNode", ManureSystemConnector.loadHoseTargetNode)
@@ -196,40 +197,49 @@ function ManureSystemConnector:getCanDischargeToObject(superFunc, dischargeNode)
                 trigger = object
             end
 
-            if (self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)) and (targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)) then
-                if targetObject.hasConnectors ~= nil and targetObject:hasConnectors() then
-                    local connectorTypeNames = {
-                        ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
-                        ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
-                    }
+            local sourceObjectCanDisableVanillaLoading = self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)
+            local targetObjectCanDisableVanillaLoading = targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)
 
-                    for _, typeName in ipairs(connectorTypeNames) do
-                        local typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
+            if sourceObjectCanDisableVanillaLoading and targetObjectCanDisableVanillaLoading then
+                local pumpDirectionIn = ManureSystemPumpMotor.PUMP_DIRECTION_IN
+                local pumpDirectionOut = ManureSystemPumpMotor.PUMP_DIRECTION_OUT
 
-                        if #self:getConnectorsByType(typeIndex) > 0 and #targetObject:getConnectorsByType(typeIndex) > 0 then
-                            return false
-                        end
+                local couplingTypeNames = {
+                    ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
+                    ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
+                }
+
+                for _, couplingTypeName in ipairs(couplingTypeNames) do
+                    if g_currentMission.manureSystem:getObjectHasConnectors(self, couplingTypeName, pumpDirectionOut) and g_currentMission.manureSystem:getObjectHasConnectors(targetObject, couplingTypeName, pumpDirectionIn) then
+                        return false
                     end
                 end
 
-                if targetObject.getFillArms ~= nil then
-                    local typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK)
+                local dockTypeName = ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK
 
-                    if #self:getConnectorsByType(typeIndex) > 0 then
-                        for _, fillArm in ipairs(targetObject:getFillArms()) do
-                            if fillArm.type == typeIndex then
-                                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_OUT then
-                                    return false
-                                end
-                            end
-                        end
-                    end
+                if g_currentMission.manureSystem:getObjectHasConnectors(self, dockTypeName, pumpDirectionOut) and g_currentMission.manureSystem:getObjectHasFillArms(targetObject, dockTypeName, pumpDirectionIn) then
+                    return false
                 end
             end
         end
     end
 
     return superFunc(self, dischargeNode)
+end
+
+---@return boolean
+function ManureSystemConnector:canChangePumpDirection(superFunc)
+    if self:hasConnectors() then
+        local currentPumpDirection = self:getPumpDirection()
+
+        for _, connector in ipairs(self:getConnectors()) do
+            if connector.hasOpenManureFlow and connector.limitedPumpDirection ~= nil and connector.limitedPumpDirection == currentPumpDirection then
+                return false
+            end
+        end
+    end
+
+    return superFunc(self)
 end
 
 ---Load extra depending part on connectors for moving tools.

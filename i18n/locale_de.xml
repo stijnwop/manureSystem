@@ -21,6 +21,7 @@
         <text name="info_directionOut" text="Entleeren"/>
         <text name="info_directionIn" text="Befüllen"/>
         <text name="warning_pumpDirectionLimited" text="Die Pumprichtung ist auf '%s' begrenzt!"/>
+        <text name="warning_limitedPumpDirectionsNotCompatible" text="Die begrenzten Pumprichtungen von Fahrzeug- und Zielbehälter sind nicht kompatibel!"/>
         <text name="warning_objectEmpty" text="Fahrzeug- oder Zielbehälter ist leer!"/>
         <text name="warning_objectFull" text="Zielbehälter ist voll!"/>
         <text name="warning_invalidFillType" text="Pumpmaterial wird nicht unterstützt!"/>

@@ -18,65 +18,35 @@ local originalFunctions = {}
 -- Overwrites --
 ----------------
 
-local function objectHasConnectors(object, typeName)
-    if object ~= nil and object.hasConnectors ~= nil and object:hasConnectors() then
-        local typeIndex
+local function getAllowTriggerActivation(trigger, sourceObject, targetObject)
+    if sourceObject ~= nil and targetObject ~= nil then
+        local sourceObjectCanDisableVanillaLoading = sourceObject.getCanDisableVanillaLoading == nil or sourceObject:getCanDisableVanillaLoading(targetObject, trigger)
+        local targetObjectCanDisableVanillaLoading = targetObject.getCanDisableVanillaLoading == nil or targetObject:getCanDisableVanillaLoading(sourceObject, trigger)
 
-        if typeName ~= nil then
-            typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
-        end
+        if sourceObjectCanDisableVanillaLoading and targetObjectCanDisableVanillaLoading then
+            local pumpDirectionIn = ManureSystemPumpMotor.PUMP_DIRECTION_IN
+            local pumpDirectionOut = ManureSystemPumpMotor.PUMP_DIRECTION_OUT
 
-        if typeIndex == nil or #object:getConnectorsByType(typeIndex) > 0 then
-            return true
-        end
-    end
+            local couplingTypeNames = {
+                ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
+                ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
+            }
 
-    return false
-end
+            local dockTypeName = ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK
 
-local function objectSupportsFillArms(object)
-    return object ~= nil and object.getSupportsFillArms ~= nil and object:getSupportsFillArms()
-end
-
-local function objectHasFillArms(object, typeName)
-    if object ~= nil and object.getFillArms ~= nil then
-        local typeIndex
-
-        if typeName ~= nil then
-            typeIndex = g_currentMission.manureSystem.connectorManager:getConnectorType(typeName)
-        end
-
-        for _, fillArm in ipairs(object:getFillArms()) do
-            if typeIndex == nil or fillArm.type == typeIndex then
-                if fillArm.limitedFillDirection == nil or fillArm.limitedFillDirection == ManureSystemPumpMotor.PUMP_DIRECTION_IN then
-                    return true
+            for _, couplingTypeName in ipairs(couplingTypeNames) do
+                if g_currentMission.manureSystem:getObjectHasConnectors(sourceObject, couplingTypeName, pumpDirectionOut) and g_currentMission.manureSystem:getObjectHasConnectors(targetObject, couplingTypeName, pumpDirectionIn) then
+                    return false
                 end
             end
-        end
-    end
 
-    return false
-end
-
-local function getAllowTriggerActivation(trigger, sourceObject, targetObject)
-    if (sourceObject.getCanDisableVanillaLoading == nil or sourceObject:getCanDisableVanillaLoading(targetObject, trigger)) and (targetObject.getCanDisableVanillaLoading == nil or targetObject:getCanDisableVanillaLoading(sourceObject, trigger)) then
-        local connectorTypeNames = {
-            ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING,
-            ManureSystemConnectorManager.CONNECTOR_TYPE_FERTILIZER_COUPLING
-        }
-
-        for _, typeName in ipairs(connectorTypeNames) do
-            if objectHasConnectors(sourceObject, typeName) and objectHasConnectors(targetObject, typeName) then
+            if g_currentMission.manureSystem:getObjectSupportsFillArms(sourceObject) and g_currentMission.manureSystem:getObjectHasFillArms(targetObject, nil, pumpDirectionIn) then
                 return false
             end
-        end
 
-        if objectSupportsFillArms(sourceObject) and objectHasFillArms(targetObject) then
-            return false
-        end
-
-        if objectHasConnectors(sourceObject, ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) and objectHasFillArms(targetObject, ManureSystemConnectorManager.CONNECTOR_TYPE_DOCK) then
-            return false
+            if g_currentMission.manureSystem:getObjectHasConnectors(sourceObject, dockTypeName, pumpDirectionOut) and g_currentMission.manureSystem:getObjectHasFillArms(targetObject, dockTypeName, pumpDirectionIn) then
+                return false
+            end
         end
     end
 

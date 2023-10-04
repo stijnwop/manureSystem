@@ -292,19 +292,45 @@ function ManureSystemCouplingStrategy:getConnectorObjectDesc(object, connector)
     local desc, length = connector.connectedObject:getConnectorObjectDesc(connector.connectedNodeId, 1, true) -- do raycast too.
 
     if desc ~= nil and desc.vehicle ~= object then
+        if connector.limitedPumpDirection ~= nil and object:getPumpDirection() ~= connector.limitedPumpDirection then
+            -- When the limited pump direction is present (source object), but not set, we force it.
+            object:setPumpDirection(connector.limitedPumpDirection)
+        end
+
         if desc.connectorId ~= nil then
             local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
 
-            if connector.hasOpenManureFlow and descConnector.isConnected then
-                if desc.vehicle.setUsedConnectorId ~= nil then
-                    desc.vehicle:setUsedConnectorId(descConnector.id)
-                end
+            if descConnector.isConnected then
+                if connector.limitedPumpDirection == nil or descConnector.limitedPumpDirection == nil or connector.limitedPumpDirection ~= descConnector.limitedPumpDirection then
+                    if connector.hasOpenManureFlow then
+                        if connector.limitedPumpDirection == nil and descConnector.limitedPumpDirection ~= nil then
+                            local targetPumpDirection = -(descConnector.limitedPumpDirection)
+                            if object:getPumpDirection() ~= targetPumpDirection then
+                                -- When the limited pump direction is present (target object), but not set, we force it.
+                                object:setPumpDirection(targetPumpDirection)
+                            end
+                        end
 
-                return {
-                    vehicle = desc.vehicle,
-                    hasOpenManureFlow = descConnector.hasOpenManureFlow,
-                    fillUnitIndex = descConnector.fillUnitIndex
-                }, length
+                        if desc.vehicle.setUsedConnectorId ~= nil then
+                            desc.vehicle:setUsedConnectorId(descConnector.id)
+                        end
+
+                        return {
+                            vehicle = desc.vehicle,
+                            hasOpenManureFlow = descConnector.hasOpenManureFlow,
+                            fillUnitIndex = descConnector.fillUnitIndex
+                        }, length
+                    end
+                else
+                    if object.isServer then
+                        -- Detach hose from target object, if limited pump directions are not compatible.
+                        descConnector.connectedObject:detach(descConnector.connectedNodeId, desc.connectorId, desc.vehicle)
+                    end
+
+                    if object.isClient then
+                        g_currentMission:showBlinkingWarning(g_i18n:getText("warning_limitedPumpDirectionsNotCompatible"))
+                    end
+                end
             end
         else
             local hasOpenManureFlow = true

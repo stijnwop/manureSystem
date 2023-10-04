@@ -69,6 +69,8 @@
             <!--Todo: add missing translation for warning_hoseRangeRestrictionLength--></e>
         <e k="warning_invalidFillType" v="The pump fill type is not supported!" tag="todo">
             <!--Todo: add missing translation for warning_invalidFillType--></e>
+        <e k="warning_limitedPumpDirectionsNotCompatible" v="Limited pump directions of pump source and target are not compatible!" tag="todo">
+            <!--Todo: add missing translation for warning_limitedPumpDirectionsNotCompatible--></e>
         <e k="warning_objectEmpty" v="The pump source or target is empty!" tag="todo">
             <!--Todo: add missing translation for warning_objectEmpty--></e>
         <e k="warning_objectFull" v="The pump target is full!" tag="todo">

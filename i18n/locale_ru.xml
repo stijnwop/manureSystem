@@ -43,5 +43,7 @@
     <elements>
         <e k="info_title_thickness" v="Thickness" tag="todo">
             <!--Todo: add missing translation for info_title_thickness--></e>
+        <e k="warning_limitedPumpDirectionsNotCompatible" v="Limited pump directions of pump source and target are not compatible!" tag="todo">
+            <!--Todo: add missing translation for warning_limitedPumpDirectionsNotCompatible--></e>
     </elements>
 </l10n>

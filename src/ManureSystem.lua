@@ -242,6 +242,58 @@ function ManureSystem:connectorObjectExists(id)
     return self.manureSystemConnectors[id] ~= nil
 end
 
+---Return true if the object has supported connectors, false otherwise.
+function ManureSystem:getObjectHasConnectors(object, connectorTypeName, pumpDirection)
+    if object ~= nil and object.hasConnectors ~= nil and object:hasConnectors() then
+        local connectorTypeIndex
+        if connectorTypeName ~= nil then
+            connectorTypeIndex = self.connectorManager:getConnectorType(connectorTypeName)
+        end
+
+        local connectors
+        if connectorTypeIndex ~= nil then
+            connectors = object:getConnectorsByType(connectorTypeIndex)
+        else
+            connectors = object:getConnectors()
+        end
+
+        if connectors ~= nil then
+            for _, connector in ipairs(connectors) do
+                if connector.limitedPumpDirection == nil or pumpDirection == nil or connector.limitedPumpDirection == pumpDirection then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
+---Return true if the object has supported fill arms, false otherwise.
+function ManureSystem:getObjectHasFillArms(object, connectorTypeName, pumpDirection)
+    if object ~= nil and object.getFillArms ~= nil then
+        local connectorTypeIndex
+        if connectorTypeName ~= nil then
+            connectorTypeIndex = self.connectorManager:getConnectorType(connectorTypeName)
+        end
+
+        for _, fillArm in ipairs(object:getFillArms()) do
+            if connectorTypeIndex == nil or fillArm.type == connectorTypeIndex then
+                if fillArm.limitedFillDirection == nil or pumpDirection == nil or fillArm.limitedFillDirection == pumpDirection then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
+---Return true if the object supports fill arms, false otherwise.
+function ManureSystem:getObjectSupportsFillArms(object)
+    return object ~= nil and object.getSupportsFillArms ~= nil and object:getSupportsFillArms()
+end
+
 function ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
     local stringParts = string.split(typeName, ".")
     if #stringParts ~= 1 then
