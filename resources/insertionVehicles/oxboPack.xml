@@ -15,11 +15,15 @@
             <entry type="float" key="#fillYOffset" value="-0.5"/>
             <entry type="string" key="#position" value="-0.32 -1.9 -0.55"/>
             <entry type="string" key="#rotation" value="-150 0 0"/>
+            <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+            <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
         </manureSystemFillArm>
 
         <manureSystemPumpMotor>
             <entry type="float" key="#litersPerSecond" value="197"/>
             <entry type="int" key="#fillUnitIndex" value="3"/>
+            <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+            <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
         </manureSystemPumpMotor>
 
         <manureSystemConnectors>
@@ -29,6 +33,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="0.93 0.85 2.72"/>
                 <entry type="string" key="#rotation" value="0 55 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
@@ -36,6 +42,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="-0.91 0.85 2.7"/>
                 <entry type="string" key="#rotation" value="0 -55 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
@@ -43,6 +51,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="1.38 0.84 -1.355"/>
                 <entry type="string" key="#rotation" value="0 90 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
         </manureSystemConnectors>
     </vehicle>
@@ -63,11 +73,15 @@
             <entry type="float" key="#fillYOffset" value="-0.5"/>
             <entry type="string" key="#position" value="-0.2 -1.9 -0.55"/>
             <entry type="string" key="#rotation" value="-150 0 0"/>
+            <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+            <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
         </manureSystemFillArm>
 
         <manureSystemPumpMotor>
             <entry type="float" key="#litersPerSecond" value="197"/>
             <entry type="int" key="#fillUnitIndex" value="3"/>
+            <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+            <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
         </manureSystemPumpMotor>
 
         <manureSystemConnectors>
@@ -77,6 +91,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="0.92 0.43 4.49"/>
                 <entry type="string" key="#rotation" value="0 55 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
@@ -84,6 +100,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="-0.92 0.43 4.49"/>
                 <entry type="string" key="#rotation" value="0 -55 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
             <connector>
                 <entry type="string" key="#type" value="COUPLING"/>
@@ -91,6 +109,8 @@
                 <entry type="int" key="#fillUnitIndex" value="3"/>
                 <entry type="string" key="#position" value="1.38 0.42 0.425"/>
                 <entry type="string" key="#rotation" value="0 90 0"/>
+                <entry type="string" key=".configurationRestrictions.requiredConfigurations.configuration(0)#name" value="vehicleType"/>
+                <entry type="int" key=".configurationRestrictions.requiredConfigurations.configuration(0)#index" value="1"/>
             </connector>
         </manureSystemConnectors>
     </vehicle>

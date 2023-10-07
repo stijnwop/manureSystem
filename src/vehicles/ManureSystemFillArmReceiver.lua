@@ -15,6 +15,7 @@ ManureSystemFillArmReceiver.MOD_NAME = g_currentModName
 function ManureSystemFillArmReceiver.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemFillArmReceiver")
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, "vehicle.manureSystemFillArmReceiver")
     schema:register(XMLValueType.INT, "vehicle.manureSystemFillArmReceiver#fillVolumeIndex", "Fill volume index to interact with")
     schema:register(XMLValueType.INT, "vehicle.manureSystemFillArmReceiver#fillUnitIndex", "Fill unit index to pump from")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemFillArmReceiver#fillArmOffset", "Offset for the fillarm interaction")
@@ -43,20 +44,26 @@ function ManureSystemFillArmReceiver:onLoad(savegame)
     self.spec_manureSystemFillArmReceiver = self[("spec_%s.manureSystemFillArmReceiver"):format(ManureSystemFillArmReceiver.MOD_NAME)]
     local spec = self.spec_manureSystemFillArmReceiver
 
-    if #self.spec_fillVolume.volumes == 0 then
+    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasFillArmReceiver") or false
+
+    if not spec.isActive then
         return
     end
 
+    if #self.spec_fillVolume.volumes == 0 then
+        spec.isActive = false
+        return
+    end
 
-    spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasFillArmReceiver") or false
-    if not spec.isActive then
+    if not g_currentMission.manureSystem:getAreConfigurationRestrictionsFulfilled(self, self.xmlFile, "vehicle.manureSystemFillArmReceiver") then
+        spec.isActive = false
         return
     end
 
     local fillVolumeIndex = self.xmlFile:getValue("vehicle.manureSystemFillArmReceiver#fillVolumeIndex", 1)
     if self.spec_fillVolume.volumes[fillVolumeIndex] == nil then
         Logging.xmlWarning(self.configFileName, "Invalid fillVolumeIndex '%d'!", fillVolumeIndex)
-
+        spec.isActive = false
         return
     end
 
@@ -97,7 +104,7 @@ end
 ---@return boolean
 function ManureSystemFillArmReceiver:isUnderFillPlane(x, y, z)
     local spec = self.spec_manureSystemFillArmReceiver
-    if not spec.isActive or #self.spec_fillVolume.volumes == 0 then
+    if not spec.isActive then
         return false
     end
 

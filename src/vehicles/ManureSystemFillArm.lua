@@ -13,14 +13,15 @@ ManureSystemFillArm.MOD_NAME = g_currentModName
 
 ---@return void
 function ManureSystemFillArm.initSpecialization()
+    g_configurationManager:addConfigurationType("manureSystemFillArm", g_i18n:getText("configuration_manureSystemFillArm"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemFillArm")
-    ManureSystemFillArm.registerFillArmXMLPaths(schema, "vehicle.manureSystemFillArm")
-    ManureSystemFillArm.registerFillArmXMLPaths(schema, "vehicle.manureSystemFillArms.fillArm(?)")
-    schema:setXMLSpecializationType()
-
-    g_configurationManager:addConfigurationType("manureSystemFillArm", g_i18n:getText("configuration_manureSystemFillArm"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+    ManureSystemFillArm.registerXMLPaths(schema, "vehicle")
+    ManureSystemFillArm.registerXMLPaths(schema, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(?)")
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(?)")
     ObjectChangeUtil.registerObjectChangeXMLPaths(schema, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(?)")
+    schema:setXMLSpecializationType()
 end
 
 ---@return boolean
@@ -29,7 +30,14 @@ function ManureSystemFillArm.prerequisitesPresent(specializations)
 end
 
 ---@return void
+function ManureSystemFillArm.registerXMLPaths(schema, baseName)
+    ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName .. ".manureSystemFillArm")
+    ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName .. ".manureSystemFillArms.fillArm(?)")
+end
+
+---@return void
 function ManureSystemFillArm.registerFillArmXMLPaths(schema, baseName)
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, baseName)
     XMLExtensions.registerXMLPaths(schema, baseName)
     schema:register(XMLValueType.STRING, baseName .. "#type", "Connector type")
     schema:register(XMLValueType.FLOAT, baseName .. "#fillYOffset", "Fill Y offset to the plane")
@@ -73,7 +81,10 @@ function ManureSystemFillArm:onLoad(savegame)
 
     local configurationId = self.configurations["manureSystemFillArm"] or 1
     local baseKey = ("vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration(%d)"):format(configurationId - 1)
-    ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration", configurationId, self.components, self)
+
+    if g_currentMission.manureSystem:getAreConfigurationRestrictionsFulfilled(self, self.xmlFile, baseKey) then
+        ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.manureSystemFillArmConfigurations.manureSystemFillArmConfiguration", configurationId, self.components, self)
+    end
 
     --Fallback
     if not self.xmlFile:hasProperty(baseKey) then
@@ -130,7 +141,7 @@ end
 ---@return void
 function ManureSystemFillArm:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
-    if self.isClient and spec.hasFillArm and self.canTurnOnPump ~= nil then
+    if self.isClient and self.canTurnOnPump ~= nil then
         local pumpHasLoad = self.spec_manureSystemPumpMotor.pumpHasLoad
         local isFillArmPumpMode = self:getPumpMode() == ManureSystemPumpMotor.MODE_FILLARM
         local pumpIsRunning = self:isPumpRunning()
@@ -158,7 +169,7 @@ end
 ---@return void
 function ManureSystemFillArm:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_manureSystemFillArm
-    if self.isServer and spec.hasFillArm and self.canTurnOnPump ~= nil then
+    if self.isServer and self.canTurnOnPump ~= nil then
 
         spec.rayCast:clear()
 
@@ -232,6 +243,10 @@ end
 
 ---@return boolean
 function ManureSystemFillArm:loadManureSystemFillArmFromXML(fillArm, xmlFile, baseKey, id)
+    if not g_currentMission.manureSystem:getAreConfigurationRestrictionsFulfilled(self, xmlFile, baseKey) then
+        return false
+    end
+
     local node = XMLExtensions.ensureExistingNode(self, xmlFile, baseKey)
 
     if node ~= nil then

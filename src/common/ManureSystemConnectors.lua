@@ -242,34 +242,36 @@ function ManureSystemConnectors:loadFromXML(typeKey, xmlFile)
             break
         end
 
-        local typeString = xmlFile:getValue(baseKey .. "#type", ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
-        local type = self.manureSystem.connectorManager:getConnectorType(typeString)
+        if self.manureSystem:getAreConfigurationRestrictionsFulfilled(self.object, xmlFile, baseKey) then
+            local typeString = xmlFile:getValue(baseKey .. "#type", ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+            local type = self.manureSystem.connectorManager:getConnectorType(typeString)
 
-        if type == nil then
-            Logging.xmlWarning(self.object.configFileName, "Invalid connector type %s", typeString)
-            type = self.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
-        end
+            if type == nil then
+                Logging.xmlWarning(self.object.configFileName, "Invalid connector type %s", typeString)
+                type = self.manureSystem.connectorManager:getConnectorType(ManureSystemConnectorManager.CONNECTOR_TYPE_HOSE_COUPLING)
+            end
 
-        if self.connectorsByType[type] == nil then
-            self.connectorsByType[type] = {}
-            self.activeConnectorsByType[type] = {}
-        end
+            if self.connectorsByType[type] == nil then
+                self.connectorsByType[type] = {}
+                self.activeConnectorsByType[type] = {}
+            end
 
-        if self.connectorStrategies[type] == nil then
-            self.connectorStrategies[type] = self.manureSystem.connectorManager:getConnectorStrategy(type, self.object)
-        end
+            if self.connectorStrategies[type] == nil then
+                self.connectorStrategies[type] = self.manureSystem.connectorManager:getConnectorStrategy(type, self.object)
+            end
 
-        local connector = {}
+            local connector = {}
 
-        connector.id = #self.connectors + 1
-        connector.type = type
+            connector.id = #self.connectors + 1
+            connector.type = type
 
-        if self:loadConnectorFromXML(connector, xmlFile, baseKey) then
-            local strategy = self.connectorStrategies[type]
+            if self:loadConnectorFromXML(connector, xmlFile, baseKey) then
+                local strategy = self.connectorStrategies[type]
 
-            if strategy == nil or strategy:load(connector, xmlFile, baseKey) then
-                table.insert(self.connectors, connector)
-                table.insert(self.connectorsByType[type], connector)
+                if strategy == nil or strategy:load(connector, xmlFile, baseKey) then
+                    table.insert(self.connectors, connector)
+                    table.insert(self.connectorsByType[type], connector)
+                end
             end
         end
 
@@ -359,12 +361,13 @@ end
 
 --region XML paths
 function ManureSystemConnectors.registerXMLPaths(schema, baseName)
-    schema:register(XMLValueType.INT, baseName .. ".manureSystemConnectors#type", "Connector type")
     schema:register(XMLValueType.NODE_INDEX, baseName .. ".manureSystemConnectors#inRangeNode", "Connector in range node")
     ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName .. ".manureSystemConnectors.connector(?)")
 end
 
 function ManureSystemConnectors.registerConnectorNodeXMLPaths(schema, baseName)
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, baseName)
+
     XMLExtensions.registerXMLPaths(schema, baseName)
 
     ManureSystemCouplingStrategy.registerConnectorNodeXMLPaths(schema, baseName)

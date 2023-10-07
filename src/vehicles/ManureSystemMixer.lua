@@ -15,6 +15,7 @@ ManureSystemMixer.MOD_NAME = g_currentModName
 function ManureSystemMixer.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemMixer")
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, "vehicle.manureSystemMixer")
     XMLExtensions.registerXMLPaths(schema, "vehicle.manureSystemMixer")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemMixer#mixPerSecond", "Mix per seconds")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemMixer#mixYOffset", "Mix Y offset to the fill plane")
@@ -49,6 +50,11 @@ function ManureSystemMixer:onLoad(savegame)
     local spec = self.spec_manureSystemMixer
 
     spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasMixer") or false
+
+    if not g_currentMission.manureSystem:getAreConfigurationRestrictionsFulfilled(self, self.xmlFile, "vehicle.manureSystemMixer") then
+        spec.isActive = false
+    end
+
     if spec.isActive then
         spec.hasContact = false
         spec.hasContactSend = spec.hasContact
@@ -168,6 +174,9 @@ end
 function ManureSystemMixer:getConsumingLoad(superFunc)
     local value, count = superFunc(self)
     local spec = self.spec_manureSystemMixer
+    if not spec.isActive then
+        return value, count
+    end
     local load = 0
     local object = spec.rayCast.hitObject
     if object ~= nil and object.getThickness ~= nil then

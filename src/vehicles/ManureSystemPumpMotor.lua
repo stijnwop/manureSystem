@@ -41,6 +41,7 @@ ManureSystemPumpMotor.MODE_FILLARM_DOCK = 3
 function ManureSystemPumpMotor.initSpecialization()
     local schema = Vehicle.xmlSchema
     schema:setXMLSpecializationType("ManureSystemPumpMotor")
+    ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, "vehicle.manureSystemPumpMotor")
     schema:register(XMLValueType.BOOL, "vehicle.manureSystemPumpMotor#isStandalone", "Fill volume index to interact with")
     schema:register(XMLValueType.BOOL, "vehicle.manureSystemPumpMotor#useStandalonePumpText", "Fill unit index to pump from")
     schema:register(XMLValueType.FLOAT, "vehicle.manureSystemPumpMotor#toReachMaxEfficiencyTime", "Offset for the fillarm interaction")
@@ -129,6 +130,10 @@ function ManureSystemPumpMotor:onLoad(savegame)
     local spec = self.spec_manureSystemPumpMotor
 
     spec.isActive = self.xmlFile:getBool("vehicle.manureSystem#hasPumpMotor") or false
+
+    if not g_currentMission.manureSystem:getAreConfigurationRestrictionsFulfilled(self, self.xmlFile, "vehicle.manureSystemPumpMotor") then
+        spec.isActive = false
+    end
 
     spec.pumpIsRunning = false
     spec.pumpHasLoad = true
@@ -885,6 +890,9 @@ function ManureSystemPumpMotor:getConsumingLoad(superFunc)
     local value, count = superFunc(self)
 
     local spec = self.spec_manureSystemPumpMotor
+    if not spec.isActive then
+        return value, count
+    end
     local load = spec.pumpEfficiency.currentLoad
     return value + load, count + 1
 end

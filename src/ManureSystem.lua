@@ -190,6 +190,62 @@ function ManureSystem:saveToXML(xmlFile)
     xmlFile:save()
 end
 
+---Registers the xml paths for the configuration restrictions
+function ManureSystem.registerConfigurationRestrictionsXMLPaths(schema, baseName)
+    local configurationRestrictionsBaseName = baseName .. ".configurationRestrictions"
+
+    local requiredConfigurationBaseName = configurationRestrictionsBaseName .. ".requiredConfigurations.configuration(?)"
+    schema:register(XMLValueType.STRING, requiredConfigurationBaseName .. "#name", "Required configuration name")
+    schema:register(XMLValueType.INT, requiredConfigurationBaseName .. "#index", "Required configuration index")
+
+    local avoidedConfigurationBaseName = configurationRestrictionsBaseName .. ".avoidedConfigurations.configuration(?)"
+    schema:register(XMLValueType.STRING, avoidedConfigurationBaseName .. "#name", "Avoided configuration name")
+    schema:register(XMLValueType.VECTOR_N, avoidedConfigurationBaseName .. "#indices", "Avoided configuration indices")
+end
+
+---Returns true, if all configuration restrictions are fulfilled, false otherwise
+function ManureSystem:getAreConfigurationRestrictionsFulfilled(object, xmlFile, baseKey)
+    local configurationRestrictionsKey = baseKey .. ".configurationRestrictions"
+
+    if object ~= nil and object.configurations ~= nil then
+        local requiredConfigurationsFulfilled = true
+        xmlFile:iterate(configurationRestrictionsKey .. ".requiredConfigurations.configuration", function(index, key)
+            local configurationName = xmlFile:getValue(key .. "#name")
+            if object.configurations[configurationName] ~= nil then
+                local configurationId = xmlFile:getValue(key .. "#index")
+                if configurationId ~= nil and object.configurations[configurationName] ~= configurationId then
+                    requiredConfigurationsFulfilled = false
+                    return false
+                end
+            end
+        end)
+        if not requiredConfigurationsFulfilled then
+            return false
+        end
+
+        local avoidedConfigurationsFulfilled = true
+        xmlFile:iterate(configurationRestrictionsKey .. ".avoidedConfigurations.configuration", function(index, key)
+            local configurationName = xmlFile:getValue(key .. "#name")
+            if object.configurations[configurationName] ~= nil then
+                local configurationIndices = xmlFile:getValue(key .. "#indices", nil, true)
+                if configurationIndices ~= nil then
+                    for _, configurationId in ipairs(configurationIndices) do
+                        if object.configurations[configurationName] == configurationId then
+                            avoidedConfigurationsFulfilled = false
+                            return false
+                        end
+                    end
+                end
+            end
+        end)
+        if not avoidedConfigurationsFulfilled then
+            return false
+        end
+    end
+
+    return true
+end
+
 ---Loads the shared sample files for the manure system.
 function ManureSystem:loadManureSystemSamples()
     local xmlFile = XMLFile.load("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
