@@ -25,6 +25,7 @@ local sourceFiles = {
     "src/vehicles/events/ManureSystemPumpIsRunningEvent.lua",
     "src/vehicles/events/ManureSystemPumpIsAllowedEvent.lua",
     "src/placeables/specializations/events/ManureSystemThicknessEvent.lua",
+    "src/placeables/specializations/events/ManureSystemMixerTurnedOnEvent.lua",
     --Common
     "src/common/events/ManureSystemConnectorIsConnectedEvent.lua",
     "src/common/events/ManureSystemConnectorManureFlowEvent.lua",

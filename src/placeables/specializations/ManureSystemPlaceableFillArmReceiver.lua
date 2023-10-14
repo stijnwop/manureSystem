@@ -26,6 +26,7 @@ function ManureSystemPlaceableFillArmReceiver.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "getFillArmFillUnitIndex", ManureSystemPlaceableFillArmReceiver.getFillArmFillUnitIndex)
     SpecializationUtil.registerFunction(placeableType, "isUnderFillPlane", ManureSystemPlaceableFillArmReceiver.isUnderFillPlane)
 
+    SpecializationUtil.registerFunction(placeableType, "getIsThicknessEnabled", ManureSystemPlaceableFillArmReceiver.getIsThicknessEnabled)
     SpecializationUtil.registerFunction(placeableType, "setThickness", ManureSystemPlaceableFillArmReceiver.setThickness)
     SpecializationUtil.registerFunction(placeableType, "getThickness", ManureSystemPlaceableFillArmReceiver.getThickness)
     SpecializationUtil.registerFunction(placeableType, "increaseThickness", ManureSystemPlaceableFillArmReceiver.increaseThickness)
@@ -51,6 +52,7 @@ function ManureSystemPlaceableFillArmReceiver.registerEventListeners(placeableTy
     SpecializationUtil.registerEventListener(placeableType, "onLoad", ManureSystemPlaceableFillArmReceiver)
     SpecializationUtil.registerEventListener(placeableType, "onReadStream", ManureSystemPlaceableFillArmReceiver)
     SpecializationUtil.registerEventListener(placeableType, "onWriteStream", ManureSystemPlaceableFillArmReceiver)
+    SpecializationUtil.registerEventListener(placeableType, "onPreFinalizePlacement", ManureSystemPlaceableFillArmReceiver)
     SpecializationUtil.registerEventListener(placeableType, "onHourChanged", ManureSystemPlaceableFillArmReceiver)
 end
 
@@ -89,17 +91,11 @@ function ManureSystemPlaceableFillArmReceiver:onLoad(savegame)
     spec.isActive = self.xmlFile:getBool("placeable.manureSystem#hasFillArmReceiver", false)
     spec.fillArmOffset = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#fillArmOffset", 0)
     spec.thicknessEnabled = self.xmlFile:getValue("placeable.manureSystemFillArmReceiver#thicknessEnabled", spec.isActive)
-
-    if not spec.thicknessEnabled then
-        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPlaceableFillArmReceiver)
-        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemPlaceableFillArmReceiver)
-        SpecializationUtil.removeEventListener(self, "onHourChanged", ManureSystemPlaceableFillArmReceiver)
-    end
 end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:loadFromXMLFile(xmlFile, key)
-    if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         xmlFile:iterate(key .. ".storage", function(_, storageKey)
             local fillUnitIndex = xmlFile:getValue(storageKey .. "#index")
             if fillUnitIndex ~= nil then
@@ -120,10 +116,9 @@ end
 
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:saveToXMLFile(xmlFile, key, usedModNames)
-    local spec = self.spec_manureSystemPlaceableFillArmReceiver
-    if spec.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         local i = 0
-        for storage, data in pairs(spec.thickness) do
+        for storage, data in pairs(self.spec_manureSystemPlaceableFillArmReceiver.thickness) do
             local storageKey = ("%s.storage(%d)"):format(key, i)
 
             local j = 0
@@ -171,6 +166,15 @@ function ManureSystemPlaceableFillArmReceiver:onWriteStream(streamId, connection
 end
 
 ---@return void
+function ManureSystemPlaceableFillArmReceiver:onPreFinalizePlacement()
+    if not self:getIsThicknessEnabled() then
+        SpecializationUtil.removeEventListener(self, "onReadStream", ManureSystemPlaceableFillArmReceiver)
+        SpecializationUtil.removeEventListener(self, "onWriteStream", ManureSystemPlaceableFillArmReceiver)
+        SpecializationUtil.removeEventListener(self, "onHourChanged", ManureSystemPlaceableFillArmReceiver)
+    end
+end
+
+---@return void
 function ManureSystemPlaceableFillArmReceiver:onHourChanged()
     for storage, data in pairs(self.spec_manureSystemPlaceableFillArmReceiver.thickness) do
         for fillTypeIndex, _ in pairs(data) do
@@ -188,7 +192,7 @@ end
 function ManureSystemPlaceableFillArmReceiver:getFillPlaneInfo()
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
 
-    if not spec.isActive and not spec.thicknessEnabled then
+    if not spec.isActive and not self:getIsThicknessEnabled() then
         return nil
     end
 
@@ -199,7 +203,7 @@ end
 function ManureSystemPlaceableFillArmReceiver:updateFillPlaneInfo(x, y, z)
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
 
-    if not spec.isActive and not spec.thicknessEnabled then
+    if not spec.isActive and not self:getIsThicknessEnabled() then
         return
     end
 
@@ -232,7 +236,7 @@ end
 function ManureSystemPlaceableFillArmReceiver:resetFillPlaneInfo()
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
 
-    if not spec.isActive and not spec.thicknessEnabled then
+    if not spec.isActive and not self:getIsThicknessEnabled() then
         return
     end
 
@@ -278,10 +282,15 @@ function ManureSystemPlaceableFillArmReceiver:isUnderFillPlane(x, y, z)
     return false
 end
 
+---@return boolean
+function ManureSystemPlaceableFillArmReceiver:getIsThicknessEnabled()
+    return self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled
+end
+
 ---@return void
 function ManureSystemPlaceableFillArmReceiver:setThickness(fillUnitIndex, fillTypeIndex, thickness, ...)
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
-    if spec.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
         if storage ~= nil then
             if spec.thickness[storage] ~= nil and spec.thickness[storage][fillTypeIndex] ~= nil then
@@ -300,7 +309,7 @@ end
 ---@return number
 function ManureSystemPlaceableFillArmReceiver:getThickness(fillUnitIndex, fillTypeIndex)
     local spec = self.spec_manureSystemPlaceableFillArmReceiver
-    if spec.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
         if storage ~= nil then
             if spec.thickness[storage] ~= nil and spec.thickness[storage][fillTypeIndex] ~= nil then
@@ -318,7 +327,7 @@ function ManureSystemPlaceableFillArmReceiver:increaseThickness(fillUnitIndex, f
         return
     end
 
-    if not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if not self:getIsThicknessEnabled() then
         return
     end
 
@@ -360,7 +369,7 @@ function ManureSystemPlaceableFillArmReceiver:decreaseThickness(fillUnitIndex, f
         return
     end
 
-    if not self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if not self:getIsThicknessEnabled() then
         return
     end
 
@@ -536,7 +545,7 @@ end
 function ManureSystemPlaceableFillArmReceiver:addFillUnitFillLevel(superFunc, farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, ...)
     local movedFillLevel = superFunc(self, farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, ...)
 
-    if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         if movedFillLevel > 0 then
             self:decreaseThickness(fillUnitIndex, fillTypeIndex, movedFillLevel)
         elseif movedFillLevel < 0 then
@@ -555,7 +564,7 @@ end
 
 ---@return boolean
 function ManureSystemPlaceableFillArmReceiver:getNeedHourChanged(superFunc, ...)
-    if self.spec_manureSystemPlaceableFillArmReceiver.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         return true
     end
 
@@ -566,11 +575,10 @@ end
 function ManureSystemPlaceableFillArmReceiver:updateInfo(superFunc, infoTable, ...)
     superFunc(self, infoTable, ...)
 
-    local spec = self.spec_manureSystemPlaceableFillArmReceiver
-    if spec.thicknessEnabled then
+    if self:getIsThicknessEnabled() then
         local averageThicknessByFillType = {}
 
-        for storage, data in pairs(spec.thickness) do
+        for storage, data in pairs(self.spec_manureSystemPlaceableFillArmReceiver.thickness) do
             for fillTypeIndex, thickness in pairs(data) do
                 if storage:getFillLevel(fillTypeIndex) > 0 then
                     if averageThicknessByFillType[fillTypeIndex] == nil then

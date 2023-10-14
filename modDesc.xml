@@ -96,6 +96,7 @@ Changelog:
         <specialization name="manureSystemPlaceableBase" className="ManureSystemPlaceableBase" filename="src/placeables/specializations/ManureSystemPlaceableBase.lua"/>
         <specialization name="manureSystemPlaceableConnector" className="ManureSystemPlaceableConnector" filename="src/placeables/specializations/ManureSystemPlaceableConnector.lua"/>
         <specialization name="manureSystemPlaceableFillArmReceiver" className="ManureSystemPlaceableFillArmReceiver" filename="src/placeables/specializations/ManureSystemPlaceableFillArmReceiver.lua"/>
+        <specialization name="manureSystemPlaceableMixers" className="ManureSystemPlaceableMixers" filename="src/placeables/specializations/ManureSystemPlaceableMixers.lua"/>
 
         <specialization name="manureSystemPlaceableSilo" className="ManureSystemPlaceableSilo" filename="src/placeables/specializations/ManureSystemPlaceableSilo.lua"/>
         <specialization name="manureSystemPlaceableSiloExtension" className="ManureSystemPlaceableSiloExtension" filename="src/placeables/specializations/ManureSystemPlaceableSiloExtension.lua"/>

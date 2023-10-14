@@ -404,6 +404,7 @@ function ManureSystem.installPlaceableSpecializations(typeManager, specializatio
             ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableBase", modName)
             ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableConnector", modName)
             ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableFillArmReceiver", modName)
+            ManureSystem.insertPlaceableSpec(typeManager, typeName, typeEntry, specializationManager, "manureSystemPlaceableMixers", modName)
         end
     end
 end
