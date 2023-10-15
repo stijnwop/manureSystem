@@ -18,4 +18,5 @@
     <file type="placeable" path="resources/insertionPlaceables/meridian.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/planET.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/rudolfHormann.xml"/>
+    <file type="placeable" path="resources/insertionPlaceables/pumpsNHosesPack.xml"/>
 </files>

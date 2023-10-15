@@ -1,0 +1,304 @@
+<data>
+    <!--tankCorrugatedSteel-->
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankClosed17m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.311 9.878"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankClosed25m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.32 13.011"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankClosed32m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.326 17.012"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankOpen17m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.32 9.9"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankOpen25m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.32 13.011"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankCorrugatedSteel/tankOpen32m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|0"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.625 0.326 17.008"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <!--tankFlatSteel-->
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankClosed13m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|1"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="0.692 0.443 7.372"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankClosed19m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|1"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="0.121 0.421 10.54"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankClosed25m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="false"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|1"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="-0.998 0.439 13.414"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankOpen13m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|2"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="0.692 0.443 7.372"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankOpen19m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|2"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="0.121 0.421 10.54"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+
+    <placeable xml="data/placeables/stallkamp/tankFlatSteel/tankOpen25m.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasFillArmReceiver" value="true"/>
+        </manureSystem>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLING"/>
+                <entry type="string" key="#fillTypes" value="LIQUIDMANURE"/>
+                <entry type="string" key="#componentNode" value="0>2|0"/>
+
+                <entry type="int" key=".sharedSet#id" value="2"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#placeholderNode" value="0>10|2"/>
+                <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
+                <entry type="string" key=".sharedSet#position" value="0.692 0.443 7.372"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+                <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
+                <entry type="string" key=".sharedSet.handle#type" value="HANDLE_NEW"/>
+            </connector>
+        </manureSystemConnectors>
+    </placeable>
+</data>
