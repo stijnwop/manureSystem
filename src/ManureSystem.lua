@@ -37,7 +37,7 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
     self.modName = modName
 
     --Debug flags
-    self.debug = true
+    self.debug = false
     self.debugShowConnectors = false
 
     self.mission = mission
@@ -45,8 +45,6 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
     self.connectorManager = ManureSystemConnectorManager.new(self.modDirectory)
     self.fillArmManager = ManureSystemFillArmManager.new(self.modDirectory)
     self.player = HosePlayer.new(self.isClient, self.isServer, mission, input)
-    --self.husbandryModuleLiquidManure = ManureSystemHusbandryModuleLiquidManure:new(self.isClient, self.isServer, mission, input)
-    --self.bga = ManureSystemBga:new(self.isClient, self.isServer, mission, input)
 
     self.manureSystemConnectors = {}
     self.samples = {}
@@ -60,16 +58,16 @@ function ManureSystem.new(mission, input, soundManager, modDirectory, modName)
         end
     end
 
-    addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
-    addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
+    if g_addCheatCommands then
+        addConsoleCommand("msToggleDebug", "Toggle debugging", "consoleCommandToggleDebug", self)
+        addConsoleCommand("msToggleConnectorNodes", "Toggle connector node", "consoleCommandToggleConnectors", self)
+    end
 
     return self
 end
 
 function ManureSystem:delete()
     self.player:delete()
-    --self.husbandryModuleLiquidManure:delete()
-    --self.bga:delete()
 
     self.connectorManager:unloadMapData()
     self.fillArmManager:unloadMapData()
