@@ -1,10 +1,11 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemConnectorManager
-----------------------------------------------------------------------------------------------------
--- Purpose: Manager to handle the connectors.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: manage different connector types
+-- Name: ManureSystemFillArmManager
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemConnectorManager
 ManureSystemConnectorManager = {}
@@ -75,12 +76,12 @@ g_xmlManager:addInitSchemaFunction(function()
     schema:register(XMLValueType.NODE_INDEX, "assets.set(?).valves.valve(?).handle(?)#node", "The handle node")
     schema:register(XMLValueType.VECTOR_TRANS, "assets.set(?).valves.valve(?).handle(?)#linkOffset", "The link offset")
 
-    ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, "assets.set(?).connectors.connector(?).placeable.animatedObject")
-    ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).placeable.animatedObject")
+    ManureSystemConnectorManager.animatedObjectRegisterXMLPaths(schema, "assets.set(?).connectors.connector(?).placeable.animatedObject")
+    ManureSystemConnectorManager.animatedObjectRegisterXMLPaths(schema, "assets.set(?).valves.valve(?).handle(?).placeable.animatedObject")
 end)
 
 --Todo: why is this needed?
-function ManureSystemConnectorManager.AnimatedObjectRegisterXMLPaths(schema, basePath)
+function ManureSystemConnectorManager.animatedObjectRegisterXMLPaths(schema, basePath)
     schema:register(XMLValueType.STRING, basePath .. "#saveId", "Save identifier", "AnimatedObject_[nodeName]")
     schema:register(XMLValueType.FLOAT, basePath .. ".animation#duration", "Animation duration (sec.)", 3)
     schema:register(XMLValueType.NODE_INDEX, basePath .. ".animation.part(?)#node", "Part node")

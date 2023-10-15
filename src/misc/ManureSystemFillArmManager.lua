@@ -1,10 +1,11 @@
-----------------------------------------------------------------------------------------------------
 -- ManureSystemFillArmManager
-----------------------------------------------------------------------------------------------------
--- Purpose: Manager to handle fill arms.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Author: Stijn Wopereis
+-- Description: manage different fillarms
+-- Name: ManureSystemFillArmManager
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemFillArmManager
 ManureSystemFillArmManager = {}

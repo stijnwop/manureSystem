@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemFillPlane
-----------------------------------------------------------------------------------------------------
--- Purpose: Fill plane that supports mixing animation.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemFillPlane
+--
+-- Author: Stijn Wopereis
+-- Description: fill plane that supports mixing animation.
+-- Name: ManureSystemFillPlane
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemFillPlane
 ManureSystemFillPlane = {}

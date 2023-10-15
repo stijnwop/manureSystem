@@ -24,8 +24,10 @@ local sourceFiles = {
     "src/vehicles/events/ManureSystemPumpDirectionEvent.lua",
     "src/vehicles/events/ManureSystemPumpIsRunningEvent.lua",
     "src/vehicles/events/ManureSystemPumpIsAllowedEvent.lua",
-    "src/placeables/specializations/events/ManureSystemThicknessEvent.lua",
-    "src/placeables/specializations/events/ManureSystemMixerTurnedOnEvent.lua",
+    "src/placeables/events/ManureSystemThicknessEvent.lua",
+    "src/placeables/events/ManureSystemMixerTurnedOnEvent.lua",
+    "src/hose/events/HoseAttachDetachEvent.lua",
+    "src/hose/events/HoseGrabDropEvent.lua",
     --Common
     "src/common/events/ManureSystemConnectorIsConnectedEvent.lua",
     "src/common/events/ManureSystemConnectorManureFlowEvent.lua",
@@ -38,8 +40,6 @@ local sourceFiles = {
     "src/misc/ManureSystemConnectorManager.lua",
     "src/misc/ManureSystemFillArmManager.lua",
     --Hose
-    "src/hose/events/HoseAttachDetachEvent.lua",
-    "src/hose/events/HoseGrabDropEvent.lua",
     "src/hose/HosePlayer.lua",
     --Utilities
     "src/utilities/NodeExtensions.lua",

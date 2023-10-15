@@ -147,6 +147,7 @@ function ManureSystemMixer:onUpdateTick(dt, isActiveForInput, isActiveForInputIg
         local object = spec.rayCast.hitObject
         if object ~= nil and object.decreaseThickness ~= nil then
             spec.hasContact = object:isUnderFillPlane(x, y + spec.mixYOffset, z)
+            log("Has contact", tostring(spec.hasContact))
             if isTurnedOn and spec.hasContact then
                 local fillUnitIndex = object:getFillArmFillUnitIndex()
                 local fillTypeIndex = object:getFillUnitFillType(fillUnitIndex)

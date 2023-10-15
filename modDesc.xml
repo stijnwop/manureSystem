@@ -108,11 +108,11 @@ Changelog:
 
     <specializations>
         <specialization name="hose" className="Hose" filename="src/hose/Hose.lua"/>
-        <specialization name="manureSystemPumpMotor" className="ManureSystemPumpMotor" filename="src/vehicles/ManureSystemPumpMotor.lua"/>
-        <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/ManureSystemConnector.lua"/>
-        <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/ManureSystemFillArm.lua"/>
-        <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/ManureSystemFillArmReceiver.lua"/>
-        <specialization name="manureSystemMixer" className="ManureSystemMixer" filename="src/vehicles/ManureSystemMixer.lua"/>
+        <specialization name="manureSystemPumpMotor" className="ManureSystemPumpMotor" filename="src/vehicles/specializations/ManureSystemPumpMotor.lua"/>
+        <specialization name="manureSystemConnector" className="ManureSystemConnector" filename="src/vehicles/specializations/ManureSystemConnector.lua"/>
+        <specialization name="manureSystemFillArm" className="ManureSystemFillArm" filename="src/vehicles/specializations/ManureSystemFillArm.lua"/>
+        <specialization name="manureSystemFillArmReceiver" className="ManureSystemFillArmReceiver" filename="src/vehicles/specializations/ManureSystemFillArmReceiver.lua"/>
+        <specialization name="manureSystemMixer" className="ManureSystemMixer" filename="src/vehicles/specializations/ManureSystemMixer.lua"/>
     </specializations>
 
     <vehicleTypes>

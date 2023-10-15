@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystem
-----------------------------------------------------------------------------------------------------
--- Purpose: Main class the handle the Manure System.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystem
+--
+-- Author: Stijn Wopereis
+-- Description: Main class the handle the Manure System.
+-- Name: ManureSystem
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
 
 ---@class ManureSystem
 ---@field connectorManager ManureSystemConnectorManager
@@ -120,6 +122,7 @@ function ManureSystem:load(xmlFilename)
         xmlFile:delete()
     end
 end
+
 ---Called when mission is loaded.
 function ManureSystem:loadFromXML(xmlFile)
     local version = xmlFile:getInt("manureSystem#version")
@@ -217,6 +220,7 @@ function ManureSystem:getAreConfigurationRestrictionsFulfilled(object, xmlFile, 
                 end
             end
         end)
+
         if not requiredConfigurationsFulfilled then
             return false
         end
@@ -236,6 +240,7 @@ function ManureSystem:getAreConfigurationRestrictionsFulfilled(object, xmlFile, 
                 end
             end
         end)
+
         if not avoidedConfigurationsFulfilled then
             return false
         end
@@ -247,6 +252,7 @@ end
 ---Loads the shared sample files for the manure system.
 function ManureSystem:loadManureSystemSamples()
     local xmlFile = XMLFile.load("ManureSystemSamples", Utils.getFilename("resources/sounds.xml", self.modDirectory))
+
     if xmlFile ~= nil then
         local soundsNode = getRootNode()
         self.samples.pump = self.soundManager:loadSampleFromXML(xmlFile.handle, "vehicle.sounds", "pump", self.modDirectory, soundsNode, 1, AudioGroup.VEHICLE, nil, nil)
@@ -350,6 +356,7 @@ end
 
 function ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
     local stringParts = string.split(typeName, ".")
+
     if #stringParts ~= 1 then
         local typeModName = unpack(stringParts)
         return specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemRegistry") ~= nil
