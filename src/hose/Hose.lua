@@ -540,7 +540,7 @@ function Hose:findConnector(id)
             if distanceToObject < Hose.VEHICLE_CONNECTOR_SEQUENCE or object:isa(Placeable) then
                 if object.isaHose ~= nil and object:isaHose() then
                     for _, connectorGrabNode in ipairs(object:getGrabNodes()) do
-                        if not self:isConnected(connectorGrabNode) then
+                        if not self:isConnected(connectorGrabNode) and connectorGrabNode.type == spec.connectorType then
                             if not grabNode.isExtension and connectorGrabNode.isExtension then
                                 if Hose.isConnectorInRange(connectorGrabNode.node, x, y, z, Hose.EXTENSION_IN_RANGE_DISTANCE) then
                                     spec.foundVehicleId = NetworkUtil.getObjectId(object)
