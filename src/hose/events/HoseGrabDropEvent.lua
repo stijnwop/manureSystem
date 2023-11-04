@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- HoseGrabDropEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to synchronize the player attach state to clients.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- HoseGrabDropEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to synchronize the player attach state to clients.
+-- Name: HoseGrabDropEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class HoseGrabDropEvent
 HoseGrabDropEvent = {}

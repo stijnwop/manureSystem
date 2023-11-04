@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- HosePlayer
-----------------------------------------------------------------------------------------------------
--- Purpose: Injection class to handle all the hose interactions with the player.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- HosePlayer
+--
+-- Author: Stijn Wopereis
+-- Description: Injection class to handle all the hose interactions with the player.
+-- Name: HosePlayer
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class HosePlayer
 HosePlayer = {}

@@ -1,11 +1,14 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemIsMixingEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the mixing state.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemIsMixingEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the mixing state.
+-- Name: ManureSystemIsMixingEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
+---@class ManureSystemIsMixingEvent
 ManureSystemIsMixingEvent = {}
 local ManureSystemIsMixingEvent_mt = Class(ManureSystemIsMixingEvent, Event)
 

@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- HoseAttachDetachEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to synchronize the vehicle attach state to clients.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- HoseAttachDetachEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to synchronize the vehicle attach state to clients.
+-- Name: HoseAttachDetachEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class HoseAttachDetachEvent
 HoseAttachDetachEvent = {}

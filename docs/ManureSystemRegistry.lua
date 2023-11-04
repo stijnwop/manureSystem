@@ -2,7 +2,7 @@
 -- ManureSystemRegistry
 --
 -- Author: Wopster (Stijn Wopereis)
--- Description:
+-- Description: Needed to be detected by the Manure System
 -- Name: ManureSystemRegistry
 -- Hide: yes
 --

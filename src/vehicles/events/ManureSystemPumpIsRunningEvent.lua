@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemPumpIsRunningEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the pump is running state.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemPumpIsRunningEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the pump is running state.
+-- Name: ManureSystemPumpIsRunningEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemPumpIsRunningEvent
 ManureSystemPumpIsRunningEvent = {}

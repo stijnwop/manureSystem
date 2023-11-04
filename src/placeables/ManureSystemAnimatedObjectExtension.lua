@@ -1,3 +1,13 @@
+--
+-- ManureSystemAnimatedObjectExtension
+--
+-- Author: Stijn Wopereis
+-- Description: Extensions for placeable animations
+-- Name: ManureSystemAnimatedObjectExtension
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2023
+
 ---@return boolean
 function Placeable:getIsAnimationPlaying(id)
     local spec = self.spec_animatedObjects

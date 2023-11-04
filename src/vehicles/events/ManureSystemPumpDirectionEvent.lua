@@ -1,11 +1,14 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemPumpDirectionEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the pump is direction state.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemPumpDirectionEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the pump is direction state.
+-- Name: ManureSystemPumpDirectionEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
+---@class ManureSystemPumpDirectionEvent
 ManureSystemPumpDirectionEvent = {}
 local ManureSystemPumpDirectionEvent_mt = Class(ManureSystemPumpDirectionEvent, Event)
 
@@ -33,7 +36,7 @@ end
 function ManureSystemPumpDirectionEvent:readStream(streamId, connection)
     self.vehicle = NetworkUtil.readNodeObject(streamId)
     self.direction = streamReadUIntN(streamId, 10) / 1023 * 2 - 1
-    if math.abs(self.direction) <  0.00099 then
+    if math.abs(self.direction) < 0.00099 then
         self.direction = 0 -- set to 0 to avoid noise caused by compression
     end
 

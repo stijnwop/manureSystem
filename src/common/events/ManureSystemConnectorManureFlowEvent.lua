@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemConnectorManureFlowEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the is the manure flow is open or not.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemConnectorManureFlowEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the is the manure flow is open or not.
+-- Name: ManureSystemConnectorManureFlowEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemConnectorManureFlowEvent
 ManureSystemConnectorManureFlowEvent = {}

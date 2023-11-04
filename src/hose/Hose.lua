@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- Hose
-----------------------------------------------------------------------------------------------------
--- Purpose: Hose functionality to pump from source to target.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- Hose
+--
+-- Author: Stijn Wopereis
+-- Description: Hose functionality to pump from source to target.
+-- Name: Hose
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class Hose
 Hose = {}

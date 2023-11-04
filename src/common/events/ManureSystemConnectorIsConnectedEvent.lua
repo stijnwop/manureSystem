@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemConnectorIsConnectedEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the is the connected state.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemConnectorIsConnectedEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the is the connected state.
+-- Name: ManureSystemConnectorIsConnectedEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemConnectorIsConnectedEvent
 ManureSystemConnectorIsConnectedEvent = {}

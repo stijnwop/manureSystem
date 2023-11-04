@@ -1,11 +1,14 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemPumpModeEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to sync the pump mode.
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemPumpModeEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to sync the pump mode.
+-- Name: ManureSystemPumpModeEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
+---@class ManureSystemPumpModeEvent
 ManureSystemPumpModeEvent = {}
 local ManureSystemPumpModeEvent_mt = Class(ManureSystemPumpModeEvent, Event)
 

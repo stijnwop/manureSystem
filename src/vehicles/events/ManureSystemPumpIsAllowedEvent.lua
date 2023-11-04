@@ -1,10 +1,12 @@
-----------------------------------------------------------------------------------------------------
--- ManureSystemPumpIsAllowedEvent
-----------------------------------------------------------------------------------------------------
--- Purpose: Event to check if we allow for pumping
 --
--- Copyright (c) Wopster, 2019
-----------------------------------------------------------------------------------------------------
+-- ManureSystemPumpIsAllowedEvent
+--
+-- Author: Stijn Wopereis
+-- Description: Event to check if we allow for pumping.
+-- Name: ManureSystemPumpIsAllowedEvent
+-- Hide: yes
+--
+-- Copyright (c) Wopster, 2019 - 2023
 
 ---@class ManureSystemPumpIsAllowedEvent
 ManureSystemPumpIsAllowedEvent = {}
