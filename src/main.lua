@@ -127,6 +127,20 @@ local function validateVehicleTypes(typeManager)
     end
 end
 
+local function addFillTypeToCategory(fillTypeName, categoryName)
+    local fillType = g_fillTypeManager:getFillTypeByName(fillTypeName:upper())
+    local categoryIndex = g_fillTypeManager.nameToCategoryIndex[categoryName:upper()]
+    if fillType ~= nil and categoryIndex ~= nil then
+        if not g_fillTypeManager:addFillTypeToCategory(fillType.index, categoryIndex) then
+            log(("Error: failed to add %s to %s"):format(fillTypeName, categoryName))
+        end
+    end
+end
+
+local function registerFillTypes()
+    addFillTypeToCategory("water", "slurryTank")
+end
+
 --- Init the mod.
 local function init()
     FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
@@ -135,6 +149,7 @@ local function init()
     Mission00.loadItemsFinished = Utils.appendedFunction(Mission00.loadItemsFinished, loadFromXMLFile)
     FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, saveToXMLFile)
     TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, validateVehicleTypes)
+    FillTypeManager.loadMapData = Utils.appendedFunction(FillTypeManager.loadMapData, registerFillTypes)
 
     manureSystem_overwrite.init()
 end
