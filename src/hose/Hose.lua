@@ -411,7 +411,7 @@ function Hose:onUpdateTick(dt)
 
                     if distance > length then
                         if g_currentMission.manureSystem.debug then
-                            Logging.info("Restriction detach distance: ", distance)
+                            Logging.info("Restriction detach distance: %d", distance)
                         end
 
                         if grabNode.isExtension then
@@ -722,7 +722,7 @@ function Hose:grab(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, true, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logging.info("Grab hose id", id)
+        Logging.info("Grab hose id %d", id)
     end
 
     local grabNode = self:getGrabNodeById(id)
@@ -756,7 +756,7 @@ function Hose:drop(id, player, noEventSend)
     HoseGrabDropEvent.sendEvent(self, id, player, false, noEventSend)
 
     if g_currentMission.manureSystem.debug then
-        Logging.info("Drop hose id", id)
+        Logging.info("Drop hose id %d", id)
     end
 
     local grabNode = self:getGrabNodeById(id)
