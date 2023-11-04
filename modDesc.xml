@@ -23,13 +23,6 @@ Slurry hose:
 
 Fertilizer hose:
 - Price: €300
-
-Changelog:
-- Support for nested pump sources
-- Fix issue with limited fill direction
-- Allow for non strategy connector types
-
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </en>
         <de>
@@ -49,13 +42,6 @@ Gülleschlauch:
 
 Düngerschlauch:
 - Preis: 300 €
-
-Changelog:
-- Support for nested pump sources
-- Fix issue with limited fill direction
-- Allow for non strategy connector types
-
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </de>
         <fr>
@@ -75,13 +61,6 @@ Tuyau à lisier:
 
 Tuyau à fertilisant:
 - Prix: €300
-
-Changelog:
-- Support for nested pump sources
-- Fix issue with limited fill direction
-- Allow for non strategy connector types
-
-<a href="https://github.com/stijnwop/manureSystem/releases/tag/1.2.0.0">Full changelog here</a>
 ]]>
         </fr>
     </description>
