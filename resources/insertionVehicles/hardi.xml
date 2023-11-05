@@ -1,0 +1,130 @@
+<data>
+    <vehicle xml="data/vehicles/hardi/navigator4000/navigator4000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="50"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="0.759 1.084 2.31"/>
+                <entry type="string" key="#rotation" value="0 90 -50"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/hardi/commander4500DF/commander4500DF.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="58"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.026 0.824 2.264"/>
+                <entry type="string" key="#rotation" value="20 82.5 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/hardi/mega1200L/mega1200L.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="30"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.125 0.326 0.543"/>
+                <entry type="string" key="#rotation" value="45 90 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.125 0.326 0.296"/>
+                <entry type="string" key="#rotation" value="45 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/hardi/aeon5200/aeon5200.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="62"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#position" value="0.7 1 2.264"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -10 -20"/>
+                <entry type="int" key=".sharedSet#id" value="3"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/hardi/rubicon9000/rubicon9000.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="80"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.597 1.872 -0.394"/>
+                <entry type="string" key="#rotation" value="90 0 0"/>
+            </connector>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="-1.574 1.714 1.769"/>
+                <entry type="string" key="#rotation" value="90 0 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

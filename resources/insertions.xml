@@ -1,9 +1,9 @@
 <files>
+    <!--Tankers-->
     <file path="resources/insertionVehicles/briri.xml"/>
     <file path="resources/insertionVehicles/farmtech.xml"/>
     <file path="resources/insertionVehicles/fliegl.xml"/>
     <file path="resources/insertionVehicles/kotte.xml"/>
-    <file path="resources/insertionVehicles/oxboPack.xml"/>
     <file path="resources/insertionVehicles/pallets.xml"/>
     <file path="resources/insertionVehicles/ploeger.xml"/>
     <file path="resources/insertionVehicles/saddleTracPack.xml"/>
@@ -12,11 +12,17 @@
     <file path="resources/insertionVehicles/veenhuis.xml"/>
     <file path="resources/insertionVehicles/vervaet.xml"/>
     <file path="resources/insertionVehicles/zunhammer.xml"/>
+    <!--Sprayers-->
+    <file path="resources/insertionVehicles/berthoud.xml"/>
+    <file path="resources/insertionVehicles/hardi.xml"/>
 
     <file type="placeable" path="resources/insertionPlaceables/lizard.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/mapAlpine.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/meridian.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/planET.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/rudolfHormann.xml"/>
+
+    <file path="resources/insertionVehicles/precisionFarming.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/pumpsNHosesPack.xml"/>
+    <file path="resources/insertionVehicles/oxboPack.xml"/>
 </files>

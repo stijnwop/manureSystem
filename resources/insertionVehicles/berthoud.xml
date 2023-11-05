@@ -1,0 +1,52 @@
+<data>
+    <vehicle xml="data/vehicles/berthoud/bruin4200/bruin4200.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="70"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#position" value="-0.886 1.7 -0.52"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 180 90"/>
+                <entry type="int" key=".sharedSet#id" value="3"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_4"/>
+                <entry type="string" key=".sharedSet.connector#color" value="0.068 0.072 0.084 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="data/vehicles/berthoud/vantage4300/vantage4300.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="70"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key=".sharedSet#createNode" value="true"/>
+                <entry type="string" key=".sharedSet#position" value="0.14 0.68 2.3"/>
+                <entry type="string" key=".sharedSet#rotation" value="0 -10 0"/>
+                <entry type="int" key=".sharedSet#id" value="3"/>
+                <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_2"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>
