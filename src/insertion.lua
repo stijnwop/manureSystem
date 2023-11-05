@@ -88,6 +88,7 @@ local function generateSpecObject(data)
                 storeItem.configurations, storeItem.defaultConfigurationIds = StoreItemUtil.getConfigurationsFromXML(self.xmlFile, rootName, storeItem.baseDir, storeItem.customEnvironment, storeItem.isMod, storeItem)
                 storeItem.subConfigurations = StoreItemUtil.getSubConfigurationsFromXML(storeItem.configurations)
                 storeItem.configurationSets = StoreItemUtil.getConfigurationSetsFromXML(storeItem, self.xmlFile, rootName, storeItem.baseDir, storeItem.customEnvironment, storeItem.isMod)
+                storeItem.canBeSold = true
             end
         end
     end

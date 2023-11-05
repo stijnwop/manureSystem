@@ -355,11 +355,15 @@ function ManureSystem:getObjectSupportsFillArms(object)
 end
 
 function ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
+    return ManureSystem.hasModSpecialization(typeName, "manureSystemRegistry", specializationManager)
+end
+
+function ManureSystem.hasModSpecialization(typeName, specName, specializationManager)
     local stringParts = string.split(typeName, ".")
 
     if #stringParts ~= 1 then
         local typeModName = unpack(stringParts)
-        return specializationManager:getSpecializationObjectByName(typeModName .. ".manureSystemRegistry") ~= nil
+        return specializationManager:getSpecializationObjectByName(typeModName .. "." .. specName) ~= nil
     end
 
     return false
@@ -472,7 +476,10 @@ end
 
 ---Add our global translations to the global table.
 function ManureSystem.addModTranslations(i18n)
-    local global = getfenv(0).g_i18n.texts
+    local modEnvMeta = getmetatable(_G)
+    local env = modEnvMeta.__index
+
+    local global = env.g_i18n.texts
     for key, text in pairs(i18n.texts) do
         if string.startsWith(key, "global_") then
             global[key:sub(8)] = text
@@ -482,7 +489,10 @@ end
 
 ---Remove are global entries to avoid duplications.
 function ManureSystem.removeModTranslations(i18n)
-    local global = getfenv(0).g_i18n.texts
+    local modEnvMeta = getmetatable(_G)
+    local env = modEnvMeta.__index
+
+    local global = env.g_i18n.texts
     for key, _ in pairs(i18n.texts) do
         if string.startsWith(key, "global_") then
             global[key:sub(8)] = nil

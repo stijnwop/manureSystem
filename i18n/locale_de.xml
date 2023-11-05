@@ -39,7 +39,6 @@
         <text name="function_hose" text="Schläuche werden zum Umpumpen von Flüssigkeiten verwendet. Gegebenenfalls können Schläuche für größere Reichweiten zusammengekoppelt werden."/>
         <text name="configuration_hose" text="Schlauch"/>
         <text name="configuration_valueExtend" text="Verlängerbar"/>
-        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Nachfüllbar "/>
     </texts>
 </l10n>

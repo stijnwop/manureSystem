@@ -35,8 +35,6 @@
             <!--Todo: add missing translation for configuration_valueExtend--></e>
         <e k="function_hose" v="With a hose you are able to pump a liquid fill type from source to target. If applicable you could extend the hose to reach larger ranges." tag="todo">
             <!--Todo: add missing translation for function_hose--></e>
-        <e k="global_configuration_disappearOnEmpty" v="Standard" tag="todo">
-            <!--Todo: add missing translation for global_configuration_disappearOnEmpty--></e>
         <e k="global_configuration_refillable" v="Refillable" tag="todo">
             <!--Todo: add missing translation for global_configuration_refillable--></e>
         <e k="info_directionIn" v="filling" tag="todo">

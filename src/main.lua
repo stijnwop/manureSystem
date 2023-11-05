@@ -82,6 +82,8 @@ local function unload()
         if g_currentMission ~= nil then
             g_currentMission.manureSystem = nil
         end
+    else
+        ManureSystem.removeModTranslations(g_i18n)
     end
 end
 
@@ -117,6 +119,8 @@ end
 
 local function validateVehicleTypes(typeManager)
     if g_modIsLoaded[modName] then
+        ManureSystem.addModTranslations(g_i18n)
+
         if typeManager.typeName == "vehicle" then
             ManureSystem.installVehicleSpecializations(typeManager, typeManager.specializationManager, modDirectory, modName)
         end

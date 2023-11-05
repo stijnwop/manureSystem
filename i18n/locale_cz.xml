@@ -37,7 +37,6 @@
         <text name="function_hose" text="S hadicí je možné přečerpávat tekutiny. Hadice lze prodloužit, pro dosažení větší vzdálenosti."/>
         <text name="configuration_hose" text="Změnit typ hadice"/>
         <text name="configuration_valueExtend" text="Prodloužení"/>
-        <text name="global_configuration_disappearOnEmpty" text="Po vyprázdnění zmizí"/>
         <text name="global_configuration_refillable" text="Plnitelná"/>
     </texts>
     <elements>
