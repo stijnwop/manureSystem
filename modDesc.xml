@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="77">
     <author>Wopster</author>
-    <version>2.0.0.0</version>
+    <version>1.0.0.0</version>
     <title>
         <en>Manure System</en>
     </title>
@@ -64,7 +64,7 @@ Tuyau à fertilisant:
 ]]>
         </fr>
     </description>
-    <iconFilename>icon.png</iconFilename>
+    <iconFilename>icon_manureSystem.png</iconFilename>
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
