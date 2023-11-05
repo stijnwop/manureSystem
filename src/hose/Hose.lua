@@ -429,22 +429,8 @@ function Hose:onUpdateTick(dt)
     end
 end
 
-function Hose:restrictPlayerMovement(id, player, dt)
+function Hose:restrictPlayerMovement(id, player)
     local spec = self.spec_hose
-    local networkInformation = player.networkInformation
-    local movementIsDirty = networkInformation.interpolationTime.isDirty
-
-    if movementIsDirty then
-        local xt, yt, zt = getTranslation(player.rootNode)
-        local interpolatorPosition = networkInformation.interpolatorPosition
-        movementIsDirty = math.abs(xt - interpolatorPosition.targetPositionX) > 0.001
-            or math.abs(yt - interpolatorPosition.targetPositionY) > 0.001
-            or math.abs(zt - interpolatorPosition.targetPositionZ) > 0.001
-    end
-
-    if not movementIsDirty then
-        return
-    end
 
     local grabNode = self:getGrabNodeById(id)
     if self:isAttached(grabNode) then
@@ -454,50 +440,32 @@ function Hose:restrictPlayerMovement(id, player, dt)
             if player == g_currentMission.player then
                 g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestrictionLength"), 1000)
             end
-            local x, y, z = unpack(spec.lastInRangePosition)
-            --Set current position when the last in range position isn't set.
-            if x == 0 or y == 0 or z == 0 then
-                spec.lastInRangePosition = { getTranslation(player.rootNode) }
-            end
 
-            player:moveToAbsoluteInternal(unpack(spec.lastInRangePosition))
-            return
-        else
-            spec.lastInRangePosition = { getTranslation(player.rootNode) }
+            return true
         end
 
         if desc ~= nil and desc.connectorId ~= nil then
             local connector = desc.vehicle:getConnectorById(desc.connectorId)
-            local cx, cy, cz = getWorldTranslation(connector.node)
-            local px, py, pz = getWorldTranslation(player.rootNode)
+            local cx, _, cz = getWorldTranslation(connector.node)
+            local px, _, pz = getWorldTranslation(player.rootNode)
             local dx, dz = px - cx, pz - cz
             local radius = dx * dx + dz * dz
             length = length + Hose.RESPAWN_LENGTH_OFFSET
 
             local actionRadius = length * length
 
-            if radius < actionRadius then
-                spec.lastInRangePosition = { getTranslation(player.rootNode) }
-            else
-                cx, cy, cz = getWorldTranslation(connector.node)
-                px, py, pz = getWorldTranslation(player.rootNode)
-
-                local distance = MathUtil.vector2Length(px - cx, pz - cz)
-                local x, _, z = unpack(spec.lastInRangePosition)
-
-                x = cx + ((px - cx) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
-                z = cz + ((pz - cz) / distance) * (length - Hose.RESPAWN_OFFSET * dt)
-
-                player:moveToAbsoluteInternal(x, py, z)
-                spec.lastInRangePosition = { x, py, z }
-
+            if radius > actionRadius then
                 if not spec.rangeRestrictionMessageShown and player == g_currentMission.player then
                     spec.rangeRestrictionMessageShown = true
                     g_currentMission:showBlinkingWarning(g_i18n:getText("warning_hoseRangeRestriction"), 5000)
                 end
+
+                return true
             end
         end
     end
+
+    return false
 end
 
 ---Returns true when the connector node is in range of the grab node, false otherwise.
@@ -751,6 +719,7 @@ function Hose:grab(id, player, noEventSend)
     end
 
     player.isCarryingObject = true
+    player.hoseIsRestricting = false
     player.hoseGrabNodeId = id
 end
 
@@ -778,6 +747,7 @@ function Hose:drop(id, player, noEventSend)
     grabNode.jointIndex = nil
 
     player.isCarryingObject = false
+    player.hoseIsRestricting = false
     player.hoseGrabNodeId = nil
 end
 

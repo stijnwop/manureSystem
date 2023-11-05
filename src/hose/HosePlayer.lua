@@ -36,6 +36,9 @@ function HosePlayer.new(isClient, isServer, mission, input)
     PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_playerStateThrow_isAvailable)
     PlayerStatePickup.isAvailable = Utils.overwrittenFunction(PlayerStatePickup.isAvailable, HosePlayer.inj_playerStatePickup_isAvailable)
 
+    PlayerStateWalk.isAvailable = Utils.overwrittenFunction(PlayerStateWalk.isAvailable, HosePlayer.inj_playerStateWalk_isAvailable)
+    PlayerStateRun.isAvailable = Utils.overwrittenFunction(PlayerStateRun.isAvailable, HosePlayer.inj_playerStateWalk_isAvailable)
+
     return self
 end
 
@@ -71,7 +74,13 @@ function HosePlayer.inj_player_update(player, dt)
         if player.hoseGrabNodeId ~= nil then
             local hose = NetworkUtil.getObject(player.lastFoundHose)
             hose:findConnector(player.hoseGrabNodeId)
-            hose:restrictPlayerMovement(player.hoseGrabNodeId, player, dt)
+            player.hoseIsRestricting = hose:restrictPlayerMovement(player.hoseGrabNodeId, player)
+
+            if player.hoseIsRestricting then
+                player.playerStateMachine:deactivateState("walk")
+                player.playerStateMachine:deactivateState("run")
+                player.playerStateMachine:activateState("idle")
+            end
         end
     end
 end
@@ -106,6 +115,16 @@ function HosePlayer.inj_player_updateActionEvents(player)
     disableInput(InputAction.MS_ATTACH_HOSE)
     disableInput(InputAction.MS_DETACH_HOSE)
     disableInput(InputAction.MS_TOGGLE_FLOW)
+
+    if player.hoseIsRestricting then
+        disableInput(InputAction.AXIS_MOVE_FORWARD_PLAYER)
+        disableInput(InputAction.AXIS_MOVE_SIDE_PLAYER)
+        disableInput(InputAction.AXIS_RUN)
+    else
+        enableInput(InputAction.AXIS_MOVE_FORWARD_PLAYER)
+        enableInput(InputAction.AXIS_MOVE_SIDE_PLAYER)
+        enableInput(InputAction.AXIS_RUN)
+    end
 
     if player.lastFoundObjectIsHose then
         local hose = NetworkUtil.getObject(player.lastFoundHose)
@@ -259,6 +278,19 @@ function HosePlayer.inj_playerStatePickup_isAvailable(state, superFunc)
     local player = state.player
     if player.lastFoundObjectIsHose and player.lastFoundHoseIsConnected then
         return false
+    end
+
+    return superFunc(state)
+end
+
+function HosePlayer.inj_playerStateWalk_isAvailable(state, superFunc)
+    local player = state.player
+    local hose = NetworkUtil.getObject(player.lastFoundHose)
+
+    if hose ~= nil and player.hoseGrabNodeId ~= nil then
+        if player.hoseIsRestricting then
+            return false
+        end
     end
 
     return superFunc(state)
