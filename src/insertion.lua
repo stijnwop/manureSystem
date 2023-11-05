@@ -13,7 +13,11 @@ local modDirectory = g_currentModDirectory or ""
 ---@type string name of the mod.
 local modName = g_currentModName or "unknown"
 
-local insertionFunction = "onPreLoad"
+local insertionFunctions = {
+    "onPreLoad",
+    "onLoadFinished"
+}
+
 local insertionRootFile = "resources/insertions.xml"
 
 local insertions = {}
@@ -77,13 +81,21 @@ local function generateSpecObject(data)
 
         if data.reloadStoreItem then
             local storeItem = g_storeManager:getItemByXMLFilename(self.configFileName)
-            local rootName = self.xmlFile:getRootName()
 
             if storeItem.species == "vehicle" then
-                storeItem.configurations, storeItem.defaultConfigurationIds = StoreItemUtil.getConfigurationsFromXML(self.xmlFile, rootName, self.baseDirectory, self.customEnvironment, false, storeItem)
+                local rootName = self.xmlFile:getRootName()
+
+                storeItem.configurations, storeItem.defaultConfigurationIds = StoreItemUtil.getConfigurationsFromXML(self.xmlFile, rootName, storeItem.baseDir, storeItem.customEnvironment, storeItem.isMod, storeItem)
                 storeItem.subConfigurations = StoreItemUtil.getSubConfigurationsFromXML(storeItem.configurations)
-                storeItem.configurationSets = StoreItemUtil.getConfigurationSetsFromXML(storeItem, self.xmlFile, rootName, self.baseDirectory, self.customEnvironment, false)
+                storeItem.configurationSets = StoreItemUtil.getConfigurationSetsFromXML(storeItem, self.xmlFile, rootName, storeItem.baseDir, storeItem.customEnvironment, storeItem.isMod)
             end
+        end
+    end
+
+    spec.onLoadFinished = function()
+        if data.reloadStoreItem then
+            g_messageCenter:publish(MessageType.STORE_ITEMS_RELOADED)
+            data.reloadStoreItem = false
         end
     end
 
@@ -102,7 +114,10 @@ local function injectRegistry(xmlFilename, orgEntry, data)
 
     if doInject then
         generatedSpec = generateSpecObject(insertions[xmlFilename])
-        table.addElement(orgEntry.eventListeners[insertionFunction], generatedSpec)
+
+        for _, insertionFunction in ipairs(insertionFunctions) do
+            table.addElement(orgEntry.eventListeners[insertionFunction], generatedSpec)
+        end
     end
 
     return doInject, generatedSpec
@@ -121,7 +136,9 @@ local function vehicleLoad(self, superFunc, data, ...)
 
     local loadingState = superFunc(self, data, ...)
     if isInjected then
-        table.removeElement(orgEntry.eventListeners[insertionFunction], registrySpec)
+        for _, insertionFunction in ipairs(insertionFunctions) do
+            table.removeElement(orgEntry.eventListeners[insertionFunction], registrySpec)
+        end
     end
 
     return loadingState
@@ -140,7 +157,9 @@ local function placeableLoad(self, superFunc, data, ...)
 
     local loadingState = superFunc(self, data, ...)
     if isInjected then
-        table.removeElement(orgEntry.eventListeners[insertionFunction], registrySpec)
+        for _, insertionFunction in ipairs(insertionFunctions) do
+            table.removeElement(orgEntry.eventListeners[insertionFunction], registrySpec)
+        end
     end
 
     return loadingState
