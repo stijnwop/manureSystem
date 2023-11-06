@@ -8,7 +8,7 @@
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits#removeVehicleIfEmpty" type="bool" value="false"/>
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#fillTypes" value="LIQUIDFERTILIZER"/>
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#startFillType" value="LIQUIDFERTILIZER"/>
-            <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#capacity" value="3000"/>
+            <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#capacity" value="2000"/>
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#startFillLevel" value="2000"/>
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#ignoreFillLimit" value="true"/>
             <entry key="vehicle.fillUnit.fillUnitConfigurations.fillUnitConfiguration(1).fillUnits.fillUnit(0)#unitTextOverride" value="$l10n_unit_literShort"/>
