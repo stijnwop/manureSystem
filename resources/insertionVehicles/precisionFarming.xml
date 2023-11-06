@@ -3,6 +3,7 @@
         <manureSystem>
             <entry type="bool" key="#hasConnectors" value="true"/>
             <entry type="bool" key="#hasFillArm" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
         </manureSystem>
 
         <manureSystemPumpMotor>
@@ -32,6 +33,7 @@
     <vehicle xml="vehicles/johnDeere/r700i/r700i.xml">
         <manureSystem>
             <entry type="bool" key="#hasConnectors" value="true"/>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
         </manureSystem>
 
         <manureSystemPumpMotor>
