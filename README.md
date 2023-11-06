@@ -10,13 +10,13 @@ Pumping does not always happen at full efficiency, manure thickness decreases th
 ## FAQ
 - Will the Manure System come to console?
 > No sadly not, as this mod includes tons of scripts in order to make the functionality possible. This is not possible due to the disallowance of scripts by Microsoft and Sony.
-- Why is mod X not working with the Manure System? 
+- Why is mod X not working with the Manure System?
 > Most mods need to be prepared for the Manure System in order to work. [Down below you can find a list of vehicles](https://github.com/stijnwop/manureSystem#out-of-the-box-support) that are supported out of the box. Please be patient with the modders that are willing to prepare their vehicles for this system specially for you, it will come soon!
 - Why is map X not working with the Manure System?
 > Same as for vehicles, when maps use custom placeables for animals or the bga they will need to be prepared for the Manure System.
 - How can I add the Manure System to my map?
 > Understand that all maps are running the new placeable system for the animal areas and BGA. You only need to follow [the tutorial](https://github.com/stijnwop/manureSystem#modding) included for adding Manure System support to the included placeables of the given map.
-- I am using a mod from your out of the box support list, but it does not work!?
+- I am using a mod from your out-of-the-box support list, but it does not work!?
 > Make sure you actually use the mod from the given link in the list, support for a slightly edited version will drop.
 - Why can't I suck water from the mod map I am using?
 > Check with the mapper if your mod map actually supports the water plane, you can also easily confirm this with running a vanilla water tanker.
@@ -36,9 +36,11 @@ This version should also work in Multiplayer.
 ## Special thanks to
 Special thanks to [VertexDezign](https://vertexdezign.net/) for providing awesome assets!
 
-Special thanks to workflowsen for creating the icon! 
+Special thanks to workflowsen for creating the icon!
 
 Special thanks to BM-Modding for providing awesome assets!
+
+Special thanks to JoPi for his contribution to the script work!
 
 ## Features
 
@@ -71,7 +73,7 @@ Press the right mouse button in order to attach the hose to the coupling. If the
 If the coupling does not have any manure flow animations the flow will be controlled automatically.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=OqU9gLwtkqU
-" target="_blank"><img src="http://img.youtube.com/vi/OqU9gLwtkqU/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/OqU9gLwtkqU/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 #### How to use: FillArm
@@ -79,7 +81,7 @@ Move the fill arm by mouse control and place it inside the target object. The fi
 > **NOTE: In order to be able to pump inwards the fill arm needs to be UNDER the fill plane.**
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2FW6mRde4Bg
-" target="_blank"><img src="http://img.youtube.com/vi/2FW6mRde4Bg/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/2FW6mRde4Bg/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 #### How to use: DockArm
@@ -88,7 +90,7 @@ The dock arm automatically functions like a fill arm (mentioned above) plus it c
 > **NOTE: Not all vehicles have the docking funnel animated, this is because the vanilla vehicles can't be prepared for that as the funnel model is attached to the whole mesh.**
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=pn29sn7EVf0
-" target="_blank"><img src="http://img.youtube.com/vi/pn29sn7EVf0/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/pn29sn7EVf0/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ### Out of the box support
