@@ -118,11 +118,9 @@ function HosePlayer.inj_player_updateActionEvents(player)
 
     if player.hoseIsRestricting then
         disableInput(InputAction.AXIS_MOVE_FORWARD_PLAYER)
-        disableInput(InputAction.AXIS_MOVE_SIDE_PLAYER)
         disableInput(InputAction.AXIS_RUN)
     else
         enableInput(InputAction.AXIS_MOVE_FORWARD_PLAYER)
-        enableInput(InputAction.AXIS_MOVE_SIDE_PLAYER)
         enableInput(InputAction.AXIS_RUN)
     end
 
@@ -236,7 +234,6 @@ function HosePlayer.inj_player_pickUpObjectRaycastCallback(player, superFunc, hi
 
         if getRigidBodyType(hitObjectId) == RigidBodyType.DYNAMIC then
             local mass = getMass(hitObjectId)
-            -- check if mounted:
             local canBePickedUp = true
             local object = g_currentMission:getNodeObject(hitObjectId)
 
