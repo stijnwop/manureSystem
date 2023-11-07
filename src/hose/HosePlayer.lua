@@ -227,28 +227,30 @@ function HosePlayer.inj_player_checkObjectInRange(player, superFunc)
 end
 
 function HosePlayer.inj_player_pickUpObjectRaycastCallback(player, superFunc, hitObjectId, x, y, z, distance)
-    if hitObjectId ~= g_currentMission.terrainRootNode and Player.PICKED_UP_OBJECTS[hitObjectId] ~= true then
-        local rigidBodyType = getRigidBodyType(hitObjectId)
-        if rigidBodyType == RigidBodyType.DYNAMIC or rigidBodyType == RigidBodyType.KINEMATIC then
-            player.lastFoundAnyObject = hitObjectId
+    if hitObjectId ~= g_currentMission.terrainRootNode and hitObjectId ~= player.rootNode and Player.PICKED_UP_OBJECTS[hitObjectId] ~= true then
+        player.lastFoundAnyObject = hitObjectId
+
+        if not player.isServer then
+            return false
         end
 
-        if player.isServer and rigidBodyType == RigidBodyType.DYNAMIC then
+        if getRigidBodyType(hitObjectId) == RigidBodyType.DYNAMIC then
             local mass = getMass(hitObjectId)
             -- check if mounted:
             local canBePickedUp = true
             local object = g_currentMission:getNodeObject(hitObjectId)
+
             if object ~= nil then
-                if object.dynamicMountObject ~= nil then
+                if object.dynamicMountObject ~= nil or object.tensionMountObject ~= nil then
                     canBePickedUp = false
                 end
+
+                if object.getCanBePickedUp ~= nil and not object:getCanBePickedUp(player) and not player.superStrengthEnabled then
+                    canBePickedUp = false
+                end
+
                 if object.getTotalMass ~= nil then
                     mass = object:getTotalMass()
-                end
-                if object.getCanBePickedUp ~= nil then
-                    if not object:getCanBePickedUp(player) then
-                        canBePickedUp = false
-                    end
                 end
             end
 
