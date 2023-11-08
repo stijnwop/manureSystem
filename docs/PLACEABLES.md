@@ -4,7 +4,7 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 
 ### What do I need?
 
-To successfully execute the required steps in this tutorial you will need the following programs: 
+To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
 - GIANTS Editor 8.2.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
@@ -19,11 +19,11 @@ If the following [Download ManureSystemAvailabilityCheck](https://raw.githubuser
 3. A window will open with the script file.
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
 5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
- 
+
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
-## Adding the ManureSystemAvailabilityCheck
-> **WARNING: you can skip this step when you're not dealing with a standalone mod (so with build-in placeables)**
+## [Optional] Adding the ManureSystemAvailabilityCheck
+> **WARNING: This part is only important if the mod should ONLY work with Manure System. If it's just using the vanilla placeable types and no custom logic you can skip this step**
 
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
 
@@ -92,7 +92,7 @@ Our step will result into this:
 
 Replace the .. (dots) with a connector entry.
 For our first connector entry we're going to use an existing reference transform group from the i3d file.
-For that we open the i3d file and copy the index of the desired node. 
+For that we open the i3d file and copy the index of the desired node.
 
 > **NOTE: placeables don't work with i3d mappings so we have to use node indexes in this case!**
 
@@ -162,7 +162,7 @@ These look like this (DON'T BLINDLY COPY):
             <part node="1|1|1">
                 <keyFrame time="0.0" rotation="0 0 0"/>
                 <keyFrame time="1" rotation="0 0 -125"/>
-            </part>            
+            </part>
         </animation>
     </animatedObject>
     <animatedObject>
