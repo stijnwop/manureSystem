@@ -327,22 +327,6 @@ Below an example setup with support for an 3 and 5 meter hose.
 </connector>
 ```
 
-Old park system (DEPRECATED)
-> Please use the new system described above.
-
-- parkOffsetThreshold (in meters) `float` e.g. `3` [OPTIONAL - default: `the length of the park place`] This determines when the deformation should take effect (deprecated)
-- parkPlaceLength (in meters) `float` e.g. `3` [OPTIONAL - default: `5`] This determines for which hose the place parameters should take effect upon.
-- parkDirection `string` e.g. `left` [OPTIONAL - default: `right`] This the hose placement direction.
-- parkStartTransOffset `vector 3 string` e.g. `1 0 0` [OPTIONAL - default: `0 0 0`] This determines the start translation of the hose on park position.
-- parkStartRotOffset `vector 3 string` e.g. `0 50 0` [OPTIONAL - default: `0 0 0`] This determines the start rotation (in degrees) of the hose on park position.
-- parkEndTransOffset `vector 3 string` e.g. `0 1 0` [OPTIONAL - default: `0 0 0`] This determines the end translation of the hose on park position.
-- parkEndRotOffset `vector 3 string` e.g. `20 0 0` [OPTIONAL - default: `0 0 0`] This determines the end rotation (in degrees) of the hose on park position.
-
-Below an example with the old inline park parameters:
-```xml
-<connector type="coupling" node="parkNode" isParkPlace="true" parkPlaceLength="5" parkOffsetThreshold="5" parkEndTransOffset="-0.01 -0.175 0" parkEndRotOffset="-13 0 0" />
-```
-
 ##### Adding the connector animation
 > **NOTE: When using shared sets the animation is already done, so there's no need to add entries for shared set connectors!**
 
