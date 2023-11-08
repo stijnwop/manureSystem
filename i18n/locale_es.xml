@@ -14,8 +14,8 @@
         <text name="action_toggleManureFlowStateClose" text="Cerrar"/>
         <text name="action_activatePump" text="Activar bomba de %s"/>
         <text name="action_deactivatePump" text="Desactivar bomba de %s"/>
-        <text name="action_directionOut" text="Cambiar modo bomba a: vaciado"/>
-        <text name="action_directionIn" text="Cambiar modo bomba a: to: filling"/>
+        <text name="action_directionOut" text="Cambiar modo bomba a: Abastecerse"/>
+        <text name="action_directionIn" text="Cambiar modo bomba a: Vaciado"/>
         <text name="action_directionLeftRight" text="Cambiar modo bomba de izda a dcha"/>
         <text name="action_directionRightLeft" text="Cambiar modo bomba de dcha a izda"/>
         <text name="info_directionOut" text="Vaciando"/>
@@ -41,9 +41,7 @@
         <text name="global_configuration_refillable" text="Reutilizable"/>
     </texts>
     <elements>
-        <e k="info_title_thickness" v="Thickness" tag="todo">
-            <!--Todo: add missing translation for info_title_thickness--></e>
-        <e k="warning_limitedPumpDirectionsNotCompatible" v="Limited pump directions of pump source and target are not compatible!" tag="todo">
-            <!--Todo: add missing translation for warning_limitedPumpDirectionsNotCompatible--></e>
+        <e k="info_title_thickness" v="Espesor"/>
+        <e k="warning_limitedPumpDirectionsNotCompatible" v="¡La direcciones de bombeo (Bomba/Depósito) y del destino (Depósito/Bomba) no son compatibles!"/>
     </elements>
 </l10n>
