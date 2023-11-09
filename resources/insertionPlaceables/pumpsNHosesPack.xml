@@ -281,7 +281,7 @@
                 <entry type="bool" key=".sharedSet#createNode" value="true"/>
                 <entry type="string" key=".sharedSet#placeholderNode" value="0>10|2"/>
                 <entry type="string" key=".sharedSet#linkNode" value="0>10"/>
-                <entry type="string" key=".sharedSet#position" value="0.692 0.443 7.372"/>
+                <entry type="string" key=".sharedSet#position" value="-0.998 0.439 13.414"/>
                 <entry type="string" key=".sharedSet#rotation" value="0 -90 0"/>
                 <entry type="string" key=".sharedSet.connector#type" value="CONNECTOR_1"/>
                 <entry type="string" key=".sharedSet.valve#type" value="8INCH_BRASS"/>
