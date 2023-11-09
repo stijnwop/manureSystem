@@ -99,17 +99,22 @@ function HosePlayer.inj_player_updateActionEvents(player)
     local function disableInput(inputAction)
         -- Check if the input exists in order to prevent callstacks with mods that load dummy players (e.g. ContractorMod).
         if eventList[inputAction] ~= nil then
-            local id = eventList[inputAction].eventId
+            local event = eventList[inputAction]
+            local id = event.eventId
             g_inputBinding:setActionEventActive(id, false)
             g_inputBinding:setActionEventTextVisibility(id, false)
         end
     end
 
-    local function enableInput(inputAction)
-        local id = eventList[inputAction].eventId
+    local function enableInput(inputAction, forcePriority)
+        local event = eventList[inputAction]
+        local id = event.eventId
         g_inputBinding:setActionEventActive(id, true)
-        g_inputBinding:setActionEventTextVisibility(id, true)
-        g_inputBinding:setActionEventTextPriority(id, GS_PRIO_HIGH)
+        g_inputBinding:setActionEventTextVisibility(id, event.textVisibility)
+
+        if forcePriority then
+            g_inputBinding:setActionEventTextPriority(id, GS_PRIO_HIGH)
+        end
     end
 
     disableInput(InputAction.MS_ATTACH_HOSE)
@@ -132,7 +137,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
             local grabNode = hose:getGrabNodeById(player.lastFoundGradNodeId)
 
             if hose:isAttached(grabNode) and spec.foundConnectorId ~= 0 and not spec.foundConnectorIsConnected then
-                enableInput(InputAction.MS_ATTACH_HOSE)
+                enableInput(InputAction.MS_ATTACH_HOSE, true)
                 local event = eventList[InputAction.MS_ATTACH_HOSE]
                 local text = spec.foundConnectorIsParkPlace and g_i18n:getText("action_storeHose") or event.text
                 g_inputBinding:setActionEventText(event.eventId, text)
@@ -145,7 +150,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
                     local animationName = connector.manureFlowAnimationName ~= nil and connector.manureFlowAnimationName or connector.manureFlowAnimationIndex
 
                     if hasManureFlowControl then
-                        enableInput(InputAction.MS_TOGGLE_FLOW)
+                        enableInput(InputAction.MS_TOGGLE_FLOW, true)
                         local state = object:getAnimationTime(animationName) == 0
                         local text = state and g_i18n:getText("action_toggleManureFlowStateOpen") or g_i18n:getText("action_toggleManureFlowStateClose")
                         local id = eventList[InputAction.MS_TOGGLE_FLOW].eventId
@@ -154,7 +159,7 @@ function HosePlayer.inj_player_updateActionEvents(player)
                     end
 
                     if not hasManureFlowControl or not connector.hasOpenManureFlow then
-                        enableInput(InputAction.MS_DETACH_HOSE)
+                        enableInput(InputAction.MS_DETACH_HOSE, true)
                     end
                 end
             end
