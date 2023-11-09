@@ -6,51 +6,75 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 
 To successfully execute the required steps in this tutorial you will need the following programs:
 
-- Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
+- Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or
+  any proper IDE ...)
 - GIANTS Editor 9.3.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
 - Internet connection for downloading sources from GitHub
 
 For vehicles you also need an extra script in order to let the `ManureSystem` detect your mod.
-You will need to get a copy of the latest `ManureSystemRegistry.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemRegistry.lua).
+You will need to get a copy of the latest `ManureSystemRegistry.lua` file which can be found in
+the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemRegistry.lua).
 
 How to download the `ManureSystemRegistry.lua` file:
+
 1. Go to the `docs` folder located in the root directory.
 2. Click on the `ManureSystemRegistry.lua` file.
 3. A window will open with the script file.
 4. Click on the button called `Raw` next to the `Blame` button and it will open the file in RAW format.
-5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in your mod.
+5. Right click and click on `save as` (or hit ctrl - s on your keyboard) and save the file to the preferred location in
+   your mod.
 
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
 ## Adding the ManureSystemRegistry specialization
-> In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#what-do-i-need).
 
-> **TIP: when you don't plan to add extra specializations besides the ManureSystemRegistry and your mod uses the vehicle type `manureBarrel` you don't necessarily have to add the ManureSystemRegistry.lua as the ManureSystem inserts the specs by default for the vehicle type `manureBarrel`**
+In order to start with this step you need to have completed the
+part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#what-do-i-need).
+
+> **INFO:** If you don't plan to add additional specializations beyond the ManureSystemRegistry and your mod uses one of
+> the following vehicle types: `manureTrailer`, `sprayer`, `selfPropelledSprayer` or already has the `ManureBarrel`
+> specialization, then you don't need to necessarily add the ManureSystemRegistry.lua because the ManureSystem inserts
+> the
+> necessary specifications by default
+
+Make sure you have read the information quote above, if so you can skip this section!
 
 ### Step 1
+
 Open the `modDesc.xml` file located in your mod directory.
 
 In order to load the specialization you will need to add the specializations entry to the modDesc.
+
 ```xml
+
 <specializations>
     <specialization name="manureSystemRegistry" className="ManureSystemRegistry" filename="ManureSystemRegistry.lua"/>
 </specializations>
 ```
 
-The filename must be the exact location of the `ManureSystemRegistry.lua` file you downloaded earlier. In this case it's loaded from the root directory of the mod.
+The filename must be the exact location of the `ManureSystemRegistry.lua` file you downloaded earlier. In this case it's
+loaded from the root directory of the mod.
 
 If a similar entry already exists you can just add the specialization entry to that.
+
 ```xml
+
 <specialization name="manureSystemRegistry" className="ManureSystemRegistry" filename="ManureSystemRegistry.lua"/>
 ```
-### Step 2
-Now we need to add the newly loaded spec to a vehicle type.
 
-In the example below we parent from the vanilla vehicle type `manureBarrel` for our convenience. This can also be something different depending on the vehicle you're adapting.
-> **NOTE: Don't blindly copy paste the `parent` in this case as this won't suit all cases but only manureBarrels in our example.**
+### Step 2
+
+Now we need to add the newly loaded specification to the vehicle type.
+
+In the example below we parent from the vanilla vehicle type `manureBarrel` for our convenience. This can also be
+something different depending on the vehicle you're adapting.
+> **NOTE: Don't blindly copy and paste the `parent` in this case as this won't suit all cases but only manureBarrels in
+our example.**
 
 Here we add the newly registered spec name `manureSystemVehicle`.
+
 ```xml
+
 <vehicleTypes>
     <type name="myNewBarrel" parent="manureBarrel" filename="$dataS/scripts/vehicles/Vehicle.lua">
         <specialization name="manureSystemRegistry"/>
@@ -61,28 +85,36 @@ Here we add the newly registered spec name `manureSystemVehicle`.
 Copy the new vehicle type name (In our case `myNewBarrel`) and close the modDesc file.
 
 ### Step 3
-Open your vehicle XML file and search for the type="" entry which can be found on the second line of the file.
+
+Open your vehicle's XML file and look for the XML element type="" which can be found on the second line of the file.
 
 Which looks similar to this:
+
 ```xml
+
 <vehicle type="manureBarrel">
 ```
 
 We're going to rename the type `manureBarrel` to our newly added vehicle type name we copied earlier in step 2:
+
 ```xml
+
 <vehicle type="myNewBarrel">
 ```
 
 > **Note: if your vehicle uses vehicleTypeConfigurations you also need to change the types there!**
 
 #### Step 4
+
 Awesome, we added the `ManureSystemRegistry` specialization to your mod!
 
 ## Determine what to add
 
 In order to tell the `ManureSystem` what specializations to add you need to add the following entry to your vehicle XML.
+
 ```xml
-<manureSystem />
+
+<manureSystem/>
 ```
 
 We have 4 options/attributes we can set here:
@@ -90,28 +122,41 @@ We have 4 options/attributes we can set here:
 - hasConnectors: `true/false` if the mod has ManureSystem connectors (e.g. couplings, docking funnels)
 - hasPumpMotor: `true/false` if the mod has a ManureSystem pump motor
 - hasFillArm: `true/false` if the mod has a ManureSystem fill arm (e.g. normal fill arm or docking arm)
-- hasFillArmReceiver: `true/false` if the mod allows ManureSystem fill arms to fill from it's fillVolume (e.g. containers)
+- hasFillArmReceiver: `true/false` if the mod allows ManureSystem fill arms to fill from it's fillVolume (e.g.
+  containers)
 
-In this example we're going to add connectors, the pump motor and a fillarm. In order to tell that to the `ManureSystem` mod we do the following:
+In this example we're going to add connectors, the pump motor and a fillarm. In order to tell that to the `ManureSystem`
+mod we do the following:
+
 ```xml
+
 <manureSystem hasConnectors="true" hasPumpMotor="true" hasFillArm="true"/>
 ```
 
 If your mod also needs support for fillarm receiver just simply add the `hasFillArmReceiver="true"` attribute.
 
 ## Setting up the PumpMotor
-> In order todo this step you need to make sure you configured the `hasPumpMotor` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+> In order todo this step you need to make sure you configured the `hasPumpMotor` entry from the
+>
+chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
 For the pump motor we have a couple of configuration possibilities.
 
 - litersPerSecond: `250` [OPTIONAL - default: `100`] the liters per second the pump can handle at max efficiency.
-- toReachMaxEfficiencyTime: `1000` [OPTIONAL - default: `1000`] the time in ms the pump needs to reach the max throughput. (This time is used as a starting point and will be influenced based on the manure thickness or hose length)
-- isStandalone: `true/false` [OPTIONAL - default: `false`] determines if the pump functions as a standalone pump (so a pump without capacity on it's own)
-- useStandalonePumpText: `true/false` [OPTIONAL - default: `false`] determines if the vehicle should use the standalone pump text, which is different than the standard pump text (left/right instead of in/out)
+- toReachMaxEfficiencyTime: `1000` [OPTIONAL - default: `1000`] the time in ms the pump needs to reach the max
+  throughput. (This time is used as a starting point and will be influenced based on the manure thickness or hose
+  length)
+- isStandalone: `true/false` [OPTIONAL - default: `false`] determines if the pump functions as a standalone pump (so a
+  pump without capacity on it's own)
+- useStandalonePumpText: `true/false` [OPTIONAL - default: `false`] determines if the vehicle should use the standalone
+  pump text, which is different than the standard pump text (left/right instead of in/out)
 
 You also have the options to use a custom sound file for the pump.
 An example entry for a standalone pump will be:
+
 ```xml
+
 <manureSystemPumpMotor isStandalone="true" litersPerSecond="250" toReachMaxEfficiencyTime="1000">
     <sounds>
         <pump template="SLURRY_02">
@@ -121,10 +166,14 @@ An example entry for a standalone pump will be:
 </manureSystemPumpMotor>
 ```
 
-Here we tell that it's a standalone pump with the `isStandalone` attribute and with a the pump throughput of 250 liters per second and that it takes 1 second to reach that with the `litersPerSecond` and `toReachMaxEfficiencyTime` attributes. In the example above you can also see the `<sounds>` entry where we use a different template for our pump sound.
+Here we tell that it's a standalone pump with the `isStandalone` attribute and with a pump throughput of 250 liters per
+second and that it takes 1 second to reach that with the `litersPerSecond` and `toReachMaxEfficiencyTime` attributes. In
+the example above you can also see the `<sounds>` entry where we use a different template for our pump sound.
 
-An example entry for a normal tanker pump will be:
+An example entry for a normal tanker pump will be, without the is `isStandalone` attribute:
+
 ```xml
+
 <manureSystemPumpMotor litersPerSecond="195" toReachMaxEfficiencyTime="1050"/>
 ```
 
@@ -132,58 +181,80 @@ As simple as that!
 
 ## Setting up a node
 
-> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to
+refer to an existing node with the `node` attribute.**
 
-This options, for creating nodes, comes with the following settings:
+This option, for creating nodes, comes with the following settings:
 
 - createNode: `true/false` [OPTIONAL - default: `false`]
 - When createNode is set to `true`:
-    - linkNode: `0>` [OPTIONAL - default: `0>`] it's defaulted to the rootNode of your object, but allows setting a custom linkNode for our node to create.
+    - linkNode: `0>` [OPTIONAL - default: `0>`] it's defaulted to the rootNode of your object, but allows setting a
+      custom linkNode for our node to create.
     - position: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz translations of the node to create.
     - rotation: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz rotations of the node to create.
 - When createNode is set to `false`:
     - node: `0>` [REQUIRED] the index of the node it should use for the fill arm.
 
 ## Setting up the FillArm
-> In order todo this step you need to make sure you configured the `hasFillArm` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+> In order todo this step you need to make sure you configured the `hasFillArm` entry from the
+>
+chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
 For the fill arm we have to following configuration possibilities:
 
-- fillYOffset: `float` e.g. `-0.5` [OPTIONAL - default: `0`] the offset for the fill arm on fillable sources (in order to reach places easier).
+- type: `string` e.g. `dock` [OPTIONAL - default: `OPTICAL`] the type of fillarm, e.g. if you want to prepare a docking
+  arm make sure to set the correct type.
+- fillYOffset: `float` e.g. `-0.5` [OPTIONAL - default: `0`] the offset for the fill arm on fillable sources (in order
+  to reach places easier).
 - fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] the fillUnitIndex of which it should fill.
-- needsDockingCollision: `true/false` [OPTIONAL - default: `false`] if the fill arm supports docking and needs to required collision for that.
+- needsDockingCollision: `true/false` [OPTIONAL - default: `false`] if the fill arm supports docking and needs to
+  required collision for that.
 
 ### Adding fillarm node
-For setting the fillArm node you have the option to create a transform group manually or let the script handle it for you.
+
+For setting the fillArm node you have the option to create a transform group manually or let the script handle it for
+you.
 
 Check section [setting up a node](#setting-up-a-node) for more details.
 
 An example entry for creating a node through the XML would be:
+
 ```xml
-<manureSystemFillArm createNode="true" linkNode="armLinkNode" position="-0.888 0.7 3.065" rotation="0 -90 0" />
+
+<manureSystemFillArm createNode="true" linkNode="armLinkNode" position="-0.888 0.7 3.065" rotation="0 -90 0"/>
 ```
 
-In the example above we let the `ManureSystem` create a fill arm node and link it to the given `armLinkNode` and give it a custom position and rotation with the `position` and `rotation` attributes.
+In the example above we let the `ManureSystem` create a fill arm node and link it to the given `armLinkNode` and give it
+a custom position and rotation with the `position` and `rotation` attributes.
 
-You don't have to use this option and have to freedom to choose if you want to refer to an existing node you placed yourself in the i3d file.
+You don't have to use this option and have to freedom to choose if you want to refer to an existing node you placed
+yourself in the i3d file.
 > Personally I prefer using the createNode setting which allows for i3d avoidance.
 
 An example entry without the option for creating a node would be:
 
 ```xml
+
 <manureSystemFillArm node="armNode"/>
 ```
-In this case the `armNode` will be the node to use for the fill arm, instead of the node we created with the createNode option from above.
+
+In this case the `armNode` will be the node to use for the fill arm, instead of the node we created with the createNode
+option from above.
 
 ### Adding docking collision (only required for dock arms)
+
 When you set the `needsDockingCollision` the `ManureSystem` will load a docking collision on your fillArm.
 This is needed in order to allow vehicles with funnels to detect the fill arm.
-This collision might not always be on the correct positions as it by defaults takes the same locations as the fill arm node you defined earlier.
+This collision might not always be on the correct positions as it by defaults takes the same locations as the fill arm
+node you defined earlier.
 If you want to offset the position or rotation of this docking collision you have to add the collision entry.
 
 This will look like this:
+
 ```xml
-<manureSystemFillArm node="armNode" needsDockingCollision="true">
+
+<manureSystemFillArm type="DOCK" node="armNode" needsDockingCollision="true">
     <collision position="0 0.1 0" rotation="90 0 0"/>
 </manureSystemFillArm>
 ```
@@ -191,62 +262,82 @@ This will look like this:
 In most cases it's not needed to set the position or rotation on the collision.
 
 ### Verify
-You can verify that your fill arm is setup correctly in F5 mode (for physics) with the `msToggleDebug` command in the developer console.
+
+You can verify that your fill arm is setup correctly in F5 mode (for physics) with the `msToggleDebug`
+and `msToggleConnectorNodes` commands in the developer console.
 > ![msToggleDebug](images/msToggleDebug.png)
 
 This will highlight the collisions and visualize the raycast line (red line)
 
 - For dock arms make sure the collision cube is visible at the end of the fillarm. (Not required for normal fillarms)
-- For all fillarms (including dock arms) make sure the raycast line is pointing away from your fillarm node, as shown on the image, to get the best results.
+- For all fillarms (including dock arms) make sure the raycast line is pointing away from your fillarm node, as shown on
+  the image, to get the best results.
 
 ![arm collision and ray](images/vehicles/armCollisionAndRay.jpg)
 
 ## Setting up the FillArmReceiver
-> In order todo this step you need to make sure you configured the `hasFillArmReceiver` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
-If you want to configure your vehicle to be able to allow sucking from the fill volume you will need the `FillArmReceiver` option.
+> In order todo this step you need to make sure you configured the `hasFillArmReceiver` entry from the
+>
+chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+If you want to configure your vehicle to be able to allow sucking from the fill volume you will need
+the `FillArmReceiver` option.
 
 For the fill arm receiver we have to following configuration possibilities:
 
 - fillVolumeIndex: `int` e.g. `1` [REQUIRED] The fillVolume index of where filarms can suck from.
 - fillUnitIndex: `int` e.g. `1` [OPTIONAL - default: `1`] The fillUnit index of where filarms can suck from.
-- fillArmOffset: `float` e.g. `0.1` [OPTIONAL - default: `0`] The offset for fillarms to be inrange (this might be used to allow for reaching hard to reach places).
+- fillArmOffset: `float` e.g. `0.1` [OPTIONAL - default: `0`] The offset for fillarms to be inrange (this might be used
+  to allow for reaching hard to reach places).
 
 ```xml
+
 <manureSystemFillArmReceiver fillVolumeIndex="1"/>
 ```
 
 If you want fillarms to suck from a different fillunit you can simply define that with:
 
 ```xml
+
 <manureSystemFillArmReceiver fillVolumeIndex="1" fillUnitIndex="2"/>
 ```
 
 ## Setting up the Connectors
-> In order todo this step you need to make sure you configured the `hasConnectors` entry from the chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
+
+> In order todo this step you need to make sure you configured the `hasConnectors` entry from the
+>
+chapter [Determine what to add](https://github.com/stijnwop/manureSystem/blob/master/docs/VEHICLES.md#determine-what-to-add).
 
 > This paragraph is still W.I.P.
 
 ### Connector types
-Connectors are needed to tell for example hoses or fillarms where to connect to. Simply said it bridges functions together.
 
-Currently the mod supports 4 types of connectors:
+Connectors are needed to tell for example hoses or fillarms where to connect to. Simply said it bridges functions
+together.
 
-- COUPLING (manure hose coupling)
-- COUPLINGFERTILIZER (fertilizer hose coupling)
-- DOCK (funnel)
-- OPTICAL (as the name already suggests non functional, just optical)
+Currently, the mod supports 4 types of connectors:
+
+- `COUPLING` (manure hose coupling)
+- `COUPLINGFERTILIZER` (fertilizer hose coupling)
+- `DOCK` (funnel)
+- `OPTICAL` (as the name already suggests non-functional, just optical)
 
 #### Couplings
-In our first example we're going to look at adding a COUPLING connector type to our vehicle, this example also works for the COUPLINGFERTILIZER type.
+
+In our first example we're going to look at adding a `COUPLING` connector type to our vehicle, this example also works
+for the `COUPLINGFERTILIZER` type.
 
 ##### Adding the connector node
+
 Open the vehicle XML and add the `<manureSystemConnectors` tag as child of the `vehicle` tag.
 
 Our step will result into this:
+
 ```xml
+
 <manureSystemConnectors>
-..
+    ..
 </manureSystemConnectors>
 ```
 
@@ -259,7 +350,9 @@ For that we open the i3d file and copy the index of the desired node.
 Now that we found our node and copied the index we have to add a connector entry to the `<manureSystemConnectors` tag.
 
 The result will look something like this:
+
 ```xml
+
 <manureSystemConnectors>
     <connector type="COUPLING" node="0>1|1|2|1"/>
 </manureSystemConnectors>
@@ -269,52 +362,67 @@ This tells the `ManureSystem` mod that the node on index `0>1|1|2|1` is a COUPLI
 
 For vehicles you can also use the identifier defined in the `i3dMappings` section which is highly recommended!
 
-
 We can also use the option to tell the `ManureSystem` to create a node (as mentioned in other tutorials).
-> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to
+refer to an existing node with the `node` attribute.**
 
 Check section [setting up a node](#setting-up-a-node) for more details.
 
 This will look something like this:
+
 ```xml
+
 <manureSystemConnectors>
-    <connector type="COUPLING" linkNode="0>0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0" />
+    <connector type="COUPLING" linkNode="0>0|3" createNode="true" position="3.7 0.5 0.85" rotation="0 90 0"/>
 </manureSystemConnectors>
 ```
 
 This will create a COUPLING node linked to the node on the index `0>0|3` with the given position and rotation.
 
 
-> **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console command `msToggleDebug` this will highlight all the connector nodes used.**
+> **TIP: in order to verify that the node is on the correct position I suggest you to look ingame and use the console
+command `msToggleDebug` this will highlight all the connector nodes used.**
 > ![msToggleDebug](images/msToggleDebug.png)
 
 ##### Configuring additional connector options
+
 For every connector type you will the following options available:
 
-- inRangeDistance `float` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing attach/detach possibilities on hard to reach places)
-- isParkPlace: `true/false` This flags is used to determine if the connector is used as a parking place (for hoses or just connectors that should behave as a parking place).
-
+- inRangeDistance `float` e.g. `1.8` This determines the distance till the hose can be connected (handy for increasing
+  attach/detach possibilities on hard to reach places)
+- isParkPlace: `true/false` This flags is used to determine if the connector is used as a parking place (for hoses or
+  just connectors that should behave as a parking place).
 
 ##### Setting up park places
+
 As mentioned above with the flag `isParkPlace` the connector will act as a parking place.
 
-- length (in meters) `float` e.g. `3` [OPTIONAL - default: `5`] This determines for which hose the place parameters should take effect upon.
+- length (in meters) `float` e.g. `3` [OPTIONAL - default: `5`] This determines for which hose the place parameters
+  should take effect upon.
 - direction `string` e.g. `left` [OPTIONAL - default: `right`] This the hose placement direction.
-- startTransOffset `vector 3 string` e.g. `1 0 0` [OPTIONAL - default: `0 0 0`] This determines the start translation of the hose on park position.
-- startRotOffset `vector 3 string` e.g. `0 50 0` [OPTIONAL - default: `0 0 0`] This determines the start rotation (in degrees) of the hose on park position.
-- endTransOffset `vector 3 string` e.g. `0 1 0` [OPTIONAL - default: `0 0 0`] This determines the end translation of the hose on park position.
-- endRotOffset `vector 3 string` e.g. `20 0 0` [OPTIONAL - default: `0 0 0`] This determines the end rotation (in degrees) of the hose on park position.
+- startTransOffset `vector 3 string` e.g. `1 0 0` [OPTIONAL - default: `0 0 0`] This determines the start translation of
+  the hose on park position.
+- startRotOffset `vector 3 string` e.g. `0 50 0` [OPTIONAL - default: `0 0 0`] This determines the start rotation (in
+  degrees) of the hose on park position.
+- endTransOffset `vector 3 string` e.g. `0 1 0` [OPTIONAL - default: `0 0 0`] This determines the end translation of the
+  hose on park position.
+- endRotOffset `vector 3 string` e.g. `20 0 0` [OPTIONAL - default: `0 0 0`] This determines the end rotation (in
+  degrees) of the hose on park position.
 
 With the deformer you can offset the hose curve with a tranform node.
 ![parkDeformerNode](images/vehicles/parkDeformerNode.png)
 
-The deformer node can be created like any other node with either the `createNode` flag or reference to an existing node with the `node` attribute.
+The deformer node can be created like any other node with either the `createNode` flag or reference to an existing node
+with the `node` attribute.
 Check section [setting up a node](#setting-up-a-node) for more details.
 
-> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to refer to an existing node with the `node` attribute.**
+> **TIP: Through the entire mod you have the option to create a node with the `createNode` attribute or the option to
+refer to an existing node with the `node` attribute.**
 
 Below an example setup with support for an 3 and 5 meter hose.
+
 ```xml
+
 <connector type="COUPLING" node="0>15|0" isParkPlace="true">
     <parkPlaces>
         <parkPlace length="3" startTransOffset="0 0 0" startRotOffset="0 0 0" endTransOffset="0.2 -0.45 0" endRotOffset="-25 0 0">
@@ -328,9 +436,12 @@ Below an example setup with support for an 3 and 5 meter hose.
 ```
 
 ##### Adding the connector animation
-> **NOTE: When using shared sets the animation is already done, so there's no need to add entries for shared set connectors!**
 
-The connector types `COUPLING` and `COUPLINGFERTILIZER` have animation support for locking the hose and opening the manure flow.
+> **NOTE: When using shared sets the animation is already done, so there's no need to add entries for shared set
+connectors!**
+
+The connector types `COUPLING` and `COUPLINGFERTILIZER` have animation support for locking the hose and opening the
+manure flow.
 This is done over the well known vehicle animations.
 
 ***For the sake of the tutorial I assume you know how to add vehicle animations.***
@@ -338,15 +449,19 @@ This is done over the well known vehicle animations.
 For vehicle animations the connector supports two entries:
 
 - lockAnimationName: `string` e.g. `myAnimationName` this is the animation name of the `animation` entry in the xml
-- manureFlowAnimationName: `string` e.g. `myAnimationName` this is the animation name of the `animation` entry in the xml
+- manureFlowAnimationName: `string` e.g. `myAnimationName` this is the animation name of the `animation` entry in the
+  xml
 
 Locking animation is an animation that triggers when the hose connects to the connector.
-Manure flow is the an animation that triggers when the player interacts with the connector in order to open the manure flow.
+Manure flow is the an animation that triggers when the player interacts with the connector in order to open the manure
+flow.
 
 For the example connector entry I added an animation entry to my vehicle for the locking animation.
 
 This looks like this (don't blindly copy this):
+
 ```xml
+
 <animations>
     <animation name="lockCoupling">
         <part node="handleBack" startTime="0" endTime="0.5" startRot="-145 0 0" endRot="-15 0 0"/>
@@ -356,12 +471,14 @@ This looks like this (don't blindly copy this):
 </animations>
 ```
 
-Above we see an animation entry with the name `lockCoupling`, we have to remember that name because in order to tell the `ManureSystem` to play that animation when the player attaches/detaches the hose.
+Above we see an animation entry with the name `lockCoupling`, we have to remember that name because in order to tell
+the `ManureSystem` to play that animation when the player attaches/detaches the hose.
 
 In order todo that we're going to set the `lockAnimationName` attribute on our connector.
 This will result in the following entry:
 
 ```xml
+
 <manureSystemConnectors>
     <connector type="COUPLING" node="refBack" lockAnimationName="lockCoupling"/>
 </manureSystemConnectors>
@@ -369,9 +486,11 @@ This will result in the following entry:
 
 In the example above the animation with the name `lockCoupling` will be played for the locking animation of the hose.
 
-The same can be done with the manure flow, that will require you to add the additional `manureFlowAnimationName` attribute on the connector.
+The same can be done with the manure flow, that will require you to add the additional `manureFlowAnimationName`
+attribute on the connector.
 
 Like:
+
 ```xml
 
 <manureSystemConnectors>
@@ -381,29 +500,227 @@ Like:
 
 The `flowCoupling` will be another animation entry like the `lockCoupling`.
 
-> **NOTE: `lockAnimationName` works with and without the `manureFlowAnimationName` but `manureFlowAnimationName` requires the `lockAnimationName`!**
+> **NOTE: `lockAnimationName` works with and without the `manureFlowAnimationName` but `manureFlowAnimationName`
+requires the `lockAnimationName`!**
+
+##### Shared sets for coupling connectors
+
+With shared sets you can load preconfigured (model and animation) connectors for your vehicle and placeables.
+
+Connector set ids:
+
+- 1 (couplings for manure tankers)
+- 2 (couplings for manure tankers)
+- 3 (couplings for sprayers)
+- 4 (funnels for docking)
+
+Also, here counts the option to create nodes.
+Check section [setting up a node](#setting-up-a-node) for more details.
+
+Extra attributes:
+
+- placeholderNode: `0>` [OPTIONAL] the index of the node that should be blended out once the shared set is loaded.
+
+Options set 1:
+
+- connector
+    - `CONNECTOR_1`
+- handle
+    - `HANDLE_OLD`
+    - `HANDLE_NEW`
+    - `HYDRAULIC`
+    - `PNEUMATIC`
+- valve
+    - `8INCH_BRASS`
+    - `8INCH_CASTIRON`
+    - `10INCH_MZ_CASTIRON`
+    - `10INCH_BP_CASTIRON`
+
+Options set 2:
+
+- connector
+    - `CONNECTOR_1`
+- handle
+    - `HANDLE_NEW`
+- valve
+    - `8INCH_BRASS`
+
+Options set 3:
+
+- connector
+    - `CONNECTOR_1`
+    - `CONNECTOR_2`
+    - `CONNECTOR_3`
+    - `CONNECTOR_4`
+
+Options set 4:
+
+- connector
+    - `FUNNEL_8INCH`
+    - `FUNNEL_10INCH`
+
+Examples:
+
+```xml
+
+<connector type="COUPLING">
+    <sharedSet createNode="true" linkNode="my_link_node" placeholderNode="my_placeholder_node" id="1">
+        <connector type="CONNECTOR_1"/>
+        <valve type="8INCH_BRASS"/>
+        <handle type="HANDLE_OLD"/>
+    </sharedSet>
+</connector>
+```
+
+```xml
+
+<connector type="COUPLING">
+    <sharedSet createNode="true" linkNode="my_link_node" placeholderNode="my_placeholder_node" id="2">
+        <connector type="CONNECTOR_1"/>
+        <valve type="8INCH_BRASS"/>
+        <handle type="HANDLE_NEW"/>
+    </sharedSet>
+</connector>
+```
+
+```xml
+
+<connector type="COUPLINGFERTILIZER">
+    <sharedSet createNode="true" linkNode="my_link_node" placeholderNode="my_placeholder_node" id="3">
+        <connector type="CONNECTOR_3"/>
+    </sharedSet>
+</connector>
+```
+
+```xml
+
+<connector type="DOCK">
+    <sharedSet node="my_node" id="4">
+        <connector type="FUNNEL_10INCH" color="SHARED_BLACK1"/>
+    </sharedSet>
+    <trigger position="0 0 0" roation="0 0 0" linkNode="my_node"/>
+</connector>
+```
+
+Optional connectors that are non-functional
+
+```xml
+
+<connector type="OPTICAL">
+    <sharedSet node="connector_10inch_optical_node" id="1">
+        <valve type="10INCH_MZ_CASTIRON"/>
+        <handle type="PNEUMATIC"/>
+    </sharedSet>
+</connector>
+```
 
 ##### Adding the dock connector
-W.I.P.
 
-##### Working with shared sets
-W.I.P.
+For the `DOCK` connector type you will the following options available:
 
+The funnel is the visual funnel that you can dock your fillarm in, this is however an optional entry and can be ignored
+if the funnel should be static.
+
+In the `<funnel></funnel>` attribute:
+
+- node: `0>` [REQUIRED] the index of the node it should use for the funnel.
+- deformationYOffset: `float` [OPTIONAL - default: `0.5`] The funnel deformation offset.
+- deformationYMaxPush: `float` [OPTIONAL - default: `0.1`] The funnel deformation max push.
+
+The trigger is needed for fillarms to detect the dock location.
+
+In the `<trigger></trigger>` attribute:
+
+- linkNode: `0>` [OPTIONAL - default: `0>`] it's defaulted to the rootNode of your object, but allows setting a custom
+  linkNode for our node to create.
+- position: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz translations of the node to create.
+- rotation: `0 0 0` [OPTIONAL - default: `0 0 0`] the xyz rotations of the node to create.
+
+Example entry:
+
+```xml
+
+<connector type="DOCK" node="funnelTopTrigger" inRangeDistance="0.2">
+    <funnel node="funnelTopDeformer" deformationYOffset="0.35" deformatioYMaxPush="0.09"/>
+</connector>
+```
+
+##### Shared sets for dock connectors
+
+With shared sets you can load preconfigured connectors for your vehicle.
+
+The Manure System also supplies two types of funnels as standard for the dock connector in the shared set id `4`. These
+funnels are loaded as an object including animation, making your modding experience as simple as possible.
+
+Funnel options:
+
+- `FUNNEL_8INCH`
+- `FUNNEL_10INCH`
+
+```xml
+
+<connector type="DOCK">
+    <sharedSet node="funnel_node" id="4">
+        <connector type="FUNNEL_10INCH" color="SHARED_BLACK1"/>
+    </sharedSet>
+    <trigger position="0 0.4 0" roation="0 0 0" linkNode="funnel_node"/>
+</connector>
+```
+
+Next to that you can configure visibilities of the pipe and change the flange visibilities.
+
+```xml
+
+<connector type="DOCK">
+    <sharedSet node="funnel_node" id="4">
+        <connector type="FUNNEL_8INCH" color="SHARED_BLACK1">
+            <pipe>true</pipe>
+            <flangeRound>false</flangeRound>
+            <flangeQuad>true</flangeQuad>
+        </connector>
+    </sharedSet>
+    <trigger position="0 0.4 0" roation="0 0 0" linkNode="funnel_node"/>
+</connector>
+```
+
+##### Forwarding the source to reference a connector
+
+If you want to tell that the source of the dock should come from a connected vehicle/placeable than you have to
+reference the stationary connector id and mark the connector stationary.
+
+- stationaryConnectorId `int` [OPTIONAL - default: `nil`] e.g. `1` This indicates the id of the connector to references
+  to.
+- isStationary: `true/false` [OPTIONAL - default: `false`] This flags if the dock is used as stationary.
+
+```xml
+
+<connector type="DOCK" isStationary="true" stationaryConnectorId="1">
+    <sharedSet node="funnel_node" id="4">
+        <connector type="FUNNEL_10INCH" color="SHARED_BLACK1"/>
+    </sharedSet>
+    <trigger position="0 0.4 0" roation="0 0 0" linkNode="funnel_node"/>
+</connector>
+```
 
 ## Setting up the transfer hose.
 
 The transfer hose (e.g. with the Zunhammer FANT mod) setup is like any other connectionHose target entry.
 The Manure System introduces two new hose types:
+
 - TRANSFER_HOSE (the actual hose)
 - TRANSFER_HOSE_CABLE_BUNDLE (bundle of hydraulic lines)
 
-In order to prepare your tanker to receive the transfer hose you will have to add the following entries at the end of the connectionHoses tag.
+In order to prepare your tanker to receive the transfer hose you will have to add the following entries at the end of
+the connectionHoses tag.
+
 ```xml
+
 <connectionHoses>
     <target attacherJointIndices="1" type="TRANSFER_HOSE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE"/>
     <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" node="INDEX TO NODE" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
 </connectionHoses>
 ```
+
 Replace the 'INDEX TO NODE' with an actual node (named) index.
 
 With the ManureSystem it's also possible to create a node on the connectionHose target entries.
@@ -412,6 +729,7 @@ Check section [setting up a node](#setting-up-a-node) for more details.
 This will result in something similar to the following:
 
 ```xml
+
 <connectionHoses>
     <target attacherJointIndices="1" type="TRANSFER_HOSE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE"/>
     <target attacherJointIndices="1" type="TRANSFER_HOSE_CABLE_BUNDLE" createNode="true" linknode="0>" position="0 1 1" rotation="0 180 0" straighteningFactor="2" socket="TRANSFER_HOSE_CABLE_BUNDLE"/>
