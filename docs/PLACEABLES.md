@@ -7,10 +7,12 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
-- GIANTS Editor 8.2.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
+- GIANTS Editor 9.4.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
 - Internet connection for downloading sources from GitHub
 
-For placeables (non build-in map placeables) you also need an extra script in order to check if the `ManureSystem` exists.
+For placeables (non build-in map placeables) that has a custom script to extend MS functionality you also need an extra script in order to check if the `ManureSystem` exists.
+### **_If above is not the case, please skip this part!_**
+
 You will need to get a copy of the latest `ManureSystemAvailabilityCheck.lua` file which can be found in the [GitHub repository](https://github.com/stijnwop/manureSystem/tree/master/docs/ManureSystemAvailabilityCheck.lua).
 
 If the following [Download ManureSystemAvailabilityCheck](https://raw.githubusercontent.com/stijnwop/manureSystem/master/docs/ManureSystemAvailabilityCheck.lua?token=AC3ZARBT2EZBDZ2R5YTS6NC6NNVU6) link does not work you can follow the following steps on how to download the `ManureSystemAvailabilityCheck.lua` file:
@@ -22,8 +24,8 @@ If the following [Download ManureSystemAvailabilityCheck](https://raw.githubuser
 
 > **REMEMBER: Rename the file extension to `.lua` and don't save it as .txt!**
 
-## [Optional] Adding the ManureSystemAvailabilityCheck
-> **WARNING: This part is only important if the mod should ONLY work with Manure System. If it's just using the vanilla placeable types and no custom logic you can skip this step**
+## [Optional please read the WARNING] Adding the ManureSystemAvailabilityCheck
+> **WARNING: This part is only important if the mod should _ONLY_ work with Manure System. If it's just using the vanilla placeable types and no custom logic you can skip this step**
 
 > In order to start with this step you need to have completed the part [What do I need?](https://github.com/stijnwop/manureSystem/blob/master/docs/PLACEABLES.md#what-do-i-need).
 
