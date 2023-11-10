@@ -7,7 +7,7 @@ In this tutorial, you're going to learn how to add ManureSystem support to your 
 To successfully execute the required steps in this tutorial you will need the following programs:
 
 - Text editor ([Notepad++](https://notepad-plus-plus.org/downloads/), [Visual Studio Code](https://code.visualstudio.com/) or any proper IDE ...)
-- GIANTS Editor 9.4.0 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
+- GIANTS Editor 9.0.4 or 3D software that supports the GIANTS Exporter (Maya, blender ...)
 - Internet connection for downloading sources from GitHub
 
 For placeables (non build-in map placeables) that has a custom script to extend MS functionality you also need an extra script in order to check if the `ManureSystem` exists.
