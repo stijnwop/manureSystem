@@ -2,6 +2,9 @@
 
 In this tutorial, you're going to learn how to add ManureSystem support to your vehicle mod.
 
+### Examples
+In the [example folder](examples/vehicles) you can find basic examples of placeables that are set up for the Manure System.
+
 ### What do I need?
 
 To successfully execute the required steps in this tutorial you will need the following programs:
