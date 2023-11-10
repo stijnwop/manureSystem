@@ -354,15 +354,33 @@ function ManureSystem:getObjectSupportsFillArms(object)
     return object ~= nil and object.getSupportsFillArms ~= nil and object:getSupportsFillArms()
 end
 
+function ManureSystem.geTypeNameModName(typeName)
+    local stringParts = string.split(typeName, ".")
+
+    if #stringParts ~= 1 then
+        return unpack(stringParts)
+    end
+
+    return nil
+end
+function ManureSystem.getTypeNameModType(typeName)
+    local stringParts = string.split(typeName, ".")
+
+    if #stringParts ~= 1 then
+        return stringParts[#stringParts]
+    end
+
+    return nil
+end
+
 function ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
     return ManureSystem.hasModSpecialization(typeName, "manureSystemRegistry", specializationManager)
 end
 
 function ManureSystem.hasModSpecialization(typeName, specName, specializationManager)
-    local stringParts = string.split(typeName, ".")
+    local typeModName = ManureSystem.geTypeNameModName(typeName)
 
-    if #stringParts ~= 1 then
-        local typeModName = unpack(stringParts)
+    if typeModName ~= nil then
         return specializationManager:getSpecializationObjectByName(typeModName .. "." .. specName) ~= nil
     end
 
@@ -410,10 +428,21 @@ function ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modNa
 end
 
 function ManureSystem.installVehicleSpecializations(vehicleTypeManager, specializationManager, modDirectory, modName)
+    local function isValidSprayerType(typeName)
+        if typeName == "sprayer"
+            or typeName == "selfPropelledSprayer" then
+            return true
+        end
+
+        -- Support DLCs and mods with extended types.
+        local modTypeName = ManureSystem.getTypeNameModType(typeName)
+        return modTypeName == "selfPropelledSprayerExtended" or modTypeName == "sprayerExtended"
+    end
+
     for typeName, typeEntry in pairs(vehicleTypeManager:getTypes()) do
         local hasRegistry = ManureSystem.hasManureSystemRegistry(typeName, specializationManager)
         local isValidTypeManureVehicle = typeName == "manureTrailer" or SpecializationUtil.hasSpecialization(ManureBarrel, typeEntry.specializations)
-        local isValidTypeSprayer = typeName == "sprayer" or typeName == "selfPropelledSprayer" or typeName == "pdlc_oxboPack.selfPropelledSprayerExtended"
+        local isValidTypeSprayer = isValidSprayerType(typeName)
 
         if hasRegistry then
             ManureSystem.insertMixer(vehicleTypeManager, typeName, typeEntry, modName)

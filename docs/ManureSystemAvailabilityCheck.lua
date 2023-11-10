@@ -49,4 +49,4 @@ local function validateVehicleTypes()
     end
 end
 
-VehicleTypeManager.validateVehicleTypes = Utils.prependedFunction(VehicleTypeManager.validateVehicleTypes, validateVehicleTypes)
+FillTypeManager.validateVehicleTypes = Utils.prependedFunction(FillTypeManager.validateVehicleTypes, validateVehicleTypes)

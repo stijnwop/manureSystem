@@ -64,7 +64,7 @@ local function generateSpecObject(data)
 
     spec.onPreLoad = function(self)
         if g_currentMission.manureSystem.debug then
-            log("MS - loading XML mapping for", data.xml)
+            log("MS - loading XML mapping for", data.xml, self.typeName)
         end
 
         for baseKey, mapping in pairs(data.mapping) do
