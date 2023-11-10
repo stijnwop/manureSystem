@@ -1,0 +1,70 @@
+<data>
+    <vehicle xml="vehicles/agrio/mamutXL/mamutXL.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="70"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.075 0.89 0.76"/>
+                <entry type="string" key="#rotation" value="90 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="vehicles/agrio/gigant/gigant.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="70"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.3 1.3 1.7"/>
+                <entry type="string" key="#rotation" value="70 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+
+    <vehicle xml="vehicles/agrio/dinoII/dinoII.xml">
+        <manureSystem>
+            <entry type="bool" key="#hasPumpMotor" value="true"/>
+            <entry type="bool" key="#hasConnectors" value="true"/>
+        </manureSystem>
+
+        <manureSystemPumpMotor>
+            <entry type="float" key="#litersPerSecond" value="70"/>
+            <entry type="string" key=".sounds.pump#template" value="SLURRY_03"/>
+            <entry type="float" key=".sounds.pump.pitch#indoor" value="0.85"/>
+            <entry type="float" key=".sounds.pump.pitch#outdoor" value="0.75"/>
+        </manureSystemPumpMotor>
+
+        <manureSystemConnectors>
+            <connector>
+                <entry type="string" key="#type" value="COUPLINGFERTILIZER"/>
+                <entry type="bool" key="#createNode" value="true"/>
+                <entry type="string" key="#position" value="1.23 1.1 -0.91"/>
+                <entry type="string" key="#rotation" value="40 90 0"/>
+            </connector>
+        </manureSystemConnectors>
+    </vehicle>
+</data>

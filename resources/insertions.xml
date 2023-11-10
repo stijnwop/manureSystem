@@ -25,4 +25,5 @@
     <file path="resources/insertionVehicles/precisionFarming.xml"/>
     <file type="placeable" path="resources/insertionPlaceables/pumpsNHosesPack.xml"/>
     <file path="resources/insertionVehicles/oxboPack.xml"/>
+    <file path="resources/insertionVehicles/premiumExpansion.xml"/>
 </files>
