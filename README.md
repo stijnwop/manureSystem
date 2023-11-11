@@ -47,6 +47,13 @@ hoses affects your pump time.
 > Check with the mapper if your mod map actually supports the water plane, you can also easily confirm this with running
 > a vanilla water tanker.
 
+## Known conflicts
+
+* [3rd Person](https://www.farming-simulator.com/mod.php?lang=en&country=us&mod_id=234226)
+  * Sadly that mod boldly replaces the whole Player.update() code, therefor destroying all mods depending/appending on that call.
+* [Precision Hands](https://www.farming-simulator.com/mod.php?lang=en&country=us&mod_id=265312)
+  * Sadly that mod does not overwrite the Player.pickUpObject() function correctly (not calling superfunc), therefor making the hose grap and drop functions unreachable.
+
 ## Publishing
 
 Only Wopster is allowed to publish any of this code as a mod to any mod site, or file sharing site. The code is open for
