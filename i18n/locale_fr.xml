@@ -41,9 +41,7 @@
         <text name="global_configuration_refillable" text="Rechargeable"/>
     </texts>
     <elements>
-        <e k="info_title_thickness" v="Thickness" tag="todo">
-            <!--Todo: add missing translation for info_title_thickness--></e>
-        <e k="warning_limitedPumpDirectionsNotCompatible" v="Limited pump directions of pump source and target are not compatible!" tag="todo">
-            <!--Todo: add missing translation for warning_limitedPumpDirectionsNotCompatible--></e>
+        <e k="info_title_thickness" v="Épaisseur"/>
+        <e k="warning_limitedPumpDirectionsNotCompatible" v="Les directions limitées de la pompe source et de la pompe cible ne sont pas compatibles!"/>
     </elements>
 </l10n>
