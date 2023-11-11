@@ -30,7 +30,6 @@ function HosePlayer.new(isClient, isServer, mission, input)
     Player.registerActionEvents = Utils.prependedFunction(Player.registerActionEvents, HosePlayer.inj_player_registerActionEvents)
 
     Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_player_pickUpObject)
-    Player.pickUpObjectRaycastCallback = Utils.overwrittenFunction(Player.pickUpObjectRaycastCallback, HosePlayer.inj_player_pickUpObjectRaycastCallback)
 
     Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_player_checkObjectInRange)
     PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_playerStateThrow_isAvailable)
@@ -227,47 +226,6 @@ function HosePlayer.inj_player_checkObjectInRange(player, superFunc)
             end
         end
     end
-end
-
-function HosePlayer.inj_player_pickUpObjectRaycastCallback(player, superFunc, hitObjectId, x, y, z, distance)
-    if hitObjectId ~= g_currentMission.terrainRootNode and hitObjectId ~= player.rootNode and Player.PICKED_UP_OBJECTS[hitObjectId] ~= true then
-        player.lastFoundAnyObject = hitObjectId
-
-        if not player.isServer then
-            return false
-        end
-
-        if getRigidBodyType(hitObjectId) == RigidBodyType.DYNAMIC then
-            local mass = getMass(hitObjectId)
-            local canBePickedUp = true
-            local object = g_currentMission:getNodeObject(hitObjectId)
-
-            if object ~= nil then
-                if object.dynamicMountObject ~= nil or object.tensionMountObject ~= nil then
-                    canBePickedUp = false
-                end
-
-                if object.getCanBePickedUp ~= nil and not object:getCanBePickedUp(player) and not player.superStrengthEnabled then
-                    canBePickedUp = false
-                end
-
-                if object.getTotalMass ~= nil then
-                    mass = object:getTotalMass()
-                end
-            end
-
-            if canBePickedUp then
-                player.lastFoundObject = hitObjectId
-                player.lastFoundObjectMass = mass
-                player.lastFoundObjectHitPoint = { x, y, z }
-            end
-
-            -- only consider first potentially valid object
-            return not canBePickedUp -- fix
-        end
-    end
-
-    return true
 end
 
 function HosePlayer.inj_playerStateThrow_isAvailable(state, superFunc)
