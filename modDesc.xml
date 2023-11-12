@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="77">
+<modDesc descVersion="79">
     <author>Wopster</author>
-    <version>1.0.0.0</version>
+    <version>1.1.0.0</version>
     <title>
         <en>Manure System</en>
     </title>
@@ -24,6 +24,13 @@ Slurry hose:
 
 Fertilizer hose:
 - Price: $300
+
+Changelog 1.1.0.0:
+- Fixed bug with visible movement input action of player
+- Fixed connector position of PnH tank open 25m
+- Added support for Premium Expansion
+- Improved mod compatibility
+- Updated translations
 ]]>
         </en>
         <de>
@@ -44,6 +51,13 @@ Gülleschlauch:
 
 Düngerschlauch:
 - Preis: €300
+
+Changelog 1.1.0.0:
+- Fixed bug with visible movement input action of player
+- Fixed connector position of PnH tank open 25m
+- Added support for Premium Expansion
+- Improved mod compatibility
+- Updated translations
 ]]>
         </de>
         <fr>
@@ -64,6 +78,13 @@ Tuyau à lisier:
 
 Tuyau à fertilisant:
 - Prix: €300
+
+Changelog 1.1.0.0:
+- Fixed bug with visible movement input action of player
+- Fixed connector position of PnH tank open 25m
+- Added support for Premium Expansion
+- Improved mod compatibility
+- Updated translations
 ]]>
         </fr>
     </description>
