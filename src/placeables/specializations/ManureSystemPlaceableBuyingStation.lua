@@ -78,15 +78,20 @@ function ManureSystemPlaceableBuyingStation:onPostLoad(savegame)
 
         local fillableObject = {}
 
-        fillableObject.getOwnerFarmId = function(_, ...)
-            return self:getOwnerFarmId(...)
-        end
-
         fillableObject.addFillUnitFillLevel = function(_, farmId, fillUnitIndex, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
             return fillLevelDelta
         end
 
         manureSystemStorage.changeFillLevel = function(_, farmId, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
+            fillableObject.getOwnerFarmId = function(_, ...)
+                local ownerFarmId = self:getOwnerFarmId(...)
+                if ownerFarmId ~= AccessHandler.EVERYONE then
+                    return ownerFarmId
+                end
+
+                return farmId
+            end
+
             return -(buyingStation:addFillLevelToFillableObject(fillableObject, 1, fillTypeIndex, -fillLevelDelta, fillPositionData, toolType or ToolType.UNDEFINED))
         end
 
