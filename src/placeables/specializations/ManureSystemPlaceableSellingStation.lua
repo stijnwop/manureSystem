@@ -77,6 +77,11 @@ function ManureSystemPlaceableSellingStation:onPostLoad(savegame)
         end
 
         manureSystemStorage.changeFillLevel = function(_, farmId, fillLevelDelta, fillTypeIndex, toolType, fillPositionData)
+            local ownerFarmId = self:getOwnerFarmId()
+            if ownerFarmId ~= AccessHandler.EVERYONE then
+                farmId = ownerFarmId
+            end
+
             return sellingStation:addFillLevelFromTool(farmId, fillLevelDelta, fillTypeIndex, fillPositionData, toolType)
         end
 
