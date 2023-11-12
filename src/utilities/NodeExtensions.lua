@@ -46,8 +46,7 @@ end
 
 ---@return boolean
 function NodeExtensions.isRigidBody(node)
-    local type = getRigidBodyType(node)
-    return type == RigidBodyType.STATIC or type == RigidBodyType.DYNAMIC
+    return getRigidBodyType(node) ~= RigidBodyType.NONE
 end
 
 ---@return void
