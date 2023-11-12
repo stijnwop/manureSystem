@@ -6,16 +6,16 @@
         <text name="input_MS_ATTACH_HOSE" text="Collega il tubo"/>
         <text name="input_MS_DETACH_HOSE" text="Scollega il tubo"/>
         <text name="input_MS_TOGGLE_FLOW" text="Apri/chiudi valvola"/>
-        <text name="input_MS_ACTIVATE_PUMP" text="Accendi/spegni pompa"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Avvia/disattiva pompa"/>
         <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Cambia direzione pompa"/>
         <text name="action_storeHose" text="Riponi il tubo"/>
         <text name="action_toggleManureFlow" text="%s la valvola"/>
         <text name="action_toggleManureFlowStateOpen" text="Apri"/>
         <text name="action_toggleManureFlowStateClose" text="Chiudi"/>
-        <text name="action_activatePump" text="Accendi la pompa di %s"/>
-        <text name="action_deactivatePump" text="Spegni la pompa di %s"/>
-        <text name="action_directionOut" text="Cambia direzione della pompa su: svuotamento"/>
-        <text name="action_directionIn" text="Cambia direzione della pompa su: riempimento"/>
+        <text name="action_activatePump" text="Avvia la pompa di %s"/>
+        <text name="action_deactivatePump" text="Disattiva la pompa di %s"/>
+        <text name="action_directionOut" text="Cambia direzione della pompa in: svuotamento"/>
+        <text name="action_directionIn" text="Cambia direzione della pompa in: riempimento"/>
         <text name="action_directionLeftRight" text="Cambia direzione della pompa da: sinistra verso destra"/>
         <text name="action_directionRightLeft" text="Cambia direzione della pompa da: destra verso sinistra"/>
         <text name="info_directionOut" text="svuotamento"/>
@@ -37,13 +37,10 @@
         <text name="function_hose" text="Con un tubo sei in grado di pompare un tipo di liquido da una sorgente ad una destinazione. È possibile estendere il tubo per raggiungere distanze maggiori."/>
         <text name="configuration_hose" text="Cambia tipo di tubo"/>
         <text name="configuration_valueExtend" text="Estensione"/>
-        <text name="global_configuration_disappearOnEmpty" text="Standard"/>
         <text name="global_configuration_refillable" text="Ricaricabile"/>
     </texts>
     <elements>
-        <e k="info_title_thickness" v="Thickness" tag="todo">
-            <!--Todo: add missing translation for info_title_thickness--></e>
-        <e k="warning_limitedPumpDirectionsNotCompatible" v="Limited pump directions of pump source and target are not compatible!" tag="todo">
-            <!--Todo: add missing translation for warning_limitedPumpDirectionsNotCompatible--></e>
+        <e k="info_title_thickness" v="Densità"/>
+        <e k="warning_limitedPumpDirectionsNotCompatible" v="La direzione della pompa sorgente e destinazione non è compatibile!"/>
     </elements>
 </l10n>
