@@ -37,12 +37,6 @@ function ManureSystemPlaceableProductionPoint:onPostLoad(savegame)
     if productionPoint ~= nil then
         if self:addManureSystemStorage(productionPoint.storage) then
             productionPoint.storage.canFarmAccess = function(_, farmId)
-                if productionPoint.isOwned then
-                    if productionPoint.loadingStation ~= nil then
-                        return productionPoint.loadingStation:hasFarmAccessToStorage(farmId, productionPoint.storage)
-                    end
-                end
-
                 return g_currentMission.accessHandler:canFarmAccess(farmId, productionPoint.storage)
             end
 
