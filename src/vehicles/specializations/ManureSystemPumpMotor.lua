@@ -455,6 +455,87 @@ function ManureSystemPumpMotor:checkPumpNotAllowedWarning(warningId)
     end
 end
 
+---Prints debug information of the source/target object, if pumping is not allowed.
+---@return void
+local function debugPumpNotAllowedWarning(self, message, sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
+    if g_currentMission.manureSystem.debug then
+        Logging.warning("Pumping is not allowed. Reason: %s", message)
+
+        local sourceObjectName = sourceObject ~= nil and sourceObject:getName() or nil
+        local sourceFillTypeIndex = sourceObject ~= nil and sourceObject:getFillUnitFillType(sourceFillUnitIndex) or FillType.UNKNOWN
+        local sourceFillLevel = sourceObject ~= nil and sourceObject:getFillUnitFillLevel(sourceFillUnitIndex) or 0
+        local sourceCapacity = sourceObject ~= nil and sourceObject:getFillUnitCapacity(sourceFillUnitIndex) or 0
+        local sourceSupportedFillTypes = sourceObject ~= nil and sourceObject:getFillUnitSupportedFillTypes(sourceFillUnitIndex)
+
+        local targetObjectName = nil
+        local targetFillTypeIndex = FillType.UNKNOWN
+        local targetFillLevel = 0
+        local targetCapacity = 0
+        local targetSupportedFillTypes = nil
+        local targetAllowsFillType = false
+
+        if self.spec_manureSystemPumpMotor.sourceIsWater then
+            targetObjectName = "Water plane"
+            targetFillTypeIndex = FillType.WATER
+            targetFillLevel = math.huge
+            targetCapacity = math.huge
+            targetSupportedFillTypes = {[FillType.WATER] = true}
+            targetAllowsFillType = true
+        elseif targetObject ~= nil then
+            targetObjectName = targetObject:getName()
+            targetFillTypeIndex = targetObject:getFillUnitFillType(targetFillUnitIndex)
+            targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
+            targetCapacity = targetObject:getFillUnitCapacity(targetFillUnitIndex)
+            targetSupportedFillTypes = targetObject:getFillUnitSupportedFillTypes(targetFillUnitIndex)
+            targetAllowsFillType = targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillTypeIndex)
+        end
+
+        local sourceAllowsFillType = sourceObject ~= nil and sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillTypeIndex) or false
+
+        local sourceSupportedFillTypesStr = ""
+        if sourceSupportedFillTypes ~= nil then
+            local i = 0
+
+            for fillTypeIndex, _ in pairs(sourceSupportedFillTypes) do
+                if i > 0 then
+                    sourceSupportedFillTypesStr = sourceSupportedFillTypesStr .. ", "
+                end
+
+                sourceSupportedFillTypesStr = sourceSupportedFillTypesStr .. g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
+
+                i = i + 1
+            end
+        end
+
+        local targetSupportedFillTypesStr = ""
+        if targetSupportedFillTypes ~= nil then
+            local i = 0
+
+            for fillTypeIndex, _ in pairs(targetSupportedFillTypes) do
+                if i > 0 then
+                    targetSupportedFillTypesStr = targetSupportedFillTypesStr .. ", "
+                end
+
+                targetSupportedFillTypesStr = targetSupportedFillTypesStr .. g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
+
+                i = i + 1
+            end
+        end
+
+        Logging.info(" sourceObject (sourceFillUnitIndex: %s)", tostring(sourceFillUnitIndex))
+        log(("        name: %s"):format(tostring(sourceObjectName)))
+        log(("        fillType: %s (allowed: %s)"):format(tostring(g_fillTypeManager:getFillTypeNameByIndex(sourceFillTypeIndex)), tostring(sourceAllowsFillType)))
+        log(("            supportedFillTypes: %s"):format(sourceSupportedFillTypesStr))
+        log(("        fillLevel: %s (capacity: %s)"):format(sourceFillLevel, sourceCapacity))
+
+        Logging.info(" targetObject (targetFillUnitIndex: %s)", tostring(targetFillUnitIndex))
+        log(("        name: %s"):format(tostring(targetObjectName)))
+        log(("        fillType: %s (allowed: %s)"):format(tostring(g_fillTypeManager:getFillTypeNameByIndex(targetFillTypeIndex)), tostring(targetAllowsFillType)))
+        log(("            supportedFillTypes: %s"):format(targetSupportedFillTypesStr))
+        log(("        fillLevel: %s (capacity: %s)"):format(targetFillLevel, targetCapacity))
+    end
+end
+
 ---Checks if we allow pumping.
 ---@return number|nil
 function ManureSystemPumpMotor:getTurnOnPumpNotAllowedWarning()
@@ -467,28 +548,33 @@ function ManureSystemPumpMotor:getTurnOnPumpNotAllowedWarning()
             if self:isPumpingIn() then
                 local targetFillType = spec.sourceIsWater and FillType.WATER or targetObject:getFillUnitFillType(targetFillUnitIndex)
                 if targetFillType ~= FillType.UNKNOWN and not sourceObject:getFillUnitAllowsFillType(sourceFillUnitIndex, targetFillType) then
+                    debugPumpNotAllowedWarning(self, "Source object does not allow the target object fill type.", sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
                     return ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE -- source does not allow the target fill type
                 end
                 if not spec.sourceIsWater then
                     local targetFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
                     if not (targetFillLevel > 0) then
+                        debugPumpNotAllowedWarning(self, "Target object is empty.", sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
                         return ManureSystemPumpMotor.WARNING_EMPTY -- empty target
                     end
                 end
             elseif self:isPumpingOut() then
                 local sourceFillLevel = sourceObject:getFillUnitFillLevel(sourceFillUnitIndex)
                 if not (sourceFillLevel > 0) then
+                    debugPumpNotAllowedWarning(self, "Source object is empty.", sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
                     return ManureSystemPumpMotor.WARNING_EMPTY -- empty source
                 end
 
                 if not spec.sourceIsWater then
                     local sourceFillType = sourceObject:getFillUnitFillType(sourceFillUnitIndex)
                     if sourceFillType ~= FillType.UNKNOWN and not targetObject:getFillUnitAllowsFillType(targetFillUnitIndex, sourceFillType) then
+                        debugPumpNotAllowedWarning(self, "Target object does not allow the source object fill type.", sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
                         return ManureSystemPumpMotor.WARNING_INVALID_FILL_TYPE -- invalid source fill type
                     end
 
                     local targetObjectFillLevel = targetObject:getFillUnitFillLevel(targetFillUnitIndex)
                     if targetObjectFillLevel >= (targetObject:getFillUnitCapacity(targetFillUnitIndex)) then
+                        debugPumpNotAllowedWarning(self, "Target object is full.", sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
                         return ManureSystemPumpMotor.WARNING_FULL -- full target
                     end
                 end

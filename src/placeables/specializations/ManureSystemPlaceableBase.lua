@@ -28,6 +28,7 @@ function ManureSystemPlaceableBase.registerFunctions(placeableType)
     SpecializationUtil.registerFunction(placeableType, "getCanDisableVanillaLoading", ManureSystemPlaceableBase.getCanDisableVanillaLoading)
 
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFillType", ManureSystemPlaceableBase.getFillUnitFillType)
+    SpecializationUtil.registerFunction(placeableType, "getFillUnitSupportedFillTypes", ManureSystemPlaceableBase.getFillUnitSupportedFillTypes)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitAllowsFillType", ManureSystemPlaceableBase.getFillUnitAllowsFillType)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFillLevel", ManureSystemPlaceableBase.getFillUnitFillLevel)
     SpecializationUtil.registerFunction(placeableType, "getFillUnitFillLevelPercentage", ManureSystemPlaceableBase.getFillUnitFillLevelPercentage)
@@ -137,6 +138,16 @@ end
 ---@return number
 function ManureSystemPlaceableBase:getFillUnitFillType(fillUnitIndex)
     return FillType.UNKNOWN
+end
+
+---@return table
+function ManureSystemPlaceableBase:getFillUnitSupportedFillTypes(fillUnitIndex)
+    local storage = self:getManureSystemStorageByIndex(fillUnitIndex)
+    if storage ~= nil then
+        return storage:getSupportedFillTypes()
+    end
+
+    return {}
 end
 
 ---@return boolean
