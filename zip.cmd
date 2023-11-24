@@ -1,4 +1,4 @@
-SET filename="FS19_manureSystem.zip"
+SET filename="FS22_manureSystem.zip"
 
 IF EXIST %filename% (
     DEL  %filename% > NUL
