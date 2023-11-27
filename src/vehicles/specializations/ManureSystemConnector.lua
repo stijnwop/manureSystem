@@ -198,10 +198,10 @@ function ManureSystemConnector:getCanDischargeToObject(superFunc, dischargeNode)
                 trigger = object
             end
 
-            local sourceObjectCanDisableVanillaLoading = self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)
-            local targetObjectCanDisableVanillaLoading = targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)
+            local sourceObjectCanDisableVanillaUnloading = self.getCanDisableVanillaUnloading == nil or self:getCanDisableVanillaUnloading(targetObject, trigger)
+            local targetObjectCanDisableVanillaUnloading = targetObject.getCanDisableVanillaUnloading == nil or targetObject:getCanDisableVanillaUnloading(self, trigger)
 
-            if sourceObjectCanDisableVanillaLoading and targetObjectCanDisableVanillaLoading then
+            if sourceObjectCanDisableVanillaUnloading and targetObjectCanDisableVanillaUnloading then
                 local pumpDirectionIn = ManureSystemPumpMotor.PUMP_DIRECTION_IN
                 local pumpDirectionOut = ManureSystemPumpMotor.PUMP_DIRECTION_OUT
 

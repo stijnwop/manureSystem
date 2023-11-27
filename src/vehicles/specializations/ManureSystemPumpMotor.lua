@@ -94,6 +94,8 @@ function ManureSystemPumpMotor.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "setPumpMaxTime", ManureSystemPumpMotor.setPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getPumpMaxTime", ManureSystemPumpMotor.getPumpMaxTime)
     SpecializationUtil.registerFunction(vehicleType, "getOriginalPumpMaxTime", ManureSystemPumpMotor.getOriginalPumpMaxTime)
+    SpecializationUtil.registerFunction(vehicleType, "getCanDisableVanillaUnloading", ManureSystemPumpMotor.getCanDisableVanillaUnloading)
+    SpecializationUtil.registerFunction(vehicleType, "getCanDisableVanillaLoading", ManureSystemPumpMotor.getCanDisableVanillaLoading)
 end
 
 ---@return void
@@ -214,12 +216,6 @@ function ManureSystemPumpMotor.disableDischargeable(self)
                 removeTrigger(dischargeNode.trigger.node)
             end
         end
-    end
-
-    local spec_fillTriggerVehicle = self.spec_fillTriggerVehicle
-    if spec_fillTriggerVehicle ~= nil and spec_fillTriggerVehicle.fillTrigger ~= nil then
-        spec_fillTriggerVehicle.fillTrigger:delete()
-        spec_fillTriggerVehicle.fillTrigger = nil
     end
 end
 
@@ -898,6 +894,24 @@ end
 ---@return number
 function ManureSystemPumpMotor:getPumpMaxTime()
     return self.spec_manureSystemPumpMotor.pumpEfficiency.maxTime
+end
+
+---@return boolean
+function ManureSystemPumpMotor:getCanDisableVanillaUnloading(sourceObject, trigger)
+    if self:getIsAIActive() then
+        return false
+    end
+
+    return true
+end
+
+---@return boolean
+function ManureSystemPumpMotor:getCanDisableVanillaLoading(targetObject, trigger)
+    if self:getIsAIActive() then
+        return false
+    end
+
+    return true
 end
 
 ----------------
