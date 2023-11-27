@@ -13,6 +13,10 @@ ManureSystemPlaceableProductionPoint = {}
 
 ---@return boolean
 function ManureSystemPlaceableProductionPoint.prerequisitesPresent(specializations)
+    if pdlc_pumpsAndHosesPack ~= nil and SpecializationUtil.hasSpecialization(pdlc_pumpsAndHosesPack.SandboxPlaceableProductionPoint, specializations) then
+        return true
+    end
+
     return SpecializationUtil.hasSpecialization(PlaceableProductionPoint, specializations)
 end
 
@@ -33,7 +37,7 @@ end
 
 ---@return void
 function ManureSystemPlaceableProductionPoint:onPostLoad(savegame)
-    local productionPoint = self.spec_productionPoint.productionPoint
+    local productionPoint = ManureSystemPlaceableProductionPoint.getProductionPoint(self)
     if productionPoint ~= nil then
         if self:addManureSystemStorage(productionPoint.storage) then
             productionPoint.storage.canFarmAccess = function(_, farmId)
@@ -61,8 +65,21 @@ end
 
 ---@return void
 function ManureSystemPlaceableProductionPoint:onPreDelete()
-    local productionPoint = self.spec_productionPoint.productionPoint
+    local productionPoint = ManureSystemPlaceableProductionPoint.getProductionPoint(self)
     if productionPoint ~= nil then
         self:removeManureSystemStorage(productionPoint.storage)
     end
+end
+
+---@return table | nil
+function ManureSystemPlaceableProductionPoint.getProductionPoint(self)
+    if self.spec_productionPoint ~= nil then
+        return self.spec_productionPoint.productionPoint
+    end
+
+    if self.spec_sandboxPlaceableProductionPoint ~= nil then
+        return self.spec_sandboxPlaceableProductionPoint.productionPoint
+    end
+
+    return nil
 end
