@@ -454,7 +454,7 @@ end
 ---Prints debug information of the source/target object, if pumping is not allowed.
 ---@return void
 local function debugPumpNotAllowedWarning(self, message, sourceObject, sourceFillUnitIndex, targetObject, targetFillUnitIndex)
-    if g_currentMission.manureSystem.debug then
+    if g_currentMission.manureSystem.debug and g_showDevelopmentWarnings then
         Logging.warning("Pumping is not allowed. Reason: %s", message)
 
         local sourceObjectName = sourceObject ~= nil and sourceObject:getName() or nil
