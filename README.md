@@ -50,9 +50,9 @@ hoses affects your pump time.
 ## Known conflicts
 
 * [Contact modder] [3rd Person](https://www.farming-simulator.com/mod.php?mod_id=234226)
-  * Sadly that mod boldly replaces the whole Player.update() code, therefor destroying all mods depending/appending on that call.
+  * Unfortunately, that mod replaces the Player.update() code, breaking any mods that depend on/add to that call. Contact the modder to mention that Utilly functions such as `overwriteFunction` and `appendedFunction` should be used instead.
 * [Contact modder]  [Precision Hands](https://www.farming-simulator.com/mod.php?mod_id=265312)
-  * Sadly that mod does not overwrite the Player.pickUpObject() function correctly (not calling superfunc), therefor making the hose grap and drop functions unreachable.
+  * Sadly, that mod does not overwrite the Player.pickUpObject() function correctly by not calling the superFunc, therefor making the hose grap and drop functions unreachable. Contact the modder to mention that the superFunc should be called to maintain comptible with other any other mod relaying on that function.
 * [Fixed] [Mobile Workshop](https://www.farming-simulator.com/mod.php?mod_id=225545)
   * Removed obsolete FS19 code in Manure System, please download the latest version of the Manure System
 
