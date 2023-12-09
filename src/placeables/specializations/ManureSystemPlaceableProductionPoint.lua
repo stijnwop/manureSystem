@@ -13,11 +13,21 @@ ManureSystemPlaceableProductionPoint = {}
 
 ---@return boolean
 function ManureSystemPlaceableProductionPoint.prerequisitesPresent(specializations)
+    if SpecializationUtil.hasSpecialization(PlaceableProductionPoint, specializations) then
+        return true
+    end
+
     if pdlc_pumpsAndHosesPack ~= nil and SpecializationUtil.hasSpecialization(pdlc_pumpsAndHosesPack.SandboxPlaceableProductionPoint, specializations) then
         return true
     end
 
-    return SpecializationUtil.hasSpecialization(PlaceableProductionPoint, specializations)
+    for _, specializationObject in ipairs(specializations) do
+        if ManureSystem.getTypeNameModType(specializationObject.className) == "PlaceableExtendedProductionPoint" then
+            return true
+        end
+    end
+
+    return false
 end
 
 ---@return void
@@ -79,6 +89,10 @@ function ManureSystemPlaceableProductionPoint.getProductionPoint(self)
 
     if self.spec_sandboxPlaceableProductionPoint ~= nil then
         return self.spec_sandboxPlaceableProductionPoint.productionPoint
+    end
+
+    if self.spec_extendedProductionPoint ~= nil then
+        return self.spec_extendedProductionPoint.productionPoint
     end
 
     return nil
