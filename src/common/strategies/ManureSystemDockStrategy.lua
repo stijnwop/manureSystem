@@ -109,10 +109,10 @@ function ManureSystemDockStrategy:onUpdate(dt)
                                 fillObject = desc.vehicle
                                 fillUnitIndex = desc.fillUnitIndex
                             end
-                        end
-
-                        if fillObject.setUsedConnectorId ~= nil then
-                            fillObject:setUsedConnectorId(connector.id)
+                        else
+                            if fillObject.setUsedConnectorId ~= nil then
+                                fillObject:setUsedConnectorId(connector.id)
+                            end
                         end
 
                         dockingArmObject:setPumpTargetObject(fillObject, fillUnitIndex)
@@ -176,6 +176,10 @@ function ManureSystemDockStrategy:getStationaryConnectorDesc(connector)
             if desc ~= nil and desc.vehicle ~= object then
                 local descConnector = desc.vehicle:getConnectorById(desc.connectorId)
                 if stationaryConnector.hasOpenManureFlow and descConnector.hasOpenManureFlow then
+                    if desc.vehicle.setUsedConnectorId ~= nil then
+                        desc.vehicle:setUsedConnectorId(desc.connectorId)
+                    end
+
                     return { vehicle = desc.vehicle, fillUnitIndex = descConnector.fillUnitIndex }, length
                 end
             end
