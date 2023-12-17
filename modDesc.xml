@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="79">
     <author>Wopster</author>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <title>
         <en>Manure System</en>
     </title>
@@ -24,6 +24,15 @@ Slurry hose:
 
 Fertilizer hose:
 - Price: $300
+
+Changelog 1.2.0.0:
+- Fixed game crash on exit if there is still a fill arm connected to a dock
+- Fixed pumping from target, if docking station is used
+- Fixed contracting farms not being able to pump from/to production points
+- Added support for sandbox production points and "PlaceableExtendedProductionPoint"
+- Added support for vanilla unloading/loading when AI is active
+- Fixed lua error when trying to sell pallets
+- Updated translations
 
 Changelog 1.1.0.0:
 - Fixed bug with visible movement input action of player
@@ -52,6 +61,15 @@ Gülleschlauch:
 Düngerschlauch:
 - Preis: €300
 
+Changelog 1.2.0.0:
+- Fixed game crash on exit if there is still a fill arm connected to a dock
+- Fixed pumping from target, if docking station is used
+- Fixed contracting farms not being able to pump from/to production points
+- Added support for sandbox production points and "PlaceableExtendedProductionPoint"
+- Added support for vanilla unloading/loading when AI is active
+- Fixed lua error when trying to sell pallets
+- Updated translations
+
 Changelog 1.1.0.0:
 - Fixed bug with visible movement input action of player
 - Fixed connector position of PnH tank open 25m
@@ -78,6 +96,15 @@ Tuyau à lisier:
 
 Tuyau à fertilisant:
 - Prix: €300
+
+Changelog 1.2.0.0:
+- Fixed game crash on exit if there is still a fill arm connected to a dock
+- Fixed pumping from target, if docking station is used
+- Fixed contracting farms not being able to pump from/to production points
+- Added support for sandbox production points and "PlaceableExtendedProductionPoint"
+- Added support for vanilla unloading/loading when AI is active
+- Fixed lua error when trying to sell pallets
+- Updated translations
 
 Changelog 1.1.0.0:
 - Fixed bug with visible movement input action of player
