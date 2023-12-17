@@ -450,6 +450,7 @@ function ManureSystem.installVehicleSpecializations(vehicleTypeManager, speciali
 
         if typeName == "pallet" and SpecializationUtil.hasSpecialization(FillUnit, typeEntry.specializations) then
             ManureSystem.insertConnector(vehicleTypeManager, typeName, typeEntry, modName)
+            vehicleTypeManager:addSpecialization(typeName, "wearable")
         end
 
         if isValidTypeManureVehicle or isValidTypeSprayer or hasRegistry then
