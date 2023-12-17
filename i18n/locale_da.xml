@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <l10n>
+    <translationContributors>NørreGaard_Farming, Michaelbjerg21978</translationContributors>
     <locale>da</locale>
-    <translationContributors>NørreGaard_Farming</translationContributors>
-
-    <elements>
-        <e k="action_activatePump" v="Aktiver pumpen af %s"/>
-        <e k="action_deactivatePump" v="Deaktiver pumpen af %s"/>
-        <e k="action_directionIn" v="Skift pumpe retning til : Fyldning"/>
-        <e k="action_directionLeftRight" v="Skift pumpe retning fra: Venstre til Højre"/>
-        <e k="action_directionOut" v="Skift pumpe retning til: Tømning"/>
-        <e k="action_directionRightLeft" v="Skift pumpe retning fra: Højre til Venstre"/>
-        <e k="action_disableMixer" v="Slut mixer"/>
-        <e k="action_enableMixer" v="Tænd mixer"/>
-        <e k="action_storeHose" v="Opbevar slange"/>
-        <e k="action_toggleManureFlow" v="%s gødnings tryk"/>
-        <e k="action_toggleManureFlowStateClose" v="Luk"/>
-        <e k="action_toggleManureFlowStateOpen" v="Åben"/>
-        <e k="configuration_hose" v="Skift slange type."/>
-        <e k="configuration_manureSystemFillArm" v="Fylde-arm"/>
-        <e k="configuration_valueExtend" v="Udvid"/>
-        <e k="function_hose" v="Med en slange kan du pumpe flydende væsker fra en kilde til målrettet udstyr. Tilkoble flere enheder for at nå længere."/>
-        <e k="global_configuration_refillable" v="Genopfyldelig"/>
-        <e k="info_directionIn" v="Fyldning"/>
-        <e k="info_directionOut" v="Tømning"/>
-        <e k="info_title_thickness" v="Tykkelse"/>
-        <e k="input_MS_ACTIVATE_PUMP" v="Aktiver/deaktiver pumpe"/>
-        <e k="input_MS_ATTACH_HOSE" v="Fastgør slange"/>
-        <e k="input_MS_DETACH_HOSE" v="Aftag slange"/>
-        <e k="input_MS_TOGGLE_FLOW" v="Slå gylle strøming til/fra"/>
-        <e k="input_MS_TOGGLE_PUMP_DIRECTION" v="Skift pumpe Retning"/>
-        <e k="shopItem_fertilizerHose" v="Gødnings slange"/>
-        <e k="shopItem_slurryHose" v="Gylle slange"/>
-        <e k="typeDesc_hose" v="Slange"/>
-        <e k="warning_checkManureFlow" v="Kontroller venligst gødningsflowet for stikket på %s!"/>
-        <e k="warning_hoseRangeRestriction" v="Slangens rækkevidde forhindre dig i at nå længere!"/>
-        <e k="warning_hoseRangeRestrictionLength" v="Du er ikke superman!"/>
-        <e k="warning_invalidFillType" v="Pumpens type er ikke understøttet!"/>
-        <e k="warning_limitedPumpDirectionsNotCompatible" v="Begrænset pumperetninger for pumpekilde og mål er ikke kompatible!"/>
-        <e k="warning_objectEmpty" v="Pumpens kilde eller udstyr er tom!"/>
-        <e k="warning_objectFull" v="Pumpeudstyret er fyldt!"/>
-        <e k="warning_parkingPlaceTooSmall" v="Der er ikke plads til %sm slangen, frigør pladsen!"/>
-        <e k="warning_pumpDirectionLimited" v="Pumpens retning er begrænset til kun: %s"/>
-    </elements>
+    <texts>
+        <text name="input_MS_ATTACH_HOSE" text="Tilkobel slange"/>
+        <text name="input_MS_DETACH_HOSE" text="Frakobel slange"/>
+        <text name="input_MS_TOGGLE_FLOW" text="Skift gylle flow"/>
+        <text name="input_MS_ACTIVATE_PUMP" text="Start/stop pumpe"/>
+        <text name="input_MS_TOGGLE_PUMP_DIRECTION" text="Skift pumpe retning"/>
+        <text name="action_storeHose" text="Opbevar slange"/>
+        <text name="action_toggleManureFlow" text="%s gylle flow"/>
+        <text name="action_toggleManureFlowStateOpen" text="Åben"/>
+        <text name="action_toggleManureFlowStateClose" text="Luk"/>
+        <text name="action_activatePump" text="Start pumpe på %s"/>
+        <text name="action_deactivatePump" text="Stop pumpe på %s"/>
+        <text name="action_directionOut" text="Skift pumpe retning til: tømning"/>
+        <text name="action_directionIn" text="Skift pumpe retning til: opfyldning"/>
+        <text name="action_directionLeftRight" text="Skift pumpe retning fra: venstre til højre"/>
+        <text name="action_directionRightLeft" text="Skift pumpe retning fra: højre til venstre"/>
+        <text name="info_directionOut" text="tømmer"/>
+        <text name="info_directionIn" text="opfylder"/>
+        <text name="warning_pumpDirectionLimited" text="Pumpe retning er begrænset til kun: %s"/>
+        <text name="warning_limitedPumpDirectionsNotCompatible" text="Begrænset pumpe retninger af pumpe kilde og mål er ikke understøttet!"/>
+        <text name="warning_objectEmpty" text="Pumpens kilde eller mål er tom!"/>
+        <text name="warning_objectFull" text="Pumpens mål er fuld!"/>
+        <text name="warning_invalidFillType" text="Pumpens fyld type er ikke understøttet!"/>
+        <text name="warning_checkManureFlow" text="Venligst tjek gylle flow til kobling på %s!"/>
+        <text name="configuration_manureSystemFillArm" text="Fyld arm"/>
+        <text name="warning_parkingPlaceTooSmall" text="Parkerings plads er for lille til %sm slange!"/>
+        <text name="warning_hoseRangeRestriction" text="Slangens rækkevidde tillader dig ikke at gå længere!"/>
+        <text name="warning_hoseRangeRestrictionLength" text="Du er ikke superman!"/>
+        <text name="action_enableMixer" text="Start mixer"/>
+        <text name="action_disableMixer" text="Stop mixer"/>
+        <text name="info_title_thickness" text="Konsistens"/>
+        <text name="typeDesc_hose" text="Slange"/>
+        <text name="shopItem_slurryHose" text="Gylle slange"/>
+        <text name="shopItem_fertilizerHose" text="Gødnings slange"/>
+        <text name="function_hose" text="Med en slange er det muligt at pumpe en flydende fyld type fra kilde til mål. Hvis tilføjet kan du udvide sangen til at nå længere."/>
+        <text name="configuration_hose" text="Ændre slange type."/>
+        <text name="configuration_valueExtend" text="Udvidelse"/>
+        <text name="global_configuration_refillable" text="Genopfyldbar"/>
+    </texts>
 </l10n>
