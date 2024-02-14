@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<i3D name="fertilizerHose" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+<i3D name="fertilizerHose.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="9.0.6"/>
+  </Asset>
 
   <Files>
-    <File fileId="3" filename="$data/shaders/vehicleShader.xml" />
-    <File fileId="5" filename="../coupling_gloss.png" />
-    <File fileId="4" filename="../coupling_normal.png" />
-    <File fileId="2" filename="../hose_gloss.png" />
-    <File fileId="1" filename="../hose_normal.png" />
+    <File fileId="4" filename="$data/shaders/vehicleShader.xml"/>
+    <File fileId="3" filename="../coupling_gloss.png"/>
+    <File fileId="2" filename="../coupling_normal.png"/>
+    <File fileId="9" filename="../hose_gloss.png"/>
+    <File fileId="8" filename="../hose_normal.png"/>
   </Files>
 
+
   <Materials>
-    <Material name="lambert1" materialId="1" diffuseColor="0.5 0.5 0.5 1">
+    <Material name="coupling_mat" materialId="76" diffuseColor="0.494118 0.494118 0.494118 1" customShaderId="4" customShaderVariation="colorMask">
+      <Normalmap fileId="2"/>
+      <Glossmap fileId="3"/>
+      <CustomParameter name="RDT" value="1 1 0 0"/>
+      <CustomParameter name="colorMat1" value="0.05 0.05 0.05 1"/>
     </Material>
-    <Material name="hose_mat" materialId="3" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="localCatmullRom_colorMask_uvScale">
-      <CustomParameter name="uvScale" value="1.0 1.5 0.0 0.0"/>
+    <Material name="hose_mat" materialId="77" diffuseColor="0.494118 0.494118 0.494118 1" customShaderId="4" customShaderVariation="localCatmullRom_colorMask_uvScale">
+      <Normalmap fileId="8"/>
+      <Glossmap fileId="9"/>
+      <CustomParameter name="RDT" value="1 1 0 0"/>
+      <CustomParameter name="uvScale" value="1 1.5 0 0"/>
       <CustomParameter name="lengthAndDiameter" value="5 1 0 0"/>
-      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
-      <CustomParameter name="colorMat0" value="0.80 0.55 0.05 1.0"/>
-      <CustomParameter name="dirtColor" value="0.20 0.14 0.08 0.0"/>
-      <Normalmap fileId="1"/>
-      <Glossmap fileId="2"/>
     </Material>
-    <Material name="coupling_mat" materialId="2" diffuseColor="0.5 0.5 0.5 1" customShaderId="3" customShaderVariation="colorMask">
-      <CustomParameter name="RDT" value="1.0 1.0 0.0 0.0"/>
-      <CustomParameter name="dirtColor" value="0.20 0.14 0.08 0.0"/>
-      <CustomParameter name="colorMat1" value="0.05 0.05 0.05 1.0"/>
-      <Normalmap fileId="4"/>
-      <Glossmap fileId="5"/>
+    <Material name="lambert1" materialId="78" diffuseColor="0.494118 0.494118 0.494118 1">
     </Material>
   </Materials>
 
@@ -35,30 +36,36 @@
   <Shapes externalShapesFile="fertilizerHose.i3d.shapes">
   </Shapes>
 
+
+  <Dynamics>
+  </Dynamics>
+
   <Scene>
-    <Shape name="hose_main_component1" translation="0 0 -0" shapeId="1" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="1">
-      <Shape name="fertilizer_coupling_camplock_1" translation="0 0 0" rotation="0 180 0" shapeId="2" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="2"/>
-      <Shape name="fertilizer_coupling_1" translation="0 0 0" rotation="0 180 0" visibility="false" shapeId="3" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="3"/>
-      <Shape name="fertilizer_hose" translation="0 0 -0.242" rotation="0 180 0" shapeId="4" castsShadows="true" receiveShadows="true" materialIds="3" clipDistance="300" nodeId="4"/>
-      <TransformGroup name="grabNode1" translation="0 0 0" nodeId="5"/>
-      <TransformGroup name="baseNode" translation="0 0 0" rotation="0 180 0" nodeId="6"/>
-      <TransformGroup name="componentJoint1" translation="0 0 -1.848" nodeId="7"/>
-      <Shape name="pCylinder1" translation="0 -0 -0.064493" shapeId="5" compoundChild="true" density="0.001" collisionMask="8194" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" nodeId="8"/>
-    </Shape>
-    <Shape name="hose_main_component2" translation="0 0 -1.928" shapeId="6" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="9">
-      <TransformGroup name="componentJoint2" translation="0 0 -1.548" nodeId="10"/>
-    </Shape>
-    <Shape name="hose_main_component3" translation="0 0 -3.556" shapeId="7" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="11">
-      <TransformGroup name="componentJoint3" translation="-0 -0 -1.848323" nodeId="12"/>
-    </Shape>
-    <Shape name="hose_main_component4" translation="0 0 -5.484195" shapeId="8" dynamic="true" compound="true" collisionMask="2109442" castsShadows="true" receiveShadows="true" nonRenderable="true" materialIds="1" clipDistance="300" nodeId="13">
-      <TransformGroup name="grabNode2" translation="-0 0 0" rotation="0 180 0" nodeId="14"/>
-      <TransformGroup name="targetNode" translation="0 0 0.242" rotation="0 180 0" nodeId="15"/>
-      <Shape name="fertilizer_coupling_camplock_2" translation="0 0 0" shapeId="9" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="16"/>
-      <Shape name="fertilizer_coupling_2" translation="0 0 0" visibility="false" shapeId="10" castsShadows="true" receiveShadows="true" materialIds="2" clipDistance="300" nodeId="17"/>
-    </Shape>
+      <Shape shapeId="1" name="hose_main_component1" dynamic="true" compound="true" collisionMask="2109442" clipDistance="300" nodeId="87" materialIds="78" castsShadows="true" receiveShadows="true" nonRenderable="true">
+        <Shape shapeId="2" name="fertilizer_coupling_camplock_1" rotation="180 -5.00896e-06 180" clipDistance="300" nodeId="88" materialIds="76" castsShadows="true" receiveShadows="true"/>
+        <Shape shapeId="3" name="fertilizer_coupling_1" translation="-1.64373e-08 0 -0.188021" rotation="0 180 0" visibility="false" clipDistance="300" nodeId="89" materialIds="76" castsShadows="true" receiveShadows="true"/>
+        <Shape shapeId="4" name="fertilizer_hose" translation="0 0 -0.242" rotation="0 180 0" clipDistance="300" nodeId="90" materialIds="77" castsShadows="true" receiveShadows="true"/>
+        <TransformGroup name="grabNode1" nodeId="91"/>
+        <TransformGroup name="baseNode" rotation="0 180 0" nodeId="92"/>
+        <TransformGroup name="componentJoint1" translation="0 0 -1.848" nodeId="93"/>
+        <Shape shapeId="5" name="pCylinder1" translation="0 -0 -0.064493" compoundChild="true" collisionMask="8194" density="0.001" nodeId="94" materialIds="78" castsShadows="true" receiveShadows="true" nonRenderable="true"/>
+        <TransformGroup name="grabNodeExt1" translation="-1.64373e-08 0 -0.188021" nodeId="107"/>
+        <TransformGroup name="baseNodeExt1" translation="-1.64373e-08 0 -0.188021" rotation="180 -5.00896e-06 180" nodeId="108"/>
+      </Shape>
+      <Shape shapeId="6" name="hose_main_component2" translation="0 0 -1.928" dynamic="true" compound="true" collisionMask="2109442" clipDistance="300" nodeId="95" materialIds="78" castsShadows="true" receiveShadows="true" nonRenderable="true">
+        <TransformGroup name="componentJoint2" translation="0 0 -1.548" nodeId="96"/>
+      </Shape>
+      <Shape shapeId="6" name="hose_main_component3" translation="0 0 -3.556" dynamic="true" compound="true" collisionMask="2109442" clipDistance="300" nodeId="97" materialIds="78" castsShadows="true" receiveShadows="true" nonRenderable="true">
+        <TransformGroup name="componentJoint3" translation="-0 -0 -1.84832" nodeId="98"/>
+      </Shape>
+      <Shape shapeId="7" name="hose_main_component4" translation="0 0 -5.48419" dynamic="true" compound="true" collisionMask="2109442" clipDistance="300" nodeId="99" materialIds="78" castsShadows="true" receiveShadows="true" nonRenderable="true">
+        <TransformGroup name="grabNode2" rotation="0 180 0" nodeId="100"/>
+        <TransformGroup name="targetNode" translation="0 0 0.242" rotation="0 180 0" nodeId="101"/>
+        <Shape shapeId="2" name="fertilizer_coupling_camplock_2" clipDistance="300" nodeId="102" materialIds="76" castsShadows="true" receiveShadows="true"/>
+        <Shape shapeId="3" name="fertilizer_coupling_2" translation="0 0 0.18796" visibility="false" clipDistance="300" nodeId="103" materialIds="76" castsShadows="true" receiveShadows="true"/>
+        <TransformGroup name="grabNodeExt2" translation="0 0 0.18796" rotation="-180 -5.00896e-06 -180" nodeId="109"/>
+        <TransformGroup name="targetNodeExt2" translation="-1.63806e-08 -1.63404e-08 0.242588" rotation="180 -5.00896e-06 180" nodeId="110"/>
+      </Shape>
   </Scene>
 
-  <UserAttributes>
-  </UserAttributes>
 </i3D>
