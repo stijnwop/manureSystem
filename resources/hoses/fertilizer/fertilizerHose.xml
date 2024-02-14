@@ -58,6 +58,45 @@
                         <visuals visualNode="fertilizer_coupling_camplock_2" hoseTargetNode="targetNode"/>
                     </grabNode>
                 </grabNodes>
+
+                <objectChange node="fertilizer_coupling_camplock_1" visibilityActive="true"/>
+                <objectChange node="fertilizer_coupling_camplock_2" visibilityActive="true"/>
+                <objectChange node="fertilizer_coupling_1" visibilityActive="false"/>
+                <objectChange node="fertilizer_coupling_2" visibilityActive="false"/>
+            </manureSystemHoseConfiguration>
+
+            <manureSystemHoseConfiguration name="$l10n_configuration_valueExtend" price="10">
+                <grabNodes>
+                    <grabNode isExtension="true" node="grabNodeExt1" raycastNode="grabNodeExt1" componentIndex="1" componentJointIndex="1">
+                        <visuals visualNode="fertilizer_coupling_1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
+                    </grabNode>
+                    <grabNode node="grabNode2" raycastNode="grabNode2" componentIndex="4" componentJointIndex="3">
+                        <visuals visualNode="fertilizer_coupling_camplock_2" hoseTargetNode="targetNode"/>
+                    </grabNode>
+                </grabNodes>
+
+                <objectChange node="fertilizer_coupling_camplock_1" visibilityActive="false"/>
+                <objectChange node="fertilizer_coupling_camplock_2" visibilityActive="true"/>
+                <objectChange node="fertilizer_coupling_1" visibilityActive="true"/>
+                <objectChange node="fertilizer_coupling_2" visibilityActive="false"/>
+                <objectChange node="pCylinder1" translationActive="0 0 -0.188"/>
+            </manureSystemHoseConfiguration>
+
+            <manureSystemHoseConfiguration name="$l10n_configuration_valueExtend" price="10">
+                <grabNodes>
+                    <grabNode isExtension="true" node="grabNodeExt1" raycastNode="grabNodeExt1" componentIndex="1" componentJointIndex="1">
+                        <visuals visualNode="fertilizer_coupling_1" hoseTargetNode="fertilizer_hose" updateHoseTargetRotation="true"/>
+                    </grabNode>
+                    <grabNode isExtension="true" node="grabNodeExt2" raycastNode="grabNodeExt2" componentIndex="4" componentJointIndex="3">
+                        <visuals visualNode="fertilizer_coupling_2" hoseTargetNode="targetNode"/>
+                    </grabNode>
+                </grabNodes>
+
+                <objectChange node="fertilizer_coupling_camplock_1" visibilityActive="false"/>
+                <objectChange node="fertilizer_coupling_camplock_2" visibilityActive="false"/>
+                <objectChange node="fertilizer_coupling_1" visibilityActive="true"/>
+                <objectChange node="fertilizer_coupling_2" visibilityActive="true"/>
+                <objectChange node="pCylinder1" translationActive="0 0 -0.188"/>
             </manureSystemHoseConfiguration>
         </manureSystemHoseConfigurations>
     </hose>
@@ -107,5 +146,12 @@
         <i3dMapping id="targetNode" node="3>1" />
         <i3dMapping id="fertilizer_coupling_camplock_2" node="3>2" />
         <i3dMapping id="fertilizer_coupling_2" node="3>3" />
+
+        <i3dMapping id="pCylinder1" node="0>6" />
+        <i3dMapping id="grabNodeExt1" node="0>7" />
+        <i3dMapping id="baseNodeExt1" node="0>8" />
+        <i3dMapping id="grabNodeExt2" node="3>4" />
+        <i3dMapping id="targetNodeExt2" node="3>5" />
+
     </i3dMappings>
 </vehicle>
