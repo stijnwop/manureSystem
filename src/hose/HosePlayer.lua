@@ -23,13 +23,19 @@ function HosePlayer.new(isClient, isServer, mission, input)
 
     Player.readUpdateStream = Utils.appendedFunction(Player.readUpdateStream, HosePlayer.inj_player_readUpdateStream)
     Player.writeUpdateStream = Utils.appendedFunction(Player.writeUpdateStream, HosePlayer.inj_player_writeUpdateStream)
-    Player.update = Utils.appendedFunction(Player.update, HosePlayer.inj_player_update)
     Player.onLeave = Utils.appendedFunction(Player.onLeave, HosePlayer.inj_player_onLeave)
+
+    -- Workaround for mod conflicts caused by Precision Hands and 3rdPerson mods:
+    -- Delay the method override so the other mods can't replace our code.
+    Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, function(...)
+        Player.update = Utils.appendedFunction(Player.update, HosePlayer.inj_player_update)
+        Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_player_pickUpObject)
+    end)
 
     Player.updateActionEvents = Utils.appendedFunction(Player.updateActionEvents, HosePlayer.inj_player_updateActionEvents)
     Player.registerActionEvents = Utils.prependedFunction(Player.registerActionEvents, HosePlayer.inj_player_registerActionEvents)
 
-    Player.pickUpObject = Utils.overwrittenFunction(Player.pickUpObject, HosePlayer.inj_player_pickUpObject)
+
 
     Player.checkObjectInRange = Utils.overwrittenFunction(Player.checkObjectInRange, HosePlayer.inj_player_checkObjectInRange)
     PlayerStateThrow.isAvailable = Utils.overwrittenFunction(PlayerStateThrow.isAvailable, HosePlayer.inj_playerStateThrow_isAvailable)
